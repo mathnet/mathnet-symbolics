@@ -52,6 +52,7 @@
     <Compile Include="Numbers.fs" />
     <Compile Include="Expressions.fs" />
     <Compile Include="Elementary.fs" />
+    <Compile Include="Polynomial.fs" />
     <Compile Include="Quotations.fs" />
     <Compile Include="Linq.fs" />
     <Compile Include="Text.fs" />

@@ -6,8 +6,14 @@ open Microsoft.FSharp
 open MathNet.Numerics
 open MathNet.Symbolics
 
+open Elementary
+
 let x = symbol "x"
 let y = symbol "y"
+let z = symbol "z"
+let a = symbol "a"
+let b = symbol "b"
+let c = symbol "c"
 
 number 2 * x
 
@@ -18,67 +24,102 @@ number 2 * x
 
 (x**2)**3
 
-Elementary.substitute (number 3) (number 4) (x**3)
-Elementary.map (fun x -> -x) (x + y**2)
+substitute (number 3) (number 4) (x**3)
+map (fun x -> -x) (x + y**2)
 negate (x + y**2)
 
-Elementary.numerator (x/y)
-Elementary.denominator (x/y)
-Elementary.numerator (x**2/y**3)
-Elementary.denominator (x**2/y**3)
+numerator (x/y)
+denominator (x/y)
+numerator (x**2/y**3)
+denominator (x**2/y**3)
 
-Elementary.numerator (x**2)
-Elementary.denominator (x**2)
-Elementary.numerator (x**(-2))
-Elementary.denominator (x**(-2))
+numerator (x**2)
+denominator (x**2)
+numerator (x**(-2))
+denominator (x**(-2))
 
 Quotations.parse <@ 3 @>
 Quotations.parse <@ x @>
 Quotations.parse <@ fun x -> x @>
 Quotations.parse <@ 3/4 @>
 Quotations.parse <@ fun x -> 3/x @>
+Quotations.parse <@ -x*y/3 @>
 Quotations.parse <@ fun x y -> -x*y/3 @>
 Quotations.parse <@ fun (x, y) -> -x*y/3 @>
 
-Polynomials.isMonomial x <| Quotations.parse <@ fun x -> 3*x @>
-Polynomials.isMonomial x <| Quotations.parse <@ 3*x+2 @>
-Polynomials.isMonomial x (3*(x*x))
-Polynomials.isMonomial y (3*x)
-Polynomials.degreeMonomial x (number 0)
-Polynomials.degreeMonomial x (number 1)
-Polynomials.degreeMonomial x (3*x)
-Polynomials.degreeMonomial x (3 * x*x)
-Polynomials.degreeMonomial x (3 * x*x * y) // undefined
-Polynomials.degreeMonomial x (3 + x) // undefined
-Polynomials.coefficientMonomial x (number 0)
-Polynomials.coefficientMonomial x (number 1)
-Polynomials.coefficientMonomial x (3 * x)
-Polynomials.coefficientMonomial x (3 * x*x)
-Polynomials.coefficientMonomial x (3 * x*x * y) // undefined
-Polynomials.coefficientMonomial x (3 + x) // undefined
-Polynomials.coefficientDegreeMonomial x (number 0)
-Polynomials.coefficientDegreeMonomial x (number 1)
-Polynomials.coefficientDegreeMonomial x (3*x)
-Polynomials.coefficientDegreeMonomial x (3*x*x)
 
-Polynomials.isPolynomial x <| Quotations.parse <@ fun x -> 3*x @>
-Polynomials.isPolynomial x <| Quotations.parse <@ 3*x+2 @>
-Polynomials.isPolynomial x (3*x*x+2)
-Polynomials.degree x (3*x*x + 2*x)
-Polynomials.degree x (3*x*x + 2*x*x*x)
-Polynomials.degree x (3*x + 2*x*(x**5) + 2*(x**3))
-Polynomials.coefficient x 0 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-Polynomials.coefficient x 1 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-Polynomials.coefficient x 2 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-Polynomials.coefficient x 3 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-Polynomials.coefficient x 4 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-Polynomials.coefficient x 5 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-Polynomials.coefficient x 6 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-Polynomials.coefficient x 7 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-Polynomials.leadingCoefficient x (3*x*x + 2*x)
-Polynomials.leadingCoefficient x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-Polynomials.leadingCoefficient x (number 2)
-Polynomials.leadingCoefficient x (number 0)
-Polynomials.leadingCoefficientDegree x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-Polynomials.coefficients x (3*x*x + 2*x)
-Polynomials.coefficients x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+module ``single variable polynomials`` =
+
+    open Polynomials
+
+    isMonomial x <| Quotations.parse <@ fun x -> 3*x @>
+    isMonomial x <| Quotations.parse <@ 3*x+2 @>
+    isMonomial x (3*(x*x))
+    isMonomial y (3*x)
+    degreeMonomial x (number 0)
+    degreeMonomial x (number 1)
+    degreeMonomial x (3*x)
+    degreeMonomial x (3 * x*x)
+    degreeMonomial x (3 * x*x * y) // undefined
+    degreeMonomial x (3 + x) // undefined
+
+    coefficientMonomial x (number 0)
+    coefficientMonomial x (number 1)
+    coefficientMonomial x (3 * x)
+    coefficientMonomial x (3 * x*x)
+    coefficientMonomial x (3 * x*x * y) // undefined
+    coefficientMonomial x (3 + x) // undefined
+    coefficientDegreeMonomial x (number 0)
+    coefficientDegreeMonomial x (number 1)
+    coefficientDegreeMonomial x (3*x)
+    coefficientDegreeMonomial x (3*x*x)
+
+    isPolynomial x (3*x)
+    isPolynomial x (3*x+2)
+    isPolynomial x (3*x*x+2)
+    degree x (3*x*x + 2*x)
+    degree x (3*x*x + 2*x*x*x)
+    degree x (3*x + 2*x*(x**5) + 2*(x**3))
+
+    coefficient x 0 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    coefficient x 1 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    coefficient x 2 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    coefficient x 3 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    coefficient x 4 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    coefficient x 5 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    coefficient x 6 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    coefficient x 7 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    leadingCoefficient x (3*x*x + 2*x)
+    leadingCoefficient x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    leadingCoefficient x (number 2)
+    leadingCoefficient x (number 0)
+    leadingCoefficientDegree x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    coefficients x (3*x*x + 2*x)
+    coefficients x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+
+
+module ``general polynomials`` =
+
+    open GeneralPolynomials
+
+    isMonomial (Set.ofList [x;y]) (a * x**2 * y**2) // true
+    isMonomial (Set.ofList [x;y]) (x**2 + y**2) // false
+    isPolynomial (Set.ofList [x;y]) (x**2 + y**2) // true
+    isPolynomial (Set.ofList [x+1]) ((x+1)**2 + 2*(x+1)) // true
+    isPolynomial (Set.ofList [x]) ((x+1)*(x+3)) // false
+
+    variables (a * x**2 * y**2)
+    variables ((x+1)**2 + 2*(x+1))
+    variables ((x+1)*(x+3))
+
+    degreeMonomial (Set.ofList [x;y]) (a * x**2 * y * b**2) // 3 (x:2 + y:1)
+    degree (Set.ofList [x;y]) (a*x**2 + b*x + c) // 2
+    degree (Set.ofList [x;z]) (2*x**2*y**8*z**2 + a*x*z**6) // 7
+    totalDegree (2*x**2*y*z**2 + a*x*z**6) // 8
+
+    coefficient x 2 (a*x**2 + b*x + c) // a
+    coefficient x 2 (a*x*x + b*x + c) // a
+    coefficient x 1 (3*x*y**2 + 5*x**2*y + 7*x + 9) // 7 + 3y^2
+    coefficient x 3 (3*x*y**2 + 5*x**2*y + 7*x + 9) // 0
+    leadingCoefficient x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 7y^3 + 5y
+    coefficients x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 9, 3y^2, 7y^3 + 5y
