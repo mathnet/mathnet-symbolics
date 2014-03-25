@@ -83,6 +83,7 @@ type Number =
         | Rational a, Rational b -> if a < b then x else y
 
 
+#nowarn "25"
 module Integers =
 
     let quot (Integer a) (Integer b) = Integer (a / b)

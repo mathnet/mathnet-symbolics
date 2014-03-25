@@ -1,25 +1,10 @@
-﻿// Learn more about F# at http://fsharp.net. See the 'F# Tutorial' project
-// for more guidance on F# programming.
-
-#I @"..\..\packages\MathNet.Numerics.3.0.0-alpha8\lib\portable-net45+windows8+sl5"
-#I @"..\..\packages\MathNet.Numerics.FSharp.3.0.0-alpha8\lib\portable-net45+windows8+sl5"
-#r "MathNet.Numerics.dll"
-#r "MathNet.Numerics.FSharp.dll"
-
-#load "Numbers.fs"
-#load "Expressions.fs"
-#load "Elementary.fs"
-#load "Quotations.fs"
-#load "Linq.fs"
-#load "Text.fs"
+﻿#load "MathNet.Symbolics.fsx"
 
 open System
 open System.Numerics
 open Microsoft.FSharp
 open MathNet.Numerics
 open MathNet.Symbolics
-
-fsi.AddPrinter Text.format
 
 let x = symbol "x"
 let y = symbol "y"
@@ -58,19 +43,41 @@ Polynomials.isMonomial x <| Quotations.parse <@ fun x -> 3*x @>
 Polynomials.isMonomial x <| Quotations.parse <@ fun x -> 3*x+2 @>
 Polynomials.isMonomial x <| Quotations.parse <@ fun x -> 3*(x*x) @>
 Polynomials.isMonomial y <| Quotations.parse <@ fun x -> 3*x @>
-Polynomials.isPolynomial x <| Quotations.parse <@ fun x -> 3*x @>
-Polynomials.isPolynomial x <| Quotations.parse <@ fun x -> 3*x+2 @>
-Polynomials.isPolynomial x <| Quotations.parse <@ fun x -> 3*x*x+2 @>
-
 Polynomials.degreeMonomial x (number 0)
 Polynomials.degreeMonomial x (number 1)
 Polynomials.degreeMonomial x (number 3 * x)
 Polynomials.degreeMonomial x (number 3 * x*x)
-Polynomials.degreeMonomial x (number 3 + x)
+Polynomials.degreeMonomial x (number 3 * x*x * y) // undefined
+Polynomials.degreeMonomial x (number 3 + x) // undefined
+Polynomials.coefficientMonomial x (number 0)
+Polynomials.coefficientMonomial x (number 1)
+Polynomials.coefficientMonomial x (number 3 * x)
+Polynomials.coefficientMonomial x (number 3 * x*x)
+Polynomials.coefficientMonomial x (number 3 * x*x * y) // undefined
+Polynomials.coefficientMonomial x (number 3 + x) // undefined
+Polynomials.coefficientDegreeMonomial x (number 0)
+Polynomials.coefficientDegreeMonomial x (number 1)
+Polynomials.coefficientDegreeMonomial x (number 3 * x)
+Polynomials.coefficientDegreeMonomial x (number 3 * x*x)
 
+Polynomials.isPolynomial x <| Quotations.parse <@ fun x -> 3*x @>
+Polynomials.isPolynomial x <| Quotations.parse <@ fun x -> 3*x+2 @>
+Polynomials.isPolynomial x <| Quotations.parse <@ fun x -> 3*x*x+2 @>
 Polynomials.degree x (number 3*x*x + number 2*x)
 Polynomials.degree x (number 3*x*x + number 2*x*x*x)
 Polynomials.degree x (number 3*x + number 2*x*(x**number 5) + number 2*(x**number 3))
-
+Polynomials.coefficient x 0 (number 3*x + number 2*x*(x**number 5) + number 2*(x**number 3) + x + number 1)
+Polynomials.coefficient x 1 (number 3*x + number 2*x*(x**number 5) + number 2*(x**number 3) + x + number 1)
+Polynomials.coefficient x 2 (number 3*x + number 2*x*(x**number 5) + number 2*(x**number 3) + x + number 1)
+Polynomials.coefficient x 3 (number 3*x + number 2*x*(x**number 5) + number 2*(x**number 3) + x + number 1)
+Polynomials.coefficient x 4 (number 3*x + number 2*x*(x**number 5) + number 2*(x**number 3) + x + number 1)
+Polynomials.coefficient x 5 (number 3*x + number 2*x*(x**number 5) + number 2*(x**number 3) + x + number 1)
+Polynomials.coefficient x 6 (number 3*x + number 2*x*(x**number 5) + number 2*(x**number 3) + x + number 1)
+Polynomials.coefficient x 7 (number 3*x + number 2*x*(x**number 5) + number 2*(x**number 3) + x + number 1)
+Polynomials.leadingCoefficient x (number 3*x*x + number 2*x)
+Polynomials.leadingCoefficient x (number 3*x + number 2*x*(x**number 5) + number 2*(x**number 3) + x + number 1)
+Polynomials.leadingCoefficient x (number 2)
+Polynomials.leadingCoefficient x (number 0)
+Polynomials.leadingCoefficientDegree x (number 3*x + number 2*x*(x**number 5) + number 2*(x**number 3) + x + number 1)
 Polynomials.coefficients x (number 3*x*x + number 2*x)
 Polynomials.coefficients x (number 3*x + number 2*x*(x**number 5) + number 2*(x**number 3) + x + number 1)
