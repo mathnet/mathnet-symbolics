@@ -11,12 +11,15 @@
 #load "Elementary.fs"
 #load "Quotations.fs"
 #load "Linq.fs"
+#load "Text.fs"
 
 open System
 open System.Numerics
 open Microsoft.FSharp
 open MathNet.Numerics
 open MathNet.Symbolics
+
+fsi.AddPrinter Text.format
 
 let x = symbol "x"
 let y = symbol "y"

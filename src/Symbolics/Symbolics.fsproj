@@ -54,6 +54,7 @@
     <Compile Include="Elementary.fs" />
     <Compile Include="Quotations.fs" />
     <Compile Include="Linq.fs" />
+    <Compile Include="Text.fs" />
     <None Include="Script.fsx" />
     <None Include="app.config" />
     <None Include="packages.config" />
