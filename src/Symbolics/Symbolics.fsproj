@@ -55,6 +55,7 @@
     <Compile Include="Quotations.fs" />
     <Compile Include="Linq.fs" />
     <Compile Include="Text.fs" />
+    <None Include="MathNet.Symbolics.fsx" />
     <None Include="Script.fsx" />
     <None Include="app.config" />
     <None Include="packages.config" />

@@ -78,3 +78,14 @@ type Expression =
         | Product ax -> Product (ax |> List.map (Expression.Invert))
         | Power (r, p) -> Power (r, -p)
         | x -> Power (x, Expression.MinusOne)
+
+    // Simpler usage
+    static member ( + ) (x, (y:int)) = x + Number (Integer (BigInteger(y)))
+    static member ( + ) ((x:int), y) = Number (Integer (BigInteger(x))) + y
+    static member ( - ) (x, (y:int)) = x - Number (Integer (BigInteger(y)))
+    static member ( - ) ((x:int), y) = Number (Integer (BigInteger(x))) - y
+    static member ( * ) (x, (y:int)) = x * Number (Integer (BigInteger(y)))
+    static member ( * ) ((x:int), y) = Number (Integer (BigInteger(x))) * y
+    static member ( / ) (x, (y:int)) = x / Number (Integer (BigInteger(y)))
+    static member ( / ) ((x:int), y) = Number (Integer (BigInteger(x))) / y
+    static member Pow (x, (y:int)) = Expression.Pow(x, Number (Integer (BigInteger(y))))

@@ -17,9 +17,19 @@ module Core =
     let one = Expression.One
     let minusOne = Expression.MinusOne
 
-module Numbers =
+    let add (x:Expression) (y:Expression) = x + y
+    let subtract (x:Expression) (y:Expression) = x - y
+    let negate (x:Expression) = -x
+    let plus (x:Expression) = +x
+    let sum (xs:Expression list) = if xs.Length = 0 then zero else List.reduce (+) xs
+    let multiply (x:Expression) (y:Expression) = x * y
+    let divide (x:Expression) (y:Expression) = x / y
+    let invert (x:Expression) = Expression.Invert(x)
+    let product (xs:Expression list) = if xs.Length = 0 then one else List.reduce (*) xs
+    let pow (x:Expression) (y:Expression) = x ** y
 
-    open Core
+
+module Numbers =
 
     let max2 a b =
         match a, b with
@@ -42,19 +52,6 @@ module Numbers =
 
 
 module Elementary =
-
-    open Core
-
-    let add (x:Expression) y = x + y
-    let subtract (x:Expression) y = x - y
-    let negate (x:Expression) = -x
-    let plus (x:Expression) = +x
-    let sum (xs:Expression list) = if xs.Length = 0 then zero else List.reduce (+) xs
-    let multiply (x:Expression) y = x * y
-    let divide (x:Expression) y = x / y
-    let invert (x:Expression) = Expression.Invert(x)
-    let product (xs:Expression list) = if xs.Length = 0 then one else List.reduce (*) xs
-    let pow (x:Expression) y = x ** y
 
     let numberOfOperands = function
         | Sum ax | Product ax -> List.length ax
@@ -101,7 +98,6 @@ module Elementary =
 /// Single-Value Polynomial (2*x+3*x^2)
 module Polynomials =
 
-    open Core
     open Numbers
     open Elementary
 
