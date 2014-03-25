@@ -2,8 +2,10 @@
 
 open System
 open System.Numerics
-open System.Linq.Expressions
 open MathNet.Numerics
+open MathNet.Symbolics
+
+open System.Linq.Expressions
 
 type SE = MathNet.Symbolics.Expression
 

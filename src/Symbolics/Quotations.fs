@@ -7,6 +7,7 @@ open Microsoft.FSharp.Quotations.Patterns
 open Microsoft.FSharp.Quotations.DerivedPatterns
 open Microsoft.FSharp.Reflection
 open MathNet.Numerics
+open MathNet.Symbolics
 
 module Quotations =
 

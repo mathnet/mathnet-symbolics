@@ -3,6 +3,7 @@
 open System
 open System.Numerics
 open MathNet.Numerics
+open MathNet.Symbolics
 
 
 [<AutoOpen>]
@@ -123,21 +124,14 @@ module Polynomials =
         | Sum ax -> max <| List.map (degreeMonomial symbol) ax
         | _ -> Expression.Undefined
 
-    let rec coefficientsByOrder symbol = function
-        | x when x = symbol -> Map.empty.Add(1, Expression.One)
-        | Number _ as a -> Map.empty.Add(0, a)
-        | Power (r, (Number (Integer n) as p)) when r = symbol && n > BigInteger.One -> Map.empty.Add(int n, Expression.One)
-        | Sum ax ->
-            List.map (coefficientsByOrder symbol) ax
-            |> List.reduce (fun a b -> a |> Map.fold (fun s order e -> s |> Map.add order (Map.tryFind order s |> Option.fold (+) e)) b)
-        | Product ax ->
-            List.map (coefficientsByOrder symbol) ax
-            |> List.reduce (fun a b -> a |> Map.fold (fun s o1 e1 -> b |> Map.fold (fun s o2 e2 -> let o = o1+o2 in s |> Map.add o (Map.tryFind o s |> Option.fold (*) (e1*e2))) s) Map.empty)
-        | _ -> Map.empty
-
     let coefficients symbol x =
-        let c = coefficientsByOrder symbol x
-        let degree = Map.toSeq c |> Seq.map fst |> Seq.max
-        let ret = Array.create (degree+1) Expression.Zero
-        c |> Map.iter (fun o e -> ret.[o] <- e)
-        ret
+        let rec collect symbol = function
+            | x when x = symbol -> [1, Expression.One]
+            | Number _ as a -> [0, a]
+            | Power (r, (Number (Integer n) as p)) when r = symbol && n > BigInteger.One -> [int n, Expression.One]
+            | Sum ax -> List.collect (collect symbol) ax
+            | Product ax -> List.map (collect symbol) ax |> List.reduce (fun a b -> a |> List.fold (fun s (o1, e1) -> b |> List.fold (fun s (o2, e2) -> (o1+o2,e1*e2)::s) s) [])
+            | _ -> []
+        let c = collect symbol x
+        let degree = c |> Seq.map fst |> Seq.max
+        c |> List.fold (fun (s:Expression[]) (o,e) -> s.[o] <- s.[o] + e; s) (Array.create (degree+1) Expression.Zero)
