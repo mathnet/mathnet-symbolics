@@ -59,6 +59,7 @@ type Expression =
     static member Pow (x, y) =
         // if power is a number, radix must not be an integer, fraction, product or power
         match x, y with
+        | a, b when b = Expression.Zero && a <> Expression.Zero -> Expression.One
         | a, b when b = Expression.One -> a
         | a, b | b, a when a = Expression.Undefined -> Expression.Undefined
         | Number a, Number (Integer b) -> Number (a ** int b)

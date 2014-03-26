@@ -60,6 +60,12 @@ differentiate x (a*x**2)
 differentiate x (a*x**b)
 differentiate x (a*x**2 + b*x + c)
 
+Expand.algebraicExpand ((x+1)*(x+3))
+Expand.algebraicExpand ((a+b)**2)
+Expand.algebraicExpand ((a+b)**3)
+Expand.algebraicExpand ((a+b)**4)
+Expand.algebraicExpand ((a+b+c)**2)
+
 
 module ``single variable polynomials`` =
 

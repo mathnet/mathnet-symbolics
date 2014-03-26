@@ -93,3 +93,7 @@ module Integers =
     let gcd2 (Integer a) (Integer b) = Integer (Euclid.GreatestCommonDivisor(a, b))
     let gcde (Integer a) (Integer b) = let g, x, y = Euclid.ExtendedGreatestCommonDivisor(a, b) in (Integer g, Integer x, Integer y)
     let lcm2 (Integer a) (Integer b) = Integer (Euclid.LeastCommonMultiple(a, b))
+
+    // TODO: proper BigInteger implementation (supporting large numbers)
+    let factorial (Integer a) = Integer(BigInteger(int(SpecialFunctions.Factorial(int a))))
+    let binomial (Integer n) (Integer k) = Integer(BigInteger(int(SpecialFunctions.Binomial(int n, int k))))
