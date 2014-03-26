@@ -176,3 +176,15 @@ module GeneralPolynomials =
         let c = collect symbol x
         let degree = c |> Seq.map fst |> Seq.max
         c |> List.fold (fun (s:Expression[]) (o,e) -> s.[o] <- s.[o] + e; s) (Array.create (degree+1) zero)
+
+    let rec collectTermsMonomial (symbols: Set<Expression>) = function
+        | x when symbols.Contains(x) -> (one, x)
+        | Number _ as x-> (x, one)
+        | Power (r, (Number (Integer n) as p)) as x when symbols.Contains(r) && n > BigInteger.One -> (one, x)
+        | Product ax -> List.map (collectTermsMonomial symbols) ax |> List.reduce (fun (c1, v1) (c2, v2) -> (c1*c2, v1*v2))
+        | x when freeOfSet symbols x -> (x, one)
+        | _ -> (undefined, undefined)
+
+    let collectTerms (symbols: Set<Expression>) = function
+        | Sum ax -> List.map (collectTermsMonomial symbols) ax |> Seq.groupBy snd |> Seq.map (fun (v, cs) -> (Seq.map fst cs |> sumSeq) * v) |> sumSeq
+        | x -> let c, v = collectTermsMonomial symbols x in if c <> undefined then c*v else undefined

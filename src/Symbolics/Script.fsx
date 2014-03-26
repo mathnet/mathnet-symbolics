@@ -123,3 +123,10 @@ module ``general polynomials`` =
     coefficient x 3 (3*x*y**2 + 5*x**2*y + 7*x + 9) // 0
     leadingCoefficient x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 7y^3 + 5y
     coefficients x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 9, 3y^2, 7y^3 + 5y
+
+    collectTermsMonomial (Set.ofList [x;y]) (2*x*a)
+    collectTermsMonomial (Set.ofList [x;y]) (2*a*x*b*y*3)
+    collectTermsMonomial (Set.ofList [x;y]) (2*a*x*b*y**3*x*3)
+
+    collectTerms (Set.ofList [x;y]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
+    collectTerms (Set.ofList [a;b]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)

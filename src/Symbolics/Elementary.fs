@@ -22,10 +22,12 @@ module Core =
     let negate (x:Expression) = -x
     let plus (x:Expression) = +x
     let sum (xs:Expression list) = if xs.Length = 0 then zero else List.reduce (+) xs
+    let sumSeq (xs:Expression seq) = Seq.fold (+) zero xs
     let multiply (x:Expression) (y:Expression) = x * y
     let divide (x:Expression) (y:Expression) = x / y
     let invert (x:Expression) = Expression.Invert(x)
     let product (xs:Expression list) = if xs.Length = 0 then one else List.reduce (*) xs
+    let productSeq (xs:Expression seq) = Seq.fold (*) one xs
     let pow (x:Expression) (y:Expression) = x ** y
 
 
