@@ -8,6 +8,7 @@ open MathNet.Symbolics
 
 open Elementary
 open Functions
+open Calculus
 
 let x = symbol "x"
 let y = symbol "y"
@@ -51,6 +52,13 @@ Quotations.parse <@ fun x -> 3/x @>
 Quotations.parse <@ -x*y/3 @>
 Quotations.parse <@ fun x y -> -x*y/3 @>
 Quotations.parse <@ fun (x, y) -> -x*y/3 @>
+
+differentiate x (a*x)
+differentiate x (sin(x))
+differentiate x (x*sin(x))
+differentiate x (a*x**2)
+differentiate x (a*x**b)
+differentiate x (a*x**2 + b*x + c)
 
 
 module ``single variable polynomials`` =

@@ -15,6 +15,7 @@
 #load "Expressions.fs"
 #load "Elementary.fs"
 #load "Polynomial.fs"
+#load "Calculus.fs"
 #load "Quotations.fs"
 #load "Linq.fs"
 #load "Text.fs"
