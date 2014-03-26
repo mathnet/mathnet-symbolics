@@ -5,17 +5,14 @@ open System.Numerics
 open MathNet.Numerics
 open MathNet.Symbolics
 
-type Symbol =
-    | Symbol of string
-    | Undefined
-    | Infinity
-
 type Expression =
     | Number of Number
     | Identifier of Symbol
     | Sum of Expression list
     | Product of Expression list
     | Power of Expression * Expression
+    | Function of Function * Expression
+    | FunctionN of Function * (Expression list)
 
     static member One = Number (Number.One)
     static member MinusOne = Number (Number.MinusOne)

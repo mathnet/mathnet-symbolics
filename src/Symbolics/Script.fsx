@@ -7,6 +7,7 @@ open MathNet.Numerics
 open MathNet.Symbolics
 
 open Elementary
+open Functions
 
 let x = symbol "x"
 let y = symbol "y"
@@ -23,6 +24,10 @@ number 2 * x
 -x*y/3
 
 (x**2)**3
+
+x + ln x
+x + ln (x+1)
+2*abs x
 
 substitute (number 3) (number 4) (x**3)
 map (fun x -> -x) (x + y**2)
@@ -55,7 +60,8 @@ module ``single variable polynomials`` =
     isMonomial x <| Quotations.parse <@ fun x -> 3*x @>
     isMonomial x <| Quotations.parse <@ 3*x+2 @>
     isMonomial x (3*(x*x))
-    isMonomial y (3*x)
+    isMonomial x (a*x) // false
+    isMonomial y (3*x) // false
     degreeMonomial x (number 0)
     degreeMonomial x (number 1)
     degreeMonomial x (3*x)
@@ -103,6 +109,7 @@ module ``general polynomials`` =
     open GeneralPolynomials
 
     isMonomial (Set.ofList [x;y]) (a * x**2 * y**2) // true
+    isMonomial (Set.ofList [x;y]) (ln(a) * x**2 * y**2) // true
     isMonomial (Set.ofList [x;y]) (x**2 + y**2) // false
     isPolynomial (Set.ofList [x;y]) (x**2 + y**2) // true
     isPolynomial (Set.ofList [x+1]) ((x+1)**2 + 2*(x+1)) // true
@@ -111,6 +118,7 @@ module ``general polynomials`` =
     variables (a * x**2 * y**2)
     variables ((x+1)**2 + 2*(x+1))
     variables ((x+1)*(x+3))
+    variables ((x+1)*(x+3)*sin(x))
 
     degreeMonomial (Set.ofList [x;y]) (a * x**2 * y * b**2) // 3 (x:2 + y:1)
     degree (Set.ofList [x;y]) (a*x**2 + b*x + c) // 2
@@ -130,3 +138,4 @@ module ``general polynomials`` =
 
     collectTerms (Set.ofList [x;y]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
     collectTerms (Set.ofList [a;b]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
+    collectTerms (Set.ofList [x;ln(a)]) (2*x*ln(a)*y + 4*x*ln(a) + 3*x*y*b + 5*x*b + c)

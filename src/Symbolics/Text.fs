@@ -11,6 +11,12 @@ module Text =
 
     // priority: 1=additive 2=product 3=power
     let rec private formatImpl write priority (q:Expression) =
+
+        let functionName = function
+            | Abs -> "abs"
+            | Ln -> "ln" | Exp -> "exp"
+            | Sin -> "sin" | Cos -> "cos" | Tan -> "tan"
+
         match q with
         | Number (Integer x) ->
             if priority > 0 && x.Sign < 0 then write "("
@@ -39,7 +45,22 @@ module Text =
             write "^"
             formatImpl write 3 p
             if priority > 2 then write ")"
-        | Sum [] | Product [] -> failwith "invalid expression"
+        | Function (Abs, x) ->
+            write "|"
+            formatImpl write 0 x
+            write "|"
+        | Function (fn, x) ->
+            write (functionName fn)
+            write "("
+            formatImpl write 0 x
+            write ")"
+        | FunctionN (fn, x::xs) ->
+            write (functionName fn)
+            write "("
+            formatImpl write 0 x
+            xs |> List.iter (fun x -> write ","; formatImpl write 0 x)
+            write ")"
+        | Sum [] | Product [] | FunctionN (_, []) -> failwith "invalid expression"
 
 
     let format q =

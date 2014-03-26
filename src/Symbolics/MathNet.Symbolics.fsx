@@ -11,6 +11,7 @@
 #r "MathNet.Numerics.FSharp.dll"
 
 #load "Numbers.fs"
+#load "Symbols.fs"
 #load "Expressions.fs"
 #load "Elementary.fs"
 #load "Polynomial.fs"
