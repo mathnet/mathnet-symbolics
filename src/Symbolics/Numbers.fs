@@ -12,7 +12,9 @@ type Number =
     static member MinusOne = Integer (BigInteger.MinusOne)
     static member Zero = Integer (BigInteger.Zero)
 
-    static member private Reduce (x:BigRational) =
+    static member OfInt32 (x:int) = Integer (BigInteger(x))
+
+    static member Reduce (x:BigRational) =
         if x.Denominator = BigInteger.One then Integer x.Numerator
         else Rational x
 
@@ -95,5 +97,5 @@ module Integers =
     let lcm2 (Integer a) (Integer b) = Integer (Euclid.LeastCommonMultiple(a, b))
 
     // TODO: proper BigInteger implementation (supporting large numbers)
-    let factorial (Integer a) = Integer(BigInteger(int(SpecialFunctions.Factorial(int a))))
-    let binomial (Integer n) (Integer k) = Integer(BigInteger(int(SpecialFunctions.Binomial(int n, int k))))
+    let factorial (Integer a) = Number.OfInt32(int(SpecialFunctions.Factorial(int a)))
+    let binomial (Integer n) (Integer k) = Number.OfInt32(int(SpecialFunctions.Binomial(int n, int k)))

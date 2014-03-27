@@ -19,11 +19,50 @@ let c = symbol "c"
 
 number 2 * x
 
+x + y
+y + x
+x + x
+x + 2*x
+x + x*2
+2*x + 3*x
+a*x + 2*x
+a*x + x*b
+1 + x + y
+x + 1 + y
+x + y + 1
+
+2*(a*b)
+(a*b)*2
+
+a*b + a*b
+a*b + b*a
+
+(a+b)*x
+(a+b)*x*y
+(a+b)*y*x
+(a+b)*(x*y)
+(a+b)*(y*x)
+
+x*y
+y*x
+x**2*x
+x*y*x**2
+y*x*y**2
+2*x*y
+x*2*y
+x*y*2
+
+2*(x*y)*z**2
+1*x*y*z**2
+2*x*y*z*z**2
+
 1 / x
 2 + 1/x - 1
 2*x*3
 -x*y/3
 
+x*x
+x*x**2*x**3
 (x**2)**3
 
 x + ln x

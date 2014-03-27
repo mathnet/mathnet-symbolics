@@ -15,6 +15,7 @@ module Core =
     let number (x:int) = Number (Integer (BigInteger(x)))
     let zero = Expression.Zero
     let one = Expression.One
+    let two = Expression.Two
     let minusOne = Expression.MinusOne
 
     let add (x:Expression) (y:Expression) = x + y
