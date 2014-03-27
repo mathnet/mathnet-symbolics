@@ -27,6 +27,7 @@ x + x*2
 2*x + 3*x
 a*x + 2*x
 a*x + x*b
+b*x + x*a
 1 + x + y
 x + 1 + y
 x + y + 1
@@ -36,6 +37,31 @@ x + y + 1
 
 a*b + a*b
 a*b + b*a
+
+a + b + c + a*b + a*c + b*c
+c*b + c*a + b*a + c + b + a
+
+a**2 + b**2
+b**2 + a**2
+
+a**2 + a**3
+a**3 + a**2
+
+a**2 * b**2
+b**2 * a**2
+
+(a+c)**2 + (a+b)**2
+(a+b)**2 + (a+c)**2
+
+(a+c)**2 * (a+b)**2
+(a+b)**2 * (a+c)**2
+
+(a+c) * (a+b)
+(a+b) * (a+c)
+
+(1+x)**2 + (1+x)**3 + (1+y)**2
+(1+x)**3 + (1+y)**2 + (1+x)**2
+(1+y)**2 + (1+x)**2 + (1+x)**3
 
 (a+b)*x
 (a+b)*x*y
@@ -182,8 +208,8 @@ module ``general polynomials`` =
     coefficient x 2 (a*x*x + b*x + c) // a
     coefficient x 1 (3*x*y**2 + 5*x**2*y + 7*x + 9) // 7 + 3y^2
     coefficient x 3 (3*x*y**2 + 5*x**2*y + 7*x + 9) // 0
-    leadingCoefficient x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 7y^3 + 5y
-    coefficients x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 9, 3y^2, 7y^3 + 5y
+    leadingCoefficient x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 5y + 7y^3
+    coefficients x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 9, 3y^2, 5y + 7y^3
 
     collectTermsMonomial (Set.ofList [x;y]) (2*x*a)
     collectTermsMonomial (Set.ofList [x;y]) (2*a*x*b*y*3)
