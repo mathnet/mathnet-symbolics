@@ -117,10 +117,10 @@ algebraicExpand ((a*x**2 + b*x + c)/(d*x + e))
 let p = algebraicExpand ((a*x**2 + b*x + c)*(d*x**2 + e*x + f))
 Polynomial.coefficients x p
 Polynomial.leadingCoefficient x p
-Polynomial.collectTerms (set [x]) p
-Polynomial.degree (set [x]) p
-Polynomial.totalDegree p
-Polynomial.variables p
+Polynomial.collectTerms x p
+Polynomial.degree x p
+MultivariatePolynomial.totalDegree p
+MultivariatePolynomial.variables p
 
 Polynomial.polynomialDivision x (5*x**2 + 4*x + 1) (2*x + 3) // q=-7/4+5/2*x, r=25/4
 Polynomial.polynomialDivision x (x**3 - 2*x**2 - 4) (x-3) // q=2+x+x^2, r=5
@@ -246,9 +246,9 @@ module ``Single Variable Polynomials`` =
     coefficients x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
 
 
-module ``General Polynomial Expressions`` =
+module ``General Multivariate Polynomial Expressions`` =
 
-    open Polynomial
+    open MultivariatePolynomial
 
     isMonomial (set [x;y]) (a * x**2 * y**2) // true
     isMonomial (set [x;y]) (ln(a) * x**2 * y**2) // true
@@ -267,12 +267,12 @@ module ``General Polynomial Expressions`` =
     degree (set [x;z]) (2*x**2*y**8*z**2 + a*x*z**6) // 7
     totalDegree (2*x**2*y*z**2 + a*x*z**6) // 8
 
-    coefficient x 2 (a*x**2 + b*x + c) // a
-    coefficient x 2 (a*x*x + b*x + c) // a
-    coefficient x 1 (3*x*y**2 + 5*x**2*y + 7*x + 9) // 7 + 3y^2
-    coefficient x 3 (3*x*y**2 + 5*x**2*y + 7*x + 9) // 0
-    leadingCoefficient x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 5y + 7y^3
-    coefficients x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 9, 3y^2, 5y + 7y^3
+//    coefficient x 2 (a*x**2 + b*x + c) // a
+//    coefficient x 2 (a*x*x + b*x + c) // a
+//    coefficient x 1 (3*x*y**2 + 5*x**2*y + 7*x + 9) // 7 + 3y^2
+//    coefficient x 3 (3*x*y**2 + 5*x**2*y + 7*x + 9) // 0
+//    leadingCoefficient x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 5y + 7y^3
+//    coefficients x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 9, 3y^2, 5y + 7y^3
 
     collectTermsMonomial (set [x;y]) (2*x*a)
     collectTermsMonomial (set [x;y]) (2*a*x*b*y*3)
@@ -283,11 +283,41 @@ module ``General Polynomial Expressions`` =
     collectTerms (set [x;ln(a)]) (2*x*ln(a)*y + 4*x*ln(a) + 3*x*y*b + 5*x*b + c)
 
 
+module ``General Univariate Polynomial Expressions`` =
+
+    open Polynomial
+
+    isMonomial x (a * x**2) // true
+    isMonomial x (ln(a) * x**2) // true
+    isMonomial x (x**2 + a) // false
+    isPolynomial x (x**2 + x**3) // true
+    isPolynomial x ((x+1)**2 + 2*(x+1)) // true
+    isPolynomial x ((x+1)*(x+3)) // false
+
+    degreeMonomial x (a * x**2 * x * b**2) // 3
+    degree x (a*x**2 + b*x + c) // 2
+
+    coefficient x 2 (a*x**2 + b*x + c) // a
+    coefficient x 2 (a*x*x + b*x + c) // a
+    coefficient x 1 (3*x*y**2 + 5*x**2*y + 7*x + 9) // 7 + 3y^2
+    coefficient x 3 (3*x*y**2 + 5*x**2*y + 7*x + 9) // 0
+    leadingCoefficient x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 5y + 7y^3
+    coefficients x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 9, 3y^2, 5y + 7y^3
+
+    collectTermsMonomial x (2*x*a)
+    collectTermsMonomial x (2*a*x*b*3)
+    collectTermsMonomial x (2*a*x**3*b*x*3)
+
+    collectTerms x (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
+    collectTerms a (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
+    collectTerms (ln(a)) (2*x*ln(a)*y + 4*x*ln(a) + 3*x*y*b + 5*x*b + c)
+
+
 
 /// primitive equation solver (symbolic roots)
 let solve x expr =
 
-    if Polynomial.isPolynomial (set [x]) expr then
+    if Polynomial.isPolynomial x expr then
         match Polynomial.coefficients x expr with
         | [||] -> undefined
         | [| a |] -> x
