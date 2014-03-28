@@ -12,6 +12,7 @@ module Core =
     let symbol name = Identifier (Symbol name)
     let undefined = Identifier Undefined
     let infinity = Identifier Infinity
+    let complexInfinity = Identifier ComplexInfinity
     let number (x:int) = Number (Integer (BigInteger(x)))
     let zero = Expression.Zero
     let one = Expression.One

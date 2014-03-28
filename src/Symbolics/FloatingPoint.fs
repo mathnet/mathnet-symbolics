@@ -13,10 +13,10 @@ type FloatingPoint =
     | ComplexVector of Vector<Complex>
     | RealMatrix of Matrix<float>
     | ComplexMatrix of Matrix<Complex>
-    | NaN
-    | PositiveInfinity
-    | NegativeInfinity
-    | ComplexInfinity
+    | Undef
+    | PosInf
+    | NegInf
+    | ComplexInf
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module FloatingPoint =
@@ -24,17 +24,18 @@ module FloatingPoint =
     type C = System.Numerics.Complex
 
     let (|Infinity|_|) = function
-        | PositiveInfinity | NegativeInfinity | ComplexInfinity -> Some Infinity
+        | PosInf | NegInf | ComplexInf -> Some Infinity
         | _ -> None
 
     let rec normalize = function
-        | Real x when Double.IsPositiveInfinity(x) -> PositiveInfinity
-        | Real x when Double.IsNegativeInfinity(x) -> NegativeInfinity
-        | Real x when Double.IsInfinity(x) -> ComplexInfinity // not supported by double?
-        | Real x when Double.IsNaN(x) -> NaN
+        | Real x when Double.IsPositiveInfinity(x) -> PosInf
+        | Real x when Double.IsNegativeInfinity(x) -> NegInf
+        | Real x when Double.IsInfinity(x) -> ComplexInf // not supported by double?
+        | Real x when Double.IsNaN(x) -> Undef
+        | Complex x when x.IsInfinity() && x.IsReal() -> if x.Real > 0.0 then PosInf else NegInf
+        | Complex x when x.IsInfinity() -> ComplexInf
         | Complex x when x.IsReal() -> normalize (Real x.Real)
-        | Complex x when x.IsInfinity() -> ComplexInfinity
-        | Complex x when x.IsNaN() -> NaN
+        | Complex x when x.IsNaN() -> Undef
         | x -> x
 
     let add u v =
@@ -46,11 +47,11 @@ module FloatingPoint =
         | ComplexVector x, ComplexVector y -> ComplexVector (x+y)
         | RealMatrix x, RealMatrix y -> RealMatrix (x+y)
         | ComplexMatrix x, ComplexMatrix y -> ComplexMatrix (x+y)
-        | NaN, _ | _, NaN -> NaN
-        | ComplexInfinity, Infinity | Infinity, ComplexInfinity -> ComplexInfinity
-        | PositiveInfinity, NegativeInfinity -> NaN
-        | PositiveInfinity, _ | _, PositiveInfinity -> PositiveInfinity
-        | NegativeInfinity, _ | _, NegativeInfinity -> NegativeInfinity
+        | Undef, _ | _, Undef -> Undef
+        | ComplexInf, Infinity | Infinity, ComplexInf -> ComplexInf
+        | PosInf, NegInf -> Undef
+        | PosInf, _ | _, PosInf -> PosInf
+        | NegInf, _ | _, NegInf -> NegInf
         | _ -> failwith "not supported"
 
     let multiply u v =
@@ -62,15 +63,15 @@ module FloatingPoint =
         | ComplexVector x, ComplexVector y -> Complex (x*y)
         | RealMatrix x, RealMatrix y -> RealMatrix (x*y)
         | ComplexMatrix x, ComplexMatrix y -> ComplexMatrix (x*y)
-        | NaN, _ | _, NaN -> NaN
-        | ComplexInfinity, Infinity | Infinity, ComplexInfinity -> ComplexInfinity
-        | PositiveInfinity, NegativeInfinity -> NegativeInfinity
-        | PositiveInfinity, Real x | Real x, PositiveInfinity ->
-            if x < 0.0 then NegativeInfinity else if x > 0.0 then PositiveInfinity else NaN
-        | NegativeInfinity, Real x | Real x, NegativeInfinity ->
-            if x < 0.0 then PositiveInfinity else if x > 0.0 then NegativeInfinity else NaN
-        | PositiveInfinity, _ | _, PositiveInfinity -> PositiveInfinity
-        | NegativeInfinity, _ | _, NegativeInfinity -> NegativeInfinity
+        | Undef, _ | _, Undef -> Undef
+        | ComplexInf, Infinity | Infinity, ComplexInf -> ComplexInf
+        | PosInf, NegInf -> NegInf
+        | PosInf, Real x | Real x, PosInf ->
+            if x < 0.0 then NegInf else if x > 0.0 then PosInf else Undef
+        | NegInf, Real x | Real x, NegInf ->
+            if x < 0.0 then PosInf else if x > 0.0 then NegInf else Undef
+        | PosInf, _ | _, PosInf -> PosInf
+        | NegInf, _ | _, NegInf -> NegInf
         | _ -> failwith "not supported"
 
     let power u v =
@@ -79,10 +80,10 @@ module FloatingPoint =
         | Complex x, Real y -> Complex (Complex.Pow(x, y))
         | Real x, Complex y -> Complex (Complex.Pow(C(x,0.0), y))
         | Complex x, Complex y -> Complex (Complex.Pow(x, y))
-        | NaN, _ | _, NaN -> NaN
-        | ComplexInfinity, Infinity | Infinity, ComplexInfinity -> ComplexInfinity
-        | Infinity, PositiveInfinity -> ComplexInfinity
-        | Infinity, NegativeInfinity -> Real (0.0)
+        | Undef, _ | _, Undef -> Undef
+        | ComplexInf, Infinity | Infinity, ComplexInf -> ComplexInf
+        | Infinity, PosInf -> ComplexInf
+        | Infinity, NegInf -> Real (0.0)
         | _ -> failwith "not supported"
 
     let unary f u =
@@ -110,8 +111,9 @@ module FloatingPoint =
     let rec evaluate symbols = function
         | Number (Integer x) -> Real (float x) |> normalize
         | Number (Rational x) -> Real (float x) |> normalize
-        | Identifier Symbol.Undefined -> NaN
-        | Identifier Symbol.Infinity -> PositiveInfinity
+        | Identifier Symbol.Undefined -> Undef
+        | Identifier Symbol.Infinity -> PosInf
+        | Identifier Symbol.ComplexInfinity -> ComplexInf
         | Identifier _ as x -> Map.find x symbols |> normalize
         | Sum xs -> xs |> List.map (evaluate symbols) |> List.reduce add |> normalize
         | Product xs -> xs |> List.map (evaluate symbols) |> List.reduce multiply |> normalize

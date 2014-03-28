@@ -20,6 +20,7 @@ type Expression =
     static member MinusOne = Number (Number.MinusOne)
     static member Undefined = Identifier Undefined
     static member Infinity = Identifier Infinity
+    static member ComplexInfinity = Identifier ComplexInfinity
     static member OfInt32 (x:int) = Number (Number.OfInt32(x))
     static member OfInteger (x:BigInteger) = Number (Integer x)
     static member OfRational (x:BigRational) = Number (Number.Reduce(x))
@@ -165,8 +166,8 @@ type Expression =
     static member Invert (x) =
         match x with
         | a when a = Expression.Undefined -> Expression.Undefined
-        | a when a = Expression.Infinity -> Expression.Zero
-        | a when a = Expression.Zero -> Expression.Undefined // no direction
+        | a when a = Expression.Infinity || a = Expression.ComplexInfinity -> Expression.Zero
+        | a when a = Expression.Zero -> Expression.ComplexInfinity // no direction
         | Number a -> Number (Number.Invert a)
         | Product ax -> Product (ax |> List.map (Expression.Invert))
         | Power (r, p) -> Power (r, -p)
