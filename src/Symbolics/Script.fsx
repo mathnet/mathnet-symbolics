@@ -10,6 +10,7 @@ open Elementary
 open Functions
 open Calculus
 
+// variables:
 let x = symbol "x"
 let y = symbol "y"
 let z = symbol "z"
@@ -20,7 +21,9 @@ let d = symbol "d"
 let e = symbol "e"
 let f = symbol "f"
 
-number 2 * x
+// numeric literal expressions:
+number 3
+3Q
 
 x + y
 y + x
@@ -106,7 +109,9 @@ x*x**2*x**3
 (a+b)**2/(b+a)
 (a+b)/(b+a)**2
 
-((x*y)**((number 1)/2)*z**2)**2
+((x*y)**(1Q/2)*z**2)**2
+
+(a/b/(c*a))*(c*d/a)/d
 
 algebraicExpand ((a*x**2 + b*x + c)/(d*x + e))
 let p = algebraicExpand ((a*x**2 + b*x + c)*(d*x**2 + e*x + f))
@@ -122,10 +127,10 @@ Polynomial.polynomialDivision x (x**3 - 2*x**2 - 4) (x-3) // q=2+x+x^2, r=5
 
 // tangent of polynomial at x = 1?
 Polynomial.polynomialDivision x (x**3 - 12*x**2 - a) (x**2-2*x+1) // q=-10x, r=10-a-21x (=u+v*x)
-let v = differentiate x (x**3 - 12*x**2 - a) |> substitute x (number 1) // v=-21
-let u = (x**3 - 12*x**2 - a) - v*x |> substitute x (number 1)  // u=10-a
+let v = differentiate x (x**3 - 12*x**2 - a) |> substitute x 1Q // v=-21
+let u = (x**3 - 12*x**2 - a) - v*x |> substitute x 1Q  // u=10-a
 
-let sqr2 = (number 2)**(number 1/number 2)
+let sqr2 = (2Q)**(1/2Q)
 Polynomial.polynomialDivision x ((2-4*sqr2)*x**2 + (-1+4*sqr2)*x - 3+3*sqr2) ((1-2*sqr2)*x + 1-sqr2)
 
 // (1+x) + (2+x)y + (2+x)y^2
@@ -140,7 +145,7 @@ x + ln x
 x + ln (x+1)
 2*abs x
 
-substitute (number 3) (number 4) (x**3)
+substitute 3Q 4Q (x**3)
 map (fun x -> -x) (x + y**2)
 negate (x + y**2)
 
@@ -183,10 +188,10 @@ module ``Evaluate some expression to floating point numbers`` =
 
     let symbols = Map.ofList [a, freal 2.0; b, freal 3.0; c, fcomplex 1.0 -1.0]
     evaluate symbols (a)
-    evaluate symbols (number 1/2)
+    evaluate symbols (1Q/2)
     evaluate symbols (sin(a) + ln(b))
     evaluate symbols (a*x**2 + b*x + c |> substitute x (number 1/2))
-    evaluate symbols (number 1/number 0)
+    evaluate symbols (1Q/0Q)
 
 
 
@@ -199,21 +204,21 @@ module ``Single Variable Polynomials`` =
     isMonomial x (3*(x*x))
     isMonomial x (a*x) // false
     isMonomial y (3*x) // false
-    degreeMonomial x (number 0)
-    degreeMonomial x (number 1)
+    degreeMonomial x 0Q
+    degreeMonomial x 1Q
     degreeMonomial x (3*x)
     degreeMonomial x (3 * x*x)
     degreeMonomial x (3 * x*x * y) // undefined
     degreeMonomial x (3 + x) // undefined
 
-    coefficientMonomial x (number 0)
-    coefficientMonomial x (number 1)
+    coefficientMonomial x 0Q
+    coefficientMonomial x 1Q
     coefficientMonomial x (3 * x)
     coefficientMonomial x (3 * x*x)
     coefficientMonomial x (3 * x*x * y) // undefined
     coefficientMonomial x (3 + x) // undefined
-    coefficientDegreeMonomial x (number 0)
-    coefficientDegreeMonomial x (number 1)
+    coefficientDegreeMonomial x 0Q
+    coefficientDegreeMonomial x 1Q
     coefficientDegreeMonomial x (3*x)
     coefficientDegreeMonomial x (3*x*x)
 
@@ -234,8 +239,8 @@ module ``Single Variable Polynomials`` =
     coefficient x 7 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
     leadingCoefficient x (3*x*x + 2*x)
     leadingCoefficient x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-    leadingCoefficient x (number 2)
-    leadingCoefficient x (number 0)
+    leadingCoefficient x 2Q
+    leadingCoefficient x 0Q
     leadingCoefficientDegree x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
     coefficients x (3*x*x + 2*x)
     coefficients x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)

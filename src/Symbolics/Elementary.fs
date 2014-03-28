@@ -36,6 +36,15 @@ module Core =
     let applyN (f:Function) (xs:Expression list) = FunctionN (f, xs)
 
 
+[<RequireQualifiedAccess>]
+module NumericLiteralQ =
+    let FromZero () = zero
+    let FromOne () = one
+    let FromInt32 (x:int) = Number (Integer (BigInteger(x)))
+    let FromInt64 (x:int64) = Number (Integer (BigInteger(x)))
+    let FromString str = Number (Number.Reduce(BigRational.Parse(str)))
+
+
 module Functions =
 
     let abs x = apply Abs x
