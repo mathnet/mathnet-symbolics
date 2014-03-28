@@ -16,6 +16,9 @@ let z = symbol "z"
 let a = symbol "a"
 let b = symbol "b"
 let c = symbol "c"
+let d = symbol "d"
+let e = symbol "e"
+let f = symbol "f"
 
 number 2 * x
 
@@ -90,6 +93,30 @@ x*y*2
 x*x
 x*x**2*x**3
 (x**2)**3
+
+(a+b)-(a+b) |> Expand.algebraicExpand
+2*(a+b)-(a+b)
+(a+b)-2*(a+b) |> Expand.algebraicExpand
+
+(a*b)/(b*a)
+(a*b)**2/(b*a)
+(a*b)/(b*a)**2
+
+(a+b)/(b+a)
+(a+b)**2/(b+a)
+(a+b)/(b+a)**2
+
+((x*y)**((number 1)/2)*z**2)**2
+
+(a*x**2 + b*x + c)/(d*x**2 + e*x + f)
+Expand.algebraicExpand ((a*x**2 + b*x + c)/(d*x**2 + e*x + f))
+let p = Expand.algebraicExpand ((a*x**2 + b*x + c)*(d*x**2 + e*x + f))
+GeneralPolynomials.coefficients x p
+GeneralPolynomials.leadingCoefficient x p
+GeneralPolynomials.collectTerms (Set.ofList [x]) p
+GeneralPolynomials.degree (Set.ofList [x]) p
+GeneralPolynomials.totalDegree p
+GeneralPolynomials.variables p
 
 x + ln x
 x + ln (x+1)

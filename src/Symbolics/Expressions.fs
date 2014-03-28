@@ -74,6 +74,7 @@ type Expression =
         let merge (xs:Expression list) (ys:Expression list) =
             let rec gen acc u v =
                 match acc, u, v with
+                | (Number n)::cc, _, _ when n = Number.Zero -> gen cc u v
                 | Term(ac,at)::cc, Term(xc,xt)::xs, y | Term(ac,at)::cc, y, Term(xc,xt)::xs when at = xt ->
                     gen ((Number(ac+xc)*at)::cc) xs y
                 | _, Term(xc,xt)::xs, Term(yc,yt)::ys when xt = yt ->
@@ -116,6 +117,7 @@ type Expression =
         let merge (xs:Expression list) (ys:Expression list) =
             let rec gen acc u v =
                 match acc, u, v with
+                | (Number n)::cc, _, _ when n = Number.One -> gen cc u v
                 | Term(ab,ae)::cc, Term(xb,xe)::xs, y | Term(ab,ae)::cc, y, Term(xb,xe)::xs when ab = xb ->
                     gen ((ab**(ae+xe))::cc) xs y
                 | _, Term(xb,xe)::xs, Term(yb,ye)::ys when xb = yb ->
@@ -157,7 +159,7 @@ type Expression =
         | a, b | b, a when a = Expression.Undefined -> Expression.Undefined
         | Number a, Number (Integer b) -> Number (a ** int b)
         | Product ax, Number (Integer b) -> Product (ax |> List.map (fun z -> Expression.Pow(z,y)))
-        | Power (r, p), Number (Integer b) -> Power (r, p*y)
+        | Power (r, p), Number (Integer b) -> Expression.Pow(r, p*y)
         | a, b -> Power(a, b)
 
     static member Invert (x) =
