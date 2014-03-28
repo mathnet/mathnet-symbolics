@@ -6,7 +6,8 @@ open MathNet.Numerics
 open MathNet.Symbolics
 
 /// Single-Variable Polynomial (2*x+3*x^2)
-module Polynomials =
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+module SingleVariablePolynomial =
 
     open Numbers
     open ExpressionPatterns
@@ -89,7 +90,8 @@ module Polynomials =
 
 
 /// General Polynomial Expressions
-module GeneralPolynomials =
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+module Polynomial =
 
     open System.Collections.Generic
     open Numbers

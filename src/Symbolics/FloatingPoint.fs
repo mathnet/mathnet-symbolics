@@ -27,18 +27,21 @@ module FloatingPoint =
         | PosInf | NegInf | ComplexInf -> Some Infinity
         | _ -> None
 
-    let rec normalize = function
+    let freal x = FloatingPoint.Real(x)
+    let fcomplex r i = FloatingPoint.Complex (System.Numerics.Complex(r, i))
+
+    let rec fnormalize = function
         | Real x when Double.IsPositiveInfinity(x) -> PosInf
         | Real x when Double.IsNegativeInfinity(x) -> NegInf
         | Real x when Double.IsInfinity(x) -> ComplexInf // not supported by double?
         | Real x when Double.IsNaN(x) -> Undef
         | Complex x when x.IsInfinity() && x.IsReal() -> if x.Real > 0.0 then PosInf else NegInf
         | Complex x when x.IsInfinity() -> ComplexInf
-        | Complex x when x.IsReal() -> normalize (Real x.Real)
+        | Complex x when x.IsReal() -> fnormalize (Real x.Real)
         | Complex x when x.IsNaN() -> Undef
         | x -> x
 
-    let add u v =
+    let fadd u v =
         match u, v with
         | Real x, Real y -> Real (x+y)
         | Real x, Complex y | Complex y, Real x -> Complex (C(x,0.0)+y)
@@ -54,7 +57,7 @@ module FloatingPoint =
         | NegInf, _ | _, NegInf -> NegInf
         | _ -> failwith "not supported"
 
-    let multiply u v =
+    let fmultiply u v =
         match u, v with
         | Real x, Real y -> Real (x*y)
         | Real x, Complex y | Complex y, Real x -> Complex (C(x,0.0)*y)
@@ -74,7 +77,7 @@ module FloatingPoint =
         | NegInf, _ | _, NegInf -> NegInf
         | _ -> failwith "not supported"
 
-    let power u v =
+    let fpower u v =
         match u, v with
         | Real x, Real y -> Real (Math.Pow(x, y))
         | Complex x, Real y -> Complex (Complex.Pow(x, y))
@@ -86,7 +89,7 @@ module FloatingPoint =
         | Infinity, NegInf -> Real (0.0)
         | _ -> failwith "not supported"
 
-    let unary f u =
+    let fapply f u =
         match f, u with
         | Abs, Real x -> Real (Math.Abs(x))
         | Abs, Complex x -> Real (Complex.Abs(x))
@@ -106,17 +109,17 @@ module FloatingPoint =
         | Tan, Complex x -> Complex (Complex.Tan(x))
         | _ -> failwith "not supported"
 
-    let nary f xs = failwith "not supported"
+    let fapplyN f xs = failwith "not supported"
 
     let rec evaluate symbols = function
-        | Number (Integer x) -> Real (float x) |> normalize
-        | Number (Rational x) -> Real (float x) |> normalize
+        | Number (Integer x) -> Real (float x) |> fnormalize
+        | Number (Rational x) -> Real (float x) |> fnormalize
         | Identifier Symbol.Undefined -> Undef
         | Identifier Symbol.Infinity -> PosInf
         | Identifier Symbol.ComplexInfinity -> ComplexInf
-        | Identifier _ as x -> Map.find x symbols |> normalize
-        | Sum xs -> xs |> List.map (evaluate symbols) |> List.reduce add |> normalize
-        | Product xs -> xs |> List.map (evaluate symbols) |> List.reduce multiply |> normalize
-        | Power (r, p) -> power (evaluate symbols r) (evaluate symbols p) |> normalize
-        | Function (f, x) -> unary f (evaluate symbols x) |> normalize
-        | FunctionN (f, xs) -> xs |> List.map (evaluate symbols) |> nary f |> normalize
+        | Identifier _ as x -> Map.find x symbols |> fnormalize
+        | Sum xs -> xs |> List.map (evaluate symbols) |> List.reduce fadd |> fnormalize
+        | Product xs -> xs |> List.map (evaluate symbols) |> List.reduce fmultiply |> fnormalize
+        | Power (r, p) -> fpower (evaluate symbols r) (evaluate symbols p) |> fnormalize
+        | Function (f, x) -> fapply f (evaluate symbols x) |> fnormalize
+        | FunctionN (f, xs) -> xs |> List.map (evaluate symbols) |> fapplyN f |> fnormalize

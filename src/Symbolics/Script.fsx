@@ -110,26 +110,26 @@ x*x**2*x**3
 
 algebraicExpand ((a*x**2 + b*x + c)/(d*x + e))
 let p = algebraicExpand ((a*x**2 + b*x + c)*(d*x**2 + e*x + f))
-GeneralPolynomials.coefficients x p
-GeneralPolynomials.leadingCoefficient x p
-GeneralPolynomials.collectTerms (set [x]) p
-GeneralPolynomials.degree (set [x]) p
-GeneralPolynomials.totalDegree p
-GeneralPolynomials.variables p
+Polynomial.coefficients x p
+Polynomial.leadingCoefficient x p
+Polynomial.collectTerms (set [x]) p
+Polynomial.degree (set [x]) p
+Polynomial.totalDegree p
+Polynomial.variables p
 
-GeneralPolynomials.polynomialDivision x (5*x**2 + 4*x + 1) (2*x + 3) // q=-7/4+5/2*x, r=25/4
-GeneralPolynomials.polynomialDivision x (x**3 - 2*x**2 - 4) (x-3) // q=2+x+x^2, r=5
+Polynomial.polynomialDivision x (5*x**2 + 4*x + 1) (2*x + 3) // q=-7/4+5/2*x, r=25/4
+Polynomial.polynomialDivision x (x**3 - 2*x**2 - 4) (x-3) // q=2+x+x^2, r=5
 
 // tangent of polynomial at x = 1?
-GeneralPolynomials.polynomialDivision x (x**3 - 12*x**2 - a) (x**2-2*x+1) // q=-10x, r=10-a-21x (=u+v*x)
+Polynomial.polynomialDivision x (x**3 - 12*x**2 - a) (x**2-2*x+1) // q=-10x, r=10-a-21x (=u+v*x)
 let v = differentiate x (x**3 - 12*x**2 - a) |> substitute x (number 1) // v=-21
 let u = (x**3 - 12*x**2 - a) - v*x |> substitute x (number 1)  // u=10-a
 
 let sqr2 = (number 2)**(number 1/number 2)
-GeneralPolynomials.polynomialDivision x ((2-4*sqr2)*x**2 + (-1+4*sqr2)*x - 3+3*sqr2) ((1-2*sqr2)*x + 1-sqr2)
+Polynomial.polynomialDivision x ((2-4*sqr2)*x**2 + (-1+4*sqr2)*x - 3+3*sqr2) ((1-2*sqr2)*x + 1-sqr2)
 
 // (1+x) + (2+x)y + (2+x)y^2
-let ex = GeneralPolynomials.polynomialExpansion x y (x**5 + 11*x**4 + 51*x**3 + 124*x**2 + 159*x + 86) (x**2 + 4*x + 5)
+let ex = Polynomial.polynomialExpansion x y (x**5 + 11*x**4 + 51*x**3 + 124*x**2 + 159*x + 86) (x**2 + 4*x + 5)
 // (1+x) + (2+x)*(5+4x+x^2) + (2+x)*(5+4x+x^2)^2
 let exs = ex |> substitute y (x**2 + 4*x + 5)
 // get back to original polynomial
@@ -176,17 +176,23 @@ algebraicExpand ((a+b)**3)
 algebraicExpand ((a+b)**4)
 algebraicExpand ((a+b+c)**2)
 
-let complex r i = System.Numerics.Complex(r, i)
-let sv = Map.empty.Add(a, FloatingPoint.Real(2.0)).Add(b, Real(3.0)).Add(c, Complex(complex 1.0 -1.0))
-FloatingPoint.evaluate sv (a)
-FloatingPoint.evaluate sv (number 1/2)
-FloatingPoint.evaluate sv (sin(a) + ln(b))
-FloatingPoint.evaluate sv (a*x**2 + b*x + c |> substitute x (number 1/2))
-FloatingPoint.evaluate sv (number 1/number 0)
 
-module ``single variable polynomials`` =
+module ``Evaluate some expression to floating point numbers`` =
 
-    open Polynomials
+    open FloatingPoint
+
+    let symbols = Map.ofList [a, freal 2.0; b, freal 3.0; c, fcomplex 1.0 -1.0]
+    evaluate symbols (a)
+    evaluate symbols (number 1/2)
+    evaluate symbols (sin(a) + ln(b))
+    evaluate symbols (a*x**2 + b*x + c |> substitute x (number 1/2))
+    evaluate symbols (number 1/number 0)
+
+
+
+module ``Single Variable Polynomials`` =
+
+    open SingleVariablePolynomial
 
     isMonomial x <| Quotations.parse <@ fun x -> 3*x @>
     isMonomial x <| Quotations.parse <@ 3*x+2 @>
@@ -235,9 +241,9 @@ module ``single variable polynomials`` =
     coefficients x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
 
 
-module ``general polynomials`` =
+module ``General Polynomial Expressions`` =
 
-    open GeneralPolynomials
+    open Polynomial
 
     isMonomial (set [x;y]) (a * x**2 * y**2) // true
     isMonomial (set [x;y]) (ln(a) * x**2 * y**2) // true
@@ -276,8 +282,8 @@ module ``general polynomials`` =
 /// primitive equation solver (symbolic roots)
 let solve x expr =
 
-    if GeneralPolynomials.isPolynomial (set [x]) expr then
-        match GeneralPolynomials.coefficients x expr with
+    if Polynomial.isPolynomial (set [x]) expr then
+        match Polynomial.coefficients x expr with
         | [||] -> undefined
         | [| a |] -> x
         | [| a; b |] -> -a/b
