@@ -176,6 +176,13 @@ algebraicExpand ((a+b)**3)
 algebraicExpand ((a+b)**4)
 algebraicExpand ((a+b+c)**2)
 
+let complex r i = System.Numerics.Complex(r, i)
+let sv = Map.empty.Add(a, FloatingPoint.Real(2.0)).Add(b, Real(3.0)).Add(c, Complex(complex 1.0 -1.0))
+FloatingPoint.evaluate sv (a)
+FloatingPoint.evaluate sv (number 1/2)
+FloatingPoint.evaluate sv (sin(a) + ln(b))
+FloatingPoint.evaluate sv (a*x**2 + b*x + c |> substitute x (number 1/2))
+FloatingPoint.evaluate sv (number 1/number 0)
 
 module ``single variable polynomials`` =
 
