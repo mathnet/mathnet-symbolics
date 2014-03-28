@@ -14,7 +14,6 @@
 #load "Symbols.fs"
 #load "Expressions.fs"
 #load "Elementary.fs"
-#load "Expand.fs"
 #load "Polynomial.fs"
 #load "Calculus.fs"
 #load "Quotations.fs"

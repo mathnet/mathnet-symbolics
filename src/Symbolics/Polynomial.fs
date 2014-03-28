@@ -194,7 +194,7 @@ module GeneralPolynomials =
     let polynomialDivision symbol u v =
         let symbols = Set.ofList [symbol]
         let n = degree symbols v
-        if n < one then (u/v |> Expand.algebraicExpand, zero) else
+        if n < one then (u/v |> algebraicExpand, zero) else
         let lcv = leadingCoefficient symbol v
         let rec pd q r =
             let m = degree symbols r
@@ -202,7 +202,7 @@ module GeneralPolynomials =
             let lcr = leadingCoefficient symbol r
             let s = lcr / lcv
             let z = symbol**(m-n)
-            pd (q + s*z) ((r - lcr*symbol**m) - (v - lcv*symbol**n)*s*z |> Expand.algebraicExpand)
+            pd (q + s*z) ((r - lcr*symbol**m) - (v - lcv*symbol**n)*s*z |> algebraicExpand)
         pd zero u
 
     let quot symbol u v = polynomialDivision symbol u v |> fst
@@ -212,6 +212,6 @@ module GeneralPolynomials =
         let rec pe x =
             if x = zero then zero else
             let q, r = polynomialDivision symbol x v
-            t * (pe q) + r |> Expand.algebraicExpand
+            t * (pe q) + r |> algebraicExpand
         pe u |> collectTerms (Set.ofList [t])
   

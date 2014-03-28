@@ -94,9 +94,9 @@ x*x
 x*x**2*x**3
 (x**2)**3
 
-(a+b)-(a+b) |> Expand.algebraicExpand
+(a+b)-(a+b) |> algebraicExpand
 2*(a+b)-(a+b)
-(a+b)-2*(a+b) |> Expand.algebraicExpand
+(a+b)-2*(a+b) |> algebraicExpand
 
 (a*b)/(b*a)
 (a*b)**2/(b*a)
@@ -108,8 +108,8 @@ x*x**2*x**3
 
 ((x*y)**((number 1)/2)*z**2)**2
 
-Expand.algebraicExpand ((a*x**2 + b*x + c)/(d*x + e))
-let p = Expand.algebraicExpand ((a*x**2 + b*x + c)*(d*x**2 + e*x + f))
+algebraicExpand ((a*x**2 + b*x + c)/(d*x + e))
+let p = algebraicExpand ((a*x**2 + b*x + c)*(d*x**2 + e*x + f))
 GeneralPolynomials.coefficients x p
 GeneralPolynomials.leadingCoefficient x p
 GeneralPolynomials.collectTerms (set [x]) p
@@ -133,7 +133,7 @@ let ex = GeneralPolynomials.polynomialExpansion x y (x**5 + 11*x**4 + 51*x**3 + 
 // (1+x) + (2+x)*(5+4x+x^2) + (2+x)*(5+4x+x^2)^2
 let exs = ex |> substitute y (x**2 + 4*x + 5)
 // get back to original polynomial
-exs |> Expand.algebraicExpand
+algebraicExpand exs
 
 
 x + ln x
@@ -170,11 +170,11 @@ differentiate x (a*x**2)
 differentiate x (a*x**b)
 differentiate x (a*x**2 + b*x + c)
 
-Expand.algebraicExpand ((x+1)*(x+3))
-Expand.algebraicExpand ((a+b)**2)
-Expand.algebraicExpand ((a+b)**3)
-Expand.algebraicExpand ((a+b)**4)
-Expand.algebraicExpand ((a+b+c)**2)
+algebraicExpand ((x+1)*(x+3))
+algebraicExpand ((a+b)**2)
+algebraicExpand ((a+b)**3)
+algebraicExpand ((a+b)**4)
+algebraicExpand ((a+b+c)**2)
 
 
 module ``single variable polynomials`` =
