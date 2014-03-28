@@ -207,3 +207,11 @@ module GeneralPolynomials =
 
     let quot symbol u v = polynomialDivision symbol u v |> fst
     let remainder symbol u v = polynomialDivision symbol u v |> snd
+
+    let polynomialExpansion symbol t u v =
+        let rec pe x =
+            if x = zero then zero else
+            let q, r = polynomialDivision symbol x v
+            t * (pe q) + r |> Expand.algebraicExpand
+        pe u |> collectTerms (Set.ofList [t])
+  

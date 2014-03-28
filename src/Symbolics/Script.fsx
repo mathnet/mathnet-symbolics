@@ -112,8 +112,8 @@ Expand.algebraicExpand ((a*x**2 + b*x + c)/(d*x + e))
 let p = Expand.algebraicExpand ((a*x**2 + b*x + c)*(d*x**2 + e*x + f))
 GeneralPolynomials.coefficients x p
 GeneralPolynomials.leadingCoefficient x p
-GeneralPolynomials.collectTerms (Set.ofList [x]) p
-GeneralPolynomials.degree (Set.ofList [x]) p
+GeneralPolynomials.collectTerms (set [x]) p
+GeneralPolynomials.degree (set [x]) p
 GeneralPolynomials.totalDegree p
 GeneralPolynomials.variables p
 
@@ -128,8 +128,12 @@ let u = (x**3 - 12*x**2 - a) - v*x |> substitute x (number 1)  // u=10-a
 let sqr2 = (number 2)**(number 1/number 2)
 GeneralPolynomials.polynomialDivision x ((2-4*sqr2)*x**2 + (-1+4*sqr2)*x - 3+3*sqr2) ((1-2*sqr2)*x + 1-sqr2)
 
-GeneralPolynomials.polynomialDivision x (number 3) (number 2)
-GeneralPolynomials.degree (Set.ofList [x]) (number 3)
+// (1+x) + (2+x)y + (2+x)y^2
+let ex = GeneralPolynomials.polynomialExpansion x y (x**5 + 11*x**4 + 51*x**3 + 124*x**2 + 159*x + 86) (x**2 + 4*x + 5)
+// (1+x) + (2+x)*(5+4x+x^2) + (2+x)*(5+4x+x^2)^2
+let exs = ex |> substitute y (x**2 + 4*x + 5)
+// get back to original polynomial
+exs |> Expand.algebraicExpand
 
 
 x + ln x
@@ -228,21 +232,21 @@ module ``general polynomials`` =
 
     open GeneralPolynomials
 
-    isMonomial (Set.ofList [x;y]) (a * x**2 * y**2) // true
-    isMonomial (Set.ofList [x;y]) (ln(a) * x**2 * y**2) // true
-    isMonomial (Set.ofList [x;y]) (x**2 + y**2) // false
-    isPolynomial (Set.ofList [x;y]) (x**2 + y**2) // true
-    isPolynomial (Set.ofList [x+1]) ((x+1)**2 + 2*(x+1)) // true
-    isPolynomial (Set.ofList [x]) ((x+1)*(x+3)) // false
+    isMonomial (set [x;y]) (a * x**2 * y**2) // true
+    isMonomial (set [x;y]) (ln(a) * x**2 * y**2) // true
+    isMonomial (set [x;y]) (x**2 + y**2) // false
+    isPolynomial (set [x;y]) (x**2 + y**2) // true
+    isPolynomial (set [x+1]) ((x+1)**2 + 2*(x+1)) // true
+    isPolynomial (set [x]) ((x+1)*(x+3)) // false
 
     variables (a * x**2 * y**2)
     variables ((x+1)**2 + 2*(x+1))
     variables ((x+1)*(x+3))
     variables ((x+1)*(x+3)*sin(x))
 
-    degreeMonomial (Set.ofList [x;y]) (a * x**2 * y * b**2) // 3 (x:2 + y:1)
-    degree (Set.ofList [x;y]) (a*x**2 + b*x + c) // 2
-    degree (Set.ofList [x;z]) (2*x**2*y**8*z**2 + a*x*z**6) // 7
+    degreeMonomial (set [x;y]) (a * x**2 * y * b**2) // 3 (x:2 + y:1)
+    degree (set [x;y]) (a*x**2 + b*x + c) // 2
+    degree (set [x;z]) (2*x**2*y**8*z**2 + a*x*z**6) // 7
     totalDegree (2*x**2*y*z**2 + a*x*z**6) // 8
 
     coefficient x 2 (a*x**2 + b*x + c) // a
@@ -252,20 +256,20 @@ module ``general polynomials`` =
     leadingCoefficient x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 5y + 7y^3
     coefficients x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 9, 3y^2, 5y + 7y^3
 
-    collectTermsMonomial (Set.ofList [x;y]) (2*x*a)
-    collectTermsMonomial (Set.ofList [x;y]) (2*a*x*b*y*3)
-    collectTermsMonomial (Set.ofList [x;y]) (2*a*x*b*y**3*x*3)
+    collectTermsMonomial (set [x;y]) (2*x*a)
+    collectTermsMonomial (set [x;y]) (2*a*x*b*y*3)
+    collectTermsMonomial (set [x;y]) (2*a*x*b*y**3*x*3)
 
-    collectTerms (Set.ofList [x;y]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
-    collectTerms (Set.ofList [a;b]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
-    collectTerms (Set.ofList [x;ln(a)]) (2*x*ln(a)*y + 4*x*ln(a) + 3*x*y*b + 5*x*b + c)
+    collectTerms (set [x;y]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
+    collectTerms (set [a;b]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
+    collectTerms (set [x;ln(a)]) (2*x*ln(a)*y + 4*x*ln(a) + 3*x*y*b + 5*x*b + c)
 
 
 
 /// primitive equation solver (symbolic roots)
 let solve x expr =
 
-    if GeneralPolynomials.isPolynomial (Set.ofList [x]) expr then
+    if GeneralPolynomials.isPolynomial (set [x]) expr then
         match GeneralPolynomials.coefficients x expr with
         | [||] -> undefined
         | [| a |] -> x
