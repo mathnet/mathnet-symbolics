@@ -245,3 +245,23 @@ module ``general polynomials`` =
     collectTerms (Set.ofList [x;y]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
     collectTerms (Set.ofList [a;b]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
     collectTerms (Set.ofList [x;ln(a)]) (2*x*ln(a)*y + 4*x*ln(a) + 3*x*y*b + 5*x*b + c)
+
+
+
+/// primitive equation solver (symbolic roots)
+let solve x expr =
+
+    if GeneralPolynomials.isPolynomial (Set.ofList [x]) expr then
+        match GeneralPolynomials.coefficients x expr with
+        | [||] -> undefined
+        | [| a |] -> x
+        | [| a; b |] -> -a/b
+        | _ -> failwith "higher polynomials not supported"
+
+    else failwith "only general polynomial expressions supported for now"
+
+// 2+3*x = 0  -->  x = -2/3
+solve x (2+3*x)
+
+// sin(a)+x*cos(b)+c = 0  -->  x = -(c+sin(a))/cos(b)
+solve x (sin(a)+x*cos(b)+c)
