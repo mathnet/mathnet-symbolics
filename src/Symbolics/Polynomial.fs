@@ -190,3 +190,20 @@ module GeneralPolynomials =
     let collectTerms (symbols: Set<Expression>) = function
         | Sum ax -> List.map (collectTermsMonomial symbols) ax |> Seq.groupBy snd |> Seq.map (fun (v, cs) -> (Seq.map fst cs |> sumSeq) * v) |> sumSeq
         | x -> let c, v = collectTermsMonomial symbols x in if c <> undefined then c*v else undefined
+
+    let polynomialDivision symbol u v =
+        let symbols = Set.ofList [symbol]
+        let n = degree symbols v
+        if n < one then (u/v |> Expand.algebraicExpand, zero) else
+        let lcv = leadingCoefficient symbol v
+        let rec pd q r =
+            let m = degree symbols r
+            if m < n then q, r else
+            let lcr = leadingCoefficient symbol r
+            let s = lcr / lcv
+            let z = symbol**(m-n)
+            pd (q + s*z) ((r - lcr*symbol**m) - (v - lcv*symbol**n)*s*z |> Expand.algebraicExpand)
+        pd zero u
+
+    let quot symbol u v = polynomialDivision symbol u v |> fst
+    let remainder symbol u v = polynomialDivision symbol u v |> snd

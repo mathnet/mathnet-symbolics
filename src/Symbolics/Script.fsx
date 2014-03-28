@@ -108,8 +108,7 @@ x*x**2*x**3
 
 ((x*y)**((number 1)/2)*z**2)**2
 
-(a*x**2 + b*x + c)/(d*x**2 + e*x + f)
-Expand.algebraicExpand ((a*x**2 + b*x + c)/(d*x**2 + e*x + f))
+Expand.algebraicExpand ((a*x**2 + b*x + c)/(d*x + e))
 let p = Expand.algebraicExpand ((a*x**2 + b*x + c)*(d*x**2 + e*x + f))
 GeneralPolynomials.coefficients x p
 GeneralPolynomials.leadingCoefficient x p
@@ -117,6 +116,21 @@ GeneralPolynomials.collectTerms (Set.ofList [x]) p
 GeneralPolynomials.degree (Set.ofList [x]) p
 GeneralPolynomials.totalDegree p
 GeneralPolynomials.variables p
+
+GeneralPolynomials.polynomialDivision x (5*x**2 + 4*x + 1) (2*x + 3) // q=-7/4+5/2*x, r=25/4
+GeneralPolynomials.polynomialDivision x (x**3 - 2*x**2 - 4) (x-3) // q=2+x+x^2, r=5
+
+// tangent of polynomial at x = 1?
+GeneralPolynomials.polynomialDivision x (x**3 - 12*x**2 - a) (x**2-2*x+1) // q=-10x, r=10-a-21x (=u+v*x)
+let v = differentiate x (x**3 - 12*x**2 - a) |> substitute x (number 1) // v=-21
+let u = (x**3 - 12*x**2 - a) - v*x |> substitute x (number 1)  // u=10-a
+
+let sqr2 = (number 2)**(number 1/number 2)
+GeneralPolynomials.polynomialDivision x ((2-4*sqr2)*x**2 + (-1+4*sqr2)*x - 3+3*sqr2) ((1-2*sqr2)*x + 1-sqr2)
+
+GeneralPolynomials.polynomialDivision x (number 3) (number 2)
+GeneralPolynomials.degree (Set.ofList [x]) (number 3)
+
 
 x + ln x
 x + ln (x+1)
