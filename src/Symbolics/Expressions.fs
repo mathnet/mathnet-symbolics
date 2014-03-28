@@ -182,3 +182,15 @@ type Expression =
     static member ( / ) (x, (y:int)) = x / Number (Integer (BigInteger(y)))
     static member ( / ) ((x:int), y) = Number (Integer (BigInteger(x))) / y
     static member Pow (x, (y:int)) = Expression.Pow(x, Number (Integer (BigInteger(y))))
+
+
+
+module ExpressionPatterns =
+
+    let (|PosIntPower|_|) = function
+        | Power (r, (Number (Integer n) as p)) when n > BigInteger.One -> Some (r, p)
+        | _ -> None
+
+    let (|NegIntPower|_|) = function
+        | Power (r, (Number (Integer n) as p)) when n < BigInteger.Zero -> Some (r, p)
+        | _ -> None

@@ -70,6 +70,7 @@ module Numbers =
 module Elementary =
 
     open System.Collections.Generic
+    open ExpressionPatterns
 
     let numberOfOperands = function
         | Sum ax | Product ax -> List.length ax
@@ -122,10 +123,10 @@ module Elementary =
 
     let rec numerator = function
         | Product ax -> product <| List.map numerator ax
-        | Power (r, Number (Integer n)) when n < BigInteger.Zero -> one
+        | NegIntPower _ -> one
         | z -> z
 
     let rec denominator = function
         | Product ax -> product <| List.map denominator ax
-        | Power (r, (Number (Integer n) as p)) when n < BigInteger.Zero -> r ** -p
+        | NegIntPower (r, p) -> r ** -p
         | _ -> one

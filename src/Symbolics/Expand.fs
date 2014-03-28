@@ -7,6 +7,8 @@ open MathNet.Symbolics
 
 module Expand =
 
+    open ExpressionPatterns
+
     let rec expandProduct x y =
         match x, y with
         | Sum ax, b | b, Sum ax -> sum <| List.map (expandProduct b) ax
@@ -26,5 +28,5 @@ module Expand =
         | Number _ | Identifier _ as x -> x
         | Sum ax -> sum <| List.map algebraicExpand ax
         | Product ax -> List.map algebraicExpand ax |> List.reduce expandProduct
-        | Power (r, (Number (Integer n))) when n > BigInteger.One -> expandPower (algebraicExpand r) (int n)
+        | PosIntPower (r, Number (Integer n)) -> expandPower (algebraicExpand r) (int n)
         | x -> x

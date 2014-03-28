@@ -9,11 +9,12 @@ open MathNet.Symbolics
 module Polynomials =
 
     open Numbers
+    open ExpressionPatterns
 
     let rec isMonomial symbol = function
         | x when x = symbol -> true
         | Number _ -> true
-        | Power (r, (Number (Integer n) as p)) when r = symbol && n > BigInteger.One -> true
+        | PosIntPower (r, _) when r = symbol -> true
         | Product ax -> List.forall (isMonomial symbol) ax
         | _ -> false
 
@@ -26,7 +27,7 @@ module Polynomials =
         | x when x = zero -> -infinity
         | x when x = symbol -> one
         | Number _ -> zero
-        | Power (r, (Number (Integer n) as p)) when r = symbol && n > BigInteger.One -> p
+        | PosIntPower (r, p) when r = symbol -> p
         | Product ax -> sum <| List.map (degreeMonomial symbol) ax
         | _ -> undefined
 
@@ -40,7 +41,7 @@ module Polynomials =
     let rec coefficientMonomial symbol = function
         | x when x = symbol -> one
         | Number _ as x -> x
-        | Power (r, (Number (Integer n) as p)) when r = symbol && n > BigInteger.One -> one
+        | PosIntPower (r, _) when r = symbol -> one
         | Product ax -> product <| List.map (coefficientMonomial symbol) ax
         | _ -> undefined
 
@@ -48,7 +49,7 @@ module Polynomials =
         | x when x = zero -> x, -infinity
         | x when x = symbol -> one, one
         | Number _ as x -> x, zero
-        | Power (r, (Number (Integer n) as p)) when r = symbol && n > BigInteger.One -> one, p
+        | PosIntPower (r, p) when r = symbol -> one, p
         | Product ax ->
             let cds = List.map (coefficientDegreeMonomial symbol) ax
             product <| List.map fst cds, sum <| List.map snd cds
@@ -78,7 +79,7 @@ module Polynomials =
         let rec collect symbol = function
             | x when x = symbol -> [1, one]
             | Number _ as a -> [0, a]
-            | Power (r, (Number (Integer n) as p)) when r = symbol && n > BigInteger.One -> [int n, one]
+            | PosIntPower (r, Number (Integer n)) when r = symbol -> [int n, one]
             | Sum ax -> List.collect (collect symbol) ax
             | Product ax -> List.map (collect symbol) ax |> List.reduce (fun a b -> a |> List.fold (fun s (o1, e1) -> b |> List.fold (fun s (o2, e2) -> (o1+o2,e1*e2)::s) s) [])
             | _ -> []
@@ -93,11 +94,12 @@ module GeneralPolynomials =
     open System.Collections.Generic
     open Numbers
     open Elementary
+    open ExpressionPatterns
 
     let variables x =
         let rec impl symbols = function
             | Number _ -> symbols
-            | Power (r, (Number (Integer n) as p)) when n > BigInteger.One -> Set.add r symbols
+            | PosIntPower (r, _) -> Set.add r symbols
             | Power _ as p -> Set.add p symbols
             | Sum ax -> ax |> List.fold impl symbols
             | Product ax -> ax |> List.fold (fun s a -> match a with | Sum _ as z -> Set.add z s | _ -> impl s a) symbols
@@ -107,7 +109,7 @@ module GeneralPolynomials =
     let rec isMonomial (symbols: Set<Expression>) = function
         | x when symbols.Contains(x) -> true
         | Number _ -> true
-        | Power (r, (Number (Integer n) as p)) when symbols.Contains(r) && n > BigInteger.One -> true
+        | PosIntPower (r, _) when symbols.Contains(r) -> true
         | Product ax -> List.forall (isMonomial symbols) ax
         | x -> freeOfSet symbols x
 
@@ -120,7 +122,7 @@ module GeneralPolynomials =
         | x when x = zero -> -infinity
         | x when symbols.Contains(x) -> one
         | Number _ -> zero
-        | Power (r, (Number (Integer n) as p)) when symbols.Contains(r) && n > BigInteger.One -> p
+        | PosIntPower (r, p) when symbols.Contains(r) -> p
         | Product ax -> sum <| List.map (degreeMonomial symbols) ax
         | x when freeOfSet symbols x -> zero
         | _ -> undefined
@@ -137,7 +139,7 @@ module GeneralPolynomials =
     let rec coefficientDegreeMonomial symbol = function
         | x when x = symbol -> one, one
         | Number _ as x -> x, zero
-        | Power (r, (Number (Integer n) as p)) when r = symbol && n > BigInteger.One -> one, p
+        | PosIntPower (r, p) when r = symbol -> one, p
         | Product ax ->
             let cds = List.map (coefficientDegreeMonomial symbol) ax
             product <| List.map fst cds, sum <| List.map snd cds
@@ -168,7 +170,7 @@ module GeneralPolynomials =
         let rec collect symbol = function
             | x when x = symbol -> [1, one]
             | Number _ as a -> [0, a]
-            | Power (r, (Number (Integer n) as p)) when r = symbol && n > BigInteger.One -> [int n, one]
+            | PosIntPower (r, Number (Integer n)) when r = symbol -> [int n, one]
             | Sum ax -> List.collect (collect symbol) ax
             | Product ax -> List.map (collect symbol) ax |> List.reduce (fun a b -> a |> List.fold (fun s (o1, e1) -> b |> List.fold (fun s (o2, e2) -> (o1+o2,e1*e2)::s) s) [])
             | x when freeOf symbol x -> [0, x]
@@ -180,7 +182,7 @@ module GeneralPolynomials =
     let rec collectTermsMonomial (symbols: Set<Expression>) = function
         | x when symbols.Contains(x) -> (one, x)
         | Number _ as x-> (x, one)
-        | Power (r, (Number (Integer n) as p)) as x when symbols.Contains(r) && n > BigInteger.One -> (one, x)
+        | PosIntPower (r, p) as x when symbols.Contains(r) -> (one, x)
         | Product ax -> List.map (collectTermsMonomial symbols) ax |> List.reduce (fun (c1, v1) (c2, v2) -> (c1*c2, v1*v2))
         | x when freeOfSet symbols x -> (x, one)
         | _ -> (undefined, undefined)
