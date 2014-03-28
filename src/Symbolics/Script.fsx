@@ -194,95 +194,6 @@ module ``Evaluate some expression to floating point numbers`` =
     evaluate symbols (1Q/0Q)
 
 
-
-module ``Single Variable Polynomials`` =
-
-    open SingleVariablePolynomial
-
-    isMonomial x <| Quotations.parse <@ fun x -> 3*x @>
-    isMonomial x <| Quotations.parse <@ 3*x+2 @>
-    isMonomial x (3*(x*x))
-    isMonomial x (a*x) // false
-    isMonomial y (3*x) // false
-    degreeMonomial x 0Q
-    degreeMonomial x 1Q
-    degreeMonomial x (3*x)
-    degreeMonomial x (3 * x*x)
-    degreeMonomial x (3 * x*x * y) // undefined
-    degreeMonomial x (3 + x) // undefined
-
-    coefficientMonomial x 0Q
-    coefficientMonomial x 1Q
-    coefficientMonomial x (3 * x)
-    coefficientMonomial x (3 * x*x)
-    coefficientMonomial x (3 * x*x * y) // undefined
-    coefficientMonomial x (3 + x) // undefined
-    coefficientDegreeMonomial x 0Q
-    coefficientDegreeMonomial x 1Q
-    coefficientDegreeMonomial x (3*x)
-    coefficientDegreeMonomial x (3*x*x)
-
-    isPolynomial x (3*x)
-    isPolynomial x (3*x+2)
-    isPolynomial x (3*x*x+2)
-    degree x (3*x*x + 2*x)
-    degree x (3*x*x + 2*x*x*x)
-    degree x (3*x + 2*x*(x**5) + 2*(x**3))
-
-    coefficient x 0 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-    coefficient x 1 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-    coefficient x 2 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-    coefficient x 3 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-    coefficient x 4 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-    coefficient x 5 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-    coefficient x 6 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-    coefficient x 7 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-    leadingCoefficient x (3*x*x + 2*x)
-    leadingCoefficient x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-    leadingCoefficient x 2Q
-    leadingCoefficient x 0Q
-    leadingCoefficientDegree x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-    coefficients x (3*x*x + 2*x)
-    coefficients x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
-
-
-module ``General Multivariate Polynomial Expressions`` =
-
-    open MultivariatePolynomial
-
-    isMonomial (set [x;y]) (a * x**2 * y**2) // true
-    isMonomial (set [x;y]) (ln(a) * x**2 * y**2) // true
-    isMonomial (set [x;y]) (x**2 + y**2) // false
-    isPolynomial (set [x;y]) (x**2 + y**2) // true
-    isPolynomial (set [x+1]) ((x+1)**2 + 2*(x+1)) // true
-    isPolynomial (set [x]) ((x+1)*(x+3)) // false
-
-    variables (a * x**2 * y**2)
-    variables ((x+1)**2 + 2*(x+1))
-    variables ((x+1)*(x+3))
-    variables ((x+1)*(x+3)*sin(x))
-
-    degreeMonomial (set [x;y]) (a * x**2 * y * b**2) // 3 (x:2 + y:1)
-    degree (set [x;y]) (a*x**2 + b*x + c) // 2
-    degree (set [x;z]) (2*x**2*y**8*z**2 + a*x*z**6) // 7
-    totalDegree (2*x**2*y*z**2 + a*x*z**6) // 8
-
-//    coefficient x 2 (a*x**2 + b*x + c) // a
-//    coefficient x 2 (a*x*x + b*x + c) // a
-//    coefficient x 1 (3*x*y**2 + 5*x**2*y + 7*x + 9) // 7 + 3y^2
-//    coefficient x 3 (3*x*y**2 + 5*x**2*y + 7*x + 9) // 0
-//    leadingCoefficient x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 5y + 7y^3
-//    coefficients x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 9, 3y^2, 5y + 7y^3
-
-    collectTermsMonomial (set [x;y]) (2*x*a)
-    collectTermsMonomial (set [x;y]) (2*a*x*b*y*3)
-    collectTermsMonomial (set [x;y]) (2*a*x*b*y**3*x*3)
-
-    collectTerms (set [x;y]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
-    collectTerms (set [a;b]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
-    collectTerms (set [x;ln(a)]) (2*x*ln(a)*y + 4*x*ln(a) + 3*x*y*b + 5*x*b + c)
-
-
 module ``General Univariate Polynomial Expressions`` =
 
     open Polynomial
@@ -313,21 +224,110 @@ module ``General Univariate Polynomial Expressions`` =
     collectTerms (ln(a)) (2*x*ln(a)*y + 4*x*ln(a) + 3*x*y*b + 5*x*b + c)
 
 
+module ``General Multivariate Polynomial Expressions`` =
 
-/// primitive equation solver (symbolic roots)
-let solve x expr =
+    open Polynomial
+    open MultivariatePolynomial
 
-    if Polynomial.isPolynomial x expr then
-        match Polynomial.coefficients x expr with
-        | [||] -> undefined
-        | [| a |] -> x
-        | [| a; b |] -> -a/b
-        | _ -> failwith "higher polynomials not supported"
+    isMonomialMV (set [x;y]) (a * x**2 * y**2) // true
+    isMonomialMV (set [x;y]) (ln(a) * x**2 * y**2) // true
+    isMonomialMV (set [x;y]) (x**2 + y**2) // false
+    isPolynomialMV (set [x;y]) (x**2 + y**2) // true
+    isPolynomialMV (set [x+1]) ((x+1)**2 + 2*(x+1)) // true
+    isPolynomialMV (set [x]) ((x+1)*(x+3)) // false
 
-    else failwith "only general polynomial expressions supported for now"
+    degreeMonomialMV (set [x;y]) (a * x**2 * y * b**2) // 3 (x:2 + y:1)
+    degreeMV (set [x;y]) (a*x**2 + b*x + c) // 2
+    degreeMV (set [x;z]) (2*x**2*y**8*z**2 + a*x*z**6) // 7
+    
+    variables (a * x**2 * y**2)
+    variables ((x+1)**2 + 2*(x+1))
+    variables ((x+1)*(x+3))
+    variables ((x+1)*(x+3)*sin(x))
+    totalDegree (2*x**2*y*z**2 + a*x*z**6) // 8
 
-// 2+3*x = 0  -->  x = -2/3
-solve x (2+3*x)
+    coefficient x 2 (a*x**2 + b*x + c) // a
+    coefficient x 2 (a*x*x + b*x + c) // a
+    coefficient x 1 (3*x*y**2 + 5*x**2*y + 7*x + 9) // 7 + 3y^2
+    coefficient x 3 (3*x*y**2 + 5*x**2*y + 7*x + 9) // 0
+    leadingCoefficient x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 5y + 7y^3
+    coefficients x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 9, 3y^2, 5y + 7y^3
 
-// sin(a)+x*cos(b)+c = 0  -->  x = -(c+sin(a))/cos(b)
-solve x (sin(a)+x*cos(b)+c)
+    collectTermsMonomialMV (set [x;y]) (2*x*a)
+    collectTermsMonomialMV (set [x;y]) (2*a*x*b*y*3)
+    collectTermsMonomialMV (set [x;y]) (2*a*x*b*y**3*x*3)
+
+    collectTermsMV (set [x;y]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
+    collectTermsMV (set [a;b]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
+    collectTermsMV (set [x;ln(a)]) (2*x*ln(a)*y + 4*x*ln(a) + 3*x*y*b + 5*x*b + c)
+
+
+module ``Single Variable Polynomials`` =
+
+    open SingleVariablePolynomial
+
+    isMonomialSV x <| Quotations.parse <@ fun x -> 3*x @>
+    isMonomialSV x <| Quotations.parse <@ 3*x+2 @>
+    isMonomialSV x (3*(x*x))
+    isMonomialSV x (a*x) // false
+    isMonomialSV y (3*x) // false
+    degreeMonomialSV x 0Q
+    degreeMonomialSV x 1Q
+    degreeMonomialSV x (3*x)
+    degreeMonomialSV x (3 * x*x)
+    degreeMonomialSV x (3 * x*x * y) // undefined
+    degreeMonomialSV x (3 + x) // undefined
+
+    coefficientMonomialSV x 0Q
+    coefficientMonomialSV x 1Q
+    coefficientMonomialSV x (3 * x)
+    coefficientMonomialSV x (3 * x*x)
+    coefficientMonomialSV x (3 * x*x * y) // undefined
+    coefficientMonomialSV x (3 + x) // undefined
+    coefficientDegreeMonomialSV x 0Q
+    coefficientDegreeMonomialSV x 1Q
+    coefficientDegreeMonomialSV x (3*x)
+    coefficientDegreeMonomialSV x (3*x*x)
+
+    isPolynomialSV x (3*x)
+    isPolynomialSV x (3*x+2)
+    isPolynomialSV x (3*x*x+2)
+    degreeSV x (3*x*x + 2*x)
+    degreeSV x (3*x*x + 2*x*x*x)
+    degreeSV x (3*x + 2*x*(x**5) + 2*(x**3))
+
+    coefficientSV x 0 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    coefficientSV x 1 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    coefficientSV x 2 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    coefficientSV x 3 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    coefficientSV x 4 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    coefficientSV x 5 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    coefficientSV x 6 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    coefficientSV x 7 (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    leadingCoefficientSV x (3*x*x + 2*x)
+    leadingCoefficientSV x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    leadingCoefficientSV x 2Q
+    leadingCoefficientSV x 0Q
+    leadingCoefficientDegreeSV x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+    coefficientsSV x (3*x*x + 2*x)
+    coefficientsSV x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+
+
+module ``Primitive Equation Solver`` =
+
+    let solve x expr =
+
+        if Polynomial.isPolynomial x expr then
+            match Polynomial.coefficients x expr with
+            | [||] -> undefined
+            | [| a |] -> x
+            | [| a; b |] -> -a/b
+            | _ -> failwith "higher polynomials not supported"
+
+        else failwith "only general polynomial expressions supported for now"
+
+    // 2+3*x = 0  -->  x = -2/3
+    solve x (2+3*x)
+
+    // sin(a)+x*cos(b)+c = 0  -->  x = -(c+sin(a))/cos(b)
+    solve x (sin(a)+x*cos(b)+c)

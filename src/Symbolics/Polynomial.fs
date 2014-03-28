@@ -139,47 +139,47 @@ module MultivariatePolynomial =
             | _ as z -> Set.add z symbols
         impl Set.empty x
 
-    let rec isMonomial (symbols: Set<Expression>) = function
+    let rec isMonomialMV (symbols: Set<Expression>) = function
         | x when symbols.Contains(x) -> true
         | Number _ -> true
         | PosIntPower (r, _) when symbols.Contains(r) -> true
-        | Product ax -> List.forall (isMonomial symbols) ax
+        | Product ax -> List.forall (isMonomialMV symbols) ax
         | x -> freeOfSet symbols x
 
-    let isPolynomial (symbols: Set<Expression>) = function
-        | Sum ax -> List.forall (isMonomial symbols) ax
-        | x when isMonomial symbols x -> true
+    let isPolynomialMV (symbols: Set<Expression>) = function
+        | Sum ax -> List.forall (isMonomialMV symbols) ax
+        | x when isMonomialMV symbols x -> true
         | _ -> false
 
-    let rec degreeMonomial (symbols: Set<Expression>) = function
+    let rec degreeMonomialMV (symbols: Set<Expression>) = function
         | x when x = zero -> -infinity
         | x when symbols.Contains(x) -> one
         | Number _ -> zero
         | PosIntPower (r, p) when symbols.Contains(r) -> p
-        | Product ax -> sum <| List.map (degreeMonomial symbols) ax
+        | Product ax -> sum <| List.map (degreeMonomialMV symbols) ax
         | x when freeOfSet symbols x -> zero
         | _ -> undefined
 
-    let degree (symbols: Set<Expression>) x =
-        let d = degreeMonomial symbols x
+    let degreeMV (symbols: Set<Expression>) x =
+        let d = degreeMonomialMV symbols x
         if d <> undefined then d else
         match x with
-        | Sum ax -> max <| List.map (degreeMonomial symbols) ax
+        | Sum ax -> max <| List.map (degreeMonomialMV symbols) ax
         | _ -> undefined
 
-    let totalDegree x = degree (variables x) x
+    let totalDegree x = degreeMV (variables x) x
 
-    let rec collectTermsMonomial (symbols: Set<Expression>) = function
+    let rec collectTermsMonomialMV (symbols: Set<Expression>) = function
         | x when symbols.Contains(x) -> (one, x)
         | Number _ as x-> (x, one)
         | PosIntPower (r, p) as x when symbols.Contains(r) -> (one, x)
-        | Product ax -> List.map (collectTermsMonomial symbols) ax |> List.reduce (fun (c1, v1) (c2, v2) -> (c1*c2, v1*v2))
+        | Product ax -> List.map (collectTermsMonomialMV symbols) ax |> List.reduce (fun (c1, v1) (c2, v2) -> (c1*c2, v1*v2))
         | x when freeOfSet symbols x -> (x, one)
         | _ -> (undefined, undefined)
 
-    let collectTerms (symbols: Set<Expression>) = function
-        | Sum ax -> List.map (collectTermsMonomial symbols) ax |> Seq.groupBy snd |> Seq.map (fun (v, cs) -> (Seq.map fst cs |> sumSeq) * v) |> sumSeq
-        | x -> let c, v = collectTermsMonomial symbols x in if c <> undefined then c*v else undefined
+    let collectTermsMV (symbols: Set<Expression>) = function
+        | Sum ax -> List.map (collectTermsMonomialMV symbols) ax |> Seq.groupBy snd |> Seq.map (fun (v, cs) -> (Seq.map fst cs |> sumSeq) * v) |> sumSeq
+        | x -> let c, v = collectTermsMonomialMV symbols x in if c <> undefined then c*v else undefined
 
 
 /// Single-Variable Polynomial (2*x+3*x^2)
@@ -188,71 +188,71 @@ module SingleVariablePolynomial =
     open Numbers
     open ExpressionPatterns
 
-    let rec isMonomial symbol = function
+    let rec isMonomialSV symbol = function
         | x when x = symbol -> true
         | Number _ -> true
         | PosIntPower (r, _) when r = symbol -> true
-        | Product ax -> List.forall (isMonomial symbol) ax
+        | Product ax -> List.forall (isMonomialSV symbol) ax
         | _ -> false
 
-    let isPolynomial symbol = function
-        | Sum ax -> List.forall (isMonomial symbol) ax
-        | x when isMonomial symbol x -> true
+    let isPolynomialSV symbol = function
+        | Sum ax -> List.forall (isMonomialSV symbol) ax
+        | x when isMonomialSV symbol x -> true
         | _ -> false
 
-    let rec degreeMonomial symbol = function
+    let rec degreeMonomialSV symbol = function
         | x when x = zero -> -infinity
         | x when x = symbol -> one
         | Number _ -> zero
         | PosIntPower (r, p) when r = symbol -> p
-        | Product ax -> sum <| List.map (degreeMonomial symbol) ax
+        | Product ax -> sum <| List.map (degreeMonomialSV symbol) ax
         | _ -> undefined
 
-    let degree symbol x =
-        let d = degreeMonomial symbol x
+    let degreeSV symbol x =
+        let d = degreeMonomialSV symbol x
         if d <> undefined then d else
         match x with
-        | Sum ax -> max <| List.map (degreeMonomial symbol) ax
+        | Sum ax -> max <| List.map (degreeMonomialSV symbol) ax
         | _ -> undefined
 
-    let rec coefficientMonomial symbol = function
+    let rec coefficientMonomialSV symbol = function
         | x when x = symbol -> one
         | Number _ as x -> x
         | PosIntPower (r, _) when r = symbol -> one
-        | Product ax -> product <| List.map (coefficientMonomial symbol) ax
+        | Product ax -> product <| List.map (coefficientMonomialSV symbol) ax
         | _ -> undefined
 
-    let rec coefficientDegreeMonomial symbol = function
+    let rec coefficientDegreeMonomialSV symbol = function
         | x when x = zero -> x, -infinity
         | x when x = symbol -> one, one
         | Number _ as x -> x, zero
         | PosIntPower (r, p) when r = symbol -> one, p
         | Product ax ->
-            let cds = List.map (coefficientDegreeMonomial symbol) ax
+            let cds = List.map (coefficientDegreeMonomialSV symbol) ax
             product <| List.map fst cds, sum <| List.map snd cds
         | _ -> undefined, undefined
 
-    let coefficient symbol (k:int) x =
+    let coefficientSV symbol (k:int) x =
         let ke = number k
-        let c, d = coefficientDegreeMonomial symbol x
+        let c, d = coefficientDegreeMonomialSV symbol x
         if d = ke then c else
         match x with
-        | Sum ax -> List.map (coefficientDegreeMonomial symbol) ax |> List.filter (fun (_, d) -> d = ke) |> List.map fst |> sum
+        | Sum ax -> List.map (coefficientDegreeMonomialSV symbol) ax |> List.filter (fun (_, d) -> d = ke) |> List.map fst |> sum
         | _ -> undefined
 
-    let leadingCoefficientDegree symbol x =
-        let c, d = coefficientDegreeMonomial symbol x
+    let leadingCoefficientDegreeSV symbol x =
+        let c, d = coefficientDegreeMonomialSV symbol x
         if d <> undefined then c, d else
         match x with
         | Sum ax ->
-            let cds = List.map (coefficientDegreeMonomial symbol) ax
+            let cds = List.map (coefficientDegreeMonomialSV symbol) ax
             let degree = max <| List.map snd cds
             cds |> List.filter (fun (_, d) -> d = degree) |> List.map fst |> sum, degree
         | _ -> undefined, undefined
 
-    let leadingCoefficient symbol x = leadingCoefficientDegree symbol x |> fst
+    let leadingCoefficientSV symbol x = leadingCoefficientDegreeSV symbol x |> fst
 
-    let coefficients symbol x =
+    let coefficientsSV symbol x =
         let rec collect symbol = function
             | x when x = symbol -> [1, one]
             | Number _ as a -> [0, a]
