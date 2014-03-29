@@ -6,6 +6,7 @@ open MathNet.Numerics
 open MathNet.Numerics.LinearAlgebra
 open MathNet.Symbolics
 
+[<NoComparison>]
 type FloatingPoint =
     | Real of float
     | Complex of Complex
@@ -112,12 +113,12 @@ module FloatingPoint =
     let fapplyN f xs = failwith "not supported"
 
     let rec evaluate symbols = function
-        | Number (Integer x) -> Real (float x) |> fnormalize
-        | Number (Rational x) -> Real (float x) |> fnormalize
+        | Number n -> Real (float n) |> fnormalize
         | Identifier Symbol.Undefined -> Undef
-        | Identifier Symbol.Infinity -> PosInf
+        | Identifier Symbol.PositiveInfinity -> PosInf
+        | Identifier Symbol.NegativeInfinity -> NegInf
         | Identifier Symbol.ComplexInfinity -> ComplexInf
-        | Identifier _ as x -> Map.find x symbols |> fnormalize
+        | Identifier (Symbol s) -> Map.find s symbols |> fnormalize
         | Sum xs -> xs |> List.map (evaluate symbols) |> List.reduce fadd |> fnormalize
         | Product xs -> xs |> List.map (evaluate symbols) |> List.reduce fmultiply |> fnormalize
         | Power (r, p) -> fpower (evaluate symbols r) (evaluate symbols p) |> fnormalize

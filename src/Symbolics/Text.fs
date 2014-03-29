@@ -18,17 +18,15 @@ module Text =
             | Sin -> "sin" | Cos -> "cos" | Tan -> "tan"
 
         match q with
-        | Number (Integer x) ->
-            if priority > 0 && x.Sign < 0 then write "("
-            write (x.ToString())
-            if priority > 0 && x.Sign < 0 then write ")"
-        | Number (Rational x) ->
-            if priority > 1 then write "("
-            write (x.ToString());
-            if priority > 1 then write ")"
+        | Number n ->
+            if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write "("
+            write (n.ToString());
+            if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write ")"
         | Identifier (Symbol name) -> write name
-        | Identifier Undefined -> write "undefined"
-        | Identifier Infinity -> write "infinity"
+        | Identifier Undefined -> write "Undefined"
+        | Identifier PositiveInfinity -> write "PositiveInfinity"
+        | Identifier NegativeInfinity -> write "NegativeInfinity"
+        | Identifier ComplexInfinity -> write "ComplexInfinity"
         | Sum (x::xs) ->
             if priority > 1 then write "("
             formatImpl write 1 x

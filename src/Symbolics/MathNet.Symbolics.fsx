@@ -1,11 +1,11 @@
 ﻿#nowarn "211"
 
-#I @"..\..\packages\MathNet.Numerics.3.0.0-alpha8\lib\portable-net45+windows8+sl5"
-#I @"..\..\packages\MathNet.Numerics.FSharp.3.0.0-alpha8\lib\portable-net45+windows8+sl5"
-#I @"..\packages\MathNet.Numerics.3.0.0-alpha8\lib\portable-net45+windows8+sl5"
-#I @"..\packages\MathNet.Numerics.FSharp.3.0.0-alpha8\lib\portable-net45+windows8+sl5"
-#I @"packages\MathNet.Numerics.3.0.0-alpha8\lib\portable-net45+windows8+sl5"
-#I @"packages\MathNet.Numerics.FSharp.3.0.0-alpha8\lib\portable-net45+windows8+sl5"
+#I @"..\..\packages\MathNet.Numerics.3.0.0-alpha9\lib\portable-net45+windows8+sl5"
+#I @"..\..\packages\MathNet.Numerics.FSharp.3.0.0-alpha9\lib\portable-net45+windows8+sl5"
+#I @"..\packages\MathNet.Numerics.3.0.0-alpha9\lib\portable-net45+windows8+sl5"
+#I @"..\packages\MathNet.Numerics.FSharp.3.0.0-alpha9\lib\portable-net45+windows8+sl5"
+#I @"packages\MathNet.Numerics.3.0.0-alpha9\lib\portable-net45+windows8+sl5"
+#I @"packages\MathNet.Numerics.FSharp.3.0.0-alpha9\lib\portable-net45+windows8+sl5"
 
 #r "MathNet.Numerics.dll"
 #r "MathNet.Numerics.FSharp.dll"

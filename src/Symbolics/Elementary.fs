@@ -10,10 +10,11 @@ open MathNet.Symbolics
 module Core =
 
     let symbol name = Identifier (Symbol name)
-    let undefined = Identifier Undefined
-    let infinity = Identifier Infinity
-    let complexInfinity = Identifier ComplexInfinity
-    let number (x:int) = Number (Integer (BigInteger(x)))
+    let undefined = Expression.Undefined
+    let positiveInfinity = Expression.PositiveInfinity
+    let negativeInfinity = Expression.NegativeInfinity
+    let complexInfinity = Expression.ComplexInfinity
+    let number (x:int) = Number (BigRational.FromInt x)
     let zero = Expression.Zero
     let one = Expression.One
     let two = Expression.Two
@@ -40,9 +41,9 @@ module Core =
 module NumericLiteralQ =
     let FromZero () = zero
     let FromOne () = one
-    let FromInt32 (x:int) = Number (Integer (BigInteger(x)))
-    let FromInt64 (x:int64) = Number (Integer (BigInteger(x)))
-    let FromString str = Number (Number.Reduce(BigRational.Parse(str)))
+    let FromInt32 (x:int) = Number (BigRational.FromInt x)
+    let FromInt64 (x:int64) = Number (BigRational.FromBigInt (BigInteger(x)))
+    let FromString str = Number (BigRational.Parse str)
 
 
 module Functions =
@@ -60,17 +61,17 @@ module Numbers =
     let max2 a b =
         match a, b with
         | a, b | b, a when a = undefined -> a
-        | a, b | b, a when a = infinity -> a
-        | a, b | b, a when a = -infinity -> b
-        | Number a, Number b -> Number (Number.Max(a, b))
+        | a, b | b, a when a = positiveInfinity -> a
+        | a, b | b, a when a = negativeInfinity -> b
+        | Number a, Number b -> Number (if b > a then b else a)
         | _ -> failwith "number expected"
 
     let min2 a b =
         match a, b with
         | a, b | b, a when a = undefined -> a
-        | a, b | b, a when a = infinity -> b
-        | a, b | b, a when a = -infinity -> a
-        | Number a, Number b -> Number (Number.Min(a, b))
+        | a, b | b, a when a = positiveInfinity -> b
+        | a, b | b, a when a = negativeInfinity -> a
+        | Number a, Number b -> Number (if b < a then b else a)
         | _ -> failwith "number expected"
 
     let max ax = List.reduce max2 ax
@@ -105,7 +106,7 @@ module Elementary =
         | Function (_, x) -> freeOf symbol x
         | Number _ | Identifier _ -> true
 
-    let rec freeOfSet (symbols: Set<Expression>) x =
+    let rec freeOfSet (symbols: HashSet<Expression>) x =
         if symbols.Contains(x) then false else
         match x with
         | Sum ax | Product ax | FunctionN (_, ax) -> List.forall (freeOfSet symbols) ax
@@ -130,6 +131,16 @@ module Elementary =
         | Function (fn, x) -> apply fn (substitute y r x)
         | FunctionN (fn, xs) -> applyN fn (List.map (substitute y r) xs)
         | Number _ | Identifier _ -> x
+
+    let compareNumber x y =
+        match x, y with
+        | a, b when a = b -> 0
+        | Number a, Number b -> compare a b
+        | Number _, Identifier PositiveInfinity -> -1
+        | Number _, Identifier NegativeInfinity -> 1
+        | Identifier PositiveInfinity, Number _ -> 1
+        | Identifier NegativeInfinity, Number _ -> -1
+        | _ -> failwith "only numbers and +/-infinity are supported"
 
     let rec numerator = function
         | Product ax -> product <| List.map numerator ax
@@ -160,5 +171,5 @@ module Elementary =
         | Number _ | Identifier _ as x -> x
         | Sum ax -> sum <| List.map algebraicExpand ax
         | Product ax -> List.map algebraicExpand ax |> List.reduce expandProduct
-        | PosIntPower (r, Number (Integer n)) -> expandPower (algebraicExpand r) (int n)
+        | PosIntPower (r, Number n) -> expandPower (algebraicExpand r) (int n)
         | x -> x

@@ -3,7 +3,8 @@
 type Symbol =
     | Symbol of string
     | Undefined
-    | Infinity
+    | NegativeInfinity
+    | PositiveInfinity
     | ComplexInfinity
 
 type Function =

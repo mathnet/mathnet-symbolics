@@ -40,11 +40,11 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="MathNet.Numerics">
-      <HintPath>..\..\packages\MathNet.Numerics.3.0.0-alpha8\lib\portable-net45+windows8+sl5\MathNet.Numerics.dll</HintPath>
+      <HintPath>..\..\packages\MathNet.Numerics.3.0.0-alpha9\lib\portable-net45+windows8+sl5\MathNet.Numerics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MathNet.Numerics.FSharp">
-      <HintPath>..\..\packages\MathNet.Numerics.FSharp.3.0.0-alpha8\lib\portable-net45+windows8+sl5\MathNet.Numerics.FSharp.dll</HintPath>
+      <HintPath>..\..\packages\MathNet.Numerics.FSharp.3.0.0-alpha9\lib\portable-net45+windows8+sl5\MathNet.Numerics.FSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

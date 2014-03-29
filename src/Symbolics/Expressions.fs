@@ -5,8 +5,9 @@ open System.Numerics
 open MathNet.Numerics
 open MathNet.Symbolics
 
+[<StructuralEquality;NoComparison>]
 type Expression =
-    | Number of Number
+    | Number of BigRational
     | Identifier of Symbol
     | Sum of Expression list
     | Product of Expression list
@@ -14,16 +15,17 @@ type Expression =
     | Function of Function * Expression
     | FunctionN of Function * (Expression list)
 
-    static member Zero = Number (Number.Zero)
-    static member One = Number (Number.One)
-    static member Two = Number (Number.OfInt32(2))
-    static member MinusOne = Number (Number.MinusOne)
+    static member Zero = Number BigRational.Zero
+    static member One = Number BigRational.One
+    static member Two = Number (BigRational.FromInt 2)
+    static member MinusOne = Number (BigRational.FromInt -1)
     static member Undefined = Identifier Undefined
-    static member Infinity = Identifier Infinity
+    static member PositiveInfinity = Identifier PositiveInfinity
+    static member NegativeInfinity = Identifier NegativeInfinity
     static member ComplexInfinity = Identifier ComplexInfinity
-    static member OfInt32 (x:int) = Number (Number.OfInt32(x))
-    static member OfInteger (x:BigInteger) = Number (Integer x)
-    static member OfRational (x:BigRational) = Number (Number.Reduce(x))
+    static member OfInt32 (x:int) = Number (BigRational.FromInt x)
+    static member OfInteger (x:BigInteger) = Number (BigRational.FromBigInt x)
+    static member OfRational (x:BigRational) = Number x
 
 
     static member private OrderRelation (x:Expression) (y:Expression) =
@@ -70,12 +72,12 @@ type Expression =
             | Number _ -> None
             | Product [(Number a); b] -> Some (a, b)
             | Product ((Number a)::xs) -> Some (a, Product xs)
-            | x -> Some (Number.One, x)
+            | x -> Some (BigRational.One, x)
 
         let merge (xs:Expression list) (ys:Expression list) =
             let rec gen acc u v =
                 match acc, u, v with
-                | (Number n)::cc, _, _ when n = Number.Zero -> gen cc u v
+                | (Number n)::cc, _, _ when n = BigRational.Zero -> gen cc u v
                 | Term(ac,at)::cc, Term(xc,xt)::xs, y | Term(ac,at)::cc, y, Term(xc,xt)::xs when at = xt ->
                     gen ((Number(ac+xc)*at)::cc) xs y
                 | _, Term(xc,xt)::xs, Term(yc,yt)::ys when xt = yt ->
@@ -118,7 +120,7 @@ type Expression =
         let merge (xs:Expression list) (ys:Expression list) =
             let rec gen acc u v =
                 match acc, u, v with
-                | (Number n)::cc, _, _ when n = Number.One -> gen cc u v
+                | (Number n)::cc, _, _ when n = BigRational.One -> gen cc u v
                 | Term(ab,ae)::cc, Term(xb,xe)::xs, y | Term(ab,ae)::cc, y, Term(xb,xe)::xs when ab = xb ->
                     gen ((ab**(ae+xe))::cc) xs y
                 | _, Term(xb,xe)::xs, Term(yb,ye)::ys when xb = yb ->
@@ -158,40 +160,46 @@ type Expression =
         | a, b when b = Expression.One -> a
         | a, b when a = Expression.One -> Expression.One
         | a, b | b, a when a = Expression.Undefined -> Expression.Undefined
-        | Number a, Number (Integer b) -> Number (a ** int b)
-        | Product ax, Number (Integer b) -> Product (ax |> List.map (fun z -> Expression.Pow(z,y)))
-        | Power (r, p), Number (Integer b) -> Expression.Pow(r, p*y)
+        | Number a, Number b when b.IsInteger -> Number (BigRational.Pow(a, int(b.Numerator)))
+        | Product ax, Number b when b.IsInteger -> Product (ax |> List.map (fun z -> Expression.Pow(z,y)))
+        | Power (r, p), Number b when b.IsInteger -> Expression.Pow(r, p*y)
         | a, b -> Power(a, b)
 
     static member Invert (x) =
         match x with
-        | a when a = Expression.Undefined -> Expression.Undefined
-        | a when a = Expression.Infinity || a = Expression.ComplexInfinity -> Expression.Zero
-        | a when a = Expression.Zero -> Expression.ComplexInfinity // no direction
-        | Number a -> Number (Number.Invert a)
+        | Identifier Undefined -> Expression.Undefined
+        | Identifier PositiveInfinity | Identifier NegativeInfinity | Identifier ComplexInfinity -> Expression.Zero
+        | Number a when a.IsZero -> Expression.ComplexInfinity // no direction
+        | Number a -> Number (BigRational.Reciprocal a)
         | Product ax -> Product (ax |> List.map (Expression.Invert))
         | Power (r, p) -> Power (r, -p)
         | x -> Power (x, Expression.MinusOne)
 
     // Simpler usage
-    static member ( + ) (x, (y:int)) = x + Number (Integer (BigInteger(y)))
-    static member ( + ) ((x:int), y) = Number (Integer (BigInteger(x))) + y
-    static member ( - ) (x, (y:int)) = x - Number (Integer (BigInteger(y)))
-    static member ( - ) ((x:int), y) = Number (Integer (BigInteger(x))) - y
-    static member ( * ) (x, (y:int)) = x * Number (Integer (BigInteger(y)))
-    static member ( * ) ((x:int), y) = Number (Integer (BigInteger(x))) * y
-    static member ( / ) (x, (y:int)) = x / Number (Integer (BigInteger(y)))
-    static member ( / ) ((x:int), y) = Number (Integer (BigInteger(x))) / y
-    static member Pow (x, (y:int)) = Expression.Pow(x, Number (Integer (BigInteger(y))))
+    static member ( + ) (x, (y:int)) = x + Number (BigRational.FromInt y)
+    static member ( + ) ((x:int), y) = Number (BigRational.FromInt x) + y
+    static member ( - ) (x, (y:int)) = x - Number (BigRational.FromInt y)
+    static member ( - ) ((x:int), y) = Number (BigRational.FromInt x) - y
+    static member ( * ) (x, (y:int)) = x * Number (BigRational.FromInt y)
+    static member ( * ) ((x:int), y) = Number (BigRational.FromInt x) * y
+    static member ( / ) (x, (y:int)) = x / Number (BigRational.FromInt y)
+    static member ( / ) ((x:int), y) = Number (BigRational.FromInt x) / y
+    static member Pow (x, (y:int)) = Expression.Pow(x, Number (BigRational.FromInt y))
 
 
 
 module ExpressionPatterns =
 
     let (|PosIntPower|_|) = function
-        | Power (r, (Number (Integer n) as p)) when n > BigInteger.One -> Some (r, p)
+        | Power (r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
         | _ -> None
 
     let (|NegIntPower|_|) = function
-        | Power (r, (Number (Integer n) as p)) when n < BigInteger.Zero -> Some (r, p)
+        | Power (r, (Number n as p)) when n.IsInteger && n.IsNegative -> Some (r, p)
+        | _ -> None
+
+    let (|Infinity|_|) = function
+        | Identifier PositiveInfinity -> Some Infinity
+        | Identifier ComplexInfinity -> Some Infinity
+        | Identifier NegativeInfinity -> Some Infinity
         | _ -> None

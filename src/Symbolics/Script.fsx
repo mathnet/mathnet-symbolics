@@ -25,6 +25,18 @@ let f = symbol "f"
 number 3
 3Q
 
+compareNumber Expression.Zero Expression.One
+compareNumber Expression.One Expression.One
+compareNumber Expression.One (Expression.OfInt32(2))
+compareNumber Expression.Zero (Expression.One / Expression.OfInt32(2))
+compareNumber Expression.One (Expression.One / Expression.OfInt32(2))
+compareNumber (Expression.One / Expression.OfInt32(2)) Expression.Zero
+compareNumber (Expression.One / Expression.OfInt32(2)) Expression.One
+compareNumber Expression.One Expression.PositiveInfinity
+compareNumber Expression.One Expression.NegativeInfinity
+compareNumber Expression.PositiveInfinity Expression.One
+compareNumber Expression.NegativeInfinity Expression.One
+
 x + y
 y + x
 x + x
@@ -116,29 +128,42 @@ x*x**2*x**3
 algebraicExpand ((a*x**2 + b*x + c)/(d*x + e))
 let p = algebraicExpand ((a*x**2 + b*x + c)*(d*x**2 + e*x + f))
 Polynomial.coefficients x p
-Polynomial.leadingCoefficient x p
+Polynomial.leadingCoefficient x p // ad
 Polynomial.collectTerms x p
-Polynomial.degree x p
-MultivariatePolynomial.totalDegree p
-MultivariatePolynomial.variables p
+Polynomial.degree x p // 4
+MultivariatePolynomial.totalDegree p // 6
+MultivariatePolynomial.variables p // a,b,c,d,e,f,x
 
-Polynomial.polynomialDivision x (5*x**2 + 4*x + 1) (2*x + 3) // q=-7/4+5/2*x, r=25/4
-Polynomial.polynomialDivision x (x**3 - 2*x**2 - 4) (x-3) // q=2+x+x^2, r=5
 
-// tangent of polynomial at x = 1?
-Polynomial.polynomialDivision x (x**3 - 12*x**2 - a) (x**2-2*x+1) // q=-10x, r=10-a-21x (=u+v*x)
-let v = differentiate x (x**3 - 12*x**2 - a) |> substitute x 1Q // v=-21
-let u = (x**3 - 12*x**2 - a) - v*x |> substitute x 1Q  // u=10-a
+module ``Polynomial Division`` =
 
-let sqr2 = (2Q)**(1/2Q)
-Polynomial.polynomialDivision x ((2-4*sqr2)*x**2 + (-1+4*sqr2)*x - 3+3*sqr2) ((1-2*sqr2)*x + 1-sqr2)
+    Polynomial.polynomialDivision x (5*x**2 + 4*x + 1) (2*x + 3) // q=-7/4+5/2*x, r=25/4
+    Polynomial.polynomialDivision x (x**3 - 2*x**2 - 4) (x-3) // q=3+x+x^2, r=5
+    Polynomial.quot x (x**3 - 2*x**2 - 4) (x-3) // q=3+x+x^2
+    Polynomial.remainder x (x**3 - 2*x**2 - 4) (x-3) // r=5
 
-// (1+x) + (2+x)y + (2+x)y^2
-let ex = Polynomial.polynomialExpansion x y (x**5 + 11*x**4 + 51*x**3 + 124*x**2 + 159*x + 86) (x**2 + 4*x + 5)
-// (1+x) + (2+x)*(5+4x+x^2) + (2+x)*(5+4x+x^2)^2
-let exs = ex |> substitute y (x**2 + 4*x + 5)
-// get back to original polynomial
-algebraicExpand exs
+    // tangent of polynomial at x = 1?
+    Polynomial.polynomialDivision x (x**3 - 12*x**2 - a) (x**2-2*x+1) // q=-10x, r=10-a-21x (=u+v*x)
+    let v = differentiate x (x**3 - 12*x**2 - a) |> substitute x 1Q // v=-21
+    let u = (x**3 - 12*x**2 - a) - v*x |> substitute x 1Q  // u=10-a
+
+    let sqr2 = (2Q)**(1/2Q)
+    Polynomial.polynomialDivision x ((2-4*sqr2)*x**2 + (-1+4*sqr2)*x - 3+3*sqr2) ((1-2*sqr2)*x + 1-sqr2)
+
+
+module ``Polynomoal Expansion`` =
+
+    // (1+x) + (2+x)y + (3+x)y^2
+    let ex = Polynomial.polynomialExpansion x y (x**5 + 11*x**4 + 51*x**3 + 124*x**2 + 159*x + 86) (x**2 + 4*x + 5)
+    // (1+x) + (2+x)*(5+4x+x^2) + (3+x)*(5+4x+x^2)^2
+    let exs = ex |> substitute y (x**2 + 4*x + 5)
+    // get back to original polynomial
+    algebraicExpand exs
+
+
+module ``Polynomial GCD`` =
+
+    Polynomial.polynomialGcd x (x**7 - 4*x**5 - x**2 + 4) (x**5 - 4*x**3 - x**2 + 4)
 
 
 x + ln x
@@ -186,7 +211,7 @@ module ``Evaluate some expression to floating point numbers`` =
 
     open FloatingPoint
 
-    let symbols = Map.ofList [a, freal 2.0; b, freal 3.0; c, fcomplex 1.0 -1.0]
+    let symbols = Map.ofList ["a", freal 2.0; "b", freal 3.0; "c", fcomplex 1.0 -1.0]
     evaluate symbols (a)
     evaluate symbols (1Q/2)
     evaluate symbols (sin(a) + ln(b))
@@ -202,7 +227,7 @@ module ``General Univariate Polynomial Expressions`` =
     isMonomial x (ln(a) * x**2) // true
     isMonomial x (x**2 + a) // false
     isPolynomial x (x**2 + x**3) // true
-    isPolynomial x ((x+1)**2 + 2*(x+1)) // true
+    isPolynomial x (x**2 + 2*x) // true
     isPolynomial x ((x+1)*(x+3)) // false
 
     degreeMonomial x (a * x**2 * x * b**2) // 3
@@ -229,17 +254,17 @@ module ``General Multivariate Polynomial Expressions`` =
     open Polynomial
     open MultivariatePolynomial
 
-    isMonomialMV (set [x;y]) (a * x**2 * y**2) // true
-    isMonomialMV (set [x;y]) (ln(a) * x**2 * y**2) // true
-    isMonomialMV (set [x;y]) (x**2 + y**2) // false
-    isPolynomialMV (set [x;y]) (x**2 + y**2) // true
-    isPolynomialMV (set [x+1]) ((x+1)**2 + 2*(x+1)) // true
-    isPolynomialMV (set [x]) ((x+1)*(x+3)) // false
+    isMonomialMV (symbols [x;y]) (a * x**2 * y**2) // true
+    isMonomialMV (symbols [x;y]) (ln(a) * x**2 * y**2) // true
+    isMonomialMV (symbols [x;y]) (x**2 + y**2) // false
+    isPolynomialMV (symbols [x;y]) (x**2 + y**2) // true
+    isPolynomialMV (symbols [x+1]) ((x+1)**2 + 2*(x+1)) // true
+    isPolynomialMV (symbols [x]) ((x+1)*(x+3)) // false
 
-    degreeMonomialMV (set [x;y]) (a * x**2 * y * b**2) // 3 (x:2 + y:1)
-    degreeMV (set [x;y]) (a*x**2 + b*x + c) // 2
-    degreeMV (set [x;z]) (2*x**2*y**8*z**2 + a*x*z**6) // 7
-    
+    degreeMonomialMV (symbols [x;y]) (a * x**2 * y * b**2) // 3 (x:2 + y:1)
+    degreeMV (symbols [x;y]) (a*x**2 + b*x + c) // 2
+    degreeMV (symbols [x;z]) (2*x**2*y**8*z**2 + a*x*z**6) // 7
+
     variables (a * x**2 * y**2)
     variables ((x+1)**2 + 2*(x+1))
     variables ((x+1)*(x+3))
@@ -253,13 +278,13 @@ module ``General Multivariate Polynomial Expressions`` =
     leadingCoefficient x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 5y + 7y^3
     coefficients x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) // 9, 3y^2, 5y + 7y^3
 
-    collectTermsMonomialMV (set [x;y]) (2*x*a)
-    collectTermsMonomialMV (set [x;y]) (2*a*x*b*y*3)
-    collectTermsMonomialMV (set [x;y]) (2*a*x*b*y**3*x*3)
+    collectTermsMonomialMV (symbols [x;y]) (2*x*a)
+    collectTermsMonomialMV (symbols [x;y]) (2*a*x*b*y*3)
+    collectTermsMonomialMV (symbols [x;y]) (2*a*x*b*y**3*x*3)
 
-    collectTermsMV (set [x;y]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
-    collectTermsMV (set [a;b]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
-    collectTermsMV (set [x;ln(a)]) (2*x*ln(a)*y + 4*x*ln(a) + 3*x*y*b + 5*x*b + c)
+    collectTermsMV (symbols [x;y]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
+    collectTermsMV (symbols [a;b]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
+    collectTermsMV (symbols [x;ln(a)]) (2*x*ln(a)*y + 4*x*ln(a) + 3*x*y*b + 5*x*b + c)
 
 
 module ``Single Variable Polynomials`` =
