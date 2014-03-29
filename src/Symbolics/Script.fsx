@@ -25,17 +25,17 @@ let f = symbol "f"
 number 3
 3Q
 
-compareNumber Expression.Zero Expression.One
-compareNumber Expression.One Expression.One
-compareNumber Expression.One (Expression.OfInt32(2))
-compareNumber Expression.Zero (Expression.One / Expression.OfInt32(2))
-compareNumber Expression.One (Expression.One / Expression.OfInt32(2))
-compareNumber (Expression.One / Expression.OfInt32(2)) Expression.Zero
-compareNumber (Expression.One / Expression.OfInt32(2)) Expression.One
-compareNumber Expression.One Expression.PositiveInfinity
-compareNumber Expression.One Expression.NegativeInfinity
-compareNumber Expression.PositiveInfinity Expression.One
-compareNumber Expression.NegativeInfinity Expression.One
+compareNumber 0Q 1Q
+compareNumber 1Q 1Q
+compareNumber 1Q 2Q
+compareNumber 0Q (1Q/2Q)
+compareNumber 1Q (1Q/2Q)
+compareNumber (1Q/2Q) 0Q
+compareNumber (1Q/2Q) 1Q
+compareNumber 1Q Expression.PositiveInfinity
+compareNumber 1Q Expression.NegativeInfinity
+compareNumber Expression.PositiveInfinity 1Q
+compareNumber Expression.NegativeInfinity 1Q
 
 x + y
 y + x
@@ -125,47 +125,6 @@ x*x**2*x**3
 
 (a/b/(c*a))*(c*d/a)/d
 
-algebraicExpand ((a*x**2 + b*x + c)/(d*x + e))
-let p = algebraicExpand ((a*x**2 + b*x + c)*(d*x**2 + e*x + f))
-Polynomial.coefficients x p
-Polynomial.leadingCoefficient x p // ad
-Polynomial.collectTerms x p
-Polynomial.degree x p // 4
-MultivariatePolynomial.totalDegree p // 6
-MultivariatePolynomial.variables p // a,b,c,d,e,f,x
-
-
-module ``Polynomial Division`` =
-
-    Polynomial.polynomialDivision x (5*x**2 + 4*x + 1) (2*x + 3) // q=-7/4+5/2*x, r=25/4
-    Polynomial.polynomialDivision x (x**3 - 2*x**2 - 4) (x-3) // q=3+x+x^2, r=5
-    Polynomial.quot x (x**3 - 2*x**2 - 4) (x-3) // q=3+x+x^2
-    Polynomial.remainder x (x**3 - 2*x**2 - 4) (x-3) // r=5
-
-    // tangent of polynomial at x = 1?
-    Polynomial.polynomialDivision x (x**3 - 12*x**2 - a) (x**2-2*x+1) // q=-10x, r=10-a-21x (=u+v*x)
-    let v = differentiate x (x**3 - 12*x**2 - a) |> substitute x 1Q // v=-21
-    let u = (x**3 - 12*x**2 - a) - v*x |> substitute x 1Q  // u=10-a
-
-    let sqr2 = (2Q)**(1/2Q)
-    Polynomial.polynomialDivision x ((2-4*sqr2)*x**2 + (-1+4*sqr2)*x - 3+3*sqr2) ((1-2*sqr2)*x + 1-sqr2)
-
-
-module ``Polynomoal Expansion`` =
-
-    // (1+x) + (2+x)y + (3+x)y^2
-    let ex = Polynomial.polynomialExpansion x y (x**5 + 11*x**4 + 51*x**3 + 124*x**2 + 159*x + 86) (x**2 + 4*x + 5)
-    // (1+x) + (2+x)*(5+4x+x^2) + (3+x)*(5+4x+x^2)^2
-    let exs = ex |> substitute y (x**2 + 4*x + 5)
-    // get back to original polynomial
-    algebraicExpand exs
-
-
-module ``Polynomial GCD`` =
-
-    Polynomial.polynomialGcd x (x**7 - 4*x**5 - x**2 + 4) (x**5 - 4*x**3 - x**2 + 4)
-
-
 x + ln x
 x + ln (x+1)
 2*abs x
@@ -205,6 +164,52 @@ algebraicExpand ((a+b)**2)
 algebraicExpand ((a+b)**3)
 algebraicExpand ((a+b)**4)
 algebraicExpand ((a+b+c)**2)
+
+algebraicExpand ((a*x**2 + b*x + c)/(d*x + e))
+let p = algebraicExpand ((a*x**2 + b*x + c)*(d*x**2 + e*x + f))
+Polynomial.coefficients x p
+Polynomial.leadingCoefficient x p // ad
+Polynomial.collectTerms x p
+Polynomial.degree x p // 4
+MultivariatePolynomial.totalDegree p // 6
+MultivariatePolynomial.variables p // a,b,c,d,e,f,x
+
+
+module ``Polynomial Division`` =
+
+    Polynomial.polynomialDivision x (5*x**2 + 4*x + 1) (2*x + 3) // q=-7/4+5/2*x, r=25/4
+    Polynomial.polynomialDivision x (x**3 - 2*x**2 - 4) (x-3) // q=3+x+x^2, r=5
+    Polynomial.quot x (x**3 - 2*x**2 - 4) (x-3) // q=3+x+x^2
+    Polynomial.remainder x (x**3 - 2*x**2 - 4) (x-3) // r=5
+
+    // tangent of polynomial at x = 1?
+    Polynomial.polynomialDivision x (x**3 - 12*x**2 - a) (x**2-2*x+1) // q=-10x, r=10-a-21x (=u+v*x)
+    let v = differentiate x (x**3 - 12*x**2 - a) |> substitute x 1Q // v=-21
+    let u = (x**3 - 12*x**2 - a) - v*x |> substitute x 1Q  // u=10-a
+
+    let sqr2 = (2Q)**(1/2Q)
+    Polynomial.polynomialDivision x ((2-4*sqr2)*x**2 + (-1+4*sqr2)*x - 3+3*sqr2) ((1-2*sqr2)*x + 1-sqr2)
+
+
+module ``Polynomoal Expansion`` =
+
+    // (1+x) + (2+x)y + (3+x)y^2
+    let ex = Polynomial.polynomialExpansion x y (x**5 + 11*x**4 + 51*x**3 + 124*x**2 + 159*x + 86) (x**2 + 4*x + 5)
+    // (1+x) + (2+x)*(5+4x+x^2) + (3+x)*(5+4x+x^2)^2
+    let exs = ex |> substitute y (x**2 + 4*x + 5)
+    // get back to original polynomial
+    algebraicExpand exs
+
+
+module ``Polynomial GCD`` =
+
+    // 4 - 4*x - x^2 + x^3
+    Polynomial.polynomialGcd x (x**7 - 4*x**5 - x**2 + 4) (x**5 - 4*x**3 - x**2 + 4)
+
+    // 4 - 4*x - x^2 + x^3, -x, 1 + x^3
+    Polynomial.polynomialExtendedGcd x (x**7 - 4*x**5 - x**2 + 4) (x**5 - 4*x**3 - x**2 + 4)
+    // verify A*u+B*v = gcd = 4 - 4*x - x^2 + x^3
+    (-x)*(x**7 - 4*x**5 - x**2 + 4) + (1+x**3)*(x**5 - 4*x**3 - x**2 + 4) |> algebraicExpand
 
 
 module ``Evaluate some expression to floating point numbers`` =

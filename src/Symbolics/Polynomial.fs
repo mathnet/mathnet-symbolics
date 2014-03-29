@@ -129,6 +129,17 @@ module Polynomial =
             else gcd y (remainder symbol x y)
         let z = gcd u v in z / (leadingCoefficient symbol z) |> algebraicExpand
 
+    /// Naive polynomial EGCD (to be replaced)
+    let polynomialExtendedGcd symbol u v =
+         if u = zero && v = zero then (zero, zero, zero) else
+         let rec gcd x y a' a'' b' b'' =
+            if y = zero then (x, a'', b'') else
+            let q, r = polynomialDivision symbol x y
+            gcd y r (a'' - q*a') a' (b'' - q*b') b'
+         let z, a, b = gcd u v zero one one zero
+         let c = leadingCoefficient symbol z
+         algebraicExpand (z/c), algebraicExpand (a/c), algebraicExpand (b/c)
+
 
 /// General Multivariate Polynomial Expressions
 module MultivariatePolynomial =
