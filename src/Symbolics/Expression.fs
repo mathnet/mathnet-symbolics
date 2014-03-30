@@ -14,15 +14,15 @@ type Expression =
     | Power of Expression * Expression
     | Function of Function * Expression
     | FunctionN of Function * (Expression list)
+    | NegativeInfinity
+    | PositiveInfinity
+    | ComplexInfinity
+    | Undefined
 
     static member Zero = Number BigRational.Zero
     static member One = Number BigRational.One
     static member Two = Number (BigRational.FromInt 2)
     static member MinusOne = Number (BigRational.FromInt -1)
-    static member Undefined = Identifier Undefined
-    static member PositiveInfinity = Identifier PositiveInfinity
-    static member NegativeInfinity = Identifier NegativeInfinity
-    static member ComplexInfinity = Identifier ComplexInfinity
     static member OfInt32 (x:int) = Number (BigRational.FromInt x)
     static member OfInteger (x:BigInteger) = Number (BigRational.FromBigInt x)
     static member OfRational (x:BigRational) = Number x
@@ -49,6 +49,8 @@ type Expression =
             | FunctionN (xf, xs), Function (yf, y) -> if xf <> yf then xf < yf else compareZip (List.rev xs) [y]
             | Function _, Identifier _ | FunctionN _, Identifier _ -> false
             | Identifier _, Function _ | Identifier _, FunctionN _ -> true
+            | Undefined, _ | ComplexInfinity, _ | PositiveInfinity, _ | NegativeInfinity, _ -> false
+            | _, Undefined | _, ComplexInfinity | _, PositiveInfinity | _, NegativeInfinity -> true
         and compareZip a b =
             match a, b with
             | x::xs, y::ys when x <> y -> compare x y
@@ -94,8 +96,8 @@ type Expression =
 
         match x, y with
         | a, b | b, a when a = Expression.Zero -> b
-        | Identifier Undefined, _ | _, Identifier Undefined -> Expression.Undefined
-        | Identifier ComplexInfinity, _ | _, Identifier ComplexInfinity -> Expression.ComplexInfinity
+        | Undefined, _ | _, Undefined -> Undefined
+        | ComplexInfinity, _ | _, ComplexInfinity -> ComplexInfinity
         | Sum ((Number a)::ax), Sum ((Number b)::bx) -> (merge ax bx) + (Number (a+b))
         | Sum ((Number a)::ax), Sum bx | Sum bx, Sum ((Number a)::ax) -> (merge ax bx) + (Number a)
         | Sum ((Number a)::ax), Number b | Number b, Sum ((Number a)::ax) -> Sum (Number (a+b)::ax)
@@ -140,8 +142,8 @@ type Expression =
         match x, y with
         | a, b | b, a when a = Expression.One -> b
         | a, _ | _, a when a = Expression.Zero -> Expression.Zero
-        | Identifier Undefined, _ | _, Identifier Undefined -> Expression.Undefined
-        | Identifier ComplexInfinity, _ | _, Identifier ComplexInfinity -> Expression.ComplexInfinity
+        | Undefined, _ | _, Undefined -> Undefined
+        | ComplexInfinity, _ | _, ComplexInfinity -> ComplexInfinity
         | Product ((Number a)::ax), Product ((Number b)::bx) -> (merge ax bx) * (Number (a*b))
         | Product ((Number a)::ax), Product bx | Product bx, Product ((Number a)::ax) -> (merge ax bx) * (Number a)
         | Product ((Number a)::ax), Number b | Number b, Product ((Number a)::ax) -> Product (Number (a*b)::ax)
@@ -157,11 +159,11 @@ type Expression =
     static member Pow (x, y) =
         // if power is a number, radix must not be an integer, fraction, product or power
         match x, y with
-        | a, b when b = Expression.Zero && a = Expression.Zero -> Expression.Undefined
+        | a, b when b = Expression.Zero && a = Expression.Zero -> Undefined
         | _, b when b = Expression.Zero -> Expression.One
         | a, b when b = Expression.One -> a
         | a, _ when a = Expression.One -> Expression.One
-        | Identifier Undefined, _ | _, Identifier Undefined -> Expression.Undefined
+        | Undefined, _ | _, Undefined -> Undefined
         | Number a, Number b when b.IsInteger -> Number (BigRational.Pow(a, int(b.Numerator)))
         | Product ax, Number b when b.IsInteger -> Product (ax |> List.map (fun z -> Expression.Pow(z,y)))
         | Power (r, p), Number b when b.IsInteger -> Expression.Pow(r, p*y)
@@ -169,9 +171,9 @@ type Expression =
 
     static member Invert (x) =
         match x with
-        | Identifier Undefined -> Expression.Undefined
-        | Identifier PositiveInfinity | Identifier NegativeInfinity | Identifier ComplexInfinity -> Expression.Zero
-        | Number a when a.IsZero -> Expression.ComplexInfinity // no direction
+        | Undefined -> Undefined
+        | PositiveInfinity | NegativeInfinity | ComplexInfinity -> Expression.Zero
+        | Number a when a.IsZero -> ComplexInfinity // no direction
         | Number a -> Number (BigRational.Reciprocal a)
         | Product ax -> Product (ax |> List.map (Expression.Invert))
         | Power (r, p) -> Power (r, -p)
@@ -205,7 +207,5 @@ module ExpressionPatterns =
         | _ -> None
 
     let (|Infinity|_|) = function
-        | Identifier PositiveInfinity -> Some Infinity
-        | Identifier ComplexInfinity -> Some Infinity
-        | Identifier NegativeInfinity -> Some Infinity
+        | PositiveInfinity | NegativeInfinity | ComplexInfinity -> Some Infinity
         | _ -> None

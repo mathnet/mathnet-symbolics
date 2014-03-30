@@ -32,10 +32,10 @@ compareNumber 0Q (1Q/2Q)
 compareNumber 1Q (1Q/2Q)
 compareNumber (1Q/2Q) 0Q
 compareNumber (1Q/2Q) 1Q
-compareNumber 1Q positiveInfinity
-compareNumber 1Q negativeInfinity
-compareNumber positiveInfinity 1Q
-compareNumber negativeInfinity 1Q
+compareNumber 1Q PositiveInfinity
+compareNumber 1Q NegativeInfinity
+compareNumber PositiveInfinity 1Q
+compareNumber NegativeInfinity 1Q
 
 x + y
 y + x
@@ -387,7 +387,7 @@ module ``Primitive Polynomial Equation Solver`` =
 
         if Polynomial.isPolynomial x expr then
             match Polynomial.coefficients x expr with
-            | [||] -> undefined
+            | [||] -> Undefined
             | [| a |] -> x
             | [| a; b |] -> -a/b
             | _ -> failwith "higher polynomials not supported"

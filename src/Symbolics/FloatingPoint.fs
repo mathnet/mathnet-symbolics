@@ -114,10 +114,10 @@ module FloatingPoint =
 
     let rec evaluate symbols = function
         | Number n -> Real (float n) |> fnormalize
-        | Identifier Symbol.Undefined -> Undef
-        | Identifier Symbol.PositiveInfinity -> PosInf
-        | Identifier Symbol.NegativeInfinity -> NegInf
-        | Identifier Symbol.ComplexInfinity -> ComplexInf
+        | Undefined -> Undef
+        | PositiveInfinity -> PosInf
+        | NegativeInfinity -> NegInf
+        | ComplexInfinity -> ComplexInf
         | Identifier (Symbol s) -> Map.find s symbols |> fnormalize
         | Sum xs -> xs |> List.map (evaluate symbols) |> List.reduce fadd |> fnormalize
         | Product xs -> xs |> List.map (evaluate symbols) |> List.reduce fmultiply |> fnormalize

@@ -1,11 +1,6 @@
 ﻿namespace MathNet.Symbolics
 
-type Symbol =
-    | Symbol of string
-    | Undefined
-    | NegativeInfinity
-    | PositiveInfinity
-    | ComplexInfinity
+type Symbol = Symbol of string
 
 type Function =
     | Abs

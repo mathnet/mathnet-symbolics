@@ -29,3 +29,4 @@ module Calculus =
         | Function (Tan, x) -> 2*(differentiate symbol x) / (cos(2*x)+1)
         | Function (Abs, _) | FunctionN _ -> failwith "not supported"
         | Product [] -> failwith "invalid expression"
+        | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined as x -> x

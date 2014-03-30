@@ -10,10 +10,6 @@ open MathNet.Symbolics
 module Core =
 
     let symbol name = Identifier (Symbol name)
-    let undefined = Expression.Undefined
-    let positiveInfinity = Expression.PositiveInfinity
-    let negativeInfinity = Expression.NegativeInfinity
-    let complexInfinity = Expression.ComplexInfinity
     let number (x:int) = Number (BigRational.FromInt x)
     let zero = Expression.Zero
     let one = Expression.One
@@ -58,19 +54,19 @@ module Functions =
 
 module Numbers =
 
-    let max2 a b =
-        match a, b with
-        | a, b | b, a when a = undefined -> a
-        | a, b | b, a when a = positiveInfinity -> a
-        | a, b | b, a when a = negativeInfinity -> b
+    let max2 u v =
+        match u, v with
+        | Undefined, _ | _, Undefined -> Undefined
+        | PositiveInfinity, _ | _, PositiveInfinity -> PositiveInfinity
+        | NegativeInfinity, b | b, NegativeInfinity -> b
         | Number a, Number b -> Number (if b > a then b else a)
         | _ -> failwith "number expected"
 
-    let min2 a b =
-        match a, b with
-        | a, b | b, a when a = undefined -> a
-        | a, b | b, a when a = positiveInfinity -> b
-        | a, b | b, a when a = negativeInfinity -> a
+    let min2 u v =
+        match u, v with
+        | Undefined, _ | _, Undefined -> Undefined
+        | PositiveInfinity, b | b, PositiveInfinity -> b
+        | NegativeInfinity, _ | _, NegativeInfinity -> NegativeInfinity
         | Number a, Number b -> Number (if b < a then b else a)
         | _ -> failwith "number expected"
 
@@ -89,6 +85,7 @@ module Elementary =
         | Function _ -> 1
         | FunctionN (_, xs) -> List.length xs
         | Number _ | Identifier _ -> 0
+        | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined -> 0
 
     let operand i = function
         | Sum ax | Product ax | FunctionN (_, ax) -> List.nth ax i
@@ -105,6 +102,7 @@ module Elementary =
         | Power (r, p) -> freeOf symbol r && freeOf symbol p
         | Function (_, x) -> freeOf symbol x
         | Number _ | Identifier _ -> true
+        | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined -> true
 
     let rec freeOfSet (symbols: HashSet<Expression>) x =
         if symbols.Contains(x) then false else
@@ -112,7 +110,8 @@ module Elementary =
         | Sum ax | Product ax | FunctionN (_, ax) -> List.forall (freeOfSet symbols) ax
         | Power (r, p) -> freeOfSet symbols r && freeOfSet symbols p
         | Function (_, x) -> freeOfSet symbols x
-        | Number _ | Identifier _ -> true
+        | Number _ | Identifier _  -> true
+        | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined -> true
 
     let rec map f = function
         | Sum ax -> sum <| List.map f ax
@@ -131,15 +130,16 @@ module Elementary =
         | Function (fn, x) -> apply fn (substitute y r x)
         | FunctionN (fn, xs) -> applyN fn (List.map (substitute y r) xs)
         | Number _ | Identifier _ -> x
+        | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined -> x
 
     let compareNumber x y =
         match x, y with
         | a, b when a = b -> 0
         | Number a, Number b -> compare a b
-        | Number _, Identifier PositiveInfinity -> -1
-        | Number _, Identifier NegativeInfinity -> 1
-        | Identifier PositiveInfinity, Number _ -> 1
-        | Identifier NegativeInfinity, Number _ -> -1
+        | Number _, PositiveInfinity -> -1
+        | Number _, NegativeInfinity -> 1
+        | PositiveInfinity, Number _ -> 1
+        | NegativeInfinity, Number _ -> -1
         | _ -> failwith "only numbers and +/-infinity are supported"
 
     let rec private expandProduct x y =
