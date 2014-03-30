@@ -158,7 +158,6 @@ module Elementary =
         | a, b -> a**(number b)
 
     let rec algebraicExpand = function
-        | Number _ | Identifier _ as x -> x
         | Sum ax -> sum <| List.map algebraicExpand ax
         | Product ax -> List.map algebraicExpand ax |> List.reduce expandProduct
         | PosIntPower (r, Number n) -> expandPower (algebraicExpand r) (int n)

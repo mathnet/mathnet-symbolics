@@ -340,7 +340,7 @@ module ``Single Variable Polynomials`` =
     coefficientsSV x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
 
 
-module ``General Univariate Rational Expressions`` =
+module ``General Rational Expressions`` =
 
     open Rational
 
@@ -354,19 +354,30 @@ module ``General Univariate Rational Expressions`` =
     numerator (x**(-2))
     denominator (x**(-2))
 
-    let u = 2Q/3*(x*(x+1))/(x+2)*y**a in numerator u, denominator u
+    numerator (2Q/3*(x*(x+1))/(x+2)*y**a)
+    denominator (2Q/3*(x*(x+1))/(x+2)*y**a)
 
     isRational x ((x**2+1)/(2*x+3)) // true
     isRational x (1/x + 1/a) // false
 
-
-module ``General Multivariate Rational Expressions`` =
-
-    open MultivariateRational
-
     variables ((2*x + 3*y)/(z + 4)) // x,y,z
     variables (1/x + 1/y) // 1/x, 1/y
     variables (a/x + b/y) // a, 1/x, b, 1/y
+
+    rationalize (a+1) // nop
+    rationalize (a/b + c/d) // (b*c + a*d)/(b*d)
+    rationalize (1+1/(1+1/x)) // (1+2*x)/(1+x)
+    rationalize (1/(1+1/x)**(1Q/2) + (1+1/x)**(3Q/2)) // (x^2+(1+x)^2)/(x^2*((1+x)/x)^(1/2))
+    rationalize ((1+1/x)**2) // ((1+x)^2)/(x^2)
+
+    rationalize (a/b + c/d + e/f) // (b*d*e + (b*c+a*d)*f)/(b*d*f)
+    rationalExpand (a/b + c/d + e/f) // (b*d*e + b*c*f + a*d*f)/(b*d*f)
+
+    rationalize (((1/((x+y)**2+1))**(1Q/2)+1)*((1/((x+y)**2+1))**(1Q/2)-1)/(x+1))
+    rationalExpand (((1/((x+y)**2+1))**(1Q/2)+1)*((1/((x+y)**2+1))**(1Q/2)-1)/(x+1))
+
+    rationalize (1/(1/a + c/(a*b)) + (a*b*c + a*c**2)/(b+c)**2-a)
+    rationalExpand (1/(1/a + c/(a*b)) + (a*b*c + a*c**2)/(b+c)**2-a) // 0
 
 
 module ``Primitive Equation Solver`` =
