@@ -142,16 +142,6 @@ module Elementary =
         | Identifier NegativeInfinity, Number _ -> -1
         | _ -> failwith "only numbers and +/-infinity are supported"
 
-    let rec numerator = function
-        | Product ax -> product <| List.map numerator ax
-        | NegIntPower _ -> one
-        | z -> z
-
-    let rec denominator = function
-        | Product ax -> product <| List.map denominator ax
-        | NegIntPower (r, p) -> r ** -p
-        | _ -> one
-
     let rec expandProduct x y =
         match x, y with
         | Sum ax, b | b, Sum ax -> sum <| List.map (expandProduct b) ax

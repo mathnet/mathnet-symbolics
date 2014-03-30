@@ -198,6 +198,10 @@ module ExpressionPatterns =
         | Power (r, (Number n as p)) when n.IsInteger && n.IsNegative -> Some (r, p)
         | _ -> None
 
+    let (|NegRationalPower|_|) = function
+        | Power (r, (Number n as p)) when n.IsNegative -> Some (r, p)
+        | _ -> None
+
     let (|Infinity|_|) = function
         | Identifier PositiveInfinity -> Some Infinity
         | Identifier ComplexInfinity -> Some Infinity

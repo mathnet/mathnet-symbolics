@@ -140,16 +140,6 @@ substitute 3Q 4Q (x**3)
 map (fun x -> -x) (x + y**2)
 negate (x + y**2)
 
-numerator (x/y)
-denominator (x/y)
-numerator (x**2/y**3)
-denominator (x**2/y**3)
-
-numerator (x**2)
-denominator (x**2)
-numerator (x**(-2))
-denominator (x**(-2))
-
 Quotations.parse <@ 3 @>
 Quotations.parse <@ x @>
 Quotations.parse <@ fun x -> x @>
@@ -348,6 +338,35 @@ module ``Single Variable Polynomials`` =
     leadingCoefficientDegreeSV x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
     coefficientsSV x (3*x*x + 2*x)
     coefficientsSV x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+
+
+module ``General Univariate Rational Expressions`` =
+
+    open Rational
+
+    numerator (x/y)
+    denominator (x/y)
+    numerator (x**2/y**3)
+    denominator (x**2/y**3)
+
+    numerator (x**2)
+    denominator (x**2)
+    numerator (x**(-2))
+    denominator (x**(-2))
+
+    let u = 2Q/3*(x*(x+1))/(x+2)*y**a in numerator u, denominator u
+
+    isRational x ((x**2+1)/(2*x+3)) // true
+    isRational x (1/x + 1/a) // false
+
+
+module ``General Multivariate Rational Expressions`` =
+
+    open MultivariateRational
+
+    variables ((2*x + 3*y)/(z + 4)) // x,y,z
+    variables (1/x + 1/y) // 1/x, 1/y
+    variables (a/x + b/y) // a, 1/x, b, 1/y
 
 
 module ``Primitive Equation Solver`` =

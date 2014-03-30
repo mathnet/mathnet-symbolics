@@ -54,6 +54,7 @@
     <Compile Include="Expressions.fs" />
     <Compile Include="Elementary.fs" />
     <Compile Include="Polynomial.fs" />
+    <Compile Include="Rational.fs" />
     <Compile Include="Calculus.fs" />
     <Compile Include="FloatingPoint.fs" />
     <Compile Include="Quotations.fs" />
