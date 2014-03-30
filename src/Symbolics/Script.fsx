@@ -125,9 +125,16 @@ x*x**2*x**3
 
 (a/b/(c*a))*(c*d/a)/d
 
+a**(3Q/2)*a**(1Q/2)
+
+(x*(y+1)**(3Q/2)+1)*(x*(y+1)**(3Q/2)-1) |> algebraicExpand |> algebraicExpand
+sin(a*(x+y)) |> algebraicExpand // does not expand
+a/(b*(x+y)) |> algebraicExpand // does not expand
+
 x + ln x
 x + ln (x+1)
 2*abs x
+
 
 substitute 3Q 4Q (x**3)
 map (fun x -> -x) (x + y**2)
@@ -204,10 +211,10 @@ module ``Polynomoal Expansion`` =
 module ``Polynomial GCD`` =
 
     // 4 - 4*x - x^2 + x^3
-    Polynomial.polynomialGcd x (x**7 - 4*x**5 - x**2 + 4) (x**5 - 4*x**3 - x**2 + 4)
+    Polynomial.gcd x (x**7 - 4*x**5 - x**2 + 4) (x**5 - 4*x**3 - x**2 + 4)
 
     // 4 - 4*x - x^2 + x^3, -x, 1 + x^3
-    Polynomial.polynomialExtendedGcd x (x**7 - 4*x**5 - x**2 + 4) (x**5 - 4*x**3 - x**2 + 4)
+    Polynomial.extendedGcd x (x**7 - 4*x**5 - x**2 + 4) (x**5 - 4*x**3 - x**2 + 4)
     // verify A*u+B*v = gcd = 4 - 4*x - x^2 + x^3
     (-x)*(x**7 - 4*x**5 - x**2 + 4) + (1+x**3)*(x**5 - 4*x**3 - x**2 + 4) |> algebraicExpand
 
