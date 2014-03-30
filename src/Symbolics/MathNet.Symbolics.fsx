@@ -10,7 +10,6 @@
 #r "MathNet.Numerics.dll"
 #r "MathNet.Numerics.FSharp.dll"
 
-#load "Numbers.fs"
 #load "Symbols.fs"
 #load "Expressions.fs"
 #load "Elementary.fs"
