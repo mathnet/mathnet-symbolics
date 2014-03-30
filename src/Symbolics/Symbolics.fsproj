@@ -50,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Symbols.fs" />
-    <Compile Include="Expressions.fs" />
+    <Compile Include="Expression.fs" />
     <Compile Include="Elementary.fs" />
     <Compile Include="Polynomial.fs" />
     <Compile Include="Rational.fs" />
