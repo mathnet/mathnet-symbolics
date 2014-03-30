@@ -35,16 +35,16 @@ module Rational =
     let isRationalMV symbols x =
         (numerator x |> MultivariatePolynomial.isPolynomialMV symbols) && (denominator x |> MultivariatePolynomial.isPolynomialMV symbols)
 
-    let rec rationalizeSum x y =
+    let rec private rationalizeSum d x y =
         let a = denominator x
         let b = denominator y
-        if a = one && b = one then x+y
-        else (rationalizeSum ((numerator x)*b) ((numerator y)*a))/(a*b)
+        if a = one && b = one then (x+y)/d
+        else rationalizeSum (a*b*d) ((numerator x)*b) ((numerator y)*a)
 
     let rec rationalize = function
         | Power (r, p) -> (rationalize r)**p
         | Product ax -> product <| List.map rationalize ax
-        | Sum ax -> List.map rationalize ax |> List.reduce rationalizeSum
+        | Sum ax -> List.map rationalize ax |> List.reduce (rationalizeSum one)
         | x -> x
 
     let rec rationalExpand x =
@@ -52,3 +52,10 @@ module Rational =
         let d = denominator x |> algebraicExpand
         let z = rationalize (n/d)
         if x = z then z else rationalExpand z
+
+    let rationalSimplify symbol x =
+        let z = rationalExpand x
+        let n = numerator z
+        let d = denominator z
+        let g = Polynomial.gcd symbol n d
+        (Polynomial.quot symbol n g)/(Polynomial.quot symbol d g)

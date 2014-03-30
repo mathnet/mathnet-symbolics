@@ -376,8 +376,14 @@ module ``General Rational Expressions`` =
     rationalize (((1/((x+y)**2+1))**(1Q/2)+1)*((1/((x+y)**2+1))**(1Q/2)-1)/(x+1))
     rationalExpand (((1/((x+y)**2+1))**(1Q/2)+1)*((1/((x+y)**2+1))**(1Q/2)-1)/(x+1))
 
-    rationalize (1/(1/a + c/(a*b)) + (a*b*c + a*c**2)/(b+c)**2-a)
+    rationalize (1/(1/a + c/(a*b)) + (a*b*c + a*c**2)/(b+c)**2-a) |> algebraicExpand
     rationalExpand (1/(1/a + c/(a*b)) + (a*b*c + a*c**2)/(b+c)**2-a) // 0
+
+    rationalize (x/z + y/z**2) // (y*z + x*z^2)/(z^3)
+
+    rationalSimplify x ((x**2-1)/(x+1)) // -1 + x
+    rationalSimplify x ((x+1)/(x**2 - 1 - (x+1)*(x-1))) // 0-div
+    rationalSimplify x (1/(1+1/(x+1)) + 2/(x+2))  // (3+x)/(2+x)
 
 
 module ``Primitive Equation Solver`` =

@@ -94,7 +94,8 @@ type Expression =
 
         match x, y with
         | a, b | b, a when a = Expression.Zero -> b
-        | a, b | b, a when a = Expression.Undefined -> Expression.Undefined
+        | Identifier Undefined, _ | _, Identifier Undefined -> Expression.Undefined
+        | Identifier ComplexInfinity, _ | _, Identifier ComplexInfinity -> Expression.ComplexInfinity
         | Sum ((Number a)::ax), Sum ((Number b)::bx) -> (merge ax bx) + (Number (a+b))
         | Sum ((Number a)::ax), Sum bx | Sum bx, Sum ((Number a)::ax) -> (merge ax bx) + (Number a)
         | Sum ((Number a)::ax), Number b | Number b, Sum ((Number a)::ax) -> Sum (Number (a+b)::ax)
@@ -138,8 +139,9 @@ type Expression =
 
         match x, y with
         | a, b | b, a when a = Expression.One -> b
-        | a, b | b, a when a = Expression.Zero -> Expression.Zero
-        | a, b | b, a when a = Expression.Undefined -> Expression.Undefined
+        | a, _ | _, a when a = Expression.Zero -> Expression.Zero
+        | Identifier Undefined, _ | _, Identifier Undefined -> Expression.Undefined
+        | Identifier ComplexInfinity, _ | _, Identifier ComplexInfinity -> Expression.ComplexInfinity
         | Product ((Number a)::ax), Product ((Number b)::bx) -> (merge ax bx) * (Number (a*b))
         | Product ((Number a)::ax), Product bx | Product bx, Product ((Number a)::ax) -> (merge ax bx) * (Number a)
         | Product ((Number a)::ax), Number b | Number b, Product ((Number a)::ax) -> Product (Number (a*b)::ax)
@@ -156,10 +158,10 @@ type Expression =
         // if power is a number, radix must not be an integer, fraction, product or power
         match x, y with
         | a, b when b = Expression.Zero && a = Expression.Zero -> Expression.Undefined
-        | a, b when b = Expression.Zero -> Expression.One
+        | _, b when b = Expression.Zero -> Expression.One
         | a, b when b = Expression.One -> a
-        | a, b when a = Expression.One -> Expression.One
-        | a, b | b, a when a = Expression.Undefined -> Expression.Undefined
+        | a, _ when a = Expression.One -> Expression.One
+        | Identifier Undefined, _ | _, Identifier Undefined -> Expression.Undefined
         | Number a, Number b when b.IsInteger -> Number (BigRational.Pow(a, int(b.Numerator)))
         | Product ax, Number b when b.IsInteger -> Product (ax |> List.map (fun z -> Expression.Pow(z,y)))
         | Power (r, p), Number b when b.IsInteger -> Expression.Pow(r, p*y)
