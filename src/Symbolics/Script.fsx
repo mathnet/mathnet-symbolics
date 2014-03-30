@@ -32,10 +32,10 @@ compareNumber 0Q (1Q/2Q)
 compareNumber 1Q (1Q/2Q)
 compareNumber (1Q/2Q) 0Q
 compareNumber (1Q/2Q) 1Q
-compareNumber 1Q Expression.PositiveInfinity
-compareNumber 1Q Expression.NegativeInfinity
-compareNumber Expression.PositiveInfinity 1Q
-compareNumber Expression.NegativeInfinity 1Q
+compareNumber 1Q positiveInfinity
+compareNumber 1Q negativeInfinity
+compareNumber positiveInfinity 1Q
+compareNumber negativeInfinity 1Q
 
 x + y
 y + x
@@ -168,8 +168,8 @@ Polynomial.coefficients x p
 Polynomial.leadingCoefficient x p // ad
 Polynomial.collectTerms x p
 Polynomial.degree x p // 4
-MultivariatePolynomial.totalDegree p // 6
-MultivariatePolynomial.variables p // a,b,c,d,e,f,x
+Polynomial.totalDegree p // 6
+Polynomial.variables p // a,b,c,d,e,f,x
 
 
 module ``Polynomial Division`` =
@@ -221,7 +221,7 @@ module ``Evaluate some expression to floating point numbers`` =
     evaluate symbols (1Q/0Q)
 
 
-module ``General Univariate Polynomial Expressions`` =
+module ``General Polynomial Expressions`` =
 
     open Polynomial
 
@@ -249,13 +249,7 @@ module ``General Univariate Polynomial Expressions`` =
     collectTerms x (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
     collectTerms a (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
     collectTerms (ln(a)) (2*x*ln(a)*y + 4*x*ln(a) + 3*x*y*b + 5*x*b + c)
-
-
-module ``General Multivariate Polynomial Expressions`` =
-
-    open Polynomial
-    open MultivariatePolynomial
-
+    
     isMonomialMV (symbols [x;y]) (a * x**2 * y**2) // true
     isMonomialMV (symbols [x;y]) (ln(a) * x**2 * y**2) // true
     isMonomialMV (symbols [x;y]) (x**2 + y**2) // false
@@ -287,6 +281,53 @@ module ``General Multivariate Polynomial Expressions`` =
     collectTermsMV (symbols [x;y]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
     collectTermsMV (symbols [a;b]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b)
     collectTermsMV (symbols [x;ln(a)]) (2*x*ln(a)*y + 4*x*ln(a) + 3*x*y*b + 5*x*b + c)
+
+
+module ``General Rational Expressions`` =
+
+    open Rational
+
+    numerator (x/y)
+    denominator (x/y)
+    numerator (x**2/y**3)
+    denominator (x**2/y**3)
+
+    numerator (x**2)
+    denominator (x**2)
+    numerator (x**(-2))
+    denominator (x**(-2))
+
+    numerator (2Q/3*(x*(x+1))/(x+2)*y**a)
+    denominator (2Q/3*(x*(x+1))/(x+2)*y**a)
+
+    isRational x ((x**2+1)/(2*x+3)) // true
+    isRational x (1/x + 1/a) // false
+
+    variables ((2*x + 3*y)/(z + 4)) // x,y,z
+    variables (1/x + 1/y) // 1/x, 1/y
+    variables (a/x + b/y) // a, 1/x, b, 1/y
+
+    rationalize (a+1) // nop
+    rationalize (a/b + c/d) // (b*c + a*d)/(b*d)
+    rationalize (1+1/(1+1/x)) // (1+2*x)/(1+x)
+    rationalize (1/(1+1/x)**(1Q/2) + (1+1/x)**(3Q/2)) // (x^2+(1+x)^2)/(x^2*((1+x)/x)^(1/2))
+    rationalize ((1+1/x)**2) // ((1+x)^2)/(x^2)
+
+    rationalize (a/b + c/d + e/f) // (b*d*e + (b*c+a*d)*f)/(b*d*f)
+    rationalExpand (a/b + c/d + e/f) // (b*d*e + b*c*f + a*d*f)/(b*d*f)
+
+    rationalize (((1/((x+y)**2+1))**(1Q/2)+1)*((1/((x+y)**2+1))**(1Q/2)-1)/(x+1))
+    rationalExpand (((1/((x+y)**2+1))**(1Q/2)+1)*((1/((x+y)**2+1))**(1Q/2)-1)/(x+1))
+
+    rationalize (1/(1/a + c/(a*b)) + (a*b*c + a*c**2)/(b+c)**2-a) |> algebraicExpand
+    rationalExpand (1/(1/a + c/(a*b)) + (a*b*c + a*c**2)/(b+c)**2-a) // 0
+
+    rationalize (x/z + y/z**2) // (y*z + x*z^2)/(z^3)
+    rationalSimplify z (x/z + y/z**2) // (x + x*z)/(z^2)
+
+    rationalSimplify x ((x**2-1)/(x+1)) // -1 + x
+    rationalSimplify x ((x+1)/(x**2 - 1 - (x+1)*(x-1))) // complex infinity
+    rationalSimplify x (1/(1+1/(x+1)) + 2/(x+2))  // (3+x)/(2+x)
 
 
 module ``Single Variable Polynomials`` =
@@ -340,53 +381,7 @@ module ``Single Variable Polynomials`` =
     coefficientsSV x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
 
 
-module ``General Rational Expressions`` =
-
-    open Rational
-
-    numerator (x/y)
-    denominator (x/y)
-    numerator (x**2/y**3)
-    denominator (x**2/y**3)
-
-    numerator (x**2)
-    denominator (x**2)
-    numerator (x**(-2))
-    denominator (x**(-2))
-
-    numerator (2Q/3*(x*(x+1))/(x+2)*y**a)
-    denominator (2Q/3*(x*(x+1))/(x+2)*y**a)
-
-    isRational x ((x**2+1)/(2*x+3)) // true
-    isRational x (1/x + 1/a) // false
-
-    variables ((2*x + 3*y)/(z + 4)) // x,y,z
-    variables (1/x + 1/y) // 1/x, 1/y
-    variables (a/x + b/y) // a, 1/x, b, 1/y
-
-    rationalize (a+1) // nop
-    rationalize (a/b + c/d) // (b*c + a*d)/(b*d)
-    rationalize (1+1/(1+1/x)) // (1+2*x)/(1+x)
-    rationalize (1/(1+1/x)**(1Q/2) + (1+1/x)**(3Q/2)) // (x^2+(1+x)^2)/(x^2*((1+x)/x)^(1/2))
-    rationalize ((1+1/x)**2) // ((1+x)^2)/(x^2)
-
-    rationalize (a/b + c/d + e/f) // (b*d*e + (b*c+a*d)*f)/(b*d*f)
-    rationalExpand (a/b + c/d + e/f) // (b*d*e + b*c*f + a*d*f)/(b*d*f)
-
-    rationalize (((1/((x+y)**2+1))**(1Q/2)+1)*((1/((x+y)**2+1))**(1Q/2)-1)/(x+1))
-    rationalExpand (((1/((x+y)**2+1))**(1Q/2)+1)*((1/((x+y)**2+1))**(1Q/2)-1)/(x+1))
-
-    rationalize (1/(1/a + c/(a*b)) + (a*b*c + a*c**2)/(b+c)**2-a) |> algebraicExpand
-    rationalExpand (1/(1/a + c/(a*b)) + (a*b*c + a*c**2)/(b+c)**2-a) // 0
-
-    rationalize (x/z + y/z**2) // (y*z + x*z^2)/(z^3)
-
-    rationalSimplify x ((x**2-1)/(x+1)) // -1 + x
-    rationalSimplify x ((x+1)/(x**2 - 1 - (x+1)*(x-1))) // 0-div
-    rationalSimplify x (1/(1+1/(x+1)) + 2/(x+2))  // (3+x)/(2+x)
-
-
-module ``Primitive Equation Solver`` =
+module ``Primitive Polynomial Equation Solver`` =
 
     let solve x expr =
 

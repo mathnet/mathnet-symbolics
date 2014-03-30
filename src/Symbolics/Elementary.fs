@@ -142,12 +142,12 @@ module Elementary =
         | Identifier NegativeInfinity, Number _ -> -1
         | _ -> failwith "only numbers and +/-infinity are supported"
 
-    let rec expandProduct x y =
+    let rec private expandProduct x y =
         match x, y with
         | Sum ax, b | b, Sum ax -> sum <| List.map (expandProduct b) ax
         | a, b -> a*b
 
-    let rec expandPower x (y:int) =
+    let rec private expandPower x (y:int) =
         match x, y with
         | Sum [a], b -> a**(number b)
         | Sum (a::ax), n when n > 1 ->

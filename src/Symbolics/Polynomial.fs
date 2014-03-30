@@ -6,13 +6,27 @@ open MathNet.Numerics
 open MathNet.Symbolics
 
 
-/// General Univariate Polynomial Expressions
+/// General Polynomial Expressions
 module Polynomial =
 
     open System.Collections.Generic
     open Numbers
     open Elementary
     open ExpressionPatterns
+
+    let symbols (xs: Expression list) = HashSet(List.toSeq xs, HashIdentity.Structural)
+
+    let variables x =
+        let rec impl keep = function
+            | Number _ -> ()
+            | PosIntPower (r, _) -> keep r
+            | Power _ as p -> keep p
+            | Sum ax -> ax |> List.iter (impl keep)
+            | Product ax -> ax |> List.iter (fun a -> match a with | Sum _ as z -> keep z | _ -> impl keep a)
+            | _ as z -> keep z
+        let hs = symbols []
+        impl (hs.Add >> ignore) x
+        hs
 
     let rec isMonomial symbol = function
         | x when x = symbol -> true
@@ -21,9 +35,21 @@ module Polynomial =
         | Product ax -> List.forall (isMonomial symbol) ax
         | x -> freeOf symbol x
 
+    let rec isMonomialMV (symbols: HashSet<Expression>) = function
+        | x when symbols.Contains(x) -> true
+        | Number _ -> true
+        | PosIntPower (r, _) when symbols.Contains(r) -> true
+        | Product ax -> List.forall (isMonomialMV symbols) ax
+        | x -> freeOfSet symbols x
+
     let isPolynomial symbol = function
         | Sum ax -> List.forall (isMonomial symbol) ax
         | x when isMonomial symbol x -> true
+        | _ -> false
+
+    let isPolynomialMV (symbols: HashSet<Expression>) = function
+        | Sum ax -> List.forall (isMonomialMV symbols) ax
+        | x when isMonomialMV symbols x -> true
         | _ -> false
 
     let rec degreeMonomial symbol = function
@@ -35,12 +61,30 @@ module Polynomial =
         | x when freeOf symbol x -> zero
         | _ -> undefined
 
+    let rec degreeMonomialMV (symbols: HashSet<Expression>) = function
+        | x when x = zero -> negativeInfinity
+        | x when symbols.Contains(x) -> one
+        | Number _ -> zero
+        | PosIntPower (r, p) when symbols.Contains(r) -> p
+        | Product ax -> sum <| List.map (degreeMonomialMV symbols) ax
+        | x when freeOfSet symbols x -> zero
+        | _ -> undefined
+
     let degree symbol x =
         let d = degreeMonomial symbol x
         if d <> undefined then d else
         match x with
         | Sum ax -> max <| List.map (degreeMonomial symbol) ax
         | _ -> undefined
+
+    let degreeMV (symbols: HashSet<Expression>) x =
+        let d = degreeMonomialMV symbols x
+        if d <> undefined then d else
+        match x with
+        | Sum ax -> max <| List.map (degreeMonomialMV symbols) ax
+        | _ -> undefined
+
+    let totalDegree x = degreeMV (variables x) x
 
     let rec coefficientDegreeMonomial symbol = function
         | x when x = symbol -> one, one
@@ -93,9 +137,21 @@ module Polynomial =
         | x when freeOf symbol x -> (x, one)
         | _ -> (undefined, undefined)
 
+    let rec collectTermsMonomialMV (symbols: HashSet<Expression>) = function
+        | x when symbols.Contains(x) -> (one, x)
+        | Number _ as x-> (x, one)
+        | PosIntPower (r, p) as x when symbols.Contains(r) -> (one, x)
+        | Product ax -> List.map (collectTermsMonomialMV symbols) ax |> List.reduce (fun (c1, v1) (c2, v2) -> (c1*c2, v1*v2))
+        | x when freeOfSet symbols x -> (x, one)
+        | _ -> (undefined, undefined)
+
     let collectTerms symbol = function
         | Sum ax -> List.map (collectTermsMonomial symbol) ax |> Seq.groupBy snd |> Seq.map (fun (v, cs) -> (Seq.map fst cs |> sumSeq) * v) |> sumSeq
         | x -> let c, v = collectTermsMonomial symbol x in if c <> undefined then c*v else undefined
+
+    let collectTermsMV (symbols: HashSet<Expression>) = function
+        | Sum ax -> List.map (collectTermsMonomialMV symbols) ax |> Seq.groupBy snd |> Seq.map (fun (v, cs) -> (Seq.map fst cs |> sumSeq) * v) |> sumSeq
+        | x -> let c, v = collectTermsMonomialMV symbols x in if c <> undefined then c*v else undefined
 
     let polynomialDivision symbol u v =
         let n = degree symbol v
@@ -139,71 +195,6 @@ module Polynomial =
          let z, a, b = inner u v zero one one zero
          let c = leadingCoefficient symbol z
          algebraicExpand (z/c), algebraicExpand (a/c), algebraicExpand (b/c)
-
-
-/// General Multivariate Polynomial Expressions
-module MultivariatePolynomial =
-
-    open System.Collections.Generic
-    open Numbers
-    open Elementary
-    open ExpressionPatterns
-
-    let symbols (xs: Expression list) = HashSet(List.toSeq xs, HashIdentity.Structural)
-
-    let variables x =
-        let rec impl keep = function
-            | Number _ -> ()
-            | PosIntPower (r, _) -> keep r
-            | Power _ as p -> keep p
-            | Sum ax -> ax |> List.iter (impl keep)
-            | Product ax -> ax |> List.iter (fun a -> match a with | Sum _ as z -> keep z | _ -> impl keep a)
-            | _ as z -> keep z
-        let hs = symbols []
-        impl (hs.Add >> ignore) x
-        hs
-
-    let rec isMonomialMV (symbols: HashSet<Expression>) = function
-        | x when symbols.Contains(x) -> true
-        | Number _ -> true
-        | PosIntPower (r, _) when symbols.Contains(r) -> true
-        | Product ax -> List.forall (isMonomialMV symbols) ax
-        | x -> freeOfSet symbols x
-
-    let isPolynomialMV (symbols: HashSet<Expression>) = function
-        | Sum ax -> List.forall (isMonomialMV symbols) ax
-        | x when isMonomialMV symbols x -> true
-        | _ -> false
-
-    let rec degreeMonomialMV (symbols: HashSet<Expression>) = function
-        | x when x = zero -> negativeInfinity
-        | x when symbols.Contains(x) -> one
-        | Number _ -> zero
-        | PosIntPower (r, p) when symbols.Contains(r) -> p
-        | Product ax -> sum <| List.map (degreeMonomialMV symbols) ax
-        | x when freeOfSet symbols x -> zero
-        | _ -> undefined
-
-    let degreeMV (symbols: HashSet<Expression>) x =
-        let d = degreeMonomialMV symbols x
-        if d <> undefined then d else
-        match x with
-        | Sum ax -> max <| List.map (degreeMonomialMV symbols) ax
-        | _ -> undefined
-
-    let totalDegree x = degreeMV (variables x) x
-
-    let rec collectTermsMonomialMV (symbols: HashSet<Expression>) = function
-        | x when symbols.Contains(x) -> (one, x)
-        | Number _ as x-> (x, one)
-        | PosIntPower (r, p) as x when symbols.Contains(r) -> (one, x)
-        | Product ax -> List.map (collectTermsMonomialMV symbols) ax |> List.reduce (fun (c1, v1) (c2, v2) -> (c1*c2, v1*v2))
-        | x when freeOfSet symbols x -> (x, one)
-        | _ -> (undefined, undefined)
-
-    let collectTermsMV (symbols: HashSet<Expression>) = function
-        | Sum ax -> List.map (collectTermsMonomialMV symbols) ax |> Seq.groupBy snd |> Seq.map (fun (v, cs) -> (Seq.map fst cs |> sumSeq) * v) |> sumSeq
-        | x -> let c, v = collectTermsMonomialMV symbols x in if c <> undefined then c*v else undefined
 
 
 /// Single-Variable Polynomial (2*x+3*x^2)

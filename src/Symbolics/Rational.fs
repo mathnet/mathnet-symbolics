@@ -25,15 +25,15 @@ module Rational =
         | _ -> one
 
     let variables x =
-        let hs = numerator x |> MultivariatePolynomial.variables
-        hs.UnionWith(denominator x |> MultivariatePolynomial.variables)
+        let hs = numerator x |> Polynomial.variables
+        hs.UnionWith(denominator x |> Polynomial.variables)
         hs
 
     let isRational symbol x =
         (numerator x |> Polynomial.isPolynomial symbol) && (denominator x |> Polynomial.isPolynomial symbol)
 
     let isRationalMV symbols x =
-        (numerator x |> MultivariatePolynomial.isPolynomialMV symbols) && (denominator x |> MultivariatePolynomial.isPolynomialMV symbols)
+        (numerator x |> Polynomial.isPolynomialMV symbols) && (denominator x |> Polynomial.isPolynomialMV symbols)
 
     let rec private rationalizeSum d x y =
         let a = denominator x
