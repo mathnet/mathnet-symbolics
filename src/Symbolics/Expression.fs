@@ -159,12 +159,17 @@ type Expression =
     static member Pow (x, y) =
         // if power is a number, radix must not be an integer, fraction, product or power
         match x, y with
-        | a, b when b = Expression.Zero && a = Expression.Zero -> Undefined
+        | a, b when a = Expression.Zero && b = Expression.Zero -> Undefined
         | _, b when b = Expression.Zero -> Expression.One
         | a, b when b = Expression.One -> a
         | a, _ when a = Expression.One -> Expression.One
         | Undefined, _ | _, Undefined -> Undefined
-        | Number a, Number b when b.IsInteger -> Number (BigRational.Pow(a, int(b.Numerator)))
+        | Number a, Number b when b.IsInteger ->
+            if b.IsNegative then
+                if a.IsZero then ComplexInfinity
+                // workaround bug in BigRational with negative powers - drop after upgrading to > v3.0.0-alpha9
+                else Number (BigRational.Pow(BigRational.Reciprocal a, -int(b.Numerator)))
+            else Number (BigRational.Pow(a, int(b.Numerator)))
         | Product ax, Number b when b.IsInteger -> Product (ax |> List.map (fun z -> Expression.Pow(z,y)))
         | Power (r, p), Number b when b.IsInteger -> Expression.Pow(r, p*y)
         | a, b -> Power(a, b)
@@ -194,6 +199,10 @@ type Expression =
 
 module ExpressionPatterns =
 
+    let (|Integer|_|) = function
+        | Number n when n.IsInteger -> Some (n)
+        | _ -> None
+
     let (|PosIntPower|_|) = function
         | Power (r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
         | _ -> None
@@ -208,4 +217,9 @@ module ExpressionPatterns =
 
     let (|Infinity|_|) = function
         | PositiveInfinity | NegativeInfinity | ComplexInfinity -> Some Infinity
+        | _ -> None
+
+    let (|Leaf|_|) = function
+        | Number _ | Identifier _ -> Some Leaf
+        | PositiveInfinity | NegativeInfinity | ComplexInfinity -> Some Leaf
         | _ -> None

@@ -199,6 +199,21 @@ module ``There are various algebaric operators available`` =
     Polynomial.totalDegree p // 6
     Polynomial.variables p // a; b; c; d; e; f; x
 
+    Exponential.expand (exp(2*x+y)) // exp(x)^2*exp(y)
+    Exponential.expand (exp(2*a*x + 3*y*z)) // exp(a*x)^2*exp(y*z)^3
+    Exponential.expand (exp(2*(x+y))) // exp(x)^2*exp(y)^2
+    Exponential.expand (1/(exp(2*x) - (exp(x))**2)) // ComplexInfinity
+    Exponential.expand (exp((x+y)*(x-y))) // exp(x^2)*exp(y^2)^(-1)
+    Exponential.expand (ln((c*x)**a) + ln(y**b*z)) // a*ln(c) + a*ln(x) + b*ln(y) + ln(z)
+
+    Trigonometric.expand (sin(2*x)) // 2*sin(x)*cos(x)
+    Trigonometric.expand (sin(a+x)) // sin(x)*cos(a) + sin(a)*cos(x)
+    Trigonometric.expand (sin(2*x + 3*y)) // ((-1)*sin(x)^2 + cos(x)^2)*((-1)*sin(y)^3 + 3*sin(y)*cos(y)^2) + 2*sin(x)*cos(x)*((-3)*sin(y)^2*cos(y) + cos(y)^3)
+    Trigonometric.expand (sin(2*(x+y))) // 2*sin(y)*((-1)*sin(x)^2 + cos(x)^2)*cos(y) + 2*sin(x)*cos(x)*((-1)*sin(y)^2 + cos(y)^2)
+    |> algebraicExpand // (-2)*sin(x)*sin(y)^2*cos(x) + (-2)*sin(x)^2*sin(y)*cos(y) + 2*sin(y)*cos(x)^2*cos(y) + 2*sin(x)*cos(x)*cos(y)^2
+    Trigonometric.expand (cos(5*x)) // 5*sin(x)^4*cos(x) + (-10)*sin(x)^2*cos(x)^3 + cos(x)^5
+    Trigonometric.expand ((sin(2*x)-2*sin(x)*cos(x))/((sin(x))**2 + (cos(x))**2 - 1)) // 0 - should actually be Undefined
+
 
 module ``Polynomial Division`` =
 
@@ -408,6 +423,13 @@ module ``Single Variable Polynomials`` =
     leadingCoefficientDegreeSV x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
     coefficientsSV x (3*x*x + 2*x)
     coefficientsSV x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1)
+
+
+module ``Exponentional and Trigonometric Functions`` =
+
+    sin x // sin(x)
+    cot x // tan(x)^(-1)
+    sec x // cos(x)^(-1)
 
 
 module ``Primitive Equation Solver`` =

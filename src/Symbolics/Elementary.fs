@@ -50,6 +50,9 @@ module Functions =
     let sin x = apply Sin x
     let cos x = apply Cos x
     let tan x = apply Tan x
+    let cot x = apply Tan x |> invert
+    let sec x = apply Cos x |> invert
+    let scs x = apply Sin x |> invert
 
 
 module Numbers =

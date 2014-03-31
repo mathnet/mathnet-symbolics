@@ -15,6 +15,7 @@
 #load "Elementary.fs"
 #load "Polynomial.fs"
 #load "Rational.fs"
+#load "Exponential.fs"
 #load "Calculus.fs"
 #load "FloatingPoint.fs"
 #load "Quotations.fs"
