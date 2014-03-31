@@ -30,7 +30,7 @@ module Text =
         | Sum (x::xs) ->
             if priority > 1 then write "("
             formatImpl write 1 x
-            xs |> List.iter (fun x -> write "+"; formatImpl write 1 x)
+            xs |> List.iter (fun x -> write " + "; formatImpl write 1 x)
             if priority > 1 then write ")"
         | Product (x::xs) ->
             if priority > 2 then write "("
