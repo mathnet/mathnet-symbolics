@@ -6,11 +6,10 @@ open MathNet.Numerics
 open MathNet.Symbolics
 
 
-[<AutoOpen>]
-module Core =
+module Operators =
 
     let symbol name = Identifier (Symbol name)
-    let number (x:int) = Expression.OfInt32 x
+    let number (x:int) = Expression.FromInt32 x
     let zero = Expression.Zero
     let one = Expression.One
     let two = Expression.Two
@@ -32,18 +31,6 @@ module Core =
     let apply (f:Function) (x:Expression) = Expression.Apply (f, x)
     let applyN (f:Function) (xs:Expression list) = Expression.ApplyN (f, xs)
 
-
-[<RequireQualifiedAccess>]
-module NumericLiteralQ =
-    let FromZero () = zero
-    let FromOne () = one
-    let FromInt32 (x:int) = Expression.OfInt32 x
-    let FromInt64 (x:int64) = Number (BigRational.FromBigInt (BigInteger(x)))
-    let FromString str = Number (BigRational.Parse str)
-
-
-module Functions =
-
     let abs x = Expression.Abs x
     let exp x = Expression.Exp x
     let ln x = Expression.Ln x
@@ -55,6 +42,7 @@ module Functions =
     let csc x = sin x |> invert
 
 
+[<RequireQualifiedAccess>]
 module Numbers =
 
     let max2 u v =
@@ -76,11 +64,23 @@ module Numbers =
     let max ax = List.reduce max2 ax
     let min ax = List.reduce min2 ax
 
+    let compare x y =
+        match x, y with
+        | a, b when a = b -> 0
+        | Number a, Number b -> compare a b
+        | Number _, PositiveInfinity -> -1
+        | Number _, NegativeInfinity -> 1
+        | PositiveInfinity, Number _ -> 1
+        | NegativeInfinity, Number _ -> -1
+        | _ -> failwith "only numbers and +/-infinity are supported"
 
-module Elementary =
+
+[<RequireQualifiedAccess>]
+module Structure =
 
     open System.Collections.Generic
     open ExpressionPatterns
+    open Operators
 
     let numberOfOperands = function
         | Sum ax | Product ax -> List.length ax
@@ -116,6 +116,17 @@ module Elementary =
         | Number _ | Identifier _  -> true
         | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined -> true
 
+    let rec substitute y r x =
+        if y = x then r else
+        match x with
+        | Sum ax -> sum <| List.map (substitute y r) ax
+        | Product ax -> product <| List.map (substitute y r) ax
+        | Power (radix, p) -> (substitute y r radix) ** (substitute y r p)
+        | Function (fn, x) -> apply fn (substitute y r x)
+        | FunctionN (fn, xs) -> applyN fn (List.map (substitute y r) xs)
+        | Number _ | Identifier _ -> x
+        | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined -> x
+
     let map f = function
         | Sum ax -> sum <| List.map f ax
         | Product ax -> product <| List.map f ax
@@ -130,26 +141,12 @@ module Elementary =
         | Function (_, x) -> f s x
         | _ -> s
 
-    let rec substitute y r x =
-        if y = x then r else
-        match x with
-        | Sum ax -> sum <| List.map (substitute y r) ax
-        | Product ax -> product <| List.map (substitute y r) ax
-        | Power (radix, p) -> (substitute y r radix) ** (substitute y r p)
-        | Function (fn, x) -> apply fn (substitute y r x)
-        | FunctionN (fn, xs) -> applyN fn (List.map (substitute y r) xs)
-        | Number _ | Identifier _ -> x
-        | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined -> x
 
-    let compareNumber x y =
-        match x, y with
-        | a, b when a = b -> 0
-        | Number a, Number b -> compare a b
-        | Number _, PositiveInfinity -> -1
-        | Number _, NegativeInfinity -> 1
-        | PositiveInfinity, Number _ -> 1
-        | NegativeInfinity, Number _ -> -1
-        | _ -> failwith "only numbers and +/-infinity are supported"
+[<RequireQualifiedAccess>]
+module Algebraic =
+
+    open ExpressionPatterns
+    open Operators
 
     let rec private expandProduct x y =
         match x, y with
@@ -167,14 +164,14 @@ module Elementary =
         | a, b -> a**(number b)
 
     /// Algebraically expand the expression recursively
-    let rec algebraicExpand = function
-        | Sum ax -> sum <| List.map algebraicExpand ax
-        | Product ax -> List.map algebraicExpand ax |> List.reduce expandProduct
-        | PosIntPower (r, Number n) -> expandPower (algebraicExpand r) (int n)
+    let rec expand = function
+        | Sum ax -> sum <| List.map expand ax
+        | Product ax -> List.map expand ax |> List.reduce expandProduct
+        | PosIntPower (r, Number n) -> expandPower (expand r) (int n)
         | x -> x
 
     /// Algebraically expand the main operator of the expression only
-    let algebraicExpandMain = function
+    let expandMain = function
         | Product ax -> List.reduce expandProduct ax
         | PosIntPower (r, Number n) -> expandPower r (int n)
         | x -> x

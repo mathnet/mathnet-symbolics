@@ -5,21 +5,21 @@ open System.Numerics
 open MathNet.Numerics
 open MathNet.Symbolics
 
+open ExpressionPatterns
+open Operators
+
+
 /// General Rational Expressions
 module Rational =
 
-    open Numbers
-    open Elementary
-    open ExpressionPatterns
-
     let rec numerator = function
-        | Number n when not n.IsInteger -> Expression.OfInteger n.Numerator
+        | Number n when not n.IsInteger -> Expression.FromInteger n.Numerator
         | NegRationalPower _ -> one
         | Product ax -> product <| List.map numerator ax
         | z -> z
 
     let rec denominator = function
-        | Number n when not n.IsInteger -> Expression.OfInteger n.Denominator
+        | Number n when not n.IsInteger -> Expression.FromInteger n.Denominator
         | NegRationalPower (r, p) -> r ** -p
         | Product ax -> product <| List.map denominator ax
         | _ -> one
@@ -48,8 +48,8 @@ module Rational =
         | x -> x
 
     let rec rationalExpand x =
-        let n = numerator x |> algebraicExpand
-        let d = denominator x |> algebraicExpand
+        let n = numerator x |> Algebraic.expand
+        let d = denominator x |> Algebraic.expand
         let z = rationalize (n/d)
         if x = z then z else rationalExpand z
 

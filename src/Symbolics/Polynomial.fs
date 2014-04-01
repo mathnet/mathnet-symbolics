@@ -1,18 +1,17 @@
 ﻿namespace MathNet.Symbolics
 
 open System
+open System.Collections.Generic
 open System.Numerics
 open MathNet.Numerics
 open MathNet.Symbolics
 
+open ExpressionPatterns
+open Operators
+
 
 /// General Polynomial Expressions
 module Polynomial =
-
-    open System.Collections.Generic
-    open Numbers
-    open Elementary
-    open ExpressionPatterns
 
     let symbols (xs: Expression list) = HashSet(List.toSeq xs, HashIdentity.Structural)
 
@@ -33,14 +32,14 @@ module Polynomial =
         | Number _ -> true
         | PosIntPower (r, _) when r = symbol -> true
         | Product ax -> List.forall (isMonomial symbol) ax
-        | x -> freeOf symbol x
+        | x -> Structure.freeOf symbol x
 
     let rec isMonomialMV (symbols: HashSet<Expression>) = function
         | x when symbols.Contains(x) -> true
         | Number _ -> true
         | PosIntPower (r, _) when symbols.Contains(r) -> true
         | Product ax -> List.forall (isMonomialMV symbols) ax
-        | x -> freeOfSet symbols x
+        | x -> Structure.freeOfSet symbols x
 
     let isPolynomial symbol = function
         | Sum ax -> List.forall (isMonomial symbol) ax
@@ -58,7 +57,7 @@ module Polynomial =
         | Number _ -> zero
         | PosIntPower (r, p) when r = symbol -> p
         | Product ax -> sum <| List.map (degreeMonomial symbol) ax
-        | x when freeOf symbol x -> zero
+        | x when Structure.freeOf symbol x -> zero
         | _ -> Undefined
 
     let rec degreeMonomialMV (symbols: HashSet<Expression>) = function
@@ -67,21 +66,21 @@ module Polynomial =
         | Number _ -> zero
         | PosIntPower (r, p) when symbols.Contains(r) -> p
         | Product ax -> sum <| List.map (degreeMonomialMV symbols) ax
-        | x when freeOfSet symbols x -> zero
+        | x when Structure.freeOfSet symbols x -> zero
         | _ -> Undefined
 
     let degree symbol x =
         let d = degreeMonomial symbol x
         if d <> Undefined then d else
         match x with
-        | Sum ax -> max <| List.map (degreeMonomial symbol) ax
+        | Sum ax -> Numbers.max <| List.map (degreeMonomial symbol) ax
         | _ -> Undefined
 
     let degreeMV (symbols: HashSet<Expression>) x =
         let d = degreeMonomialMV symbols x
         if d <> Undefined then d else
         match x with
-        | Sum ax -> max <| List.map (degreeMonomialMV symbols) ax
+        | Sum ax -> Numbers.max <| List.map (degreeMonomialMV symbols) ax
         | _ -> Undefined
 
     let totalDegree x = degreeMV (variables x) x
@@ -93,7 +92,7 @@ module Polynomial =
         | Product ax ->
             let cds = List.map (coefficientDegreeMonomial symbol) ax
             product <| List.map fst cds, sum <| List.map snd cds
-        | x when freeOf symbol x -> x, zero
+        | x when Structure.freeOf symbol x -> x, zero
         | _ -> Undefined, Undefined
 
     let coefficient symbol (k:int) x =
@@ -110,7 +109,7 @@ module Polynomial =
         match x with
         | Sum ax ->
             let cds = List.map (coefficientDegreeMonomial symbol) ax
-            let degree = max <| List.map snd cds
+            let degree = Numbers.max <| List.map snd cds
             cds |> List.filter (fun (_, d) -> d = degree) |> List.map fst |> sum, degree
         | _ -> Undefined, Undefined
 
@@ -123,7 +122,7 @@ module Polynomial =
             | PosIntPower (r, Number n) when r = symbol -> [int n, one]
             | Sum ax -> List.collect (collect symbol) ax
             | Product ax -> List.map (collect symbol) ax |> List.reduce (fun a b -> a |> List.fold (fun s (o1, e1) -> b |> List.fold (fun s (o2, e2) -> (o1+o2,e1*e2)::s) s) [])
-            | x when freeOf symbol x -> [0, x]
+            | x when Structure.freeOf symbol x -> [0, x]
             | _ -> []
         let c = collect symbol x
         let degree = c |> Seq.map fst |> Seq.max
@@ -134,7 +133,7 @@ module Polynomial =
         | Number _ as x-> (x, one)
         | PosIntPower (r, p) as x when r = symbol -> (one, x)
         | Product ax -> List.map (collectTermsMonomial symbol) ax |> List.reduce (fun (c1, v1) (c2, v2) -> (c1*c2, v1*v2))
-        | x when freeOf symbol x -> (x, one)
+        | x when Structure.freeOf symbol x -> (x, one)
         | _ -> (Undefined, Undefined)
 
     let rec collectTermsMonomialMV (symbols: HashSet<Expression>) = function
@@ -142,7 +141,7 @@ module Polynomial =
         | Number _ as x-> (x, one)
         | PosIntPower (r, p) as x when symbols.Contains(r) -> (one, x)
         | Product ax -> List.map (collectTermsMonomialMV symbols) ax |> List.reduce (fun (c1, v1) (c2, v2) -> (c1*c2, v1*v2))
-        | x when freeOfSet symbols x -> (x, one)
+        | x when Structure.freeOfSet symbols x -> (x, one)
         | _ -> (Undefined, Undefined)
 
     let collectTerms symbol = function
@@ -155,16 +154,16 @@ module Polynomial =
 
     let polynomialDivision symbol u v =
         let n = degree symbol v
-        if compareNumber n one < 0 then (u/v |> algebraicExpand, zero) else
+        if Numbers.compare n one < 0 then (u/v |> Algebraic.expand, zero) else
         let lcv = leadingCoefficient symbol v
         let w = v - lcv*symbol**n
         let rec pd q r =
             let m = degree symbol r
-            if compareNumber m n < 0 then q, r else
+            if Numbers.compare m n < 0 then q, r else
             let lcr = leadingCoefficient symbol r
             let s = lcr / lcv
             let z = symbol**(m-n)
-            pd (q + s*z) ((r - lcr*symbol**m) - w*s*z |> algebraicExpand)
+            pd (q + s*z) ((r - lcr*symbol**m) - w*s*z |> Algebraic.expand)
         pd zero u
 
     let quot symbol u v = polynomialDivision symbol u v |> fst
@@ -174,7 +173,7 @@ module Polynomial =
         let rec pe x =
             if x = zero then zero else
             let q, r = polynomialDivision symbol x v
-            t * (pe q) + r |> algebraicExpand
+            t * (pe q) + r |> Algebraic.expand
         pe u |> collectTerms t
 
     /// Naive polynomial GCD (to be replaced)
@@ -183,7 +182,7 @@ module Polynomial =
         let rec inner x y =
             if y = zero then x
             else inner y (remainder symbol x y)
-        let z = inner u v in z / (leadingCoefficient symbol z) |> algebraicExpand
+        let z = inner u v in z / (leadingCoefficient symbol z) |> Algebraic.expand
 
     /// Naive polynomial EGCD (to be replaced)
     let extendedGcd symbol u v =
@@ -194,14 +193,11 @@ module Polynomial =
             inner y r (a'' - q*a') a' (b'' - q*b') b'
          let z, a, b = inner u v zero one one zero
          let c = leadingCoefficient symbol z
-         algebraicExpand (z/c), algebraicExpand (a/c), algebraicExpand (b/c)
+         Algebraic.expand (z/c), Algebraic.expand (a/c), Algebraic.expand (b/c)
 
 
 /// Single-Variable Polynomial (2*x+3*x^2)
 module SingleVariablePolynomial =
-
-    open Numbers
-    open ExpressionPatterns
 
     let rec isMonomialSV symbol = function
         | x when x = symbol -> true
@@ -227,7 +223,7 @@ module SingleVariablePolynomial =
         let d = degreeMonomialSV symbol x
         if d <> Undefined then d else
         match x with
-        | Sum ax -> max <| List.map (degreeMonomialSV symbol) ax
+        | Sum ax -> Numbers.max <| List.map (degreeMonomialSV symbol) ax
         | _ -> Undefined
 
     let rec coefficientMonomialSV symbol = function
@@ -261,7 +257,7 @@ module SingleVariablePolynomial =
         match x with
         | Sum ax ->
             let cds = List.map (coefficientDegreeMonomialSV symbol) ax
-            let degree = max <| List.map snd cds
+            let degree = Numbers.max <| List.map snd cds
             cds |> List.filter (fun (_, d) -> d = degree) |> List.map fst |> sum, degree
         | _ -> Undefined, Undefined
 

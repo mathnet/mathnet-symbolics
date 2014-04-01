@@ -6,9 +6,7 @@ open Microsoft.FSharp
 open MathNet.Numerics
 open MathNet.Symbolics
 
-open Elementary
-open Functions
-open Calculus
+open Operators
 
 // variables:
 let x = symbol "x"
@@ -30,17 +28,17 @@ module ``Create number literal expressions with the Q suffix or the number funct
 
     // expressions are not comparable (NoComparison) to prevent errors,
     // but if the expressions are numbers we can use compareNumber:
-    compareNumber 0Q 1Q // -1
-    compareNumber 1Q 1Q // 0
-    compareNumber 1Q 2Q // -1
-    compareNumber 0Q (1Q/2Q) // -1
-    compareNumber 1Q (1Q/2Q) // 1
-    compareNumber (1Q/2Q) 0Q // 1
-    compareNumber (1Q/2Q) 1Q // -1
-    compareNumber 1Q PositiveInfinity // -1
-    compareNumber 1Q NegativeInfinity // 1
-    compareNumber PositiveInfinity 1Q // 1
-    compareNumber NegativeInfinity 1Q // -1
+    Numbers.compare 0Q 1Q // -1
+    Numbers.compare 1Q 1Q // 0
+    Numbers.compare 1Q 2Q // -1
+    Numbers.compare 0Q (1Q/2Q) // -1
+    Numbers.compare 1Q (1Q/2Q) // 1
+    Numbers.compare (1Q/2Q) 0Q // 1
+    Numbers.compare (1Q/2Q) 1Q // -1
+    Numbers.compare 1Q PositiveInfinity // -1
+    Numbers.compare 1Q NegativeInfinity // 1
+    Numbers.compare PositiveInfinity 1Q // 1
+    Numbers.compare NegativeInfinity 1Q // -1
 
     // The literal suffix is only needed if a number appears isolated,
     // otherwise F#'s excellent type inference does its work:
@@ -158,9 +156,9 @@ module ``Algebraic Expansion`` =
 
     // Auto-simplification does not expand expressions:
     (a+b)-(a+b) // a + b + (-1)*(a + b)
-    (a+b)-(a+b) |> algebraicExpand // 0
+    (a+b)-(a+b) |> Algebraic.expand // 0
     2*(a+b)-(a+b) // a + b
-    (a+b)-2*(a+b) |> algebraicExpand // (-1)*a + (-1)*b
+    (a+b)-2*(a+b) |> Algebraic.expand // (-1)*a + (-1)*b
 
     (a*b)/(b*a) // 1
     (a*b)**2/(b*a) // a*b
@@ -171,35 +169,35 @@ module ``Algebraic Expansion`` =
     (a+b)/(b+a)**2 // (a + b)^(-1)
 
     (x*(y+1)**(3Q/2)+1)*(x*(y+1)**(3Q/2)-1) // ((-1) + x*(1 + y)^(3/2))*(1 + x*(1 + y)^(3/2))
-    (x*(y+1)**(3Q/2)+1)*(x*(y+1)**(3Q/2)-1) |> algebraicExpand |> algebraicExpand // (-1) + x^2 + 3*x^2*y + 3*x^2*y^2 + x^2*y^3
-    sin(a*(x+y)) |> algebraicExpand // sin(a*(x + y)) - does not expand
-    a/(b*(x+y)) |> algebraicExpand // a*b^(-1)*(x + y)^(-1) - does not expand
+    (x*(y+1)**(3Q/2)+1)*(x*(y+1)**(3Q/2)-1) |> Algebraic.expand |> Algebraic.expand // (-1) + x^2 + 3*x^2*y + 3*x^2*y^2 + x^2*y^3
+    sin(a*(x+y)) |> Algebraic.expand // sin(a*(x + y)) - does not expand
+    a/(b*(x+y)) |> Algebraic.expand // a*b^(-1)*(x + y)^(-1) - does not expand
 
 
 module ``There are various algebaric operators available`` =
 
-    substitute 3Q 4Q (x**3) // x^4
-    map (fun x -> -x) (x + y**2) // (-1)*x + (-1)*y^2
+    Structure.substitute 3Q 4Q (x**3) // x^4
+    Structure.map (fun x -> -x) (x + y**2) // (-1)*x + (-1)*y^2
     negate (x + y**2) // (-1)*(x + y^2)
 
-    differentiate x (a*x) // a
-    differentiate x (sin(x)) // cos(x)
-    differentiate x (x*sin(x)) // sin(x) + x*cos(x)
-    differentiate x (a*x**2) // 2*a*x
-    differentiate x (a*x**b) // a*b*x^((-1) + b)
-    differentiate x (a*x**2 + b*x + c) // b + 2*a*x
+    Calculus.differentiate x (a*x) // a
+    Calculus.differentiate x (sin(x)) // cos(x)
+    Calculus.differentiate x (x*sin(x)) // sin(x) + x*cos(x)
+    Calculus.differentiate x (a*x**2) // 2*a*x
+    Calculus.differentiate x (a*x**b) // a*b*x^((-1) + b)
+    Calculus.differentiate x (a*x**2 + b*x + c) // b + 2*a*x
 
-    algebraicExpand ((x+1)*(x+3)) // 3 + 4*x + x^2
-    algebraicExpand ((a+b)**2) // a^2 + 2*a*b + b^2
-    algebraicExpand ((a+b)**3) // a^3 + 3*a^2*b + 3*a*b^2 + b^3
-    algebraicExpand ((a+b)**4) // a^4 + 4*a^3*b + 6*a^2*b^2 + 4*a*b^3 + b^4
-    algebraicExpand ((a+b+c)**2) // a^2 + 2*a*b + b^2 + 2*a*c + 2*b*c + c^2
+    Algebraic.expand ((x+1)*(x+3)) // 3 + 4*x + x^2
+    Algebraic.expand ((a+b)**2) // a^2 + 2*a*b + b^2
+    Algebraic.expand ((a+b)**3) // a^3 + 3*a^2*b + 3*a*b^2 + b^3
+    Algebraic.expand ((a+b)**4) // a^4 + 4*a^3*b + 6*a^2*b^2 + 4*a*b^3 + b^4
+    Algebraic.expand ((a+b+c)**2) // a^2 + 2*a*b + b^2 + 2*a*c + 2*b*c + c^2
 
-    algebraicExpandMain (x*(2+(1+x)**2)) // 2*x + x*(1 + x)^2
-    algebraicExpandMain ((x+(1+x)**2)**2) // x^2 + 2*x*(1 + x)^2 + (1 + x)^4
+    Algebraic.expandMain (x*(2+(1+x)**2)) // 2*x + x*(1 + x)^2
+    Algebraic.expandMain ((x+(1+x)**2)**2) // x^2 + 2*x*(1 + x)^2 + (1 + x)^4
 
-    algebraicExpand ((a*x**2 + b*x + c)/(d*x + e)) // c*(e + d*x)^(-1) + b*x*(e + d*x)^(-1) + a*x^2*(e + d*x)^(-1)
-    let p = algebraicExpand ((a*x**2 + b*x + c)*(d*x**2 + e*x + f)) // c*f + c*e*x + b*f*x + c*d*x^2 + b*e*x^2 + a*f*x^2 + b*d*x^3 + a*e*x^3 + a*d*x^4
+    Algebraic.expand ((a*x**2 + b*x + c)/(d*x + e)) // c*(e + d*x)^(-1) + b*x*(e + d*x)^(-1) + a*x^2*(e + d*x)^(-1)
+    let p = Algebraic.expand ((a*x**2 + b*x + c)*(d*x**2 + e*x + f)) // c*f + c*e*x + b*f*x + c*d*x^2 + b*e*x^2 + a*f*x^2 + b*d*x^3 + a*e*x^3 + a*d*x^4
     Polynomial.coefficients x p // c*f; c*e + b*f; c*d + b*e + a*f; b*d + a*e; a*d
     Polynomial.leadingCoefficient x p // a*d
     Polynomial.collectTerms x p // c*f + (c*e + b*f)*x + (c*d + b*e + a*f)*x^2 + (b*d + a*e)*x^3 + a*d*x^4
@@ -225,7 +223,7 @@ module ``There are various algebaric operators available`` =
     Trigonometric.expand (sin(a+x)) // sin(x)*cos(a) + sin(a)*cos(x)
     Trigonometric.expand (sin(2*x + 3*y)) // ((-1)*sin(x)^2 + cos(x)^2)*((-1)*sin(y)^3 + 3*sin(y)*cos(y)^2) + 2*sin(x)*cos(x)*((-3)*sin(y)^2*cos(y) + cos(y)^3)
     Trigonometric.expand (sin(2*(x+y))) // 2*sin(y)*((-1)*sin(x)^2 + cos(x)^2)*cos(y) + 2*sin(x)*cos(x)*((-1)*sin(y)^2 + cos(y)^2)
-    |> algebraicExpand // (-2)*sin(x)*sin(y)^2*cos(x) + (-2)*sin(x)^2*sin(y)*cos(y) + 2*sin(y)*cos(x)^2*cos(y) + 2*sin(x)*cos(x)*cos(y)^2
+    |> Algebraic.expand // (-2)*sin(x)*sin(y)^2*cos(x) + (-2)*sin(x)^2*sin(y)*cos(y) + 2*sin(y)*cos(x)^2*cos(y) + 2*sin(x)*cos(x)*cos(y)^2
     Trigonometric.expand (cos(5*x)) // 5*sin(x)^4*cos(x) + (-10)*sin(x)^2*cos(x)^3 + cos(x)^5
     Trigonometric.expand ((sin(2*x)-2*sin(x)*cos(x))/((sin(x))**2 + (cos(x))**2 - 1)) // 0 - should actually be Undefined
 
@@ -250,8 +248,8 @@ module ``Polynomial Division`` =
 
     // tangent of polynomial at x = 1?
     Polynomial.polynomialDivision x (x**3 - 12*x**2 - a) (x**2-2*x+1) // ((-10) + x, 10 + (-1)*a + (-21)*x)
-    let v = differentiate x (x**3 - 12*x**2 - a) |> substitute x 1Q // v=-21
-    let u = (x**3 - 12*x**2 - a) - v*x |> substitute x 1Q  // 10 + (-1)*a
+    let v = Calculus.differentiate x (x**3 - 12*x**2 - a) |> Structure.substitute x 1Q // v=-21
+    let u = (x**3 - 12*x**2 - a) - v*x |> Structure.substitute x 1Q  // 10 + (-1)*a
 
 
 module ``Polynomial Expansion`` =
@@ -259,10 +257,10 @@ module ``Polynomial Expansion`` =
     // 1 + x + (2 + x)*y + (3 + x)*y^2
     let ex = Polynomial.polynomialExpansion x y (x**5 + 11*x**4 + 51*x**3 + 124*x**2 + 159*x + 86) (x**2 + 4*x + 5)
     // 1 + x + (2 + x)*(5 + 4*x + x^2) + (3 + x)*(5 + 4*x + x^2)^2
-    let exs = ex |> substitute y (x**2 + 4*x + 5)
+    let exs = ex |> Structure.substitute y (x**2 + 4*x + 5)
     // get back to original polynomial:
     // 86 + 159*x + 124*x^2 + 51*x^3 + 11*x^4 + x^5
-    algebraicExpand exs
+    Algebraic.expand exs
 
 
 module ``Polynomial GCD`` =
@@ -274,7 +272,7 @@ module ``Polynomial GCD`` =
     Polynomial.extendedGcd x (x**7 - 4*x**5 - x**2 + 4) (x**5 - 4*x**3 - x**2 + 4)
     // verify A*u+B*v = gcd = 4 - 4*x - x^2 + x^3:
     // 4 + (-4)*x + (-1)*x^2 + x^3
-    (-x)*(x**7 - 4*x**5 - x**2 + 4) + (1+x**3)*(x**5 - 4*x**3 - x**2 + 4) |> algebraicExpand
+    (-x)*(x**7 - 4*x**5 - x**2 + 4) + (1+x**3)*(x**5 - 4*x**3 - x**2 + 4) |> Algebraic.expand
 
 
 module ``Evaluate some expression to floating point numbers`` =
@@ -285,7 +283,7 @@ module ``Evaluate some expression to floating point numbers`` =
     evaluate symbols (a) // Real 2.0
     evaluate symbols (1Q/2) // Real 0.5
     evaluate symbols (sin(a) + ln(b)) // Real 2.007909715
-    evaluate symbols (a*x**2 + b*x + c |> substitute x (number 1/2)) // Complex (3, -1)
+    evaluate symbols (a*x**2 + b*x + c |> Structure.substitute x (number 1/2)) // Complex (3, -1)
     evaluate symbols (1Q/0Q) // ComplexInf
 
 
@@ -389,7 +387,7 @@ module ``General Rational Expressions`` =
     // ((-1)*x^2 + (-2)*x*y + (-1)*y^2)*(1 + x + x^2 + x^3 + 2*x*y + 2*x^2*y + y^2 + x*y^2)^(-1)
     rationalExpand (((1/((x+y)**2+1))**(1Q/2)+1)*((1/((x+y)**2+1))**(1Q/2)-1)/(x+1))
 
-    rationalize (1/(1/a + c/(a*b)) + (a*b*c + a*c**2)/(b+c)**2-a) |> algebraicExpand // 0
+    rationalize (1/(1/a + c/(a*b)) + (a*b*c + a*c**2)/(b+c)**2-a) |> Algebraic.expand // 0
     rationalExpand (1/(1/a + c/(a*b)) + (a*b*c + a*c**2)/(b+c)**2-a) // 0
 
     rationalize (x/z + y/z**2) // z^(-3)*(y*z + x*z^2)

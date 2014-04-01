@@ -23,10 +23,10 @@ type Expression =
     static member One = Number BigRational.One
     static member Two = Number (BigRational.FromInt 2)
     static member MinusOne = Number (BigRational.FromInt -1)
-    static member OfInt32 (x:int) = Number (BigRational.FromInt x)
-    static member OfInt64 (x:int64) = Number (BigRational.FromBigInt (BigInteger(x)))
-    static member OfInteger (x:BigInteger) = Number (BigRational.FromBigInt x)
-    static member OfRational (x:BigRational) = Number x
+    static member FromInt32 (x:int) = Number (BigRational.FromInt x)
+    static member FromInt64 (x:int64) = Number (BigRational.FromBigInt (BigInteger(x)))
+    static member FromInteger (x:BigInteger) = Number (BigRational.FromBigInt x)
+    static member FromRational (x:BigRational) = Number x
 
 
     static member private OrderRelation (x:Expression) (y:Expression) =
@@ -256,6 +256,14 @@ type Expression =
     static member Pow (x, (y:int)) = Expression.Pow(x, Number (BigRational.FromInt y))
 
 
+[<RequireQualifiedAccess>]
+module NumericLiteralQ =
+    let FromZero () = Expression.Zero
+    let FromOne () = Expression.One
+    let FromInt32 (x:int) = Expression.FromInt32 x
+    let FromInt64 (x:int64) = Expression.FromInt64 x
+    let FromString str = Expression.FromRational (BigRational.Parse str)
+
 
 module ExpressionPatterns =
 
@@ -279,9 +287,11 @@ module ExpressionPatterns =
         | PositiveInfinity | NegativeInfinity | ComplexInfinity -> Some Infinity
         | _ -> None
 
-    let (|Leaf|_|) = function
-        | Number _ | Identifier _ -> Some Leaf
-        | PositiveInfinity | NegativeInfinity | ComplexInfinity -> Some Leaf
+    /// Terminal node, either a number, identifier/symbol or infinity. 
+    /// Warning: Undefined is *not* included.
+    let (|Terminal|_|) = function
+        | Number _ | Identifier _ -> Some Terminal
+        | PositiveInfinity | NegativeInfinity | ComplexInfinity -> Some Terminal
         | _ -> None
 
     /// Recognizes a sin or cos expression

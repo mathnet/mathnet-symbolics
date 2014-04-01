@@ -7,6 +7,8 @@ open System.Numerics
 open MathNet.Numerics
 open MathNet.Symbolics
 
+
+[<RequireQualifiedAccess>]
 module Text =
 
     // priority: 1=additive 2=product 3=power

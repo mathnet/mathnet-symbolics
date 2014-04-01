@@ -5,13 +5,12 @@ open System.Numerics
 open MathNet.Numerics
 open MathNet.Symbolics
 
+open ExpressionPatterns
+open Operators
+
 
 [<RequireQualifiedAccess>]
 module Exponential =
-
-    open ExpressionPatterns
-    open Elementary
-    open Functions
 
     /// Expand exponential and logarithmic terms
     let rec expand x =
@@ -21,16 +20,16 @@ module Exponential =
             | x -> exp x
         let rec lnRules = function
             | Product ax -> sum <| List.map lnRules ax
-            | Power (r, p) -> p*lnRules r |> algebraicExpand
+            | Power (r, p) -> p*lnRules r |> Algebraic.expand
             | x -> ln x
-        match (map expand x) with
-        | Function (Exp, a) -> expRules (algebraicExpand a)
-        | Function (Ln, a) -> lnRules (algebraicExpand a)
+        match Structure.map expand x with
+        | Function (Exp, a) -> expRules (Algebraic.expand a)
+        | Function (Ln, a) -> lnRules (Algebraic.expand a)
         | a -> a
 
     let rec contract x =
         let rec rules x =
-            match algebraicExpandMain x with
+            match Algebraic.expandMain x with
             | Power (Function (Exp, a), s) ->
                 match a*s with
                 | Product _ | Power _ as p -> exp (rules p)
@@ -42,7 +41,7 @@ module Exponential =
                 let f s = function | Product _ | Power _ as a -> s+(rules a) | a -> s+a
                 List.fold f zero ax
             | a -> a
-        match (map contract x) with
+        match Structure.map contract x with
         | Product _ | Power _ as a -> rules a
         | a -> a
 
@@ -53,10 +52,6 @@ module Exponential =
 
 [<RequireQualifiedAccess>]
 module Trigonometric =
-
-    open ExpressionPatterns
-    open Elementary
-    open Functions
 
     let private binomial n k = SpecialFunctions.Binomial(n, k) |> int |> number
     let private oneIfEven (k:int) = if Euclid.IsEven(k) then 1 else -1
@@ -79,9 +74,9 @@ module Trigonometric =
                     |> List.map (fun (k,c) -> c*cost**number(e-k)*sint**k) |> sum
                 (esin, ecos)
             | x -> sin x, cos x
-        match (map expand x) with
-        | Function (Sin, a) -> rules (algebraicExpand a) |> fst
-        | Function (Cos, a) -> rules (algebraicExpand a) |> snd
+        match Structure.map expand x with
+        | Function (Sin, a) -> rules (Algebraic.expand a) |> fst
+        | Function (Cos, a) -> rules (Algebraic.expand a) |> snd
         | a -> a
 
     let separateSinCos x =
@@ -128,21 +123,21 @@ module Trigonometric =
             | x::xs -> rules (x * productRules xs)
             | _ -> failwith "algorithm error 2"
         and rules x =
-            match algebraicExpandMain x with
+            match Algebraic.expandMain x with
             | SinCosPosIntPower (r, p) -> powerRules r p
             | Product _ as a ->
                 let c, d = separateSinCos a
                 match d with
                 | v when v = one -> a
                 | SinCos -> a
-                | Power (r, p) -> c * powerRules r p |> algebraicExpandMain
-                | Product ax -> c * productRules ax |> algebraicExpandMain
+                | Power (r, p) -> c * powerRules r p |> Algebraic.expandMain
+                | Product ax -> c * productRules ax |> Algebraic.expandMain
                 | v -> c*d
             | Sum ax ->
                 let f s = function | Product _ | Power _ as a -> s+(rules a) | a -> s+a
                 List.fold f zero ax
             | a -> a
-        match (map contract x) with
+        match Structure.map contract x with
         | Product _ | Power _ as a -> rules a
         | a -> a
 

@@ -5,9 +5,11 @@ open System.Numerics
 open MathNet.Numerics
 open MathNet.Symbolics
 
-module Calculus =
+open Operators
 
-    open Functions
+
+[<RequireQualifiedAccess>]
+module Calculus =
 
     let rec differentiate symbol = function
         | x when x = symbol -> one
