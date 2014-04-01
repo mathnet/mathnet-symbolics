@@ -124,6 +124,8 @@ module ``Expressions are always in simplified form`` =
     1 / x // x^(-1)
     -x // (-1)*x
     2 + 1/x - 1 // 1 + x^(-1)
+    -(-x) // x
+    1 / (1 / x) // x
 
     2*x*3 // 6*x
     -x*y/3 // (-1/3)*x*y
@@ -150,7 +152,7 @@ module ``Algebraic Expansion`` =
     // Auto-simplification does not expand expressions:
     (a+b)-(a+b) // a + b + (-1)*(a + b)
     (a+b)-(a+b) |> algebraicExpand // 0
-    2*(a+b)-(a+b) // a+b
+    2*(a+b)-(a+b) // a + b
     (a+b)-2*(a+b) |> algebraicExpand // (-1)*a + (-1)*b
 
     (a*b)/(b*a) // 1
@@ -227,7 +229,13 @@ module ``There are various algebaric operators available`` =
     Trigonometric.contract (sin(a)*sin(b)) // (-1/2)*cos(a + b) + (1/2)*cos(a + (-1)*b)
     Trigonometric.contract ((sin(x) + cos(y))*cos(y)) // 1/2 + (1/2)*sin(x + y) + (1/2)*sin(x + (-1)*y) + (1/2)*cos(2*y)
     Trigonometric.contract (sin(x)**2*cos(x)**2) // 1/8 + (-1/8)*cos(4*x)
-    Trigonometric.contract (cos(x)**4) // 3/8 + (1/8)*(4*cos(2*x) + cos(4*x))
+    Trigonometric.contract (cos(x)**4) // 3/8 + (1/2)*cos(2*x) + (1/8)*cos(4*x)
+
+    Trigonometric.simplify ((cos(x)+sin(x))**4 + (cos(x)-sin(x))**4 + cos(4*x) - 3) // 0
+    
+    // TODO: (-1/2)*sin(0) + sin(y) + (-1/2)*sin(x + (-1)*y) + (-1/2)*sin((1/2)*x + (-1/2)*y + (-1)*((1/2)*x + (-1/2)*y)) + (-1/2)*sin((-1/2)*x + (1/2)*y + (-1)*((1/2)*x + (-1/2)*y)) + (-1)*sin((1/2)*x + (1/2)*y + (-1)*((1/2)*x + (-1/2)*y))
+    // Should be: 0
+    Trigonometric.simplify (sin(x) + sin(y) - 2*sin(x/2+y/2)*cos(x/2-y/2))
 
 
 module ``Polynomial Division`` =

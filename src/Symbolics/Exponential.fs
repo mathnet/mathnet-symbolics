@@ -100,19 +100,21 @@ module Trigonometric =
             | Function (Sin, x), (Number n as p) when n.IsInteger && n.IsPositive ->
                 let e = int n
                 if Euclid.IsEven(e) then
-                    let z = sum [for j in 0 .. (e/2-1) -> oneIfEven j * (binomial e j) * cos((e-2*j)*x)]
-                    oneIfEven e * (binomial e (e/2))/(2Q**e) + oneIfEven(e/2) * (2Q**(1-e)) * z
+                    let w =  oneIfEven(e/2) * (2Q**(1-e))
+                    let z = sum [for j in 0 .. (e/2-1) -> oneIfEven j * w * (binomial e j) * cos((e-2*j)*x)]
+                    oneIfEven e * (binomial e (e/2))/(2Q**e) + z
                 else
-                    let z = sum [for j in 0 .. (e/2) -> oneIfEven j * (binomial e j) * sin((e-2*j)*x)]
-                    oneIfEven((e-1)/2) * (2Q**(1-e)) * z
+                    let w = oneIfEven((e-1)/2) * (2Q**(1-e))
+                    sum [for j in 0 .. (e/2) -> oneIfEven j * w * (binomial e j) * sin((e-2*j)*x)]
             | Function (Cos, x), (Number n as p) when n.IsInteger && n.IsPositive ->
                 let e = int n
                 if Euclid.IsEven(e) then
-                    let z = sum [for j in 0 .. (e/2-1) -> (binomial e j) * cos((e-2*j)*x)]
-                    (binomial e (e/2))/(2Q**e) + (2Q**(1-e))*z
+                    let w = (2Q**(1-e))
+                    let z = sum [for j in 0 .. (e/2-1) -> w * (binomial e j) * cos((e-2*j)*x)]
+                    (binomial e (e/2))/(2Q**e) + z
                 else
-                    let z = sum [for j in 0 .. (e/2) -> (binomial e j) * cos((e-2*j)*x)]
-                    (2Q**(1-e))*z
+                    let w = (2Q**(1-e))
+                    sum [for j in 0 .. (e/2) -> w * (binomial e j) * cos((e-2*j)*x)]
             | _ -> r**p
         let rec productRules = function
             | [u; v] ->
@@ -143,3 +145,19 @@ module Trigonometric =
         match (map contract x) with
         | Product _ | Power _ as a -> rules a
         | a -> a
+
+    // Substitute Tan, Cot, Sec, Csc to sin and cos
+    let rec substitute x =
+        match x with
+        | Function (Tan, a) -> let a' = substitute a in sin(a')/cos(a')
+        | Sum ax -> sum <| List.map substitute ax
+        | Product ax -> product <| List.map substitute ax
+        | Power (radix, p) -> (substitute radix) ** (substitute p)
+        | Function (fn, x) -> apply fn (substitute x)
+        | FunctionN (fn, xs) -> applyN fn (List.map substitute xs)
+        | x -> x
+
+    let simplify x =
+        let x' = substitute x
+        let w = Rational.rationalize x'
+        (Rational.numerator w |> expand |> contract) / (Rational.denominator w |> expand |> contract)

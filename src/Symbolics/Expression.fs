@@ -94,20 +94,27 @@ type Expression =
             | [] -> Expression.Zero
             | x -> Sum (List.rev x)
 
+        let rec numAdd n x =
+            match x with
+            | Number b -> Number (n+b)
+            | Sum [] -> Number n
+            | Sum [Number a] -> Number (a+n)
+            | Sum [a] -> if n.IsZero then a else Sum [Number n; a]
+            | Sum ((Number a)::ax) -> numAdd (a+n) (Sum ax)
+            | Sum ax -> if n.IsZero then x else Sum (Number n::ax)
+            | x -> if n.IsZero then x else Sum [Number n; x]
+
         match x, y with
         | a, b | b, a when a = Expression.Zero -> b
         | Undefined, _ | _, Undefined -> Undefined
         | ComplexInfinity, _ | _, ComplexInfinity -> ComplexInfinity
-        | Sum ((Number a)::ax), Sum ((Number b)::bx) -> (merge ax bx) + (Number (a+b))
-        | Sum ((Number a)::ax), Sum bx | Sum bx, Sum ((Number a)::ax) -> (merge ax bx) + (Number a)
-        | Sum ((Number a)::ax), Number b | Number b, Sum ((Number a)::ax) -> Sum (Number (a+b)::ax)
-        | Sum ((Number a)::ax), b | b, Sum ((Number a)::ax) -> (merge ax [b]) + (Number a)
+        | Number a, b | b, Number a -> numAdd a b
+        | Sum ((Number a)::ax), Sum ((Number b)::bx) -> numAdd (a+b) (merge ax bx)
+        | Sum ((Number a)::ax), Sum bx | Sum bx, Sum ((Number a)::ax) -> numAdd a (merge ax bx)
+        | Sum ((Number a)::ax), b | b, Sum ((Number a)::ax) -> numAdd a (merge ax [b])
         | Sum ax, Sum bx -> merge ax bx
-        | Sum ax, Number b | Number b, Sum ax -> Sum ((Number b)::ax)
         | Sum ax, b -> merge ax [b]
         | a, Sum bx -> merge [a] bx
-        | Number a, Number b -> Number (a+b)
-        | Number a, b | b, Number a -> Sum [Number a; b]
         | a, b -> merge [a] [b]
 
     static member ( * ) (x, y) =
@@ -139,21 +146,30 @@ type Expression =
             | [] -> Expression.One
             | x -> Product (List.rev x)
 
+        /// Multiply a number with an expression (potentially a denormalized product)
+        let rec numMul (n:BigRational) x =
+            if n.IsZero then Expression.Zero else
+            match x with
+            | Number b -> Number (n*b)
+            | Product [] -> Number n
+            | Product [Number a] -> Number (a*n)
+            | Product [a] -> if n.IsOne then a else Product [Number n; a]
+            | Product ((Number a)::ax) -> numMul (a*n) (Product ax)
+            | Product ax -> if n.IsOne then x else Product (Number n::ax)
+            | x -> if n.IsOne then x else Product [Number n; x]
+            
         match x, y with
         | a, b | b, a when a = Expression.One -> b
         | a, _ | _, a when a = Expression.Zero -> Expression.Zero
         | Undefined, _ | _, Undefined -> Undefined
         | ComplexInfinity, _ | _, ComplexInfinity -> ComplexInfinity
-        | Product ((Number a)::ax), Product ((Number b)::bx) -> (merge ax bx) * (Number (a*b))
-        | Product ((Number a)::ax), Product bx | Product bx, Product ((Number a)::ax) -> (merge ax bx) * (Number a)
-        | Product ((Number a)::ax), Number b | Number b, Product ((Number a)::ax) -> Product (Number (a*b)::ax)
-        | Product ((Number a)::ax), b | b, Product ((Number a)::ax) -> (merge ax [b]) * (Number a)
+        | Number a, b | b, Number a -> numMul a b
+        | Product ((Number a)::ax), Product ((Number b)::bx) -> numMul (a*b) (merge ax bx)
+        | Product ((Number a)::ax), Product bx | Product bx, Product ((Number a)::ax) -> numMul a (merge ax bx)
+        | Product ((Number a)::ax), b | b, Product ((Number a)::ax) -> numMul a (merge ax [b])
         | Product ax, Product bx -> merge ax bx
-        | Product ax, Number b | Number b, Product ax -> Product ((Number b)::ax)
         | Product ax, b -> merge ax [b]
         | a, Product bx -> merge [a] bx
-        | Number a, Number b -> Number (a*b)
-        | Number a, b | b, Number a -> Product [Number a; b]
         | a, b -> merge [a] [b]
 
     static member Pow (x, y) =
@@ -181,7 +197,7 @@ type Expression =
         | Number a when a.IsZero -> ComplexInfinity // no direction
         | Number a -> Number (BigRational.Reciprocal a)
         | Product ax -> Product (ax |> List.map (Expression.Invert))
-        | Power (r, p) -> Power (r, -p)
+        | Power (r, p) -> Expression.Pow(r, -p)
         | x -> Power (x, Expression.MinusOne)
 
     // Simpler usage
