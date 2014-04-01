@@ -45,14 +45,14 @@ module NumericLiteralQ =
 module Functions =
 
     let abs x = apply Abs x
-    let ln x = apply Ln x
-    let exp x = apply Exp x
+    let ln x = if x=one then zero else apply Ln x
+    let exp x = if x=zero then one else apply Exp x
     let sin x = apply Sin x
     let cos x = apply Cos x
     let tan x = apply Tan x
     let cot x = apply Tan x |> invert
     let sec x = apply Cos x |> invert
-    let scs x = apply Sin x |> invert
+    let csc x = apply Sin x |> invert
 
 
 module Numbers =
@@ -116,13 +116,19 @@ module Elementary =
         | Number _ | Identifier _  -> true
         | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined -> true
 
-    let rec map f = function
+    let map f = function
         | Sum ax -> sum <| List.map f ax
         | Product ax -> product <| List.map f ax
         | Power (r, p) -> (f r) ** (f p)
         | Function (fn, x) -> apply fn (f x)
         | FunctionN (fn, xs) -> applyN fn (List.map f xs)
         | _ as x -> x
+
+    let fold f s = function
+        | Sum ax | Product ax | FunctionN (_, ax) -> List.fold f s ax
+        | Power (r, p) -> List.fold f s [r;p]
+        | Function (_, x) -> f s x
+        | _ -> s
 
     let rec substitute y r x =
         if y = x then r else
@@ -160,8 +166,15 @@ module Elementary =
             |> sum
         | a, b -> a**(number b)
 
+    /// Algebraically expand the expression recursively
     let rec algebraicExpand = function
         | Sum ax -> sum <| List.map algebraicExpand ax
         | Product ax -> List.map algebraicExpand ax |> List.reduce expandProduct
         | PosIntPower (r, Number n) -> expandPower (algebraicExpand r) (int n)
+        | x -> x
+
+    /// Algebraically expand the main operator of the expression only
+    let algebraicExpandMain = function
+        | Product ax -> List.reduce expandProduct ax
+        | PosIntPower (r, Number n) -> expandPower r (int n)
         | x -> x

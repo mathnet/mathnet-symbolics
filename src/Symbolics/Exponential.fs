@@ -11,22 +11,44 @@ module Exponential =
 
     open ExpressionPatterns
     open Elementary
+    open Functions
 
     /// Expand exponential and logarithmic terms
     let rec expand x =
         let rec expRules = function
             | Sum ax -> product <| List.map expRules ax
             | Product ((Integer _ as n)::ax) -> (expRules (product ax))**n
-            | x -> Functions.exp x
+            | x -> exp x
         let rec lnRules = function
             | Product ax -> sum <| List.map lnRules ax
             | Power (r, p) -> p*lnRules r |> algebraicExpand
-            | x -> Functions.ln x
-        let x' = map expand x
-        match x' with
+            | x -> ln x
+        match (map expand x) with
         | Function (Exp, a) -> expRules (algebraicExpand a)
         | Function (Ln, a) -> lnRules (algebraicExpand a)
         | a -> a
+
+    let rec contract x =
+        let rec rules x =
+            match algebraicExpandMain x with
+            | Power (Function (Exp, a), s) ->
+                match a*s with
+                | Product _ | Power _ as p -> exp (rules p)
+                | p -> exp p
+            | Product ax ->
+                let f (p,s) = function | Function (Exp, a) -> (p,s+a) | a -> (p*a,s)
+                let p, s = List.fold f (one, zero) ax in p * exp s
+            | Sum ax ->
+                let f s = function | Product _ | Power _ as a -> s+(rules a) | a -> s+a
+                List.fold f zero ax
+            | a -> a
+        match (map contract x) with
+        | Product _ | Power _ as a -> rules a
+        | a -> a
+
+    let simplify x =
+        let x' = Rational.rationalize x
+        (Rational.numerator x' |> contract) / (Rational.denominator x' |> contract)
 
 
 [<RequireQualifiedAccess>]
@@ -34,6 +56,10 @@ module Trigonometric =
 
     open ExpressionPatterns
     open Elementary
+    open Functions
+
+    let private binomial n k = SpecialFunctions.Binomial(n, k) |> int |> number
+    let private oneIfEven (k:int) = if Euclid.IsEven(k) then 1 else -1
 
     let rec expand x =
         let rec rules = function
@@ -43,18 +69,77 @@ module Trigonometric =
             | Product ((Integer n)::ax) when n.IsPositive ->
                 let e = int n
                 let t = product ax
-                let sint = Functions.sin t
-                let cost = Functions.cos t
+                let sint = sin t
+                let cost = cos t
                 let esin =
-                    [for k in 1 .. 2 .. e -> (k, (if Euclid.IsEven((k-1)/2) then 1 else -1) * int(SpecialFunctions.Binomial(e, k)))]
+                    [for k in 1 .. 2 .. e -> (k, oneIfEven((k-1)/2) * binomial e k)]
                     |> List.map (fun (k,c) -> c*cost**number(e-k)*sint**k) |> sum
                 let ecos =
-                    [for k in 0 .. 2 .. e -> (k, (if Euclid.IsEven(k/2) then 1 else -1) * int(SpecialFunctions.Binomial(e, k)))]
+                    [for k in 0 .. 2 .. e -> (k, oneIfEven(k/2) * binomial e k)]
                     |> List.map (fun (k,c) -> c*cost**number(e-k)*sint**k) |> sum
                 (esin, ecos)
-            | x -> Functions.sin x, Functions.cos x
-        let x' = map expand x
-        match x' with
+            | x -> sin x, cos x
+        match (map expand x) with
         | Function (Sin, a) -> rules (algebraicExpand a) |> fst
         | Function (Cos, a) -> rules (algebraicExpand a) |> snd
+        | a -> a
+
+    let separateSinCos x =
+        let rec isSinCosPart = function
+            | PosIntPower (r, _) -> isSinCosPart r
+            | SinCos -> true
+            | _ -> false
+        match x with
+        | Product ax -> let s, r = List.partition isSinCosPart ax in (product r, product s)
+        | x when isSinCosPart x -> (one, x)
+        | x -> (x, one)
+
+    let rec contract x =
+        let powerRules r p =
+            match r, p with
+            | Function (Sin, x), (Number n as p) when n.IsInteger && n.IsPositive ->
+                let e = int n
+                if Euclid.IsEven(e) then
+                    let z = sum [for j in 0 .. (e/2-1) -> oneIfEven j * (binomial e j) * cos((e-2*j)*x)]
+                    oneIfEven e * (binomial e (e/2))/(2Q**e) + oneIfEven(e/2) * (2Q**(1-e)) * z
+                else
+                    let z = sum [for j in 0 .. (e/2) -> oneIfEven j * (binomial e j) * sin((e-2*j)*x)]
+                    oneIfEven((e-1)/2) * (2Q**(1-e)) * z
+            | Function (Cos, x), (Number n as p) when n.IsInteger && n.IsPositive ->
+                let e = int n
+                if Euclid.IsEven(e) then
+                    let z = sum [for j in 0 .. (e/2-1) -> (binomial e j) * cos((e-2*j)*x)]
+                    (binomial e (e/2))/(2Q**e) + (2Q**(1-e))*z
+                else
+                    let z = sum [for j in 0 .. (e/2) -> (binomial e j) * cos((e-2*j)*x)]
+                    (2Q**(1-e))*z
+            | _ -> r**p
+        let rec productRules = function
+            | [u; v] ->
+                match u, v with
+                | Power (r, p), b | b, Power (r, p) -> rules (b * powerRules r p)
+                | Function (Sin, a), Function (Sin, b) -> cos(a-b)/2 - cos(a+b)/2
+                | Function (Cos, a), Function (Cos, b) -> cos(a+b)/2 + cos(a-b)/2
+                | Function (Sin, a), Function (Cos, b) -> sin(a+b)/2 + sin(a-b)/2
+                | Function (Cos, a), Function (Sin, b) -> sin(a+b)/2 - sin(b-a)/2
+                | _ -> failwith "unexpected expression"
+            | x::xs -> rules (x * productRules xs)
+            | _ -> failwith "algorithm error 2"
+        and rules x =
+            match algebraicExpandMain x with
+            | SinCosPosIntPower (r, p) -> powerRules r p
+            | Product _ as a ->
+                let c, d = separateSinCos a
+                match d with
+                | v when v = one -> a
+                | SinCos -> a
+                | Power (r, p) -> c * powerRules r p |> algebraicExpandMain
+                | Product ax -> c * productRules ax |> algebraicExpandMain
+                | v -> c*d
+            | Sum ax ->
+                let f s = function | Product _ | Power _ as a -> s+(rules a) | a -> s+a
+                List.fold f zero ax
+            | a -> a
+        match (map contract x) with
+        | Product _ | Power _ as a -> rules a
         | a -> a

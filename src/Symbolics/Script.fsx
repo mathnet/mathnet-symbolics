@@ -190,6 +190,9 @@ module ``There are various algebaric operators available`` =
     algebraicExpand ((a+b)**4) // a^4 + 4*a^3*b + 6*a^2*b^2 + 4*a*b^3 + b^4
     algebraicExpand ((a+b+c)**2) // a^2 + 2*a*b + b^2 + 2*a*c + 2*b*c + c^2
 
+    algebraicExpandMain (x*(2+(1+x)**2)) // 2*x + x*(1 + x)^2
+    algebraicExpandMain ((x+(1+x)**2)**2) // x^2 + 2*x*(1 + x)^2 + (1 + x)^4
+
     algebraicExpand ((a*x**2 + b*x + c)/(d*x + e)) // c*(e + d*x)^(-1) + b*x*(e + d*x)^(-1) + a*x^2*(e + d*x)^(-1)
     let p = algebraicExpand ((a*x**2 + b*x + c)*(d*x**2 + e*x + f)) // c*f + c*e*x + b*f*x + c*d*x^2 + b*e*x^2 + a*f*x^2 + b*d*x^3 + a*e*x^3 + a*d*x^4
     Polynomial.coefficients x p // c*f; c*e + b*f; c*d + b*e + a*f; b*d + a*e; a*d
@@ -206,6 +209,13 @@ module ``There are various algebaric operators available`` =
     Exponential.expand (exp((x+y)*(x-y))) // exp(x^2)*exp(y^2)^(-1)
     Exponential.expand (ln((c*x)**a) + ln(y**b*z)) // a*ln(c) + a*ln(x) + b*ln(y) + ln(z)
 
+    Exponential.contract (exp(x)*exp(y)) // exp(x + y)
+    Exponential.contract (exp(x)**a) // exp(a*x)
+    Exponential.contract (exp(x)*(exp(x) + exp(y))) // exp(2*x) + exp(x + y)
+    Exponential.contract ((exp(exp(x)))**exp(y)) // exp(exp(x + y))
+
+    Exponential.simplify (1/(exp(x)*(exp(y)+exp(-x))) - (exp(x+y)-1)/((exp(x+y))**2-1)) // 0
+
     Trigonometric.expand (sin(2*x)) // 2*sin(x)*cos(x)
     Trigonometric.expand (sin(a+x)) // sin(x)*cos(a) + sin(a)*cos(x)
     Trigonometric.expand (sin(2*x + 3*y)) // ((-1)*sin(x)^2 + cos(x)^2)*((-1)*sin(y)^3 + 3*sin(y)*cos(y)^2) + 2*sin(x)*cos(x)*((-3)*sin(y)^2*cos(y) + cos(y)^3)
@@ -213,6 +223,11 @@ module ``There are various algebaric operators available`` =
     |> algebraicExpand // (-2)*sin(x)*sin(y)^2*cos(x) + (-2)*sin(x)^2*sin(y)*cos(y) + 2*sin(y)*cos(x)^2*cos(y) + 2*sin(x)*cos(x)*cos(y)^2
     Trigonometric.expand (cos(5*x)) // 5*sin(x)^4*cos(x) + (-10)*sin(x)^2*cos(x)^3 + cos(x)^5
     Trigonometric.expand ((sin(2*x)-2*sin(x)*cos(x))/((sin(x))**2 + (cos(x))**2 - 1)) // 0 - should actually be Undefined
+
+    Trigonometric.contract (sin(a)*sin(b)) // (-1/2)*cos(a + b) + (1/2)*cos(a + (-1)*b)
+    Trigonometric.contract ((sin(x) + cos(y))*cos(y)) // 1/2 + (1/2)*sin(x + y) + (1/2)*sin(x + (-1)*y) + (1/2)*cos(2*y)
+    Trigonometric.contract (sin(x)**2*cos(x)**2) // 1/8 + (-1/8)*cos(4*x)
+    Trigonometric.contract (cos(x)**4) // 3/8 + (1/8)*(4*cos(2*x) + cos(4*x))
 
 
 module ``Polynomial Division`` =
@@ -228,7 +243,7 @@ module ``Polynomial Division`` =
     let u = (x**3 - 12*x**2 - a) - v*x |> substitute x 1Q  // 10 + (-1)*a
 
 
-module ``Polynomoal Expansion`` =
+module ``Polynomial Expansion`` =
 
     // 1 + x + (2 + x)*y + (3 + x)*y^2
     let ex = Polynomial.polynomialExpansion x y (x**5 + 11*x**4 + 51*x**3 + 124*x**2 + 159*x + 86) (x**2 + 4*x + 5)

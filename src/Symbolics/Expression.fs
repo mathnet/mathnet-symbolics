@@ -223,3 +223,14 @@ module ExpressionPatterns =
         | Number _ | Identifier _ -> Some Leaf
         | PositiveInfinity | NegativeInfinity | ComplexInfinity -> Some Leaf
         | _ -> None
+
+    /// Recognizes a sin or cos expression
+    let (|SinCos|_|) = function
+        | Function (Sin, _) | Function (Cos, _) -> Some SinCos
+        | _ -> None
+
+    let (|SinCosPosIntPower|_|) = function
+        | Function (Sin, _) | Function (Cos, _) as r -> Some (r, Expression.One)
+        | Power (Function (Sin, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
+        | Power (Function (Cos, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
+        | _ -> None
