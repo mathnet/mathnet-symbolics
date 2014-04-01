@@ -500,3 +500,18 @@ module ``Primitive Equation Solver`` =
     solveLine x y (x/2+y/3) 1Q // 3 + (-3/2)*x   -->  x/2 + y/3 = 1  ->  y = -3/2*x + 3
     solveLine x y (x/a) ((x+y)/b) // ((-1) + a^(-1)*b)*x
     solveLine x y ((y/x-2)/(1-3/x)) 6Q // (-18) + 8*x
+
+
+module ``Taylor Series`` =
+
+    /// Taylor expansion of x(symbol) at symbol=a of the first k terms
+    let taylor1 (k:int) symbol x a =
+        let rec taylor n nf acc dxn =
+            if n = k then acc else
+            taylor (n+1) (nf*(n+1)) (acc + (dxn |> Structure.substitute symbol a)/nf*(symbol-a)**n) (Calculus.differentiate symbol dxn)
+        taylor 0 1 zero x
+
+    taylor1 3 x (1/(1-x)) 0Q // 1 + x + x^2
+    taylor1 3 x (1/x) 1Q // 1 + (-1)*((-1) + x) + ((-1) + x)^2
+    taylor1 3 x (ln(x)) 1Q // (-1) + x + (-1/2)*((-1) + x)^2
+    taylor1 4 x (sin(x)+cos(x)) 0Q // 1 + x + (-1/2)*x^2 + (-1/6)*x^3
