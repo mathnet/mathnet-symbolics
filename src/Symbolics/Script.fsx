@@ -180,12 +180,15 @@ module ``There are various algebaric operators available`` =
     Structure.map (fun x -> -x) (x + y**2) // (-1)*x + (-1)*y^2
     negate (x + y**2) // (-1)*(x + y^2)
 
+    Algebraic.separateFactors x (b*cos(x)*ln(d)*x) // (b*ln(d), x*cos(x))
+
     Calculus.differentiate x (a*x) // a
     Calculus.differentiate x (sin(x)) // cos(x)
     Calculus.differentiate x (x*sin(x)) // sin(x) + x*cos(x)
     Calculus.differentiate x (a*x**2) // 2*a*x
     Calculus.differentiate x (a*x**b) // a*b*x^((-1) + b)
     Calculus.differentiate x (a*x**2 + b*x + c) // b + 2*a*x
+
 
     Algebraic.expand ((x+1)*(x+3)) // 3 + 4*x + x^2
     Algebraic.expand ((a+b)**2) // a^2 + 2*a*b + b^2
@@ -234,8 +237,9 @@ module ``There are various algebaric operators available`` =
 
     Trigonometric.simplify ((cos(x)+sin(x))**4 + (cos(x)-sin(x))**4 + cos(4*x) - 3) // 0
 
-    // TODO: sin(y) + (-1/2)*sin(x + (-1)*y) + (-1/2)*sin((1/2)*x + (-1/2)*y + (-1)*((1/2)*x + (-1/2)*y)) + (-1/2)*sin((-1/2)*x + (1/2)*y + (-1)*((1/2)*x + (-1/2)*y)) + (-1)*sin((1/2)*x + (1/2)*y + (-1)*((1/2)*x + (-1/2)*y))
-    // Should be: 0
+    // TODO:
+    // expected: 0
+    // actual: sin(y) + (-1/2)*sin(x + (-1)*y) + (-1/2)*sin((1/2)*x + (-1/2)*y + (-1)*((1/2)*x + (-1/2)*y)) + (-1/2)*sin((-1/2)*x + (1/2)*y + (-1)*((1/2)*x + (-1/2)*y)) + (-1)*sin((1/2)*x + (1/2)*y + (-1)*((1/2)*x + (-1/2)*y))
     Trigonometric.simplify (sin(x) + sin(y) - 2*sin(x/2+y/2)*cos(x/2-y/2))
 
 
@@ -247,9 +251,15 @@ module ``Polynomial Division`` =
     Polynomial.remainder x (x**3 - 2*x**2 - 4) (x-3) // 5
 
     // tangent of polynomial at x = 1?
-    Polynomial.polynomialDivision x (x**3 - 12*x**2 - a) (x**2-2*x+1) // ((-10) + x, 10 + (-1)*a + (-21)*x)
-    let v = Calculus.differentiate x (x**3 - 12*x**2 - a) |> Structure.substitute x 1Q // v=-21
-    let u = (x**3 - 12*x**2 - a) - v*x |> Structure.substitute x 1Q  // 10 + (-1)*a
+    Polynomial.polynomialDivision x (x**3 - 12*x**2 - c) (x**2-2*x+1) // ((-10) + x, 10 + (-1)*c + (-21)*x)
+
+    /// Find tangent equation for x(symbol) at symbol=a
+    let tangent symbol x a =
+        let m = Calculus.differentiate symbol x |> Structure.substitute symbol a
+        m*(symbol - a) + Structure.substitute symbol a x |> Algebraic.expand
+
+    tangent x (x**3 - 12*x**2 - c) 1Q // 10 + (-1)*c + (-21)*x
+    tangent z (1/z) 3Q // 2/3 + (-1/9)*z
 
 
 module ``Polynomial Expansion`` =

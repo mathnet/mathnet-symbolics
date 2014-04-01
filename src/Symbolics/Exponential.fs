@@ -79,7 +79,8 @@ module Trigonometric =
         | Function (Cos, a) -> rules (Algebraic.expand a) |> snd
         | a -> a
 
-    let separateSinCos x =
+    /// Splits a product into a tuple (rest, sin or cos or a positive integer power of them)
+    let separateFactors x =
         let rec isSinCosPart = function
             | PosIntPower (r, _) -> isSinCosPart r
             | SinCos -> true
@@ -126,7 +127,7 @@ module Trigonometric =
             match Algebraic.expandMain x with
             | SinCosPosIntPower (r, p) -> powerRules r p
             | Product _ as a ->
-                let c, d = separateSinCos a
+                let c, d = separateFactors a
                 match d with
                 | v when v = one -> a
                 | SinCos -> a

@@ -148,6 +148,13 @@ module Algebraic =
     open ExpressionPatterns
     open Operators
 
+    /// Splits a product into a tuple (free of a symbol, dependent on symbol)
+    let separateFactors symbol x =
+        match x with
+        | Product ax -> let f, d = List.partition (Structure.freeOf symbol) ax in (product f, product d)
+        | a when Structure.freeOf symbol a -> (a,one)
+        | a -> (one, a)
+
     let rec private expandProduct x y =
         match x, y with
         | Sum ax, b | b, Sum ax -> sum <| List.map (expandProduct b) ax
