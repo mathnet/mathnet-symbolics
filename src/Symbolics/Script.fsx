@@ -140,7 +140,7 @@ module ``Expressions are always in simplified form`` =
     exp 0Q // 1
 
 
-module ``We can also parse F# quotations`` =
+module ``Parse F# quotations`` =
 
     Quotations.parse <@ 3 @> // 3
     Quotations.parse <@ x @> // x
@@ -182,14 +182,6 @@ module ``There are various algebaric operators available`` =
 
     Algebraic.separateFactors x (b*cos(x)*ln(d)*x) // (b*ln(d), x*cos(x))
     Algebraic.separateFactors x (c*x*sin(x)/2) // ((1/2)*c, x*sin(x))
-
-    Calculus.differentiate x (a*x) // a
-    Calculus.differentiate x (sin(x)) // cos(x)
-    Calculus.differentiate x (x*sin(x)) // sin(x) + x*cos(x)
-    Calculus.differentiate x (a*x**2) // 2*a*x
-    Calculus.differentiate x (a*x**b) // a*b*x^((-1) + b)
-    Calculus.differentiate x (a*x**2 + b*x + c) // b + 2*a*x
-
 
     Algebraic.expand ((x+1)*(x+3)) // 3 + 4*x + x^2
     Algebraic.expand ((a+b)**2) // a^2 + 2*a*b + b^2
@@ -244,6 +236,30 @@ module ``There are various algebaric operators available`` =
     Trigonometric.simplify (sin(x) + sin(y) - 2*sin(x/2+y/2)*cos(x/2-y/2))
 
 
+module ``Differentiation and Taylor Series`` =
+
+    Calculus.differentiate x (a*x) // a
+    Calculus.differentiate x (sin(x)) // cos(x)
+    Calculus.differentiate x (x*sin(x)) // sin(x) + x*cos(x)
+    Calculus.differentiate x (a*x**2) // 2*a*x
+    Calculus.differentiate x (a*x**b) // a*b*x^((-1) + b)
+    Calculus.differentiate x (a*x**2 + b*x + c) // b + 2*a*x
+
+    /// Taylor expansion of x(symbol) at symbol=a of the first k terms
+    let taylor1 (k:int) symbol x a =
+        let rec taylor n nf acc dxn =
+            if n = k then acc else
+            taylor (n+1) (nf*(n+1)) (acc + (dxn |> Structure.substitute symbol a)/nf*(symbol-a)**n) (Calculus.differentiate symbol dxn)
+        taylor 0 1 zero x |> Algebraic.expand
+
+    taylor1 3 x (1/(1-x)) 0Q // 1 + x + x^2
+    taylor1 3 x (1/x) 1Q // 3 + (-3)*x + x^2
+    taylor1 3 x (ln(x)) 1Q // -3/2 + 2*x + (-1/2)*x^2
+    taylor1 4 x (ln(x)) 1Q // -11/6 + 3*x + (-3/2)*x^2 + (1/3)*x^3
+    taylor1 3 x (sin(x)+cos(x)) 0Q // 1 + x + (-1/2)*x^2
+    taylor1 4 x (sin(x)+cos(x)) 0Q // 1 + x + (-1/2)*x^2 + (-1/6)*x^3
+
+
 module ``Polynomial Division`` =
 
     Polynomial.polynomialDivision x (5*x**2 + 4*x + 1) (2*x + 3) // (-7/4 + (5/2)*x, 25/4)
@@ -296,6 +312,41 @@ module ``Evaluate some expression to floating point numbers`` =
     evaluate symbols (sin(a) + ln(b)) // Real 2.007909715
     evaluate symbols (a*x**2 + b*x + c |> Structure.substitute x (number 1/2)) // Complex (3, -1)
     evaluate symbols (1Q/0Q) // ComplexInf
+
+
+module ``Primitive Equation Solver`` =
+
+    let solve x expr =
+
+        let expr' = Rational.rationalSimplify x expr |> Algebraic.expand
+
+        if Polynomial.isPolynomial x expr' then
+            match Polynomial.coefficients x expr' with
+            | [||] -> Undefined
+            | [| a |] -> x
+            | [| a; b |] -> -a/b
+            | _ -> failwith "higher polynomials not supported"
+
+        else failwith "only general polynomial expressions supported for now"
+
+    // 2+3*x = 0 --> x =
+    solve x (2+3*x) // -2/3
+
+    // sin(a)+x*cos(b)+c = 0 --> x =
+    solve x (sin(a)+x*cos(b)+c) // (-1)*(c + sin(a))*cos(b)^(-1)
+
+    // (x^2-1)/(x+1) = 0 --> x =
+    solve x ((x**2-1)/(x+1)) // 1
+
+    /// Solve simple a=b line equations to y=f(x) form
+    let solveLine x y a b =
+        let z = solve y (a-b) |> Algebraic.expand |> Rational.rationalSimplify x
+        let z' = z |> Algebraic.expand |> Polynomial.collectTerms x
+        if z' <> Undefined then z' else z
+
+    solveLine x y (x/2+y/3) 1Q // 3 + (-3/2)*x   -->  x/2 + y/3 = 1  ->  y = -3/2*x + 3
+    solveLine x y (x/a) ((x+y)/b) // ((-1) + a^(-1)*b)*x
+    solveLine x y ((y/x-2)/(1-3/x)) 6Q // (-18) + 8*x
 
 
 module ``General Polynomial Expressions`` =
@@ -465,53 +516,3 @@ module ``Exponentional and Trigonometric Functions`` =
     sin x // sin(x)
     cot x // tan(x)^(-1)
     sec x // cos(x)^(-1)
-
-
-module ``Primitive Equation Solver`` =
-
-    let solve x expr =
-
-        let expr' = Rational.rationalSimplify x expr |> Algebraic.expand
-
-        if Polynomial.isPolynomial x expr' then
-            match Polynomial.coefficients x expr' with
-            | [||] -> Undefined
-            | [| a |] -> x
-            | [| a; b |] -> -a/b
-            | _ -> failwith "higher polynomials not supported"
-
-        else failwith "only general polynomial expressions supported for now"
-
-    // 2+3*x = 0 --> x =
-    solve x (2+3*x) // -2/3
-
-    // sin(a)+x*cos(b)+c = 0 --> x =
-    solve x (sin(a)+x*cos(b)+c) // (-1)*(c + sin(a))*cos(b)^(-1)
-
-    // (x^2-1)/(x+1) = 0 --> x =
-    solve x ((x**2-1)/(x+1)) // 1
-
-    /// Solve simple a=b line equations to y=f(x) form
-    let solveLine x y a b =
-        let z = solve y (a-b) |> Algebraic.expand |> Rational.rationalSimplify x
-        let z' = z |> Algebraic.expand |> Polynomial.collectTerms x
-        if z' <> Undefined then z' else z
-
-    solveLine x y (x/2+y/3) 1Q // 3 + (-3/2)*x   -->  x/2 + y/3 = 1  ->  y = -3/2*x + 3
-    solveLine x y (x/a) ((x+y)/b) // ((-1) + a^(-1)*b)*x
-    solveLine x y ((y/x-2)/(1-3/x)) 6Q // (-18) + 8*x
-
-
-module ``Taylor Series`` =
-
-    /// Taylor expansion of x(symbol) at symbol=a of the first k terms
-    let taylor1 (k:int) symbol x a =
-        let rec taylor n nf acc dxn =
-            if n = k then acc else
-            taylor (n+1) (nf*(n+1)) (acc + (dxn |> Structure.substitute symbol a)/nf*(symbol-a)**n) (Calculus.differentiate symbol dxn)
-        taylor 0 1 zero x
-
-    taylor1 3 x (1/(1-x)) 0Q // 1 + x + x^2
-    taylor1 3 x (1/x) 1Q // 1 + (-1)*((-1) + x) + ((-1) + x)^2
-    taylor1 3 x (ln(x)) 1Q // (-1) + x + (-1/2)*((-1) + x)^2
-    taylor1 4 x (sin(x)+cos(x)) 0Q // 1 + x + (-1/2)*x^2 + (-1/6)*x^3
