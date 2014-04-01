@@ -181,6 +181,7 @@ module ``There are various algebaric operators available`` =
     negate (x + y**2) // (-1)*(x + y^2)
 
     Algebraic.separateFactors x (b*cos(x)*ln(d)*x) // (b*ln(d), x*cos(x))
+    Algebraic.separateFactors x (c*x*sin(x)/2) // ((1/2)*c, x*sin(x))
 
     Calculus.differentiate x (a*x) // a
     Calculus.differentiate x (sin(x)) // cos(x)
@@ -470,7 +471,7 @@ module ``Primitive Equation Solver`` =
 
     let solve x expr =
 
-        let expr' = Rational.rationalSimplify x expr
+        let expr' = Rational.rationalSimplify x expr |> Algebraic.expand
 
         if Polynomial.isPolynomial x expr' then
             match Polynomial.coefficients x expr' with
@@ -481,11 +482,21 @@ module ``Primitive Equation Solver`` =
 
         else failwith "only general polynomial expressions supported for now"
 
-    // 2+3*x = 0  -->  x = -2/3
-    solve x (2+3*x)
+    // 2+3*x = 0 --> x =
+    solve x (2+3*x) // -2/3
 
-    // sin(a)+x*cos(b)+c = 0  -->  x = (-1)*(c + sin(a))*cos(b)^(-1)
-    solve x (sin(a)+x*cos(b)+c)
+    // sin(a)+x*cos(b)+c = 0 --> x =
+    solve x (sin(a)+x*cos(b)+c) // (-1)*(c + sin(a))*cos(b)^(-1)
 
-    // (x^2-1)/(x+1) = 0  -->  x = 1
-    solve x ((x**2-1)/(x+1))
+    // (x^2-1)/(x+1) = 0 --> x =
+    solve x ((x**2-1)/(x+1)) // 1
+
+    /// Solve simple a=b line equations to y=f(x) form
+    let solveLine x y a b =
+        let z = solve y (a-b) |> Algebraic.expand |> Rational.rationalSimplify x
+        let z' = z |> Algebraic.expand |> Polynomial.collectTerms x
+        if z' <> Undefined then z' else z
+
+    solveLine x y (x/2+y/3) 1Q // 3 + (-3/2)*x   -->  x/2 + y/3 = 1  ->  y = -3/2*x + 3
+    solveLine x y (x/a) ((x+y)/b) // ((-1) + a^(-1)*b)*x
+    solveLine x y ((y/x-2)/(1-3/x)) 6Q // (-18) + 8*x
