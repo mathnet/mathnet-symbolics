@@ -24,6 +24,7 @@ type Expression =
     static member Two = Number (BigRational.FromInt 2)
     static member MinusOne = Number (BigRational.FromInt -1)
     static member OfInt32 (x:int) = Number (BigRational.FromInt x)
+    static member OfInt64 (x:int64) = Number (BigRational.FromBigInt (BigInteger(x)))
     static member OfInteger (x:BigInteger) = Number (BigRational.FromBigInt x)
     static member OfRational (x:BigRational) = Number x
 
@@ -157,7 +158,7 @@ type Expression =
             | Product ((Number a)::ax) -> numMul (a*n) (Product ax)
             | Product ax -> if n.IsOne then x else Product (Number n::ax)
             | x -> if n.IsOne then x else Product [Number n; x]
-            
+
         match x, y with
         | a, b | b, a when a = Expression.One -> b
         | a, _ | _, a when a = Expression.Zero -> Expression.Zero
@@ -199,6 +200,49 @@ type Expression =
         | Product ax -> Product (ax |> List.map (Expression.Invert))
         | Power (r, p) -> Expression.Pow(r, -p)
         | x -> Power (x, Expression.MinusOne)
+
+    static member Abs (x) =
+        match x with
+        | Number n when n.IsNegative -> Number -n
+        | Number n -> x
+        | Product ((Number n)::ax) when n.IsNegative -> Function (Abs, (Number -n) * Product ax)
+        | x -> Function (Abs, x)
+
+    static member Exp (x) = if x = Expression.Zero then Expression.One else Function (Exp, x)
+    static member Ln (x) = if x = Expression.One then Expression.Zero else Function (Ln, x)
+
+    static member Sin (x) =
+        match x with
+        | Number n when n.IsZero -> Expression.Zero
+        | Number n when n.IsNegative -> -Function (Sin, Number -n)
+        | Product ((Number n)::ax) when n.IsNegative -> -Function (Sin, (Number -n) * Product ax)
+        | x -> Function (Sin, x)
+
+    static member Cos (x) =
+        match x with
+        | Number n when n.IsZero -> Expression.One
+        | Number n when n.IsNegative -> Function (Cos, Number -n)
+        | Product ((Number n)::ax) when n.IsNegative -> Function (Cos, (Number -n) * Product ax)
+        | x -> Function (Cos, x)
+
+    static member Tan (x) =
+        match x with
+        | Number n when n.IsZero -> Expression.Zero
+        | Number n when n.IsNegative -> -Function (Tan, Number -n)
+        | Product ((Number n)::ax) when n.IsNegative -> -Function (Tan, (Number -n) * Product ax)
+        | x -> Function (Tan, x)
+
+    static member Apply (f, x) =
+        match f with
+        | Abs -> Expression.Abs x
+        | Exp -> Expression.Exp x
+        | Ln -> Expression.Ln x
+        | Sin -> Expression.Sin x
+        | Cos -> Expression.Cos x
+        | Tan -> Expression.Tan x
+
+    static member ApplyN (f, xs) = FunctionN (f, xs)
+
 
     // Simpler usage
     static member ( + ) (x, (y:int)) = x + Number (BigRational.FromInt y)

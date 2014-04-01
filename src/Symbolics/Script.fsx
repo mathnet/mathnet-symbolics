@@ -134,6 +134,13 @@ module ``Expressions are always in simplified form`` =
     (a/b/(c*a))*(c*d/a)/d // a^(-1)*b^(-1)
     a**(3Q/2)*a**(1Q/2) // a^2
 
+    x + ln x // x + ln(x)
+    x + ln (x+1) // x + ln(1 + x)
+    2*abs x // 2*|x|
+    x + abs (-x) // x + |x|
+    abs (-3Q) // 3
+    exp 0Q // 1
+
 
 module ``We can also parse F# quotations`` =
 
@@ -167,10 +174,6 @@ module ``Algebraic Expansion`` =
     (x*(y+1)**(3Q/2)+1)*(x*(y+1)**(3Q/2)-1) |> algebraicExpand |> algebraicExpand // (-1) + x^2 + 3*x^2*y + 3*x^2*y^2 + x^2*y^3
     sin(a*(x+y)) |> algebraicExpand // sin(a*(x + y)) - does not expand
     a/(b*(x+y)) |> algebraicExpand // a*b^(-1)*(x + y)^(-1) - does not expand
-
-    x + ln x // x + ln(x)
-    x + ln (x+1) // x + ln(1 + x)
-    2*abs x // 2*|x|
 
 
 module ``There are various algebaric operators available`` =
@@ -232,8 +235,8 @@ module ``There are various algebaric operators available`` =
     Trigonometric.contract (cos(x)**4) // 3/8 + (1/2)*cos(2*x) + (1/8)*cos(4*x)
 
     Trigonometric.simplify ((cos(x)+sin(x))**4 + (cos(x)-sin(x))**4 + cos(4*x) - 3) // 0
-    
-    // TODO: (-1/2)*sin(0) + sin(y) + (-1/2)*sin(x + (-1)*y) + (-1/2)*sin((1/2)*x + (-1/2)*y + (-1)*((1/2)*x + (-1/2)*y)) + (-1/2)*sin((-1/2)*x + (1/2)*y + (-1)*((1/2)*x + (-1/2)*y)) + (-1)*sin((1/2)*x + (1/2)*y + (-1)*((1/2)*x + (-1/2)*y))
+
+    // TODO: sin(y) + (-1/2)*sin(x + (-1)*y) + (-1/2)*sin((1/2)*x + (-1/2)*y + (-1)*((1/2)*x + (-1/2)*y)) + (-1/2)*sin((-1/2)*x + (1/2)*y + (-1)*((1/2)*x + (-1/2)*y)) + (-1)*sin((1/2)*x + (1/2)*y + (-1)*((1/2)*x + (-1/2)*y))
     // Should be: 0
     Trigonometric.simplify (sin(x) + sin(y) - 2*sin(x/2+y/2)*cos(x/2-y/2))
 

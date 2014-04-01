@@ -19,7 +19,7 @@ module Linq =
         | ExpressionType.Subtract, (:? BinaryExpression as e) -> (parse e.Left) - (parse e.Right)
         | ExpressionType.Multiply, (:? BinaryExpression as e) -> (parse e.Left) * (parse e.Right)
         | ExpressionType.Divide, (:? BinaryExpression as e) -> (parse e.Left) / (parse e.Right)
-        | ExpressionType.Constant, (:? ConstantExpression as e) -> Number (BigRational.FromBigInt (BigInteger (Convert.ToInt64(e.Value))))
+        | ExpressionType.Constant, (:? ConstantExpression as e) -> Expression.OfInt64 (Convert.ToInt64(e.Value))
         | ExpressionType.Parameter, (:? ParameterExpression as e) -> Identifier (Symbol e.Name)
         | ExpressionType.MemberAccess, (:? MemberExpression as e) -> Identifier (Symbol e.Member.Name)
         | ExpressionType.Lambda, (:? LambdaExpression as e) -> parse e.Body

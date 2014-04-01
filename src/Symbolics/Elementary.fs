@@ -10,7 +10,7 @@ open MathNet.Symbolics
 module Core =
 
     let symbol name = Identifier (Symbol name)
-    let number (x:int) = Number (BigRational.FromInt x)
+    let number (x:int) = Expression.OfInt32 x
     let zero = Expression.Zero
     let one = Expression.One
     let two = Expression.Two
@@ -29,30 +29,30 @@ module Core =
     let productSeq (xs:Expression seq) = Seq.fold (*) one xs
     let pow (x:Expression) (y:Expression) = x ** y
 
-    let apply (f:Function) (x:Expression) = Function (f, x)
-    let applyN (f:Function) (xs:Expression list) = FunctionN (f, xs)
+    let apply (f:Function) (x:Expression) = Expression.Apply (f, x)
+    let applyN (f:Function) (xs:Expression list) = Expression.ApplyN (f, xs)
 
 
 [<RequireQualifiedAccess>]
 module NumericLiteralQ =
     let FromZero () = zero
     let FromOne () = one
-    let FromInt32 (x:int) = Number (BigRational.FromInt x)
+    let FromInt32 (x:int) = Expression.OfInt32 x
     let FromInt64 (x:int64) = Number (BigRational.FromBigInt (BigInteger(x)))
     let FromString str = Number (BigRational.Parse str)
 
 
 module Functions =
 
-    let abs x = apply Abs x
-    let ln x = if x=one then zero else apply Ln x
-    let exp x = if x=zero then one else apply Exp x
-    let sin x = apply Sin x
-    let cos x = apply Cos x
-    let tan x = apply Tan x
-    let cot x = apply Tan x |> invert
-    let sec x = apply Cos x |> invert
-    let csc x = apply Sin x |> invert
+    let abs x = Expression.Abs x
+    let exp x = Expression.Exp x
+    let ln x = Expression.Ln x
+    let sin x = Expression.Sin x
+    let cos x = Expression.Cos x
+    let tan x = Expression.Tan x
+    let cot x = tan x |> invert
+    let sec x = cos x |> invert
+    let csc x = sin x |> invert
 
 
 module Numbers =
