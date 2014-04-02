@@ -318,7 +318,7 @@ module ``Primitive Equation Solver`` =
 
     let solve x expr =
 
-        let expr' = Rational.rationalSimplify x expr |> Algebraic.expand
+        let expr' = Rational.simplify x expr |> Algebraic.expand
 
         if Polynomial.isPolynomial x expr' then
             match Polynomial.coefficients x expr' with
@@ -340,7 +340,7 @@ module ``Primitive Equation Solver`` =
 
     /// Solve simple a=b line equations to y=f(x) form
     let solveLine x y a b =
-        let z = solve y (a-b) |> Algebraic.expand |> Rational.rationalSimplify x
+        let z = solve y (a-b) |> Algebraic.expand |> Rational.simplify x
         let z' = z |> Algebraic.expand |> Polynomial.collectTerms x
         if z' <> Undefined then z' else z
 
@@ -442,22 +442,22 @@ module ``General Rational Expressions`` =
     rationalize ((1+1/x)**2) // x^(-2)*(1 + x)^2
 
     rationalize (a/b + c/d + e/f) // b^(-1)*d^(-1)*f^(-1)*(b*d*e + (b*c + a*d)*f)
-    rationalExpand (a/b + c/d + e/f) // b^(-1)*d^(-1)*f^(-1)*(b*d*e + b*c*f + a*d*f)
+    expand (a/b + c/d + e/f) // b^(-1)*d^(-1)*f^(-1)*(b*d*e + b*c*f + a*d*f)
 
     // (1 + x)^(-1)*((-1) + ((1 + (x + y)^2)^(-1))^(1/2))*(1 + ((1 + (x + y)^2)^(-1))^(1/2))
     rationalize (((1/((x+y)**2+1))**(1Q/2)+1)*((1/((x+y)**2+1))**(1Q/2)-1)/(x+1))
     // ((-1)*x^2 + (-2)*x*y + (-1)*y^2)*(1 + x + x^2 + x^3 + 2*x*y + 2*x^2*y + y^2 + x*y^2)^(-1)
-    rationalExpand (((1/((x+y)**2+1))**(1Q/2)+1)*((1/((x+y)**2+1))**(1Q/2)-1)/(x+1))
+    expand (((1/((x+y)**2+1))**(1Q/2)+1)*((1/((x+y)**2+1))**(1Q/2)-1)/(x+1))
 
     rationalize (1/(1/a + c/(a*b)) + (a*b*c + a*c**2)/(b+c)**2-a) |> Algebraic.expand // 0
-    rationalExpand (1/(1/a + c/(a*b)) + (a*b*c + a*c**2)/(b+c)**2-a) // 0
+    expand (1/(1/a + c/(a*b)) + (a*b*c + a*c**2)/(b+c)**2-a) // 0
 
     rationalize (x/z + y/z**2) // z^(-3)*(y*z + x*z^2)
-    rationalSimplify z (x/z + y/z**2) // z^(-2)*(y + x*z)
+    simplify z (x/z + y/z**2) // z^(-2)*(y + x*z)
 
-    rationalSimplify x ((x**2-1)/(x+1)) // (-1) + x
-    rationalSimplify x ((x+1)/(x**2 - 1 - (x+1)*(x-1))) // ComplexInfinity
-    rationalSimplify x (1/(1+1/(x+1)) + 2/(x+2))  // (2 + x)^(-1)*(3 + x)
+    simplify x ((x**2-1)/(x+1)) // (-1) + x
+    simplify x ((x+1)/(x**2 - 1 - (x+1)*(x-1))) // ComplexInfinity
+    simplify x (1/(1+1/(x+1)) + 2/(x+2))  // (2 + x)^(-1)*(3 + x)
 
 
 module ``Single Variable Polynomials`` =

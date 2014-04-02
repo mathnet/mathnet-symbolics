@@ -47,14 +47,14 @@ module Rational =
         | Sum ax -> List.map rationalize ax |> List.reduce (rationalizeSum one)
         | x -> x
 
-    let rec rationalExpand x =
+    let rec expand x =
         let n = numerator x |> Algebraic.expand
         let d = denominator x |> Algebraic.expand
         let z = rationalize (n/d)
-        if x = z then z else rationalExpand z
+        if x = z then z else expand z
 
-    let rationalSimplify symbol x =
-        let z = rationalExpand x
+    let simplify symbol x =
+        let z = expand x
         let n = numerator z
         let d = denominator z
         let g = Polynomial.gcd symbol n d
