@@ -267,6 +267,11 @@ module ``Polynomial Division`` =
     Polynomial.quot x (x**3 - 2*x**2 - 4) (x-3) // 3 + x + x^2
     Polynomial.remainder x (x**3 - 2*x**2 - 4) (x-3) // 5
 
+    Polynomial.divide x (3*x**3 + x**2 + x + 5) (5*x**2 - 3*x + 1) // (14/25 + (3/5)*x, 111/25 + (52/25)*x)
+    Polynomial.divide x (3*x**3 + x**2 + x + 5) (2Q) // (5/2 + (1/2)*x + (1/2)*x^2 + (3/2)*x^3, 0)
+    Polynomial.pseudoDivide x (3*x**3 + x**2 + x + 5) (5*x**2 - 3*x + 1) // (14 + 15*x, 111 + 52*x, 25)
+    Polynomial.pseudoDivide x (3*x**3 + x**2 + x + 5) (2Q) // (5 + x + x^2 + 3*x^3, 0, 2)
+
     // tangent of polynomial at x = 1?
     Polynomial.divide x (x**3 - 12*x**2 - c) (x**2-2*x+1) // ((-10) + x, 10 + (-1)*c + (-21)*x)
 

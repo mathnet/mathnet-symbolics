@@ -152,22 +152,41 @@ module Polynomial =
         | Sum ax -> List.map (collectTermsMonomialMV symbols) ax |> Seq.groupBy snd |> Seq.map (fun (v, cs) -> (Seq.map fst cs |> sumSeq) * v) |> sumSeq
         | x -> let c, v = collectTermsMonomialMV symbols x in if c <> Undefined then c*v else Undefined
 
+    /// Euclidean division of polynomials.
+    /// Returns a tuple with the quotient q and remainder such that u = q*v + r
     let divide symbol u v =
-        let n = degree symbol v
-        if Numbers.compare n one < 0 then (u/v |> Algebraic.expand, zero) else
+        let dv = degree symbol v
+        if Numbers.compare dv one < 0 then (u/v |> Algebraic.expand, zero) else
         let lcv = leadingCoefficient symbol v
-        let w = v - lcv*symbol**n
+        let w = v - lcv*symbol**dv
         let rec pd q r =
-            let m = degree symbol r
-            if Numbers.compare m n < 0 then q, r else
+            let dr = degree symbol r
+            if Numbers.compare dr dv < 0 then q, r else
             let lcr = leadingCoefficient symbol r
-            let s = lcr / lcv
-            let z = symbol**(m-n)
-            pd (q + s*z) ((r - lcr*symbol**m) - w*s*z |> Algebraic.expand)
+            let z = (lcr / lcv) * symbol**(dr-dv)
+            pd (q + z) ((r - lcr*symbol**dr) - w*z |> Algebraic.expand)
         pd zero u
-
     let quot symbol u v = divide symbol u v |> fst
     let remainder symbol u v = divide symbol u v |> snd
+
+    /// Pseudo-division of polynomials (does not require coefficient divisibility and thus also supports integral domains).
+    /// Returns a tuple with the pseudo-quotient q, pseudo-remainder r and factor b such that b*u = q*v+r.
+    let pseudoDivide symbol u v  =
+        let dv = degree symbol v
+        if Numbers.compare dv one < 0 then (u, zero, v) else
+        let lcv = leadingCoefficient symbol v
+        let rec pd n q r =
+            let dr = degree symbol r
+            if Numbers.compare dr dv < 0 then
+                let s=lcv**n
+                Algebraic.expand (s*q), Algebraic.expand (s*r), lcv**((degree symbol u)-dv+1)
+            else
+                let lcr = leadingCoefficient symbol r
+                let z = lcr * symbol**(dr-dv)
+                pd (n-one) (lcv*q + z) (lcv*r - z*v |> Algebraic.expand)
+        pd ((degree symbol u) - dv + one) zero u
+    let pseudoQuot symbol u v = let q,_,_ = pseudoDivide symbol u v in q
+    let pseudoRemainder symbol u v = let _,r,_ = pseudoDivide symbol u v in r
 
     let polynomialExpansion symbol t u v =
         let rec pe x =
