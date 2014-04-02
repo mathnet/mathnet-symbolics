@@ -262,13 +262,13 @@ module ``Differentiation and Taylor Series`` =
 
 module ``Polynomial Division`` =
 
-    Polynomial.polynomialDivision x (5*x**2 + 4*x + 1) (2*x + 3) // (-7/4 + (5/2)*x, 25/4)
-    Polynomial.polynomialDivision x (x**3 - 2*x**2 - 4) (x-3) // (3 + x + x^2, 5)
+    Polynomial.divide x (5*x**2 + 4*x + 1) (2*x + 3) // (-7/4 + (5/2)*x, 25/4)
+    Polynomial.divide x (x**3 - 2*x**2 - 4) (x-3) // (3 + x + x^2, 5)
     Polynomial.quot x (x**3 - 2*x**2 - 4) (x-3) // 3 + x + x^2
     Polynomial.remainder x (x**3 - 2*x**2 - 4) (x-3) // 5
 
     // tangent of polynomial at x = 1?
-    Polynomial.polynomialDivision x (x**3 - 12*x**2 - c) (x**2-2*x+1) // ((-10) + x, 10 + (-1)*c + (-21)*x)
+    Polynomial.divide x (x**3 - 12*x**2 - c) (x**2-2*x+1) // ((-10) + x, 10 + (-1)*c + (-21)*x)
 
     /// Find tangent equation for x(symbol) at symbol=a
     let tangent symbol x a =

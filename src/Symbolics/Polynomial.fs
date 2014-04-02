@@ -152,7 +152,7 @@ module Polynomial =
         | Sum ax -> List.map (collectTermsMonomialMV symbols) ax |> Seq.groupBy snd |> Seq.map (fun (v, cs) -> (Seq.map fst cs |> sumSeq) * v) |> sumSeq
         | x -> let c, v = collectTermsMonomialMV symbols x in if c <> Undefined then c*v else Undefined
 
-    let polynomialDivision symbol u v =
+    let divide symbol u v =
         let n = degree symbol v
         if Numbers.compare n one < 0 then (u/v |> Algebraic.expand, zero) else
         let lcv = leadingCoefficient symbol v
@@ -166,13 +166,13 @@ module Polynomial =
             pd (q + s*z) ((r - lcr*symbol**m) - w*s*z |> Algebraic.expand)
         pd zero u
 
-    let quot symbol u v = polynomialDivision symbol u v |> fst
-    let remainder symbol u v = polynomialDivision symbol u v |> snd
+    let quot symbol u v = divide symbol u v |> fst
+    let remainder symbol u v = divide symbol u v |> snd
 
     let polynomialExpansion symbol t u v =
         let rec pe x =
             if x = zero then zero else
-            let q, r = polynomialDivision symbol x v
+            let q, r = divide symbol x v
             t * (pe q) + r |> Algebraic.expand
         pe u |> collectTerms t
 
@@ -189,7 +189,7 @@ module Polynomial =
          if u = zero && v = zero then (zero, zero, zero) else
          let rec inner x y a' a'' b' b'' =
             if y = zero then (x, a'', b'') else
-            let q, r = polynomialDivision symbol x y
+            let q, r = divide symbol x y
             inner y r (a'' - q*a') a' (b'' - q*b') b'
          let z, a, b = inner u v zero one one zero
          let c = leadingCoefficient symbol z
