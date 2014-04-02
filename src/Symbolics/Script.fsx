@@ -23,8 +23,8 @@ let f = symbol "f"
 module ``Create number literal expressions with the Q suffix or the number function`` =
 
     // equivalent:
-    number 3
-    3Q
+    number 3 // 3
+    6Q/4 // 3/2
 
     // expressions are not comparable (NoComparison) to prevent errors,
     // but if the expressions are numbers we can use compareNumber:
@@ -43,7 +43,7 @@ module ``Create number literal expressions with the Q suffix or the number funct
     // The literal suffix is only needed if a number appears isolated,
     // otherwise F#'s excellent type inference does its work:
     3Q/2 // 3/2
-    (3Q + 2)*4 // 20
+    (3Q + 2)*4/6 // 10/3
     (3*a+4)**2 // (4 + 3*a)^2
 
 
