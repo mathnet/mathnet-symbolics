@@ -195,7 +195,6 @@ module Polynomial =
             t * (pe q) + r |> Algebraic.expand
         pe u |> collectTerms t
 
-    /// Naive polynomial GCD (to be replaced)
     let gcd symbol u v =
         if u = zero && v = zero then zero else
         let rec inner x y =
@@ -203,16 +202,22 @@ module Polynomial =
             else inner y (remainder symbol x y)
         let z = inner u v in z / (leadingCoefficient symbol z) |> Algebraic.expand
 
-    /// Naive polynomial EGCD (to be replaced)
-    let extendedGcd symbol u v =
-         if u = zero && v = zero then (zero, zero, zero) else
-         let rec inner x y a' a'' b' b'' =
-            if y = zero then (x, a'', b'') else
+    /// Returns a tuple with the gcd and a such that a*u = gcd (mod v)
+    let halfExtendedGcd symbol u v =
+         if u = zero && v = zero then (zero, zero) else
+         let rec inner x y a' a'' =
+            if y = zero then (x, a'') else
             let q, r = divide symbol x y
-            inner y r (a'' - q*a') a' (b'' - q*b') b'
-         let z, a, b = inner u v zero one one zero
+            inner y r (a'' - q*a') a'
+         let z, a = inner u v zero one
          let c = leadingCoefficient symbol z
-         Algebraic.expand (z/c), Algebraic.expand (a/c), Algebraic.expand (b/c)
+         Algebraic.expand (z/c), Algebraic.expand (a/c)
+
+    /// Returns a tuple with gcd, a and b such that a*u + b*v = gcd(u,v)
+    let extendedGcd symbol u v =
+        let z, a = halfExtendedGcd symbol u v
+        let q, r = divide symbol (z-a*u |> Algebraic.expand) v
+        z, a, q
 
 
 /// Single-Variable Polynomial (2*x+3*x^2)

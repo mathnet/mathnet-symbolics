@@ -306,6 +306,10 @@ module ``Polynomial GCD`` =
     // 4 + (-4)*x + (-1)*x^2 + x^3
     (-x)*(x**7 - 4*x**5 - x**2 + 4) + (1+x**3)*(x**5 - 4*x**3 - x**2 + 4) |> Algebraic.expand
 
+    Polynomial.gcd x (x**4 - 2*x**3 - 6*x**2 + 12*x + 15) (x**3 + x**2 - 4*x - 4) // 1 + x
+    Polynomial.halfExtendedGcd x (x**4 - 2*x**3 - 6*x**2 + 12*x + 15) (x**3 + x**2 - 4*x - 4) // (1 + x, 3/5 + (-1/5)*x)
+    Polynomial.extendedGcd x (x**4 - 2*x**3 - 6*x**2 + 12*x + 15) (x**3 + x**2 - 4*x - 4) // (1 + x, 3/5 + (-1/5)*x, 2 + (-6/5)*x + (1/5)*x^2)
+
 
 module ``Evaluate some expression to floating point numbers`` =
 
