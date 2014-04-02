@@ -306,9 +306,23 @@ module ``Polynomial GCD`` =
     // 4 + (-4)*x + (-1)*x^2 + x^3
     (-x)*(x**7 - 4*x**5 - x**2 + 4) + (1+x**3)*(x**5 - 4*x**3 - x**2 + 4) |> Algebraic.expand
 
-    Polynomial.gcd x (x**4 - 2*x**3 - 6*x**2 + 12*x + 15) (x**3 + x**2 - 4*x - 4) // 1 + x
-    Polynomial.halfExtendedGcd x (x**4 - 2*x**3 - 6*x**2 + 12*x + 15) (x**3 + x**2 - 4*x - 4) // (1 + x, 3/5 + (-1/5)*x)
-    Polynomial.extendedGcd x (x**4 - 2*x**3 - 6*x**2 + 12*x + 15) (x**3 + x**2 - 4*x - 4) // (1 + x, 3/5 + (-1/5)*x, 2 + (-6/5)*x + (1/5)*x^2)
+
+    let u = x**4 - 2*x**3 - 6*x**2 + 12*x + 15
+    let v = x**3 + x**2 - 4*x - 4
+    Polynomial.gcd x u v // 1 + x
+    Polynomial.halfExtendedGcd x u v // (1 + x, 3/5 + (-1/5)*x)
+    let g,a,b = Polynomial.extendedGcd x u v
+    // val g : Expression = 1 + x
+    // val b : Expression = 2 + (-6/5)*x + (1/5)*x^2
+    // val a : Expression = 3/5 + (-1/5)*x
+    // hence u*a + v*b = g ? indeed:
+    u*a + v*b |> Algebraic.expand // 1 + x
+
+    // Let's try to find s, t such that s*u + t*v = x^2 - 1
+    let s, t = Polynomial.diophantineGcd x (x**4 - 2*x**3 - 6*x**2 + 12*x + 15) (x**3 + x**2 - 4*x - 4) (x**2 - 1)
+    // val t : Expression = (-2) + (16/5)*x + (-7/5)*x^2 + (1/5)*x^3
+    // val s : Expression = -3/5 + (4/5)*x + (-1/5)*x^2
+    s*u + t*v |> Algebraic.expand // (-1) + x^2
 
 
 module ``Evaluate some expression to floating point numbers`` =

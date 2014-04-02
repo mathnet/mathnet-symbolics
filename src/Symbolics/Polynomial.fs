@@ -213,11 +213,27 @@ module Polynomial =
          let c = leadingCoefficient symbol z
          Algebraic.expand (z/c), Algebraic.expand (a/c)
 
-    /// Returns a tuple with gcd, a and b such that a*u + b*v = gcd(u,v)
+    /// Returns a tuple with gcd, a, b such that a*u + b*v = gcd(u,v)
     let extendedGcd symbol u v =
         let z, a = halfExtendedGcd symbol u v
-        let q, r = divide symbol (z-a*u |> Algebraic.expand) v
-        z, a, q
+        let b = quot symbol (z-a*u |> Algebraic.expand) v
+        z, a, b
+
+    /// Returns a tuple a, b such that a*u = w (mod v)
+    let halfDiophantineGcd symbol u v w =
+        let (g, s) = halfExtendedGcd symbol u v
+        let (q, r) = divide symbol w g
+        if r <> zero then Undefined else
+        let s' = Algebraic.expand (q*s)
+        if s' <> zero && Numbers.compare (degree symbol s') (degree symbol v) >= 0 then
+            remainder symbol s' v
+        else s'
+
+    /// Returns a tuple a, b such that a*u + b*v = w
+    let diophantineGcd symbol u v w =
+        let a = halfDiophantineGcd symbol u v w
+        let b = quot symbol (w - a*u |> Algebraic.expand) v
+        a, b
 
 
 /// Single-Variable Polynomial (2*x+3*x^2)
