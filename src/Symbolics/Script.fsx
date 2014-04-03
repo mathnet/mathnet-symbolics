@@ -324,6 +324,9 @@ module ``Polynomial GCD`` =
     // val s : Expression = -3/5 + (4/5)*x + (-1/5)*x^2
     s*u + t*v |> Algebraic.expand // (-1) + x^2
 
+    // (x^2 + 3*x)/((x + 1)*(x^2 - 2*x + 1)) --> (-1/2)/(x+1) + (1/2 + (3/2)*x)/(x^2-2*x+1)
+    Polynomial.partialFraction x (x**2+3*x) [x+1; x**2-2*x+1] // (0, [-1/2; 1/2 + (3/2)*x])
+
 
 module ``Evaluate some expression to floating point numbers`` =
 

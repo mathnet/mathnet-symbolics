@@ -235,6 +235,19 @@ module Polynomial =
         let b = quot symbol (w - a*u |> Algebraic.expand) v
         a, b
 
+    /// Partial fraction decomposition (plumbing)
+    let rec partialFraction symbol numerator denominatorFactors =
+        let rec impl n df =
+            let a0, r = divide symbol n (Product df |> Algebraic.expand)
+            match df with
+            | [d] -> (a0, [r])
+            | d::dx ->
+                let a1, n' = diophantineGcd symbol (Product dx |> Algebraic.expand) d r
+                let b0, ax = impl n' dx
+                ((a0+b0), a1::ax)
+            | _ -> (a0, [])
+        impl numerator denominatorFactors
+
 
 /// Single-Variable Polynomial (2*x+3*x^2)
 module SingleVariablePolynomial =
