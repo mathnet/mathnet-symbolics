@@ -16,11 +16,17 @@ open MathNet.Symbolics
 
 open Operators
 
-// test helpers
+
+// Test: x should evaluate to expected
 let inline (-->) x expected = x |> should equal expected
+
+// Test: x should evaluate to the expected string when formatted *nicely*
 let inline (==>) x expected = Text.format x |> should equal expected
 
-// extra test helpers - don't like them much, maybe there's a better way?
+// Test: x should evaluate to the expected string when formatted *strictly* (not denormalized)
+let inline (===>) x expected = Text.formatStrict x |> should equal expected
+
+// extra test helpers for tuples, list, arrays and hash-sets - maybe there's a better way?
 let inline (==|>) (x1, x2) expected = (Text.format x1, Text.format x2) |> should equal expected
 let inline (==||>) (x1, x2, x3) expected = (Text.format x1, Text.format x2, Text.format x3) |> should equal expected
 let inline (==+>) x expected = List.iter2 (fun x e -> Text.format x |> should equal e) x expected
@@ -132,19 +138,25 @@ let ``Expressions are always in auto-simplified form`` () =
     1*x*y*z**2 ==> "x*y*z^2"
     2*x*y*z*z**2 ==> "2*x*y*z^3"
 
-    // There is no subtraction, negation or division in simplified expressions:
-    // TODO: Print as text in a nicer way (Text module): i.e. x^(-1) -> 1/x, (-1)*x -> -x
-    1 / x ==> "x^(-1)"
-    -x ==> "(-1)*x"
-    2 + 1/x - 1 ==> "1 + x^(-1)"
+    // There is no subtraction, negation or division in simplified expressions (strict):
+    1 / x ===> "x^(-1)" // strict
+    1 / x ==> "1/x" // nice
+    -x ===> "(-1)*x"
+    -x ==> "-x"
+    2 + 1/x - 1 ===> "1 + x^(-1)"
+    2 + 1/x - 1 ==> "1 + 1/x"
+    -(-x) ===> "x"
     -(-x) ==> "x"
+    1 / (1 / x) ===> "x"
     1 / (1 / x) ==> "x"
 
     2*x*3 ==> "6*x"
-    -x*y/3 ==> "(-1/3)*x*y"
+    -x*y/3 ===> "(-1/3)*x*y"
+    -x*y/3 ==> "-(1/3)*x*y"
 
     ((x*y)**(1Q/2)*z**2)**2 ==> "x*y*z^4"
-    (a/b/(c*a))*(c*d/a)/d ==> "a^(-1)*b^(-1)"
+    (a/b/(c*a))*(c*d/a)/d ===> "a^(-1)*b^(-1)" // strict
+    (a/b/(c*a))*(c*d/a)/d ==> "1/(a*b)" // nice
     a**(3Q/2)*a**(1Q/2) ==> "a^2"
 
     x + ln x ==> "x + ln(x)"
@@ -155,8 +167,8 @@ let ``Expressions are always in auto-simplified form`` () =
     exp 0Q ==> "1"
 
     sin x ==> "sin(x)"
-    cot x ==> "tan(x)^(-1)"
-    sec x ==> "cos(x)^(-1)"
+    cot x ==> "1/tan(x)"
+    sec x ==> "1/cos(x)"
 
 
 [<Test>]
@@ -166,41 +178,43 @@ let ``Parse F# quotations`` () =
     Quotations.parse <@ x @> ==> "x"
     Quotations.parse <@ fun x -> x @> ==> "x"
     Quotations.parse <@ 3/4 @> ==> "3/4"
-    Quotations.parse <@ fun x -> 3/x @> ==> "3*x^(-1)"
-    Quotations.parse <@ -x*y/3 @> ==> "(-1/3)*x*y"
-    Quotations.parse <@ fun x y -> -x*y/3 @> ==> "(-1/3)*x*y"
-    Quotations.parse <@ fun (x, y) -> -x*y/3 @> ==> "(-1/3)*x*y"
+    Quotations.parse <@ fun x -> 3/x @> ==> "3/x"
+    Quotations.parse <@ -x*y/3 @> ==> "-(1/3)*x*y"
+    Quotations.parse <@ fun x y -> -x*y/3 @> ==> "-(1/3)*x*y"
+    Quotations.parse <@ fun (x, y) -> -x*y/3 @> ==> "-(1/3)*x*y"
 
 
 [<Test>]
 let ``Algebraic Expansion`` () =
 
     // Auto-simplification does not expand expressions:
-    (a+b)-(a+b) ==> "a + b + (-1)*(a + b)"
+    (a+b)-(a+b) ==> "a + b - (a + b)"
     (a+b)-(a+b) |> Algebraic.expand ==> "0"
     2*(a+b)-(a+b) ==> "a + b"
-    (a+b)-2*(a+b) |> Algebraic.expand ==> "(-1)*a + (-1)*b"
+    (a+b)-2*(a+b) |> Algebraic.expand ===> "(-1)*a + (-1)*b"
+    (a+b)-2*(a+b) |> Algebraic.expand ==> "-a - b"
 
     (a*b)/(b*a) ==> "1"
     (a*b)**2/(b*a) ==> "a*b"
-    (a*b)/(b*a)**2 ==> "a^(-1)*b^(-1)"
+    (a*b)/(b*a)**2 ==> "1/(a*b)"
 
     (a+b)/(b+a) ==> "1"
     (a+b)**2/(b+a) ==> "a + b"
-    (a+b)/(b+a)**2 ==> "(a + b)^(-1)"
+    (a+b)/(b+a)**2 ==> "1/(a + b)"
 
-    (x*(y+1)**(3Q/2)+1)*(x*(y+1)**(3Q/2)-1) ==> "((-1) + x*(1 + y)^(3/2))*(1 + x*(1 + y)^(3/2))"
-    (x*(y+1)**(3Q/2)+1)*(x*(y+1)**(3Q/2)-1) |> Algebraic.expand |> Algebraic.expand ==> "(-1) + x^2 + 3*x^2*y + 3*x^2*y^2 + x^2*y^3"
+    (x*(y+1)**(3Q/2)+1)*(x*(y+1)**(3Q/2)-1) ==> "(-1 + x*(1 + y)^(3/2))*(1 + x*(1 + y)^(3/2))"
+    (x*(y+1)**(3Q/2)+1)*(x*(y+1)**(3Q/2)-1) |> Algebraic.expand |> Algebraic.expand ==> "-1 + x^2 + 3*x^2*y + 3*x^2*y^2 + x^2*y^3"
     sin(a*(x+y)) |> Algebraic.expand ==> "sin(a*(x + y))" // does not expand
-    a/(b*(x+y)) |> Algebraic.expand ==> "a*b^(-1)*(x + y)^(-1)" // does not expand
+    a/(b*(x+y)) |> Algebraic.expand ===> "a*b^(-1)*(x + y)^(-1)" // strict; does not expand
+    a/(b*(x+y)) |> Algebraic.expand ==> "a/(b*(x + y))" // nice; does not expand
 
 
 [<Test>]
-let ``There are various algebaric operators available`` () =
+let ``Algebaric Operators`` () =
 
     Structure.substitute 3Q 4Q (x**3) ==> "x^4"
-    Structure.map (fun x -> -x) (x + y**2) ==> "(-1)*x + (-1)*y^2"
-    negate (x + y**2) ==> "(-1)*(x + y^2)"
+    Structure.map (fun x -> -x) (x + y**2) ==> "-x - y^2"
+    negate (x + y**2) ==> "-(x + y^2)"
 
     Algebraic.separateFactors x (b*cos(x)*ln(d)*x) ==|> ("b*ln(d)", "x*cos(x)")
     Algebraic.separateFactors x (c*x*sin(x)/2) ==|> ("(1/2)*c", "x*sin(x)")
@@ -214,7 +228,7 @@ let ``There are various algebaric operators available`` () =
     Algebraic.expandMain (x*(2+(1+x)**2)) ==> "2*x + x*(1 + x)^2"
     Algebraic.expandMain ((x+(1+x)**2)**2) ==> "x^2 + 2*x*(1 + x)^2 + (1 + x)^4"
 
-    Algebraic.expand ((a*x**2 + b*x + c)/(d*x + e)) ==> "c*(e + d*x)^(-1) + b*x*(e + d*x)^(-1) + a*x^2*(e + d*x)^(-1)"
+    Algebraic.expand ((a*x**2 + b*x + c)/(d*x + e)) ==> "c/(e + d*x) + (b*x)/(e + d*x) + (a*x^2)/(e + d*x)"
     let p = Algebraic.expand ((a*x**2 + b*x + c)*(d*x**2 + e*x + f))
     p ==> "c*f + c*e*x + b*f*x + c*d*x^2 + b*e*x^2 + a*f*x^2 + b*d*x^3 + a*e*x^3 + a*d*x^4"
     Polynomial.coefficients x p ==-> [|"c*f"; "c*e + b*f"; "c*d + b*e + a*f"; "b*d + a*e"; "a*d"|]
@@ -228,7 +242,7 @@ let ``There are various algebaric operators available`` () =
     Exponential.expand (exp(2*a*x + 3*y*z)) ==> "exp(a*x)^2*exp(y*z)^3"
     Exponential.expand (exp(2*(x+y))) ==> "exp(x)^2*exp(y)^2"
     Exponential.expand (1/(exp(2*x) - (exp(x))**2)) ==>  "ComplexInfinity"
-    Exponential.expand (exp((x+y)*(x-y))) ==> "exp(x^2)*exp(y^2)^(-1)"
+    Exponential.expand (exp((x+y)*(x-y))) ==> "exp(x^2)/exp(y^2)"
     Exponential.expand (ln((c*x)**a) + ln(y**b*z)) ==> "a*ln(c) + a*ln(x) + b*ln(y) + ln(z)"
 
     Exponential.contract (exp(x)*exp(y)) ==> "exp(x + y)"
@@ -240,23 +254,23 @@ let ``There are various algebaric operators available`` () =
 
     Trigonometric.expand (sin(2*x)) ==> "2*sin(x)*cos(x)"
     Trigonometric.expand (sin(a+x)) ==> "sin(x)*cos(a) + sin(a)*cos(x)"
-    Trigonometric.expand (sin(2*x + 3*y)) ==> "((-1)*sin(x)^2 + cos(x)^2)*((-1)*sin(y)^3 + 3*sin(y)*cos(y)^2) + 2*sin(x)*cos(x)*((-3)*sin(y)^2*cos(y) + cos(y)^3)"
-    Trigonometric.expand (sin(2*(x+y))) ==> "2*sin(y)*((-1)*sin(x)^2 + cos(x)^2)*cos(y) + 2*sin(x)*cos(x)*((-1)*sin(y)^2 + cos(y)^2)"
-    Trigonometric.expand (sin(2*(x+y))) |> Algebraic.expand ==> "(-2)*sin(x)*sin(y)^2*cos(x) + (-2)*sin(x)^2*sin(y)*cos(y) + 2*sin(y)*cos(x)^2*cos(y) + 2*sin(x)*cos(x)*cos(y)^2"
-    Trigonometric.expand (cos(5*x)) ==> "5*sin(x)^4*cos(x) + (-10)*sin(x)^2*cos(x)^3 + cos(x)^5"
+    Trigonometric.expand (sin(2*x + 3*y)) ==> "(-sin(x)^2 + cos(x)^2)*(-sin(y)^3 + 3*sin(y)*cos(y)^2) + 2*sin(x)*cos(x)*(-3*sin(y)^2*cos(y) + cos(y)^3)"
+    Trigonometric.expand (sin(2*(x+y))) ==> "2*sin(y)*(-sin(x)^2 + cos(x)^2)*cos(y) + 2*sin(x)*cos(x)*(-sin(y)^2 + cos(y)^2)"
+    Trigonometric.expand (sin(2*(x+y))) |> Algebraic.expand ==> "-2*sin(x)*sin(y)^2*cos(x) - 2*sin(x)^2*sin(y)*cos(y) + 2*sin(y)*cos(x)^2*cos(y) + 2*sin(x)*cos(x)*cos(y)^2"
+    Trigonometric.expand (cos(5*x)) ==> "5*sin(x)^4*cos(x) - 10*sin(x)^2*cos(x)^3 + cos(x)^5"
     // TODO: should actually be Undefined
     Trigonometric.expand ((sin(2*x)-2*sin(x)*cos(x))/((sin(x))**2 + (cos(x))**2 - 1)) ==> "0"
 
-    Trigonometric.contract (sin(a)*sin(b)) ==> "(-1/2)*cos(a + b) + (1/2)*cos(a + (-1)*b)"
-    Trigonometric.contract ((sin(x) + cos(y))*cos(y)) ==> "1/2 + (1/2)*sin(x + y) + (1/2)*sin(x + (-1)*y) + (1/2)*cos(2*y)"
-    Trigonometric.contract (sin(x)**2*cos(x)**2) ==> "1/8 + (-1/8)*cos(4*x)"
+    Trigonometric.contract (sin(a)*sin(b)) ==> "-(1/2)*cos(a + b) + (1/2)*cos(a - b)"
+    Trigonometric.contract ((sin(x) + cos(y))*cos(y)) ==> "1/2 + (1/2)*sin(x + y) + (1/2)*sin(x - y) + (1/2)*cos(2*y)"
+    Trigonometric.contract (sin(x)**2*cos(x)**2) ==> "1/8 - (1/8)*cos(4*x)"
     Trigonometric.contract (cos(x)**4) ==> "3/8 + (1/2)*cos(2*x) + (1/8)*cos(4*x)"
 
     Trigonometric.simplify ((cos(x)+sin(x))**4 + (cos(x)-sin(x))**4 + cos(4*x) - 3) ==> "0"
 
     // TODO: expected: 0
     Trigonometric.simplify (sin(x) + sin(y) - 2*sin(x/2+y/2)*cos(x/2-y/2))
-        ==> "sin(y) + (-1/2)*sin(x + (-1)*y) + (-1/2)*sin((1/2)*x + (-1/2)*y + (-1)*((1/2)*x + (-1/2)*y)) + (-1/2)*sin((-1/2)*x + (1/2)*y + (-1)*((1/2)*x + (-1/2)*y)) + (-1)*sin((1/2)*x + (1/2)*y + (-1)*((1/2)*x + (-1/2)*y))"
+        ==> "sin(y) - (1/2)*sin(x - y) - (1/2)*sin((1/2)*x - (1/2)*y - ((1/2)*x - (1/2)*y)) - (1/2)*sin(-(1/2)*x + (1/2)*y - ((1/2)*x - (1/2)*y)) - sin((1/2)*x + (1/2)*y - ((1/2)*x - (1/2)*y))"
 
 
 [<Test>]
@@ -266,7 +280,7 @@ let ``Differentiation and Taylor Series`` () =
     Calculus.differentiate x (sin(x)) ==> "cos(x)"
     Calculus.differentiate x (x*sin(x)) ==> "sin(x) + x*cos(x)"
     Calculus.differentiate x (a*x**2) ==> "2*a*x"
-    Calculus.differentiate x (a*x**b) ==> "a*b*x^((-1) + b)"
+    Calculus.differentiate x (a*x**b) ==> "a*b*x^(-1 + b)"
     Calculus.differentiate x (a*x**2 + b*x + c) ==> "b + 2*a*x"
 
     /// Taylor expansion of x(symbol) at symbol=a of the first k terms
@@ -277,11 +291,11 @@ let ``Differentiation and Taylor Series`` () =
         taylor 0 1 zero x |> Algebraic.expand
 
     taylor1 3 x (1/(1-x)) 0Q ==> "1 + x + x^2"
-    taylor1 3 x (1/x) 1Q ==> "3 + (-3)*x + x^2"
-    taylor1 3 x (ln(x)) 1Q ==> "-3/2 + 2*x + (-1/2)*x^2"
-    taylor1 4 x (ln(x)) 1Q ==> "-11/6 + 3*x + (-3/2)*x^2 + (1/3)*x^3"
-    taylor1 3 x (sin(x)+cos(x)) 0Q ==> "1 + x + (-1/2)*x^2"
-    taylor1 4 x (sin(x)+cos(x)) 0Q ==> "1 + x + (-1/2)*x^2 + (-1/6)*x^3"
+    taylor1 3 x (1/x) 1Q ==> "3 - 3*x + x^2"
+    taylor1 3 x (ln(x)) 1Q ==> "-3/2 + 2*x - (1/2)*x^2"
+    taylor1 4 x (ln(x)) 1Q ==> "-11/6 + 3*x - (3/2)*x^2 + (1/3)*x^3"
+    taylor1 3 x (sin(x)+cos(x)) 0Q ==> "1 + x - (1/2)*x^2"
+    taylor1 4 x (sin(x)+cos(x)) 0Q ==> "1 + x - (1/2)*x^2 - (1/6)*x^3"
 
 
 [<Test>]
@@ -298,15 +312,15 @@ let ``Polynomial Division`` () =
     Polynomial.pseudoDivide x (3*x**3 + x**2 + x + 5) (2Q) ==||> ("5 + x + x^2 + 3*x^3", "0", "2")
 
     // tangent of polynomial at x = 1?
-    Polynomial.divide x (x**3 - 12*x**2 - c) (x**2-2*x+1) ==|> ("(-10) + x", "10 + (-1)*c + (-21)*x")
+    Polynomial.divide x (x**3 - 12*x**2 - c) (x**2-2*x+1) ==|> ("-10 + x", "10 - c - 21*x")
 
     /// Find tangent equation for x(symbol) at symbol=a
     let tangent symbol x a =
         let m = Calculus.differentiate symbol x |> Structure.substitute symbol a
         m*(symbol - a) + Structure.substitute symbol a x |> Algebraic.expand
 
-    tangent x (x**3 - 12*x**2 - c) 1Q ==> "10 + (-1)*c + (-21)*x"
-    tangent z (1/z) 3Q ==> "2/3 + (-1/9)*z"
+    tangent x (x**3 - 12*x**2 - c) 1Q ==> "10 - c - 21*x"
+    tangent z (1/z) 3Q ==> "2/3 - (1/9)*z"
 
 
 [<Test>]
@@ -325,32 +339,32 @@ let ``Polynomial Expansion`` () =
 [<Test>]
 let ``Polynomial Euclidean/GCD`` () =
 
-    Polynomial.gcd x (x**7 - 4*x**5 - x**2 + 4) (x**5 - 4*x**3 - x**2 + 4) ==> "4 + (-4)*x + (-1)*x^2 + x^3"
+    Polynomial.gcd x (x**7 - 4*x**5 - x**2 + 4) (x**5 - 4*x**3 - x**2 + 4) ==> "4 - 4*x - x^2 + x^3"
 
     Polynomial.extendedGcd x (x**7 - 4*x**5 - x**2 + 4) (x**5 - 4*x**3 - x**2 + 4)
-        ==||> ("4 + (-4)*x + (-1)*x^2 + x^3", "(-1)*x", "1 + x^3")
+        ==||> ("4 - 4*x - x^2 + x^3", "-x", "1 + x^3")
 
     // verify A*u+B*v = gcd = 4 - 4*x - x^2 + x^3:
     (-x)*(x**7 - 4*x**5 - x**2 + 4) + (1+x**3)*(x**5 - 4*x**3 - x**2 + 4) |> Algebraic.expand
-        ==> "4 + (-4)*x + (-1)*x^2 + x^3"
+        ==> "4 - 4*x - x^2 + x^3"
 
     let u = x**4 - 2*x**3 - 6*x**2 + 12*x + 15
     let v = x**3 + x**2 - 4*x - 4
     Polynomial.gcd x u v ==> "1 + x"
-    Polynomial.halfExtendedGcd x u v ==|> ("1 + x", "3/5 + (-1/5)*x")
+    Polynomial.halfExtendedGcd x u v ==|> ("1 + x", "3/5 - (1/5)*x")
     let g,a,b = Polynomial.extendedGcd x u v
     g ==> "1 + x"
-    a ==> "3/5 + (-1/5)*x"
-    b ==> "2 + (-6/5)*x + (1/5)*x^2"
+    a ==> "3/5 - (1/5)*x"
+    b ==> "2 - (6/5)*x + (1/5)*x^2"
 
     // hence u*a + v*b = g ? indeed:
     u*a + v*b |> Algebraic.expand ==> "1 + x"
 
     // Let's try to find s, t such that s*u + t*v = x^2 - 1
     let s, t = Polynomial.diophantineGcd x (x**4 - 2*x**3 - 6*x**2 + 12*x + 15) (x**3 + x**2 - 4*x - 4) (x**2 - 1)
-    s ==> "-3/5 + (4/5)*x + (-1/5)*x^2"
-    t ==> "(-2) + (16/5)*x + (-7/5)*x^2 + (1/5)*x^3"
-    s*u + t*v |> Algebraic.expand ==> "(-1) + x^2"
+    s ==> "-3/5 + (4/5)*x - (1/5)*x^2"
+    t ==> "-2 + (16/5)*x - (7/5)*x^2 + (1/5)*x^3"
+    s*u + t*v |> Algebraic.expand ==> "-1 + x^2"
 
     // (x^2 + 3*x)/((x + 1)*(x^2 - 2*x + 1)) --> (-1/2)/(x+1) + (1/2 + (3/2)*x)/(x^2-2*x+1)
     let a0, ax = Polynomial.partialFraction x (x**2+3*x) [x+1; x**2-2*x+1] // (0, [-1/2; 1/2 + (3/2)*x])
@@ -391,7 +405,7 @@ let ``Primitive Equation Solver`` () =
     solve x (2+3*x) ==> "-2/3"
 
     // sin(a)+x*cos(b)+c = 0 --> x =
-    solve x (sin(a)+x*cos(b)+c) ==> "(-1)*(c + sin(a))*cos(b)^(-1)"
+    solve x (sin(a)+x*cos(b)+c) ==> "-(c + sin(a))/cos(b)"
 
     // (x^2-1)/(x+1) = 0 --> x =
     solve x ((x**2-1)/(x+1)) ==> "1"
@@ -402,9 +416,9 @@ let ``Primitive Equation Solver`` () =
         let z' = z |> Algebraic.expand |> Polynomial.collectTerms x
         if z' <> Undefined then z' else z
 
-    solveLine x y (x/2+y/3) 1Q ==> "3 + (-3/2)*x" //   -->  x/2 + y/3 = 1  ->  y = -3/2*x + 3
-    solveLine x y (x/a) ((x+y)/b) ==> "((-1) + a^(-1)*b)*x"
-    solveLine x y ((y/x-2)/(1-3/x)) 6Q ==> "(-18) + 8*x"
+    solveLine x y (x/2+y/3) 1Q ==> "3 - (3/2)*x" //   -->  x/2 + y/3 = 1  ->  y = -3/2*x + 3
+    solveLine x y (x/a) ((x+y)/b) ==> "(-1 + b/a)*x"
+    solveLine x y ((y/x-2)/(1-3/x)) 6Q ==> "-18 + 8*x"
 
 
 [<Test>]
@@ -488,32 +502,32 @@ let ``General Rational Expressions`` () =
     Rational.isRational x (1/x + 1/a) --> false
 
     Rational.variables ((2*x + 3*y)/(z + 4)) ==*> ["x"; "y"; "z"]
-    Rational.variables (1/x + 1/y) ==*> ["x^(-1)"; "y^(-1)"]
-    Rational.variables (a/x + b/y) ==*> ["a"; "x^(-1)"; "b"; "y^(-1)"]
+    Rational.variables (1/x + 1/y) ==*> ["1/x"; "1/y"]
+    Rational.variables (a/x + b/y) ==*> ["a"; "1/x"; "b"; "1/y"]
 
     Rational.rationalize (a+1) ==> "1 + a"
-    Rational.rationalize (a/b + c/d) ==> "b^(-1)*d^(-1)*(b*c + a*d)"
-    Rational.rationalize (1+1/(1+1/x)) ==> "(1 + x)^(-1)*(1 + 2*x)"
-    Rational.rationalize (1/(1+1/x)**(1Q/2) + (1+1/x)**(3Q/2)) ==> "x^(-2)*(x^(-1)*(1 + x))^(-1/2)*(x^2 + (1 + x)^2)"
-    Rational.rationalize ((1+1/x)**2) ==> "x^(-2)*(1 + x)^2"
+    Rational.rationalize (a/b + c/d) ==> "(b*c + a*d)/(b*d)"
+    Rational.rationalize (1+1/(1+1/x)) ==> "(1 + 2*x)/(1 + x)"
+    Rational.rationalize (1/(1+1/x)**(1Q/2) + (1+1/x)**(3Q/2)) ==> "(x^2 + (1 + x)^2)/(x^2*((1 + x)/x)^(1/2))"
+    Rational.rationalize ((1+1/x)**2) ==> "(1 + x)^2/x^2"
 
-    Rational.rationalize (a/b + c/d + e/f) ==> "b^(-1)*d^(-1)*f^(-1)*(b*d*e + (b*c + a*d)*f)"
-    Rational.expand (a/b + c/d + e/f) ==> "b^(-1)*d^(-1)*f^(-1)*(b*d*e + b*c*f + a*d*f)"
+    Rational.rationalize (a/b + c/d + e/f) ==> "(b*d*e + (b*c + a*d)*f)/(b*d*f)"
+    Rational.expand (a/b + c/d + e/f) ==> "(b*d*e + b*c*f + a*d*f)/(b*d*f)"
 
     Rational.rationalize (((1/((x+y)**2+1))**(1Q/2)+1)*((1/((x+y)**2+1))**(1Q/2)-1)/(x+1))
-        ==> "(1 + x)^(-1)*((-1) + ((1 + (x + y)^2)^(-1))^(1/2))*(1 + ((1 + (x + y)^2)^(-1))^(1/2))"
+        ==> "((-1 + (1/(1 + (x + y)^2))^(1/2))*(1 + (1/(1 + (x + y)^2))^(1/2)))/(1 + x)"
     Rational.expand (((1/((x+y)**2+1))**(1Q/2)+1)*((1/((x+y)**2+1))**(1Q/2)-1)/(x+1))
-        ==> "((-1)*x^2 + (-2)*x*y + (-1)*y^2)*(1 + x + x^2 + x^3 + 2*x*y + 2*x^2*y + y^2 + x*y^2)^(-1)"
+        ==> "(-x^2 - 2*x*y - y^2)/(1 + x + x^2 + x^3 + 2*x*y + 2*x^2*y + y^2 + x*y^2)"
 
     Rational.rationalize (1/(1/a + c/(a*b)) + (a*b*c + a*c**2)/(b+c)**2-a) |> Algebraic.expand ==> "0"
     Rational.expand (1/(1/a + c/(a*b)) + (a*b*c + a*c**2)/(b+c)**2-a) ==> "0"
 
-    Rational.rationalize (x/z + y/z**2) ==> "z^(-3)*(y*z + x*z^2)"
-    Rational.simplify z (x/z + y/z**2) ==> "z^(-2)*(y + x*z)"
+    Rational.rationalize (x/z + y/z**2) ==> "(y*z + x*z^2)/z^3"
+    Rational.simplify z (x/z + y/z**2) ==> "(y + x*z)/z^2"
 
-    Rational.simplify x ((x**2-1)/(x+1)) ==> "(-1) + x"
+    Rational.simplify x ((x**2-1)/(x+1)) ==> "-1 + x"
     Rational.simplify x ((x+1)/(x**2 - 1 - (x+1)*(x-1))) ==> "ComplexInfinity"
-    Rational.simplify x (1/(1+1/(x+1)) + 2/(x+2))  ==> "(2 + x)^(-1)*(3 + x)"
+    Rational.simplify x (1/(1+1/(x+1)) + 2/(x+2))  ==> "(3 + x)/(2 + x)"
 
 
 [<Test>]
