@@ -1,12 +1,7 @@
 ﻿namespace MathNet.Symbolics
 
-open System
-open System.Numerics
-open MathNet.Numerics
 open MathNet.Symbolics
-
 open Operators
-
 
 [<RequireQualifiedAccess>]
 module Calculus =
@@ -25,7 +20,7 @@ module Calculus =
             let de = differentiate symbol e
             de*ln(r)*p + e*dr*(r**(e-1))
         | Function (Exp, x) as f -> (differentiate symbol x) * f
-        | Function (Ln, x) as f -> (differentiate symbol x) / x
+        | Function (Ln, x) -> (differentiate symbol x) / x
         | Function (Sin, x) -> (differentiate symbol x) * cos(x)
         | Function (Cos, x) -> -(differentiate symbol x) * sin(x)
         | Function (Tan, x) -> 2*(differentiate symbol x) / (cos(2*x)+1)

@@ -1,14 +1,10 @@
 ﻿namespace MathNet.Symbolics
 
-open System
 open System.Numerics
 open Microsoft.FSharp.Quotations
 open Microsoft.FSharp.Quotations.Patterns
 open Microsoft.FSharp.Quotations.DerivedPatterns
-open Microsoft.FSharp.Reflection
-open MathNet.Numerics
 open MathNet.Symbolics
-
 
 [<RequireQualifiedAccess>]
 module Quotations =

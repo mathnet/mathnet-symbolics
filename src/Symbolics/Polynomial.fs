@@ -1,14 +1,10 @@
 ﻿namespace MathNet.Symbolics
 
-open System
 open System.Collections.Generic
-open System.Numerics
-open MathNet.Numerics
 open MathNet.Symbolics
 
 open ExpressionPatterns
 open Operators
-
 
 /// General Polynomial Expressions
 module Polynomial =

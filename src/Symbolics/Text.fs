@@ -1,12 +1,8 @@
 ﻿namespace MathNet.Symbolics
 
-open System
 open System.IO
 open System.Text
-open System.Numerics
-open MathNet.Numerics
 open MathNet.Symbolics
-
 
 [<RequireQualifiedAccess>]
 module Text =

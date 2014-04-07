@@ -6,16 +6,10 @@
 
 open NUnit.Framework
 open FsUnit
-open System
-open System.Numerics
 open System.Collections.Generic
-open Microsoft.FSharp
-
-open MathNet.Numerics
 open MathNet.Symbolics
 
 open Operators
-
 
 // Test: x should evaluate to expected
 let inline (-->) x expected = x |> should equal expected
@@ -340,6 +334,7 @@ let ``Polynomial Expansion`` () =
 let ``Polynomial Euclidean/GCD`` () =
 
     Polynomial.gcd x (x**7 - 4*x**5 - x**2 + 4) (x**5 - 4*x**3 - x**2 + 4) ==> "4 - 4*x - x^2 + x^3"
+    Polynomial.gcd x (x**4 - 2*x**3 - 6*x**2 + 12*x + 15) (x**3 + x**2 - 4*x - 4) ==> "1 + x"
 
     Polynomial.extendedGcd x (x**7 - 4*x**5 - x**2 + 4) (x**5 - 4*x**3 - x**2 + 4)
         ==||> ("4 - 4*x - x^2 + x^3", "-x", "1 + x^3")
@@ -367,7 +362,7 @@ let ``Polynomial Euclidean/GCD`` () =
     s*u + t*v |> Algebraic.expand ==> "-1 + x^2"
 
     // (x^2 + 3*x)/((x + 1)*(x^2 - 2*x + 1)) --> (-1/2)/(x+1) + (1/2 + (3/2)*x)/(x^2-2*x+1)
-    let a0, ax = Polynomial.partialFraction x (x**2+3*x) [x+1; x**2-2*x+1] // (0, [-1/2; 1/2 + (3/2)*x])
+    let a0, ax = Polynomial.partialFraction x (x**2+3*x) [x+1; x**2-2*x+1]
     a0 ==> "0"
     ax ==+> ["-1/2"; "1/2 + (3/2)*x"]
 
