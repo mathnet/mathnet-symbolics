@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Symbolics", "src\Symbolics\Symbolics.fsproj", "{A8667C7D-CC10-4519-ACFE-1B4D3C190E97}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SymbolicsUnitTests", "src\SymbolicsUnitTests\SymbolicsUnitTests.fsproj", "{AC68FB1A-99D5-4F60-B626-3A57D8F3438D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Readme", "Readme", "{7177ADE4-E525-4CDB-AA7C-C71A876B9ED8}"
+	ProjectSection(SolutionItems) = preProject
+		CONTRIBUTING.md = CONTRIBUTING.md
+		CONTRIBUTORS.md = CONTRIBUTORS.md
+		LICENSE.md = LICENSE.md
+		README.md = README.md
+		RELEASENOTES.md = RELEASENOTES.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{6A8FB80F-8A1F-447D-AAF7-574B85D8600E}"
+	ProjectSection(SolutionItems) = preProject
+		build.fsx = build.fsx
+		build\MathNet.Symbolics.Extension.nuspec = build\MathNet.Symbolics.Extension.nuspec
+		build\MathNet.Symbolics.nuspec = build\MathNet.Symbolics.nuspec
+		build\packages.config = build\packages.config
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{6BC9D192-5754-4F4E-8957-94B19E25F7D8}"
+	ProjectSection(SolutionItems) = preProject
+		docs\tools\build-docs.fsx = docs\tools\build-docs.fsx
+		docs\tools\packages.config = docs\tools\packages.config
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{37C7BBC6-A637-45BC-9EBF-1733771CDE56}"
+	ProjectSection(SolutionItems) = preProject
+		docs\content\index.fsx = docs\content\index.fsx
+		docs\tools\templates\template.cshtml = docs\tools\templates\template.cshtml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A8667C7D-CC10-4519-ACFE-1B4D3C190E97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8667C7D-CC10-4519-ACFE-1B4D3C190E97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8667C7D-CC10-4519-ACFE-1B4D3C190E97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8667C7D-CC10-4519-ACFE-1B4D3C190E97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC68FB1A-99D5-4F60-B626-3A57D8F3438D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC68FB1A-99D5-4F60-B626-3A57D8F3438D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC68FB1A-99D5-4F60-B626-3A57D8F3438D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC68FB1A-99D5-4F60-B626-3A57D8F3438D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6BC9D192-5754-4F4E-8957-94B19E25F7D8} = {6A8FB80F-8A1F-447D-AAF7-574B85D8600E}
+	EndGlobalSection
+EndGlobal
