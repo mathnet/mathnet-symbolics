@@ -296,7 +296,7 @@ Target "DocsDev" (fun _ ->
 Target "CleanApi" (fun _ -> CleanDirs ["out/api"])
 
 Target "Api" (fun _ ->
-    !! "out/lib/Net40/MathNet.Symbolics.dll"
+    !! "out/lib/Profile47/MathNet.Symbolics.dll"
     |> Docu (fun p ->
         { p with
             ToolPath = "tools/docu/docu.exe"
@@ -337,8 +337,8 @@ Target "PublishDocs" (fun _ ->
 Target "PublishApi" (fun _ ->
     let repo = "../mathnet-websites"
     Git.Branches.pull repo "origin" "master"
-    CleanDir "../mathnet-websites/api-symbolics"
-    CopyRecursive "out/api" "../mathnet-websites/api-symbolics" true |> printfn "%A"
+    CleanDir "../mathnet-websites/symbolics/api"
+    CopyRecursive "out/api" "../mathnet-websites/symbolics/api" true |> printfn "%A"
     Git.Staging.StageAll repo
     Git.Commit.Commit repo (sprintf "Symbolics: %s api update" packageVersion)
     Git.Branches.pushBranch repo "origin" "master")

@@ -4,17 +4,17 @@
 // --------------------------------------------------------------------------------------
 
 // Binaries that have XML documentation (in a corresponding generated XML file)
-let referenceBinaries = [ "MathNet.Spatial.dll"; "MathNet.Numerics.dll" ]
+let referenceBinaries = [ "MathNet.Symbolics.dll"; "MathNet.Numerics.dll" ]
 // Web site location for the generated documentation
-let website = "http://spatial.mathdotnet.com/docs"
+let website = "http://symbolics.mathdotnet.com/docs"
 
 // Specify more information about your project
 let info =
-  [ "project-name", "Math.NET Spatial"
-    "project-author", "Christoph Ruegg, Johan Larsson"
-    "project-summary", "Math.NET Spatial. .Net 4, .Net 3.5, SL5, Win8, WP8, PCL 47 and 136, Mono, Xamarin Android/iOS."
-    "project-github", "http://github.com/mathnet/mathnet-spatial"
-    "project-nuget", "http://nuget.com/packages/MathNet.Spatial" ]
+  [ "project-name", "Math.NET Symbolics"
+    "project-author", "Christoph Ruegg"
+    "project-summary", "Math.NET Symbolics. .Net 4, .Net 3.5, SL5, Win8, WP8, PCL 47 and 136, Mono, Xamarin Android/iOS."
+    "project-github", "http://github.com/mathnet/mathnet-symbolics"
+    "project-nuget", "http://nuget.com/packages/MathNet.Symbolics" ]
 
 // --------------------------------------------------------------------------------------
 // For typical project, no changes are needed below
@@ -83,7 +83,7 @@ let prepareReleaseNotes() =
     for (fileName, docName, title) in releaseNotesDocs do
         String.concat Environment.NewLine
           [ "# " + title
-            "[Math.NET Spatial](ReleaseNotes.html)"
+            "[Math.NET Symbolics](ReleaseNotes.html)"
             ""
             ReadFileAsString (top @@ fileName) ]
         |> ReplaceFile (content @@ docName)
@@ -94,7 +94,7 @@ let buildReference() =
     for lib in referenceBinaries do
         MetadataFormat.Generate
             (bin @@ lib, output @@ "reference", layoutRoots, parameters = ("root", root) :: info,
-             sourceRepo = "https://github.com/mathnet/mathnet-spatial/tree/master/src", sourceFolder = @"..\..\src",
+             sourceRepo = "https://github.com/mathnet/mathnet-symbolics/tree/master/src", sourceFolder = @"..\..\src",
              publicOnly = true)
 
 // Build documentation from `fsx` and `md` files in `docs/content`

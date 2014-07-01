@@ -8,9 +8,9 @@ Getting Started
 NuGet Packages
 --------------
 
-The recommended way to get Math.NET Spatial is to use NuGet. The following packages are provided and maintained in the public [NuGet Gallery](https://nuget.org/profiles/mathnet/):
+The recommended way to get Math.NET Symbolics is to use NuGet. The following packages are provided and maintained in the public [NuGet Gallery](https://nuget.org/profiles/mathnet/):
 
-- **MathNet.Spatial** - core package, including .Net 4, .Net 3.5 and portable/PCL builds.
+- **MathNet.Symbolics** - core package, including .Net 4, .Net 3.5 and portable/PCL builds.
 
 Supported Platforms:
 
@@ -19,13 +19,13 @@ Supported Platforms:
 - Xamarin: Android, iOS
 
 
-Using Math.NET Spatial with C#
-------------------------------
+Using Math.NET Symbolics with C#
+--------------------------------
 
-Building Math.NET Spatial
--------------------------
+Building Math.NET Symbolics
+---------------------------
 
-If you do not want to use the official binaries, or if you like to modify, debug or contribute, you can compile Math.NET Spatial locally either using Visual Studio or manually with the build scripts.
+If you do not want to use the official binaries, or if you like to modify, debug or contribute, you can compile Math.NET Symbolics locally either using Visual Studio or manually with the build scripts.
 
 * The Visual Studio solutions should build out of the box, without any preparation steps or package restores.
 * Instead of a compatible IDE you can also build the solutions with `msbuild`, or on Mono with `xbuild`.
@@ -34,10 +34,10 @@ If you do not want to use the official binaries, or if you like to modify, debug
 ### How to build with MSBuild/XBuild
 
     [lang=sh]
-    msbuild MathNet.Spatial.sln             # only build for .Net 4 (main solution)
-    msbuild MathNet.Spatial.Net35Only.sln  # only build for .Net 3.5
-    msbuild MathNet.Spatial.All.sln        # full build with .Net 4, 3.5 and PCL profiles
-    xbuild MathNet.Spatial.sln             # build with Mono, e.g. on Linux or Mac
+    msbuild MathNet.Symbolics.sln            # only build for .Net 4 (main solution)
+    msbuild MathNet.Symbolics.Net35Only.sln  # only build for .Net 3.5
+    msbuild MathNet.Symbolics.All.sln        # full build with .Net 4, 3.5 and PCL profiles
+    xbuild MathNet.Symbolics.sln             # build with Mono, e.g. on Linux or Mac
 
 ### How to build with FAKE
 
