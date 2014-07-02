@@ -8,7 +8,7 @@
     <ProjectGuid>ac68fb1a-99d5-4f60-b626-3a57d8f3438d</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>UnitTests</RootNamespace>
-    <AssemblyName>UnitTests</AssemblyName>
+    <AssemblyName>MathNet.Symbolics.UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
     <Name>SymbolicsUnitTests</Name>
