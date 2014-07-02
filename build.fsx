@@ -64,13 +64,11 @@ let releaseNotes = release.Notes |> List.map (fun l -> l.Replace("*","").Replace
 trace (sprintf " Math.NET Symbolics  v%s" packageVersion)
 trace ""
 
-let summary = "Math.NET Symbolics, providing methods and algorithms for geometry computations in science, engineering and every day use."
+let summary = "Math.NET Symbolics is a basic opensource computer algebra library for .Net, Silverlight and Mono, written entirely in F#."
 let description = "Math.NET Symbolics. "
-let support = "Supports .Net 4.0, .Net 3.5 and Mono on Windows, Linux and Mac; Silverlight 5, WindowsPhone/SL 8, WindowsPhone 8.1 and Windows 8 with PCL Portable Profiles 47 and 344; Android/iOS with Xamarin."
+let support = "Supports .Net 4.5 and Mono on Windows, Linux and Mac; Silverlight 5, WindowsPhone/SL 8, WindowsPhone 8.1 and Windows 8 with PCL Portable Profiles 47 and 344; Android/iOS with Xamarin."
 let tags = "math symbolics algebra simplify solve cas"
 
-let libnet35 = "lib/net35"
-let libnet40 = "lib/net40"
 let libnet45 = "lib/net45"
 let libpcl47 = "lib/portable-net45+sl5+netcore45+MonoAndroid1+MonoTouch1"
 let libpcl344 = "lib/portable-net45+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1"
@@ -84,19 +82,19 @@ let symbolicsPack =
       ReleaseNotes = releaseNotes
       Tags = tags
       Authors = [ "Christoph Ruegg"; "Johan Larsson" ]
-      Dependencies = []
-      Files = [ @"..\..\out\lib\Net35\MathNet.Symbolics.*", Some libnet35, None;
-                @"..\..\out\lib\Net45\MathNet.Symbolics.*", Some libnet45, None;
+      Dependencies = getDependencies "src/Symbolics/packages.config"
+      Files = [ @"..\..\out\lib\Net45\MathNet.Symbolics.*", Some libnet45, None;
                 @"..\..\out\lib\Profile47\MathNet.Symbolics.*", Some libpcl47, None;
                 @"..\..\out\lib\Profile344\MathNet.Symbolics.*", Some libpcl344, None;
-                @"..\..\src\Symbolics\**\*.cs", Some "src/Common", None ] }
+                @"MathNet.Symbolics.fsx", None, None;
+                @"..\..\src\Symbolics\**\*.fs", Some "src/Common", None ] }
 
 let coreBundle =
     { Id = symbolicsPack.Id
       Version = packageVersion
       Title = symbolicsPack.Title
       ReleaseNotesFile = "RELEASENOTES.md"
-      FsLoader = false
+      FsLoader = true
       Packages = [ symbolicsPack ] }
 
 
@@ -109,8 +107,8 @@ Target "Start" DoNothing
 Target "Clean" (fun _ ->
     CleanDirs [ "obj" ]
     CleanDirs [ "out/api"; "out/docs"; "out/packages" ]
-    CleanDirs [ "out/lib/Net35"; "out/lib/Net45"; "out/lib/Profile47"; "out/lib/Profile344" ]
-    CleanDirs [ "out/test/Net35"; "out/test/Net45"; "out/test/Profile47"; "out/test/Profile344" ])
+    CleanDirs [ "out/lib/Net45"; "out/lib/Profile47"; "out/lib/Profile344" ]
+    CleanDirs [ "out/test/Net45"; "out/test/Profile47"; "out/test/Profile344" ])
 
 Target "RestorePackages" RestorePackages
 
@@ -140,14 +138,12 @@ let buildConfig config subject = MSBuild "" (if hasBuildParam "incremental" then
 let build subject = buildConfig "Release" subject
 
 Target "BuildMain" (fun _ -> build !! "MathNet.Symbolics.sln")
-Target "BuildNet35" (fun _ -> build !! "MathNet.Symbolics.Net35Only.sln")
 Target "BuildAll" (fun _ -> build !! "MathNet.Symbolics.All.sln")
 
 Target "Build" DoNothing
 "Prepare"
-  =?> ("BuildNet35", hasBuildParam "net35")
   =?> ("BuildAll", hasBuildParam "all" || hasBuildParam "release")
-  =?> ("BuildMain", not (hasBuildParam "all" || hasBuildParam "release" || hasBuildParam "net35" || hasBuildParam "signed"))
+  =?> ("BuildMain", not (hasBuildParam "all" || hasBuildParam "release"))
   ==> "Build"
 
 
@@ -183,10 +179,10 @@ let provideReadme title releasenotes path =
 
 let provideFsLoader includes path =
     // inspired by FsLab/tpetricek
-    let fullScript = ReadFile "src/FSharp/MathNet.Symbolics.fsx" |> Array.ofSeq
+    let fullScript = ReadFile "src/Symbolics/MathNet.Symbolics.fsx" |> Array.ofSeq
     let startIndex = fullScript |> Seq.findIndex (fun s -> s.Contains "***MathNet.Symbolics.fsx***")
     let extraScript = fullScript .[startIndex + 1 ..] |> List.ofSeq
-    let assemblies = [ "MathNet.Symbolics.dll" ]
+    let assemblies = [ "MathNet.Numerics.dll"; "MathNet.Numerics.FSharp.dll"; "MathNet.Symbolics.dll" ]
     let nowarn = ["#nowarn \"211\""]
     let references = [ for assembly in assemblies -> sprintf "#r \"%s\"" assembly ]
     ReplaceFile (path @@ "MathNet.Symbolics.fsx") (nowarn @ includes @ references @ extraScript |> toLines)
@@ -195,12 +191,17 @@ let provideZipExtraFiles path (bundle:Bundle) =
     provideLicense path
     provideReadme (sprintf "%s v%s" bundle.Title bundle.Version) bundle.ReleaseNotesFile path
     if bundle.FsLoader then
-        let includes = [ for root in [ ""; "../"; "../../" ] -> sprintf "#I \"%sNet40\"" root ]
+        let includes = [ for root in [ ""; "../"; "../../" ] -> sprintf "#I \"%sProfile47\"" root ]
         provideFsLoader includes path
 
 let provideNuGetExtraFiles path (bundle:Bundle) (pack:Package) =
     provideLicense path
     provideReadme (sprintf "%s v%s" pack.Title pack.Version) bundle.ReleaseNotesFile path
+    if pack = symbolicsPack then
+        let includes = [ for root in [ ""; "../"; "../../"; "../../../" ] do
+                         for package in bundle.Packages ->
+                         sprintf "#I \"%spackages/%s.%s/lib/portable-net45+sl5+netcore45+MonoAndroid1+MonoTouch1\"" root package.Id package.Version ]
+        provideFsLoader includes path
 
 // ZIP
 
@@ -214,8 +215,7 @@ let zip zipDir filesDir filesFilter bundle =
 
 Target "Zip" (fun _ ->
     CleanDir "out/packages/Zip"
-    if not (hasBuildParam "signed") || hasBuildParam "release" then
-        coreBundle |> zip "out/packages/Zip" "out/lib" (fun f -> f.Contains("MathNet.Symbolics.")))
+    coreBundle |> zip "out/packages/Zip" "out/lib" (fun f -> f.Contains("MathNet.Symbolics.")))
 "Build" ==> "Zip"
 
 
