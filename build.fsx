@@ -215,7 +215,7 @@ let zip zipDir filesDir filesFilter bundle =
 
 Target "Zip" (fun _ ->
     CleanDir "out/packages/Zip"
-    coreBundle |> zip "out/packages/Zip" "out/lib" (fun f -> f.Contains("MathNet.Symbolics.")))
+    coreBundle |> zip "out/packages/Zip" "out/lib" (fun f -> f.Contains("MathNet.Symbolics.") || f.Contains("MathNet.Numerics.")))
 "Build" ==> "Zip"
 
 
