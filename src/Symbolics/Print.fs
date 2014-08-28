@@ -194,16 +194,18 @@ module Print =
             else write " + "; tex write 1 x
     and private tex write priority = function
         | Number n ->
-            if not(n.IsInteger) && priority > 2 || n.IsInteger && priority > 0 && n.Sign < 0 then write "\\left("
             if n.IsInteger then
+                if priority > 0 && n.Sign < 0 then write "\\left("
                 write (n.ToString());
+                if priority > 0 && n.Sign < 0 then write "\\right)"
             else
+                if priority > 2 then write "\\left("
                 write "\\frac{"
                 write (n.Numerator.ToString());
                 write "}{"
                 write (n.Denominator.ToString());
                 write "}"
-            if not(n.IsInteger) && priority > 2 || n.IsInteger && priority > 0 && n.Sign < 0 then write "\\right)"
+                if priority > 2 then write "\\right)"
         | Identifier (Symbol name) -> write name
         | Undefined -> write "Undefined"
         | PositiveInfinity -> write "PositiveInfinity"
@@ -225,11 +227,13 @@ module Print =
             if d = one then
                 texFractionPart write 2 n
             else
+                if priority > 2 then write "\\left("
                 write "\\frac{"
                 texFractionPart write 0 n
                 write "}{"
                 texFractionPart write 0 d
                 write "}"
+                if priority > 2 then write "\\right)"
         | NegIntPower (r, p) ->
             if priority > 2 then write "\\left("
             write "\\frac{1}{"
