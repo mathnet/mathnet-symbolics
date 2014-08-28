@@ -63,11 +63,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="MathNet.Numerics">
-      <HintPath>..\..\packages\MathNet.Numerics.3.0.2\lib\net40\MathNet.Numerics.dll</HintPath>
+      <HintPath>..\..\packages\MathNet.Numerics.3.2.1\lib\net40\MathNet.Numerics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MathNet.Numerics.FSharp">
-      <HintPath>..\..\packages\MathNet.Numerics.FSharp.3.0.2\lib\net40\MathNet.Numerics.FSharp.dll</HintPath>
+      <HintPath>..\..\packages\MathNet.Numerics.FSharp.3.2.1\lib\net40\MathNet.Numerics.FSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />

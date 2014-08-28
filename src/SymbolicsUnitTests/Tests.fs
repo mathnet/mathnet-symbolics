@@ -15,17 +15,17 @@ open Operators
 let inline (-->) x expected = x |> should equal expected
 
 // Test: x should evaluate to the expected string when formatted *nicely*
-let inline (==>) x expected = Text.format x |> should equal expected
+let inline (==>) x expected = Print.format x |> should equal expected
 
 // Test: x should evaluate to the expected string when formatted *strictly* (not denormalized)
-let inline (===>) x expected = Text.formatStrict x |> should equal expected
+let inline (===>) x expected = Print.formatStrict x |> should equal expected
 
 // extra test helpers for tuples, list, arrays and hash-sets - maybe there's a better way?
-let inline (==|>) (x1, x2) expected = (Text.format x1, Text.format x2) |> should equal expected
-let inline (==||>) (x1, x2, x3) expected = (Text.format x1, Text.format x2, Text.format x3) |> should equal expected
-let inline (==+>) x expected = List.iter2 (fun x e -> Text.format x |> should equal e) x expected
-let inline (==->) x expected = Array.iter2 (fun x e -> Text.format x |> should equal e) x expected
-let inline (==*>) (x:HashSet<Expression>) (expected:string list) = HashSet(expected).SetEquals(x |> Seq.map (Text.format)) |> should be True
+let inline (==|>) (x1, x2) expected = (Print.format x1, Print.format x2) |> should equal expected
+let inline (==||>) (x1, x2, x3) expected = (Print.format x1, Print.format x2, Print.format x3) |> should equal expected
+let inline (==+>) x expected = List.iter2 (fun x e -> Print.format x |> should equal e) x expected
+let inline (==->) x expected = Array.iter2 (fun x e -> Print.format x |> should equal e) x expected
+let inline (==*>) (x:HashSet<Expression>) (expected:string list) = HashSet(expected).SetEquals(x |> Seq.map (Print.format)) |> should be True
 
 // variables
 let x = symbol "x"

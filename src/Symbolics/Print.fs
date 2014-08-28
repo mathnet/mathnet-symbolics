@@ -5,7 +5,7 @@ open System.Text
 open MathNet.Symbolics
 
 [<RequireQualifiedAccess>]
-module Text =
+module Print =
 
     open Operators
     open ExpressionPatterns
