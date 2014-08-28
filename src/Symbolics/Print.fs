@@ -117,10 +117,10 @@ module Print =
             niceSummand write true x
             xs |> List.iter (niceSummand write false)
             if priority > 1 then write ")"
-        | Product (Number n::xs) as p when n.IsNegative ->
+        | Product (Number n::xs) when n.IsNegative ->
             write "-";
             nice write 2 (product ((Number -n)::xs))
-        | Product xs as p ->
+        | Product _ as p ->
             let n = properNumerator p
             let d = properDenominator p
             if d = one then
@@ -195,9 +195,13 @@ module Print =
     and private tex write priority = function
         | Number n ->
             if n.IsInteger then
-                if priority > 0 && n.Sign < 0 then write "\\left("
-                write (n.ToString());
-                if priority > 0 && n.Sign < 0 then write "\\right)"
+                if n.Sign >= 0 then write (n.ToString());
+                else
+                    if priority > 0 then write "\\left("
+                    write "{"
+                    write (n.ToString());
+                    write "}"
+                    if priority > 0 then write "\\right)"
             else
                 if priority > 2 then write "\\left("
                 write "\\frac{"
@@ -207,21 +211,24 @@ module Print =
                 write "}"
                 if priority > 2 then write "\\right)"
         | Identifier (Symbol name) -> write name
-        | Undefined -> write "Undefined"
-        | PositiveInfinity -> write "PositiveInfinity"
-        | NegativeInfinity -> write "NegativeInfinity"
-        | ComplexInfinity -> write "ComplexInfinity"
+        | Undefined -> write "\\mathrm{undefined}"
+        | PositiveInfinity -> write "\\infty"
+        | NegativeInfinity ->
+            if priority > 0 then write "\\left("
+            write "-\\infty"
+            if priority > 0 then write "\\right)"
+        | ComplexInfinity -> write "\\infty"
         | Sum (x::xs) ->
             if priority > 1 then write "\\left("
             texSummand write true x
             xs |> List.iter (texSummand write false)
             if priority > 1 then write "\\right)"
-        | Product (Number n::xs) as p when n.IsNegative ->
+        | Product (Number n::xs) when n.IsNegative ->
             if priority > 1 then write "\\left("
             write "-";
             tex write 2 (product ((Number -n)::xs))
             if priority > 1 then write "\\right)"
-        | Product xs as p ->
+        | Product _ as p ->
             let n = properNumerator p
             let d = properDenominator p
             if d = one then
