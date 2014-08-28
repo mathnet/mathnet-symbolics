@@ -69,6 +69,7 @@ let description = "Math.NET Symbolics. "
 let support = "Supports .Net 4.5 and Mono on Windows, Linux and Mac; Silverlight 5, WindowsPhone/SL 8, WindowsPhone 8.1 and Windows 8 with PCL Portable Profiles 47 and 344; Android/iOS with Xamarin."
 let tags = "math symbolics algebra simplify solve cas"
 
+let libnet40 = "lib/net40"
 let libnet45 = "lib/net45"
 let libpcl47 = "lib/portable-net45+sl5+netcore45+MonoAndroid1+MonoTouch1"
 let libpcl344 = "lib/portable-net45+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1"
@@ -81,9 +82,9 @@ let symbolicsPack =
       Description = description + support
       ReleaseNotes = releaseNotes
       Tags = tags
-      Authors = [ "Christoph Ruegg"; "Johan Larsson" ]
+      Authors = [ "Christoph Ruegg" ]
       Dependencies = getDependencies "src/Symbolics/packages.config"
-      Files = [ @"..\..\out\lib\Net45\MathNet.Symbolics.*", Some libnet45, None;
+      Files = [ @"..\..\out\lib\Net40\MathNet.Symbolics.*", Some libnet40, None;
                 @"..\..\out\lib\Profile47\MathNet.Symbolics.*", Some libpcl47, None;
                 @"..\..\out\lib\Profile344\MathNet.Symbolics.*", Some libpcl344, None;
                 @"MathNet.Symbolics.fsx", None, None;
@@ -107,8 +108,8 @@ Target "Start" DoNothing
 Target "Clean" (fun _ ->
     CleanDirs [ "obj" ]
     CleanDirs [ "out/api"; "out/docs"; "out/packages" ]
-    CleanDirs [ "out/lib/Net45"; "out/lib/Profile47"; "out/lib/Profile344" ]
-    CleanDirs [ "out/test/Net45"; "out/test/Profile47"; "out/test/Profile344" ])
+    CleanDirs [ "out/lib/Net40"; "out/lib/Profile47"; "out/lib/Profile344" ]
+    CleanDirs [ "out/test/Net40"; "out/test/Profile47"; "out/test/Profile344" ])
 
 Target "RestorePackages" RestorePackages
 
@@ -200,7 +201,7 @@ let provideNuGetExtraFiles path (bundle:Bundle) (pack:Package) =
     if pack = symbolicsPack then
         let includes = [ for root in [ ""; "../"; "../../"; "../../../" ] do
                          for package in bundle.Packages ->
-                         sprintf "#I \"%spackages/%s.%s/lib/portable-net45+sl5+netcore45+MonoAndroid1+MonoTouch1\"" root package.Id package.Version ]
+                         sprintf "#I \"%spackages/%s.%s/lib/net40\"" root package.Id package.Version ]
         provideFsLoader includes path
 
 // ZIP
