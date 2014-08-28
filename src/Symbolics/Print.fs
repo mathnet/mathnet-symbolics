@@ -73,14 +73,15 @@ module Print =
 
     // Nice Formatting:
 
-    let rec niceNumerator = function
+    let rec properNumerator = function
         | NegRationalPower _ -> one
-        | Product ax -> product <| List.map niceNumerator ax
+        | Product ax -> product <| List.map properNumerator ax
         | z -> z
-    let rec niceDenominator = function
+    let rec properDenominator = function
         | NegRationalPower (r, p) -> r ** -p
-        | Product ax -> product <| List.map niceDenominator ax
+        | Product ax -> product <| List.map properDenominator ax
         | _ -> one
+
     let rec private niceFractionPart write priority = function
         | Product (x::xs) ->
             if priority > 2 then write "("
@@ -120,8 +121,8 @@ module Print =
             write "-";
             nice write 2 (product ((Number -n)::xs))
         | Product xs as p ->
-            let n = niceNumerator p
-            let d = niceDenominator p
+            let n = properNumerator p
+            let d = properDenominator p
             if d = one then
                 niceFractionPart write 2 n
             else
@@ -168,3 +169,108 @@ module Print =
         sb.ToString()
 
     let formatTextWriter (writer:TextWriter) q = nice (writer.Write) 0 q
+
+
+    // LaTeX Formatting
+
+    let rec private texFractionPart write priority = function
+        | Product (x) ->
+            if priority > 2 then write "\\left("
+            x |> List.iter (fun x -> tex write 2 x)
+            if priority > 2 then write "\\right)"
+        | x -> tex write priority x
+    and private texSummand write first = function
+        | Number n as x when n.IsNegative ->
+            write "-";
+            tex write 1 (-x)
+        | Product ((Number n)::xs) when n.IsNegative ->
+            if first then write "-"; tex write 2 (product ((Number -n)::xs))
+            else write " - "; tex write 2 (product ((Number -n)::xs))
+        | Product _ as p ->
+            if first then tex write 1 p
+            else write " + "; tex write 1 p
+        | x ->
+            if first then tex write 1 x
+            else write " + "; tex write 1 x
+    and private tex write priority = function
+        | Number n ->
+            if not(n.IsInteger) && priority > 2 || n.IsInteger && priority > 0 && n.Sign < 0 then write "\\left("
+            if n.IsInteger then
+                write (n.ToString());
+            else
+                write "\\frac{"
+                write (n.Numerator.ToString());
+                write "}{"
+                write (n.Denominator.ToString());
+                write "}"
+            if not(n.IsInteger) && priority > 2 || n.IsInteger && priority > 0 && n.Sign < 0 then write "\\right)"
+        | Identifier (Symbol name) -> write name
+        | Undefined -> write "Undefined"
+        | PositiveInfinity -> write "PositiveInfinity"
+        | NegativeInfinity -> write "NegativeInfinity"
+        | ComplexInfinity -> write "ComplexInfinity"
+        | Sum (x::xs) ->
+            if priority > 1 then write "\\left("
+            texSummand write true x
+            xs |> List.iter (texSummand write false)
+            if priority > 1 then write "\\right)"
+        | Product (Number n::xs) as p when n.IsNegative ->
+            if priority > 1 then write "\\left("
+            write "-";
+            tex write 2 (product ((Number -n)::xs))
+            if priority > 1 then write "\\right)"
+        | Product xs as p ->
+            let n = properNumerator p
+            let d = properDenominator p
+            if d = one then
+                texFractionPart write 2 n
+            else
+                write "\\frac{"
+                texFractionPart write 0 n
+                write "}{"
+                texFractionPart write 0 d
+                write "}"
+        | NegIntPower (r, p) ->
+            if priority > 2 then write "\\left("
+            write "\\frac{1}{"
+            tex write 3 r
+            if (p <> Expression.MinusOne) then
+                write "^"
+                tex write 3 -p
+            write "}"
+            if priority > 2 then write "\\right)"
+        | Power (r, p) ->
+            if priority > 3 then write "\\left("
+            tex write 4 r
+            write "^"
+            tex write 4 p
+            if priority > 3 then write "\\right)"
+        | Function (Abs, x) ->
+            write "\\left|"
+            tex write 0 x
+            write "\\right|"
+        | Function (fn, x) ->
+            if priority > 3 then write "\\left("
+            write "\\mathrm{"
+            write (functionName fn)
+            write "}\\,"
+            tex write 3 x
+            if priority > 3 then write "\\right)" else write "\\;"
+        | FunctionN (fn, x::xs) ->
+            if priority > 3 then write "\\left("
+            write "\\mathrm{"
+            write (functionName fn)
+            write "}\\left("
+            tex write 0 x
+            xs |> List.iter (fun x -> write ","; tex write 0 x)
+            write "\\right)"
+            if priority > 3 then write "\\right)"
+        | Sum [] | Product [] | FunctionN (_, []) -> failwith "invalid expression"
+
+    /// LaTeX output
+    let latex q =
+        let sb = StringBuilder()
+        tex (sb.Append >> ignore) 0 q
+        sb.ToString()
+
+    let latexTextWriter (writer:TextWriter) q = tex (writer.Write) 0 q

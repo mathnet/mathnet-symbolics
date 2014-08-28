@@ -1,4 +1,4 @@
-﻿#load @"..\..\packages\MathNet.Numerics.FSharp.3.0.2\MathNet.Numerics.fsx"
+﻿#load @"..\..\packages\MathNet.Numerics.FSharp.3.2.1\MathNet.Numerics.fsx"
 #load "MathNet.Symbolics.fsx"
 
 open System
