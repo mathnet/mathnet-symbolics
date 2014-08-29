@@ -28,7 +28,10 @@ module FloatingPoint =
         | PosInf | NegInf | ComplexInf -> Some Infinity
         | _ -> None
 
+    [<CompiledName("Real")>]
     let freal x = FloatingPoint.Real(x)
+
+    [<CompiledName("Complex")>]
     let fcomplex r i = FloatingPoint.Complex (System.Numerics.Complex(r, i))
 
     let rec fnormalize = function
@@ -112,6 +115,7 @@ module FloatingPoint =
 
     let fapplyN f xs = failwith "not supported"
 
+    [<CompiledName("Evaluate")>]
     let rec evaluate symbols = function
         | Number n -> Real (float n) |> fnormalize
         | Undefined -> Undef

@@ -63,24 +63,17 @@ module Print =
         | Sum [] | Product [] | FunctionN (_, []) -> failwith "invalid expression"
 
      /// Strict formatting, prints an exact representation of the expression tree
+    [<CompiledName("FormatStrict")>]
     let formatStrict q =
         let sb = StringBuilder()
         strict (sb.Append >> ignore) 0 q
         sb.ToString()
 
+    [<CompiledName("FormatStrictToTextWriter")>]
     let formatStrictTextWriter (writer:TextWriter) q = strict (writer.Write) 0 q
 
 
     // Nice Formatting:
-
-    let rec properNumerator = function
-        | NegRationalPower _ -> one
-        | Product ax -> product <| List.map properNumerator ax
-        | z -> z
-    let rec properDenominator = function
-        | NegRationalPower (r, p) -> r ** -p
-        | Product ax -> product <| List.map properDenominator ax
-        | _ -> one
 
     let rec private niceFractionPart write priority = function
         | Product (x::xs) ->
@@ -121,8 +114,8 @@ module Print =
             write "-";
             nice write 2 (product ((Number -n)::xs))
         | Product _ as p ->
-            let n = properNumerator p
-            let d = properDenominator p
+            let n = Rational.numerator p
+            let d = Rational.denominator p
             if d = one then
                 niceFractionPart write 2 n
             else
@@ -163,11 +156,13 @@ module Print =
         | Sum [] | Product [] | FunctionN (_, []) -> failwith "invalid expression"
 
     /// Nicer human readable but slightly denormalized output
+    [<CompiledName("Format")>]
     let format q =
         let sb = StringBuilder()
         nice (sb.Append >> ignore) 0 q
         sb.ToString()
 
+    [<CompiledName("FormatToTextWriter")>]
     let formatTextWriter (writer:TextWriter) q = nice (writer.Write) 0 q
 
 
@@ -229,8 +224,8 @@ module Print =
             tex write 2 (product ((Number -n)::xs))
             if priority > 1 then write "\\right)"
         | Product _ as p ->
-            let n = properNumerator p
-            let d = properDenominator p
+            let n = Rational.numerator p
+            let d = Rational.denominator p
             if d = one then
                 texFractionPart write 2 n
             else
@@ -279,9 +274,11 @@ module Print =
         | Sum [] | Product [] | FunctionN (_, []) -> failwith "invalid expression"
 
     /// LaTeX output
+    [<CompiledName("LaTeX")>]
     let latex q =
         let sb = StringBuilder()
         tex (sb.Append >> ignore) 0 q
         sb.ToString()
 
+    [<CompiledName("LaTeXToTextWriter")>]
     let latexTextWriter (writer:TextWriter) q = tex (writer.Write) 0 q

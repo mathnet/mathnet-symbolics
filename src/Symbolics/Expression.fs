@@ -27,7 +27,7 @@ type Expression =
     static member FromInt64 (x:int64) = Number (BigRational.FromBigInt (BigInteger(x)))
     static member FromInteger (x:BigInteger) = Number (BigRational.FromBigInt x)
     static member FromRational (x:BigRational) = Number x
-
+    static member Symbol (name:string) = Identifier (Symbol name)
 
     static member private OrderRelation (x:Expression) (y:Expression) =
         let rec compare a b =
@@ -254,6 +254,13 @@ type Expression =
     static member ( / ) (x, (y:int)) = x / Number (BigRational.FromInt y)
     static member ( / ) ((x:int), y) = Number (BigRational.FromInt x) / y
     static member Pow (x, (y:int)) = Expression.Pow(x, Number (BigRational.FromInt y))
+
+    // Simpler usage in C#
+    static member op_Implicit (x:int) = Expression.FromInt32(x)
+    static member op_Implicit (x:int64) = Expression.FromInt64(x)
+    static member op_Implicit (x:BigInteger) = Expression.FromInteger(x)
+    static member op_Implicit (x:BigRational) = Expression.FromRational(x)
+    static member op_Implicit (name:string) = Expression.Symbol(name)
 
 
 [<RequireQualifiedAccess>]

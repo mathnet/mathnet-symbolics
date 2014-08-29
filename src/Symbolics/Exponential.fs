@@ -10,6 +10,7 @@ open Operators
 module Exponential =
 
     /// Expand exponential and logarithmic terms
+    [<CompiledName("Expand")>]
     let rec expand x =
         let rec expRules = function
             | Sum ax -> product <| List.map expRules ax
@@ -24,6 +25,7 @@ module Exponential =
         | Function (Ln, a) -> lnRules (Algebraic.expand a)
         | a -> a
 
+    [<CompiledName("Contract")>]
     let rec contract x =
         let rec rules x =
             match Algebraic.expandMain x with
@@ -42,6 +44,7 @@ module Exponential =
         | Product _ | Power _ as a -> rules a
         | a -> a
 
+    [<CompiledName("Simplify")>]
     let simplify x =
         let x' = Rational.rationalize x
         (Rational.numerator x' |> contract) / (Rational.denominator x' |> contract)
@@ -53,6 +56,7 @@ module Trigonometric =
     let private binomial n k = SpecialFunctions.Binomial(n, k) |> int |> number
     let private oneIfEven (k:int) = if Euclid.IsEven(k) then 1 else -1
 
+    [<CompiledName("Expand")>]
     let rec expand x =
         let rec rules = function
             | Sum ax ->
@@ -77,6 +81,7 @@ module Trigonometric =
         | a -> a
 
     /// Splits a product into a tuple (rest, sin or cos or a positive integer power of them)
+    [<CompiledName("SeparateFactors")>]
     let separateFactors x =
         let rec isSinCosPart = function
             | PosIntPower (r, _) -> isSinCosPart r
@@ -87,6 +92,7 @@ module Trigonometric =
         | x when isSinCosPart x -> (one, x)
         | x -> (x, one)
 
+    [<CompiledName("Contract")>]
     let rec contract x =
         let powerRules r p =
             match r, p with
@@ -140,6 +146,7 @@ module Trigonometric =
         | a -> a
 
     // Substitute Tan, Cot, Sec, Csc to sin and cos
+    [<CompiledName("Substitute")>]
     let rec substitute x =
         match x with
         | Function (Tan, a) -> let a' = substitute a in sin(a')/cos(a')
@@ -150,6 +157,7 @@ module Trigonometric =
         | FunctionN (fn, xs) -> applyN fn (List.map substitute xs)
         | x -> x
 
+    [<CompiledName("Simplify")>]
     let simplify x =
         let x' = substitute x
         let w = Rational.rationalize x'

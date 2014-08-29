@@ -6,6 +6,7 @@ open Operators
 [<RequireQualifiedAccess>]
 module Calculus =
 
+    [<CompiledName("Differentiate")>]
     let rec differentiate symbol = function
         | x when x = symbol -> one
         | Number _ | Identifier _ -> zero

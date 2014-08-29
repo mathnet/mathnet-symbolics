@@ -5,7 +5,7 @@ open MathNet.Symbolics
 
 module Operators =
 
-    let symbol name = Identifier (Symbol name)
+    let symbol name = Expression.Symbol name
     let number (x:int) = Expression.FromInt32 x
     let zero = Expression.Zero
     let one = Expression.One
@@ -42,6 +42,7 @@ module Operators =
 [<RequireQualifiedAccess>]
 module Numbers =
 
+    [<CompiledName("Max2")>]
     let max2 u v =
         match u, v with
         | Undefined, _ | _, Undefined -> Undefined
@@ -50,6 +51,7 @@ module Numbers =
         | Number a, Number b -> Number (if b > a then b else a)
         | _ -> failwith "number expected"
 
+    [<CompiledName("Min2")>]
     let min2 u v =
         match u, v with
         | Undefined, _ | _, Undefined -> Undefined
@@ -58,9 +60,13 @@ module Numbers =
         | Number a, Number b -> Number (if b < a then b else a)
         | _ -> failwith "number expected"
 
+    [<CompiledName("Max")>]
     let max ax = List.reduce max2 ax
+
+    [<CompiledName("Min")>]
     let min ax = List.reduce min2 ax
 
+    [<CompiledName("Compare")>]
     let compare x y =
         match x, y with
         | a, b when a = b -> 0
@@ -79,6 +85,7 @@ module Structure =
     open ExpressionPatterns
     open Operators
 
+    [<CompiledName("NumberOfOperands")>]
     let numberOfOperands = function
         | Sum ax | Product ax -> List.length ax
         | Power _ -> 2
@@ -87,6 +94,7 @@ module Structure =
         | Number _ | Identifier _ -> 0
         | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined -> 0
 
+    [<CompiledName("Operand")>]
     let operand i = function
         | Sum ax | Product ax | FunctionN (_, ax) -> List.nth ax i
         | Power (r, _) when i = 0 -> r
@@ -95,6 +103,7 @@ module Structure =
         | Number _ | Identifier _ -> failwith "numbers and identifiers have no operands"
         | _ -> failwith "no such operand"
 
+    [<CompiledName("IsFreeOf")>]
     let rec freeOf symbol x =
         if symbol = x then false else
         match x with
@@ -104,6 +113,7 @@ module Structure =
         | Number _ | Identifier _ -> true
         | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined -> true
 
+    [<CompiledName("IsFreeOfSet")>]
     let rec freeOfSet (symbols: HashSet<Expression>) x =
         if symbols.Contains(x) then false else
         match x with
@@ -113,6 +123,7 @@ module Structure =
         | Number _ | Identifier _  -> true
         | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined -> true
 
+    [<CompiledName("Substitute")>]
     let rec substitute y r x =
         if y = x then r else
         match x with
@@ -124,6 +135,7 @@ module Structure =
         | Number _ | Identifier _ -> x
         | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined -> x
 
+    [<CompiledName("Map")>]
     let map f = function
         | Sum ax -> sum <| List.map f ax
         | Product ax -> product <| List.map f ax
@@ -132,6 +144,7 @@ module Structure =
         | FunctionN (fn, xs) -> applyN fn (List.map f xs)
         | _ as x -> x
 
+    [<CompiledName("Fold")>]
     let fold f s = function
         | Sum ax | Product ax | FunctionN (_, ax) -> List.fold f s ax
         | Power (r, p) -> List.fold f s [r;p]
@@ -146,6 +159,7 @@ module Algebraic =
     open Operators
 
     /// Splits a product into a tuple (free of a symbol, dependent on symbol)
+    [<CompiledName("SeparateFactors")>]
     let separateFactors symbol x =
         match x with
         | Product ax -> let f, d = List.partition (Structure.freeOf symbol) ax in (product f, product d)
@@ -168,6 +182,7 @@ module Algebraic =
         | a, b -> a**(number b)
 
     /// Algebraically expand the expression recursively
+    [<CompiledName("Expand")>]
     let rec expand = function
         | Sum ax -> sum <| List.map expand ax
         | Product ax -> List.map expand ax |> List.reduce expandProduct
@@ -175,6 +190,7 @@ module Algebraic =
         | x -> x
 
     /// Algebraically expand the main operator of the expression only
+    [<CompiledName("ExpandMain")>]
     let expandMain = function
         | Product ax -> List.reduce expandProduct ax
         | PosIntPower (r, Number n) -> expandPower r (int n)

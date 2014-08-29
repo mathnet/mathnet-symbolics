@@ -9,6 +9,7 @@ open MathNet.Symbolics
 [<RequireQualifiedAccess>]
 module Quotations =
 
+    [<CompiledName("Parse")>]
     let rec parse (q:Expr) : Expression =
         match q with
         | SpecificCall <@@ ( + ) @@> (_, _, [xt; yt]) -> (parse xt) + (parse yt)

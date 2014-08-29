@@ -9,6 +9,7 @@ type SE = MathNet.Symbolics.Expression
 [<RequireQualifiedAccess>]
 module Linq =
 
+    [<CompiledName("Parse")>]
     let rec parse (q:Expression) : SE =
         match q.NodeType, q with
         | ExpressionType.UnaryPlus, (:? UnaryExpression as e) -> +(parse e.Operand)
