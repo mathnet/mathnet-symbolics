@@ -34,8 +34,8 @@ open System.Resources;
 open System.Runtime.CompilerServices
 open System.Runtime.InteropServices
 
-[<assembly: AssemblyTitle("Math.NET Symbolics")>]
-[<assembly: AssemblyDescription("Math.NET Symbolics")>]
+[<assembly: AssemblyTitle("Math.NET Symbolics Parser")>]
+[<assembly: AssemblyDescription("Math.NET Symbolics Parser")>]
 [<assembly: AssemblyConfiguration("")>]
 [<assembly: AssemblyCompany("Math.NET Project")>]
 [<assembly: AssemblyProduct("Math.NET Symbolics")>]

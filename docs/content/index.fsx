@@ -10,14 +10,24 @@ NuGet Packages
 
 The recommended way to get Math.NET Symbolics is to use NuGet. The following packages are provided and maintained in the public [NuGet Gallery](https://nuget.org/profiles/mathnet/):
 
-- **MathNet.Symbolics** - core package, including .Net 4, .Net 3.5 and portable/PCL builds.
+Core Package:
 
-Supported Platforms:
+- **MathNet.Symbolics** - core package
+- **MathNet.Symbolics.Parser** - optional extension to parse expressions from infix strings.
 
-- .Net 4.0, .Net 3.5 and Mono: Windows, Linux and Mac.
-- PCL Portable Profiles 47 and 344: Windows 8, Silverlight 5, Windows Phone/SL 8, Windows Phone 8.1.
-- Xamarin: Android, iOS
+Platform Support and Dependencies
+---------------------------------
 
+- .Net 4.0 and Mono: Windows, Linux and Mac.
+
+Package Dependencies:
+
+- MathNet.Symbolics: None
+- MathNet.Symbolics.Parser: [FParsec](http://www.nuget.org/packages/FParsec)
+
+
+Using Math.NET Symbolics with F# and F# Interactive
+---------------------------------------------------
 
 Using Math.NET Symbolics with C#
 --------------------------------
@@ -35,8 +45,6 @@ If you do not want to use the official binaries, or if you like to modify, debug
 
     [lang=sh]
     msbuild MathNet.Symbolics.sln            # only build for .Net 4 (main solution)
-    msbuild MathNet.Symbolics.Net35Only.sln  # only build for .Net 3.5
-    msbuild MathNet.Symbolics.All.sln        # full build with .Net 4, 3.5 and PCL profiles
     xbuild MathNet.Symbolics.sln             # build with Mono, e.g. on Linux or Mac
 
 ### How to build with FAKE
@@ -47,20 +55,15 @@ If you do not want to use the official binaries, or if you like to modify, debug
     
     build.cmd Build              # normal build (.Net 4.0)
     build.cmd Build incremental  # normal build, incremental (.Net 4.0)
-    build.cmd Build all          # full build (.Net 4.0, 3.5, PCL)
-    build.cmd Build net35        # compatibility build (.Net 3.5
     
     build.cmd Test        # normal build (.Net 4.0), run unit tests
     build.cmd Test quick  # normal build (.Net 4.0), run unit tests except long running ones
-    build.cmd Test all    # full build (.Net 4.0, 3.5, PCL), run all unit tests
-    build.cmd Test net35  # compatibility build (.Net 3.5), run unit tests
     
     build.cmd Clean  # cleanup build artifacts
     build.cmd Docs   # generate documentation
     build.cmd Api    # generate api reference
     
-    build.cmd NuGet all     # generate normal NuGet packages (.Net 4.0, 3.5, PCL)
-    build.cmd NuGet signed  # generate signed/strong named NuGet packages (.Net 4.0)
+    build.cmd NuGet all     # generate normal NuGet packages
 
     build.cmd All          # build, test, docs, api reference (.Net 4.0)
     build.cmd All release  # release build

@@ -5,20 +5,20 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{a8667c7d-cc10-4519-acfe-1b4d3c190e97}</ProjectGuid>
+    <ProjectGuid>830e4b1a-f59d-4e5f-85cf-2cd977a9d316</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>MathNet.Symbolics</RootNamespace>
-    <AssemblyName>MathNet.Symbolics</AssemblyName>
+    <RootNamespace>MathNet.Symbolics.Parser</RootNamespace>
+    <AssemblyName>MathNet.Symbolics.Parser</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
-    <Name>MathNet.Symbolics</Name>
+    <Name>MathNet.Symbolics.Parser</Name>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>..\..\out\lib\Net40\</OutputPath>
     <IntermediateOutputPath>..\..\obj\lib\Net40\</IntermediateOutputPath>
     <BaseIntermediateOutputPath>..\..\obj\lib\Net40\</BaseIntermediateOutputPath>
-    <DocumentationFile>..\..\out\lib\Net40\MathNet.Symbolics.xml</DocumentationFile>
+    <DocumentationFile>..\..\out\lib\Net40\MathNet.Symbolics.Parser.xml</DocumentationFile>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <Tailcalls>true</Tailcalls>
@@ -35,6 +35,8 @@
     <Tailcalls>false</Tailcalls>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
@@ -54,37 +56,16 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Symbols.fs" />
-    <Compile Include="Expression.fs" />
-    <Compile Include="Elementary.fs" />
-    <Compile Include="Polynomial.fs" />
-    <Compile Include="Rational.fs" />
-    <Compile Include="Exponential.fs" />
-    <Compile Include="Calculus.fs" />
-    <Compile Include="FloatingPoint.fs" />
-    <Compile Include="Quotations.fs" />
-    <Compile Include="Linq.fs" />
-    <Compile Include="Print.fs" />
-    <None Include="MathNet.Symbolics.fsx" />
     <None Include="Script.fsx" />
-    <None Include="app.config" />
-    <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="MathNet.Numerics">
-      <HintPath>..\..\packages\MathNet.Numerics.3.2.1\lib\net40\MathNet.Numerics.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MathNet.Numerics.FSharp">
-      <HintPath>..\..\packages\MathNet.Numerics.FSharp.3.2.1\lib\net40\MathNet.Numerics.FSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <Reference Include="FParsecCS" />
     <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>True</Private>
     </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
   </ItemGroup>
 </Project>
