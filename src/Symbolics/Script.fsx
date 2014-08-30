@@ -24,7 +24,7 @@ let f = symbol "f"
 // This script is just for local experiments
 // For examples see Tests.fs in the UnitTest project which is quite readable
 
-
+(3 + 2)*4/6
 
 (3Q + 2)*4/6 // 10/3
 (3*a+4)**2 // (4 + 3*a)^2

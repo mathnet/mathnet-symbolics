@@ -64,13 +64,13 @@ module Print =
 
      /// Strict formatting, prints an exact representation of the expression tree
     [<CompiledName("FormatStrict")>]
-    let formatStrict q =
+    let infixStrict q =
         let sb = StringBuilder()
         strict (sb.Append >> ignore) 0 q
         sb.ToString()
 
     [<CompiledName("FormatStrictToTextWriter")>]
-    let formatStrictTextWriter (writer:TextWriter) q = strict (writer.Write) 0 q
+    let infixtStrictTextWriter (writer:TextWriter) q = strict (writer.Write) 0 q
 
 
     // Nice Formatting:
@@ -166,13 +166,13 @@ module Print =
 
     /// Nicer human readable but slightly denormalized output
     [<CompiledName("Format")>]
-    let format q =
+    let infix q =
         let sb = StringBuilder()
         nice (sb.Append >> ignore) 0 q
         sb.ToString()
 
     [<CompiledName("FormatToTextWriter")>]
-    let formatTextWriter (writer:TextWriter) q = nice (writer.Write) 0 q
+    let infixTextWriter (writer:TextWriter) q = nice (writer.Write) 0 q
 
 
     // LaTeX Formatting
