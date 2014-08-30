@@ -81,12 +81,12 @@ Trigonometric.simplify (sin(x) + sin(y) - 2*sin(x/2+y/2)*cos(x/2-y/2))
 
 
 /// Taylor expansion of x(symbol) at symbol=a of the first k terms
-let taylor1 (k:int) symbol x a =
-    let rec taylor n nf acc dxn =
+let taylor (k:int) symbol x a =
+    let rec impl n nf acc dxn =
         if n = k then acc else
-        taylor (n+1) (nf*(n+1)) (acc + (dxn |> Structure.substitute symbol a)/nf*(symbol-a)**n) (Calculus.differentiate symbol dxn)
-    taylor 0 1 zero x |> Algebraic.expand
-taylor1 4 x (sin(x)+cos(x)) 0Q // 1 + x - (1/2)*x^2 - (1/6)*x^3
+        impl (n+1) (nf*(n+1)) (acc + (dxn |> Structure.substitute symbol a)/nf*(symbol-a)**n) (Calculus.differentiate symbol dxn)
+    impl 0 1 zero x |> Algebraic.expand
+taylor 4 x (sin(x)+cos(x)) 0Q // 1 + x - (1/2)*x^2 - (1/6)*x^3
 
 
 Polynomial.divide x (5*x**2 + 4*x + 1) (2*x + 3) // (-7/4 + (5/2)*x, 25/4)

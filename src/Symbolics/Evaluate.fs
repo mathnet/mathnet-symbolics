@@ -26,6 +26,32 @@ type FloatingPoint =
     static member op_Implicit (x:Vector<complex>) = ComplexVector x
     static member op_Implicit (x:Matrix<float>) = RealMatrix x
     static member op_Implicit (x:Matrix<complex>) = ComplexMatrix x
+    member x.RealValue =
+        match x with
+        | Real x -> x
+        | Complex x when x.IsReal() -> x.Real
+        | _ -> failwith "Value not convertible to a real number."
+    member x.ComplexValue =
+        match x with
+        | Real x -> complex x 0.0
+        | Complex x -> x
+        | _ -> failwith "Value not convertible to a complex number."
+    member x.RealVectorValue =
+        match x with
+        | RealVector x -> x
+        | _ -> failwith "Value not convertible to a real vector."
+    member x.ComplexVectorValue =
+        match x with
+        | ComplexVector x -> x
+        | _ -> failwith "Value not convertible to a complex vector."
+    member x.RealMatrixValue =
+        match x with
+        | RealMatrix x -> x
+        | _ -> failwith "Value not convertible to a real matrix."
+    member x.ComplexMatrixValue =
+        match x with
+        | ComplexMatrix x -> x
+        | _ -> failwith "Value not convertible to a complex matrix."
 
 
 module Evaluate =
