@@ -9,19 +9,28 @@ open MathNet.Symbolics
 [<NoComparison>]
 type FloatingPoint =
     | Real of float
-    | Complex of Complex
+    | Complex of complex
     | RealVector of Vector<float>
-    | ComplexVector of Vector<Complex>
+    | ComplexVector of Vector<complex>
     | RealMatrix of Matrix<float>
-    | ComplexMatrix of Matrix<Complex>
+    | ComplexMatrix of Matrix<complex>
     | Undef
     | PosInf
     | NegInf
     | ComplexInf
 
-[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
-module FloatingPoint =
+    // Simpler usage in C#
+    static member op_Implicit (x:float) = Real x
+    static member op_Implicit (x:complex) = Complex x
+    static member op_Implicit (x:Vector<float>) = RealVector x
+    static member op_Implicit (x:Vector<complex>) = ComplexVector x
+    static member op_Implicit (x:Matrix<float>) = RealMatrix x
+    static member op_Implicit (x:Matrix<complex>) = ComplexMatrix x
 
+
+module Evaluate =
+
+    open System.Collections.Generic
     type C = System.Numerics.Complex
 
     let (|Infinity|_|) = function
@@ -116,13 +125,13 @@ module FloatingPoint =
     let fapplyN f xs = failwith "not supported"
 
     [<CompiledName("Evaluate")>]
-    let rec evaluate symbols = function
+    let rec evaluate (symbols:IDictionary<string, FloatingPoint>) = function
         | Number n -> Real (float n) |> fnormalize
         | Undefined -> Undef
         | PositiveInfinity -> PosInf
         | NegativeInfinity -> NegInf
         | ComplexInfinity -> ComplexInf
-        | Identifier (Symbol s) -> Map.find s symbols |> fnormalize
+        | Identifier (Symbol s) -> symbols.[s] |> fnormalize
         | Sum xs -> xs |> List.map (evaluate symbols) |> List.reduce fadd |> fnormalize
         | Product xs -> xs |> List.map (evaluate symbols) |> List.reduce fmultiply |> fnormalize
         | Power (r, p) -> fpower (evaluate symbols r) (evaluate symbols p) |> fnormalize

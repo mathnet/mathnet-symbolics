@@ -7,6 +7,8 @@
 open NUnit.Framework
 open FsUnit
 open System.Collections.Generic
+open System.Numerics
+open MathNet.Numerics
 open MathNet.Symbolics
 
 open Operators
@@ -372,12 +374,12 @@ let ``Evaluate some expression to floating point numbers`` () =
 
     let (=!=) x expected = x.ToString() |> should equal (expected.ToString())
 
-    let symbols = Map.ofList ["a", FloatingPoint.freal 2.0; "b", FloatingPoint.freal 3.0; "c", FloatingPoint.fcomplex 1.0 -1.0]
-    FloatingPoint.evaluate symbols (a) =!= FloatingPoint.Real 2.0
-    FloatingPoint.evaluate symbols (1Q/2) =!= FloatingPoint.Real 0.5
-    FloatingPoint.evaluate symbols (sin(a) + ln(b)) =!= FloatingPoint.Real 2.007909715
-    FloatingPoint.evaluate symbols (a*x**2 + b*x + c |> Structure.substitute x (number 1/2)) =!= FloatingPoint.Complex (System.Numerics.Complex(3.0, -1.0))
-    FloatingPoint.evaluate symbols (1Q/0Q) =!= FloatingPoint.ComplexInf
+    let symbols = Map.ofList ["a", Real 2.0; "b", Real 3.0; "c", Complex (complex 1.0 -1.0)]
+    Evaluate.evaluate symbols (a) =!= Real 2.0
+    Evaluate.evaluate symbols (1Q/2) =!= Real 0.5
+    Evaluate.evaluate symbols (sin(a) + ln(b)) =!= Real 2.007909715
+    Evaluate.evaluate symbols (a*x**2 + b*x + c |> Structure.substitute x (number 1/2)) =!= Complex (complex 3.0 -1.0)
+    Evaluate.evaluate symbols (1Q/0Q) =!= ComplexInf
 
 
 [<Test>]

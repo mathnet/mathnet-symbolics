@@ -75,6 +75,15 @@ module Print =
 
     // Nice Formatting:
 
+    let rec numerator = function
+        | NegRationalPower _ -> one
+        | Product ax -> product <| List.map numerator ax
+        | z -> z
+    let rec denominator = function
+        | NegRationalPower (r, p) -> r ** -p
+        | Product ax -> product <| List.map denominator ax
+        | _ -> one
+
     let rec private niceFractionPart write priority = function
         | Product (x::xs) ->
             if priority > 2 then write "("
@@ -114,8 +123,8 @@ module Print =
             write "-";
             nice write 2 (product ((Number -n)::xs))
         | Product _ as p ->
-            let n = Rational.numerator p
-            let d = Rational.denominator p
+            let n = numerator p
+            let d = denominator p
             if d = one then
                 niceFractionPart write 2 n
             else
@@ -224,8 +233,8 @@ module Print =
             tex write 2 (product ((Number -n)::xs))
             if priority > 1 then write "\\right)"
         | Product _ as p ->
-            let n = Rational.numerator p
-            let d = Rational.denominator p
+            let n = numerator p
+            let d = denominator p
             if d = one then
                 texFractionPart write 2 n
             else

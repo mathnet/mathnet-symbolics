@@ -32,6 +32,7 @@ _ReSharper*
 *.aps
 *.opensdf
 *.cachefile
+*.TMP
 
 # Upgrades
 _UpgradeReport_Files/

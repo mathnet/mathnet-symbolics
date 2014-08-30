@@ -2,15 +2,13 @@
 
 open System
 open MathNet.Symbolics
-
 open System.Linq.Expressions
-type SE = MathNet.Symbolics.Expression
 
 [<RequireQualifiedAccess>]
 module Linq =
 
     [<CompiledName("Parse")>]
-    let rec parse (q:Expression) : SE =
+    let rec parse (q:Expression) : MathNet.Symbolics.Expression =
         match q.NodeType, q with
         | ExpressionType.UnaryPlus, (:? UnaryExpression as e) -> +(parse e.Operand)
         | ExpressionType.Negate, (:? UnaryExpression as e) -> -(parse e.Operand)

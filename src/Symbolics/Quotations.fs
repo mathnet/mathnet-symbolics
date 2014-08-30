@@ -28,5 +28,5 @@ module Quotations =
         | Var x -> Identifier (Symbol x.Name)
         | PropertyGet (_, info, _) -> Identifier (Symbol info.Name)
         | Let (_, _, t) -> parse t
-        | Lambda (x, t) -> parse t
+        | Lambda (_, t) -> parse t
         | _ -> failwith "not supported"
