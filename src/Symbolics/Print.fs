@@ -63,13 +63,13 @@ module Print =
         | Sum [] | Product [] | FunctionN (_, []) -> failwith "invalid expression"
 
      /// Strict formatting, prints an exact representation of the expression tree
-    [<CompiledName("FormatStrict")>]
+    [<CompiledName("InfixStrict")>]
     let infixStrict q =
         let sb = StringBuilder()
         strict (sb.Append >> ignore) 0 q
         sb.ToString()
 
-    [<CompiledName("FormatStrictToTextWriter")>]
+    [<CompiledName("InfixStrictToTextWriter")>]
     let infixtStrictTextWriter (writer:TextWriter) q = strict (writer.Write) 0 q
 
 
@@ -165,13 +165,13 @@ module Print =
         | Sum [] | Product [] | FunctionN (_, []) -> failwith "invalid expression"
 
     /// Nicer human readable but slightly denormalized output
-    [<CompiledName("Format")>]
+    [<CompiledName("Infix")>]
     let infix q =
         let sb = StringBuilder()
         nice (sb.Append >> ignore) 0 q
         sb.ToString()
 
-    [<CompiledName("FormatToTextWriter")>]
+    [<CompiledName("InfixToTextWriter")>]
     let infixTextWriter (writer:TextWriter) q = nice (writer.Write) 0 q
 
 
