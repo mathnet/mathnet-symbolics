@@ -64,10 +64,10 @@ let releaseNotes = release.Notes |> List.map (fun l -> l.Replace("*","").Replace
 trace (sprintf " Math.NET Symbolics  v%s" packageVersion)
 trace ""
 
-let summary = "Math.NET Symbolics is a basic opensource computer algebra library for .Net, Silverlight and Mono, written entirely in F#."
+let summary = "Math.NET Symbolics is a basic opensource computer algebra library for .Net and Mono. Written in F# but works well in C# as well."
 let description = "Math.NET Symbolics. "
-let support = "Supports .Net 4.5 and Mono on Windows, Linux and Mac; Silverlight 5, WindowsPhone/SL 8, WindowsPhone 8.1 and Windows 8 with PCL Portable Profiles 47 and 344; Android/iOS with Xamarin."
-let tags = "math symbolics algebra simplify solve cas"
+let support = "Supports .Net 4.0 and Mono on Windows, Linux and Mac."
+let tags = "math symbolics algebra simplify solve cas fsharp parse"
 
 let libnet40 = "lib/net40"
 let libnet45 = "lib/net45"
@@ -192,7 +192,7 @@ let provideZipExtraFiles path (bundle:Bundle) =
     provideLicense path
     provideReadme (sprintf "%s v%s" bundle.Title bundle.Version) bundle.ReleaseNotesFile path
     if bundle.FsLoader then
-        let includes = [ for root in [ ""; "../"; "../../" ] -> sprintf "#I \"%sProfile47\"" root ]
+        let includes = [ for root in [ ""; "../"; "../../" ] -> sprintf "#I \"%sNet40\"" root ]
         provideFsLoader includes path
 
 let provideNuGetExtraFiles path (bundle:Bundle) (pack:Package) =
@@ -216,7 +216,7 @@ let zip zipDir filesDir filesFilter bundle =
 
 Target "Zip" (fun _ ->
     CleanDir "out/packages/Zip"
-    coreBundle |> zip "out/packages/Zip" "out/lib" (fun f -> f.Contains("MathNet.Symbolics.") || f.Contains("MathNet.Numerics.")))
+    coreBundle |> zip "out/packages/Zip" "out/lib" (fun f -> f.Contains("MathNet.Symbolics.") || f.Contains("MathNet.Numerics.") || f.Contains("FParsec")))
 "Build" ==> "Zip"
 
 
