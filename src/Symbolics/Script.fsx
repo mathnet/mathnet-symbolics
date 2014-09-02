@@ -1,13 +1,18 @@
 ﻿#load @"..\..\packages\MathNet.Numerics.FSharp.3.2.1\MathNet.Numerics.fsx"
-#load "MathNet.Symbolics.fsx"
+
+//#load "MathNet.Symbolics.fsx"
+#I @"..\..\out\lib\Net40"
+#r "MathNet.Numerics.dll"
+#r "MathNet.Symbolics.dll"
 
 open System
 open System.Numerics
-open Microsoft.FSharp
 open MathNet.Numerics
 open MathNet.Symbolics
 
 open Operators
+
+fsi.AddPrinter Print.infix
 
 // variables:
 let x = symbol "x"
@@ -207,3 +212,19 @@ Rational.simplify z (x/z + y/z**2) // (y + x*z)/z^2
 Rational.simplify x ((x**2-1)/(x+1)) // -1 + x
 Rational.simplify x ((x+1)/(x**2 - 1 - (x+1)*(x-1))) // ComplexInfinity
 Rational.simplify x (1/(1+1/(x+1)) + 2/(x+2))  // (3 + x)/(2 + x)
+
+
+
+// Parsing
+#I "../../packages/FParsec.1.0.1/lib/net40-client"
+#r "FParsecCS.dll"
+#r "FParsec.dll"
+open FParsec
+
+run Infix.parser "1/(a*b)"
+run Infix.parser "sin(x)"
+run Infix.parser "sin (x)"
+run Infix.parser "sin x"
+run Infix.parser "sin"
+
+run Infix.parser "sin x - 1"
