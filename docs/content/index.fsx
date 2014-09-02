@@ -79,6 +79,16 @@ Infix.printStrict (1/(a*b))  // returns string "a^(-1)*b^(-1)"
 LaTeX.print (1/(a*b))        // returns string "\frac{1}{ab}"
 
 (**
+Strings in infix notation can be parsed back into expressions:
+*)
+
+Infix.parse "1/(a*b)"     // Returns ParsedExpression 1/(a*b)
+Infix.parse "1/(a*b"      // Returns ParseFailure, 7: Expecting infix operator or ')'
+Infix.tryParse "1/(a*b)"  // Returns Some (1/(a*b))
+Infix.parseOrUndefined "1/(a*b)"  // Returns 1/(a*b)
+Infix.parseOrThrow "1/(a*b)"      // Returns 1/(a*b)
+
+(**
 ### Number Literals
 
 Numbers can be forced to become expressions using the `Q` suffix, e.g. `3Q`
@@ -130,7 +140,7 @@ Trigonometric.contract (cos(x)**4)  // Returns 3/8 + (1/2)*cos(2*x) + (1/8)*cos(
 These modules can also be combined to build more interesting manipulations.
 For example, let's implement a [taylor expansion](https://en.wikipedia.org/wiki/Taylor_series)
 routine to approximate the shape of a differentiable function $x(\zeta)$ at
-some point $\zeta = a$ by its $k$ first derivatives at that point. We can leverage the existing
+some point $\zeta = a$ by its $k-1$ first derivatives at that point (order $k$). We can leverage the existing
 structural substitute routine to substitute $\zeta$ with $a$ to get the resulting expression at $a$,
 and the differentiate routine to evaluate the partial derivative $\frac{\partial{x}}{\partial\zeta}$.
 *)
@@ -180,6 +190,10 @@ almost exactly the same way. The equivalent C# code to the F# code above could l
     Infix.Print(1/(a*b));        // returns string "1/(a*b)"
     Infix.PrintStrict(1/(a*b));  // returns string "a^(-1)*b^(-1)"
     LaTeX.Print(1/(a*b));        // returns string "\frac{1}{ab}"
+
+    Infix.Print(Infix.ParseOrUndefined("1/(a*b)")); // Returns 1/(a*b)
+    Infix.Print(Infix.ParseOrUndefined("1/(a*b"));  // Returns Undefined
+    Infix.Print(Infix.ParseOrThrow("1/(a*b)"));     // Returns 1/(a*b)
 
     var symbols = new Dictionary<string,FloatingPoint>
        {{ "a", 2.0 },
