@@ -64,8 +64,8 @@
     <Compile Include="Evaluate.fs" />
     <Compile Include="Quotations.fs" />
     <Compile Include="Linq.fs" />
-    <Compile Include="Print.fs" />
     <Compile Include="Infix.fs" />
+    <Compile Include="LaTeX.fs" />
     <None Include="MathNet.Symbolics.fsx" />
     <None Include="Script.fsx" />
     <None Include="app.config" />

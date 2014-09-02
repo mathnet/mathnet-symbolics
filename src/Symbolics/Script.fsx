@@ -12,7 +12,7 @@ open MathNet.Symbolics
 
 open Operators
 
-fsi.AddPrinter Print.infix
+fsi.AddPrinter Infix.print
 
 // variables:
 let x = symbol "x"
@@ -215,8 +215,13 @@ Rational.simplify x (1/(1+1/(x+1)) + 2/(x+2))  // (3 + x)/(2 + x)
 
 
 
-// Parsing
+// Printing
+Infix.print (1/(a*b))        // "1/(a*b)"
+Infix.printStrict (1/(a*b))  // "a^(-1)*b^(-1)"
+LaTeX.print (1/(a*b))        // "\frac{1}{ab}"
 
+
+// Parsing
 Infix.parse "1/(a*b)"
 Infix.parse "sin(x)"
 Infix.parse "sin (x)"
@@ -226,3 +231,5 @@ Infix.parse "sin"
 Infix.parseOrUndefined "sin x - 1" // -1 + sin(x)
 Infix.parseOrUndefined "|a-2|-1"
 Infix.parseOrUndefined "x-" // undefined
+
+Quotations.parse <@ fun x y -> -x*y/3 @>  // -(1/3)*x*y

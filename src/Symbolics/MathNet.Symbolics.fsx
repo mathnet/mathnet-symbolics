@@ -6,4 +6,4 @@
 
 open MathNet.Symbolics
 
-fsi.AddPrinter Print.infix
+fsi.AddPrinter Infix.print

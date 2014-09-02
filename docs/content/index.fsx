@@ -74,9 +74,9 @@ to format any expression as infix string, LaTeX expression or in strict mode to 
 internal representation:
 *)
 
-Print.infix (1/(a*b))        // returns string "1/(a*b)"
-Print.infixStrict (1/(a*b))  // returns string "a^(-1)*b^(-1)"
-Print.latex (1/(a*b))        // returns string "\frac{1}{ab}"
+Infix.print (1/(a*b))        // returns string "1/(a*b)"
+Infix.printStrict (1/(a*b))  // returns string "a^(-1)*b^(-1)"
+LaTeX.print (1/(a*b))        // returns string "\frac{1}{ab}"
 
 (**
 ### Number Literals
@@ -172,14 +172,14 @@ almost exactly the same way. The equivalent C# code to the F# code above could l
     var e = Expr.Symbol("e");
     var f = Expr.Symbol("f");
 
-    Print.Infix(a+a);                    // returns 2*a
-    Print.Infix(a*a);                    // returns a^2
-    Print.Infix(2 + 1/x - 1);            // returns 1 + 1/x
-    Print.Infix((a/b/(c*a))*(c*d/a)/d);  // returns 1/(a*b)
+    Infix.Print(a+a);                    // returns 2*a
+    Infix.Print(a*a);                    // returns a^2
+    Infix.Print(2 + 1/x - 1);            // returns 1 + 1/x
+    Infix.Print((a/b/(c*a))*(c*d/a)/d);  // returns 1/(a*b)
 
-    Print.Infix(1/(a*b));        // returns string "1/(a*b)"
-    Print.InfixStrict(1/(a*b));  // returns string "a^(-1)*b^(-1)"
-    Print.LaTeX(1/(a*b));        // returns string "\frac{1}{ab}"
+    Infix.Print(1/(a*b));        // returns string "1/(a*b)"
+    Infix.PrintStrict(1/(a*b));  // returns string "a^(-1)*b^(-1)"
+    LaTeX.Print(1/(a*b));        // returns string "\frac{1}{ab}"
 
     var symbols = new Dictionary<string,FloatingPoint>
        {{ "a", 2.0 },
@@ -189,7 +189,7 @@ almost exactly the same way. The equivalent C# code to the F# code above could l
     Evaluate.Evaluate(symbols, 1/(a*b)).RealValue;
 
     // Returns 3/8 + (1/2)*cos(2*x) + (1/8)*cos(4*x)
-    Print.Infix(Trigonometric.Contract(Expr.Pow(Expr.Cos(x), 4)));
+    Infix.Print(Trigonometric.Contract(Expr.Pow(Expr.Cos(x), 4)));
 
     // Taylor Expansion
     Expr Taylor(int k, Expr symbol, Expr a, Expr x)
@@ -208,7 +208,7 @@ almost exactly the same way. The equivalent C# code to the F# code above could l
     }
 
     // Returns 1 + x - (1/2)*x^2 - (1/6)*x^3
-    Print.Infix(Taylor(4, x, 0, Expr.Sin(x)+Expr.Cos(x)));
+    Infix.Print(Taylor(4, x, 0, Expr.Sin(x)+Expr.Cos(x)));
 
 
 Building Math.NET Symbolics

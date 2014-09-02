@@ -1,21 +1,23 @@
 ﻿namespace MathNet.Symbolics
 
+open System.IO
+open System.Text
 open System.Numerics
 open MathNet.Numerics
 open MathNet.Symbolics
-open FParsec
 
-[<RequireQualifiedAccess>]
-module Infix =
+type ParseResult =
+    | ParsedExpression of Expression
+    | ParseFailure of string
+
+
+module private InfixParser =
 
     open Microsoft.FSharp.Reflection
+    open FParsec
     open Operators
 
     type 'a parser = Parser<'a, unit>
-
-    type ParseResult =
-        | Success of Expression
-        | Failure of string
 
     let ws = spaces
     let str_ws s = pstring s .>> ws
@@ -70,26 +72,205 @@ module Infix =
 
     let parser : Expression parser = ws >>. expression .>> eof
 
+    let parse text =
+        match run parser text with
+        | ParserResult.Success (result,_,_) -> ParsedExpression result
+        | ParserResult.Failure (error,_,_) -> ParseFailure error
+
+
+module private InfixPrinter =
+
+    open Operators
+    open ExpressionPatterns
+
+    let functionName = function
+        | Abs -> "abs"
+        | Ln -> "ln" | Exp -> "exp"
+        | Sin -> "sin" | Cos -> "cos" | Tan -> "tan"
+
+    // priority: 1=additive 2=product 3=power
+
+    // Strict Formatting:
+
+    let rec strict write priority = function
+        | Number n ->
+            if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write "("
+            write (n.ToString());
+            if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write ")"
+        | Identifier (Symbol name) -> write name
+        | Undefined -> write "Undefined"
+        | PositiveInfinity -> write "PositiveInfinity"
+        | NegativeInfinity -> write "NegativeInfinity"
+        | ComplexInfinity -> write "ComplexInfinity"
+        | Sum (x::xs) ->
+            if priority > 1 then write "("
+            strict write 1 x
+            xs |> List.iter (fun x -> write " + "; strict write 1 x)
+            if priority > 1 then write ")"
+        | Product (x::xs) ->
+            if priority > 2 then write "("
+            strict write 2 x
+            xs |> List.iter (fun x -> write "*"; strict write 2 x)
+            if priority > 2 then write ")"
+        | Power (r, p) ->
+            if priority > 2 then write "("
+            strict write 3 r
+            write "^"
+            strict write 3 p
+            if priority > 2 then write ")"
+        | Function (Abs, x) ->
+            write "|"
+            strict write 0 x
+            write "|"
+        | Function (fn, x) ->
+            write (functionName fn)
+            write "("
+            strict write 0 x
+            write ")"
+        | FunctionN (fn, x::xs) ->
+            write (functionName fn)
+            write "("
+            strict write 0 x
+            xs |> List.iter (fun x -> write ","; strict write 0 x)
+            write ")"
+        | Sum [] | Product [] | FunctionN (_, []) -> failwith "invalid expression"
+
+
+    // Nice Formatting:
+
+    let rec numerator = function
+        | NegRationalPower _ -> one
+        | Product ax -> product <| List.map numerator ax
+        | z -> z
+    let rec denominator = function
+        | NegRationalPower (r, p) -> r ** -p
+        | Product ax -> product <| List.map denominator ax
+        | _ -> one
+
+    let rec private niceFractionPart write priority = function
+        | Product (x::xs) ->
+            if priority > 2 then write "("
+            nice write 2 x
+            xs |> List.iter (fun x -> write "*"; nice write 2 x)
+            if priority > 2 then write ")"
+        | x -> nice write priority x
+    and private niceSummand write first = function
+        | Number n as x when n.IsNegative ->
+            write "-";
+            nice write 1 (-x)
+        | Product ((Number n)::xs) when n.IsNegative ->
+            if first then write "-"; nice write 2 (product ((Number -n)::xs))
+            else write " - "; nice write 2 (product ((Number -n)::xs))
+        | Product _ as p ->
+            if first then nice write 1 p
+            else write " + "; nice write 1 p
+        | x ->
+            if first then nice write 1 x
+            else write " + "; nice write 1 x
+    and nice write priority = function
+        | Number n ->
+            if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write "("
+            write (n.ToString());
+            if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write ")"
+        | Identifier (Symbol name) -> write name
+        | Undefined -> write "Undefined"
+        | PositiveInfinity -> write "PositiveInfinity"
+        | NegativeInfinity -> write "NegativeInfinity"
+        | ComplexInfinity -> write "ComplexInfinity"
+        | Sum (x::xs) ->
+            if priority > 1 then write "("
+            niceSummand write true x
+            xs |> List.iter (niceSummand write false)
+            if priority > 1 then write ")"
+        | Product (Number n::xs) when n.IsNegative ->
+            write "-";
+            nice write 2 (product ((Number -n)::xs))
+        | Product _ as p ->
+            let n = numerator p
+            let d = denominator p
+            if d = one then
+                niceFractionPart write 2 n
+            else
+                if priority > 2 then write "("
+                niceFractionPart write 3 n
+                write "/"
+                niceFractionPart write 3 d
+                if priority > 2 then write ")"
+        | NegIntPower (r, p) ->
+            if priority > 2 then write "("
+            write "1/"
+            nice write 3 r
+            if (p <> Expression.MinusOne) then
+                write "^"
+                nice write 3 -p
+            if priority > 2 then write ")"
+        | Power (r, p) ->
+            if priority > 3 then write "("
+            nice write 4 r
+            write "^"
+            nice write 4 p
+            if priority > 3 then write ")"
+        | Function (Abs, x) ->
+            write "|"
+            nice write 0 x
+            write "|"
+        | Function (fn, x) ->
+            write (functionName fn)
+            write "("
+            nice write 0 x
+            write ")"
+        | FunctionN (fn, x::xs) ->
+            write (functionName fn)
+            write "("
+            nice write 0 x
+            xs |> List.iter (fun x -> write ","; nice write 0 x)
+            write ")"
+        | Sum [] | Product [] | FunctionN (_, []) -> failwith "invalid expression"
+
+
+/// Print and parse infix expression string
+[<RequireQualifiedAccess>]
+module Infix =
+
+    /// Strict formatting, prints an exact representation of the expression tree
+    [<CompiledName("PrintStrict")>]
+    let printStrict q =
+        let sb = StringBuilder()
+        InfixPrinter.strict (sb.Append >> ignore) 0 q
+        sb.ToString()
+
+    /// Strict formatting, prints an exact representation of the expression tree
+    [<CompiledName("PrintStrictToTextWriter")>]
+    let printStrictTextWriter (writer:TextWriter) q = InfixPrinter.strict (writer.Write) 0 q
+
+    /// Nicer human readable but slightly denormalized output
+    [<CompiledName("Print")>]
+    let print q =
+        let sb = StringBuilder()
+        InfixPrinter.nice (sb.Append >> ignore) 0 q
+        sb.ToString()
+
+    /// Nicer human readable but slightly denormalized output
+    [<CompiledName("PrintToTextWriter")>]
+    let printTextWriter (writer:TextWriter) q = InfixPrinter.nice (writer.Write) 0 q
+
     [<CompiledName("Parse")>]
-    let parse (infix: string) =
-        match run parser infix with
-        | ParserResult.Success (result,_,_) -> Success result
-        | ParserResult.Failure (error,_,_) -> Failure error
+    let parse (infix: string) = InfixParser.parse infix
 
     [<CompiledName("TryParse")>]
     let tryParse (infix: string) =
-        match run parser infix with
-        | ParserResult.Success (result,_,_) -> Some result
+        match InfixParser.parse infix with
+        | ParsedExpression expression -> Some expression
         | _ -> None
 
     [<CompiledName("ParseOrThrow")>]
     let parseOrThrow (infix: string) =
-        match run parser infix with
-        | ParserResult.Success (result,_,_) -> result
-        | ParserResult.Failure (error,_,_) -> failwith error
+        match InfixParser.parse infix with
+        | ParsedExpression expression -> expression
+        | ParseFailure error -> failwith error
 
     [<CompiledName("ParseOrUndefined")>]
     let parseOrUndefined (infix: string) =
-        match run parser infix with
-        | ParserResult.Success (result,_,_) -> result
+        match InfixParser.parse infix with
+        | ParsedExpression expression -> expression
         | _ -> Expression.Undefined
