@@ -12,6 +12,11 @@ module LaTeX =
 
     // priority: 1=additive 2=product 3=power
 
+    let functionName = function
+        | Abs -> "\\mathrm{abs}"
+        | Ln -> "\\ln" | Exp -> "\\exp"
+        | Sin -> "\\sin" | Cos -> "\\cos" | Tan -> "\\tan"
+
     let rec private texFractionPart write priority = function
         | Product (x) ->
             if priority > 2 then write "\\left("
@@ -99,21 +104,25 @@ module LaTeX =
             write "\\left|"
             tex write 0 x
             write "\\right|"
+        | Function (Exp, x) ->
+            if priority > 3 then write "\\left("
+            write "\\mathrm{e}^"
+            tex write 4 x
+            if priority > 3 then write "\\right)"
         | Function (fn, x) ->
             if priority > 3 then write "\\left("
-            write "\\mathrm{"
-            write (InfixPrinter.functionName fn)
-            write "}\\,"
+            write (functionName fn)
+            write "{"
             tex write 3 x
-            if priority > 3 then write "\\right)" else write "\\;"
+            write "}"
+            if priority > 3 then write "\\right)"
         | FunctionN (fn, x::xs) ->
             if priority > 3 then write "\\left("
-            write "\\mathrm{"
-            write (InfixPrinter.functionName fn)
-            write "}\\left("
+            write (functionName fn)
+            write "{\\left("
             tex write 0 x
             xs |> List.iter (fun x -> write ","; tex write 0 x)
-            write "\\right)"
+            write "\\right)}"
             if priority > 3 then write "\\right)"
         | Sum [] | Product [] | FunctionN (_, []) -> failwith "invalid expression"
 
