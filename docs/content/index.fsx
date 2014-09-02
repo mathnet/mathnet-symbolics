@@ -15,7 +15,6 @@ The recommended way to get Math.NET Symbolics is to use NuGet. The following pac
 Core Package:
 
 - **MathNet.Symbolics** - core package
-- **MathNet.Symbolics.Parser** - optional extension to parse expressions from infix strings.
 
 Platform Support and Dependencies
 ---------------------------------
@@ -24,8 +23,7 @@ Platform Support and Dependencies
 
 Package Dependencies:
 
-- MathNet.Symbolics: None
-- MathNet.Symbolics.Parser: [FParsec](http://www.nuget.org/packages/FParsec)
+- [FParsec](http://www.nuget.org/packages/FParsec) (isolated usage only for infix parsing)
 
 
 Using Math.NET Symbolics with F# and F# Interactive

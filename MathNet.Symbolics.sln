@@ -36,8 +36,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{37C7BBC6-A
 		docs\tools\templates\template.cshtml = docs\tools\templates\template.cshtml
 	EndProjectSection
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Parser", "src\Parser\Parser.fsproj", "{830E4B1A-F59D-4E5F-85CF-2CD977A9D316}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,10 +50,6 @@ Global
 		{AC68FB1A-99D5-4F60-B626-3A57D8F3438D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC68FB1A-99D5-4F60-B626-3A57D8F3438D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC68FB1A-99D5-4F60-B626-3A57D8F3438D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{830E4B1A-F59D-4E5F-85CF-2CD977A9D316}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{830E4B1A-F59D-4E5F-85CF-2CD977A9D316}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{830E4B1A-F59D-4E5F-85CF-2CD977A9D316}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{830E4B1A-F59D-4E5F-85CF-2CD977A9D316}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
