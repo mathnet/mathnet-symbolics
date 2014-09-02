@@ -181,6 +181,31 @@ let ``Parse F# quotations`` () =
 
 
 [<Test>]
+let ``Parse infix expressions`` () =
+
+    Infix.parseOrUndefined "-3" ==> "-3"
+    Infix.parseOrUndefined "1234567890123456789012345678901234567890" ==> "1234567890123456789012345678901234567890"
+    Infix.parseOrUndefined "x" ==> "x"
+    Infix.parseOrUndefined "-x" ==> "-x"
+    Infix.parseOrUndefined "x-" ==> "Undefined"
+    Infix.parseOrUndefined "y*x" ==> "x*y"
+    Infix.parseOrUndefined "  y  *  x  " ==> "x*y"
+
+    Infix.parseOrUndefined "sin(x)" ==> "sin(x)"
+    Infix.parseOrUndefined " sin (x) " ==> "sin(x)"
+    Infix.parseOrUndefined " sin ( - x ) " ==> "-sin(x)"
+    Infix.parseOrUndefined "sin x" ==> "Undefined"
+    Infix.parseOrUndefined "sin x-1" ==> "Undefined"
+    Infix.parseOrUndefined "sin -x" ==> "sin - x"
+    Infix.parseOrUndefined "sin" ==> "sin"
+
+    Infix.parseOrUndefined "1/(a*b)" ==> "1/(a*b)"
+    Infix.parseOrUndefined "exp(a)^exp(b)" ==> "exp(a)^exp(b)"
+    Infix.parseOrUndefined "a^b^c" ==> "a^(b^c)"
+    Infix.parseOrUndefined "|a-2|-1" ==> "-1 + |-2 + a|"
+
+
+[<Test>]
 let ``Algebraic Expansion`` () =
 
     // Auto-simplification does not expand expressions:

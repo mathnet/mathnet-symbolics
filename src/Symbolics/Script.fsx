@@ -216,15 +216,13 @@ Rational.simplify x (1/(1+1/(x+1)) + 2/(x+2))  // (3 + x)/(2 + x)
 
 
 // Parsing
-#I "../../packages/FParsec.1.0.1/lib/net40-client"
-#r "FParsecCS.dll"
-#r "FParsec.dll"
-open FParsec
 
-run Infix.parser "1/(a*b)"
-run Infix.parser "sin(x)"
-run Infix.parser "sin (x)"
-run Infix.parser "sin x"
-run Infix.parser "sin"
+Infix.parse "1/(a*b)"
+Infix.parse "sin(x)"
+Infix.parse "sin (x)"
+Infix.parse "sin x"
+Infix.parse "sin"
 
-run Infix.parser "sin x - 1"
+Infix.parseOrUndefined "sin x - 1" // -1 + sin(x)
+Infix.parseOrUndefined "|a-2|-1"
+Infix.parseOrUndefined "x-" // undefined

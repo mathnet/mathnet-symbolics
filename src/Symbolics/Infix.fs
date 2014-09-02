@@ -8,9 +8,14 @@ open FParsec
 [<RequireQualifiedAccess>]
 module Infix =
 
+    open Microsoft.FSharp.Reflection
     open Operators
 
     type 'a parser = Parser<'a, unit>
+
+    type ParseResult =
+        | Success of Expression
+        | Failure of string
 
     let ws = spaces
     let str_ws s = pstring s .>> ws
@@ -31,13 +36,10 @@ module Infix =
     let value : Expression parser = number <|> identifier
 
     let functionName : Function parser =
-        // TODO: consider reflection approach
-        choice [ str_ws "abs" |>> fun _ -> Function.Abs
-                 str_ws "ln"  |>> fun _ -> Function.Ln
-                 str_ws "exp" |>> fun _ -> Function.Exp
-                 str_ws "sin" |>> fun _ -> Function.Sin
-                 str_ws "cos" |>> fun _ -> Function.Cos
-                 str_ws "tan" |>> fun _ -> Function.Tan ] .>> ws
+        let cases =
+            FSharpType.GetUnionCases typeof<Function>
+            |> Array.map (fun case -> (case.Name.ToLower(), FSharpValue.MakeUnion(case, [||]) :?> Function))
+        choice [ for (name, union) in cases -> str_ws name |>> fun _ -> union ] .>> ws
 
     let applyFunction = function
         | f, [arg] -> Expression.Apply(f, arg)
@@ -51,9 +53,8 @@ module Infix =
         let parensTerm = parens expr
         let absTerm = abs expr
 
-        let functionArgsSimple = value |>> fun x -> [x]
-        let functionArgsList = sepBy expr (str_ws ",") |> parens
-        let functionTerm = functionName .>>. (functionArgsList <|> functionArgsSimple) |>> applyFunction
+        let functionArgs = sepBy expr (str_ws ",") |> parens
+        let functionTerm = functionName .>>. functionArgs |>> applyFunction
 
         let term = number <|> parensTerm <|> absTerm <|> attempt functionTerm <|> identifier
 
@@ -68,3 +69,27 @@ module Infix =
         expr
 
     let parser : Expression parser = ws >>. expression .>> eof
+
+    [<CompiledName("Parse")>]
+    let parse (infix: string) =
+        match run parser infix with
+        | ParserResult.Success (result,_,_) -> Success result
+        | ParserResult.Failure (error,_,_) -> Failure error
+
+    [<CompiledName("TryParse")>]
+    let tryParse (infix: string) =
+        match run parser infix with
+        | ParserResult.Success (result,_,_) -> Some result
+        | _ -> None
+
+    [<CompiledName("ParseOrThrow")>]
+    let parseOrThrow (infix: string) =
+        match run parser infix with
+        | ParserResult.Success (result,_,_) -> result
+        | ParserResult.Failure (error,_,_) -> failwith error
+
+    [<CompiledName("ParseOrUndefined")>]
+    let parseOrUndefined (infix: string) =
+        match run parser infix with
+        | ParserResult.Success (result,_,_) -> result
+        | _ -> Expression.Undefined
