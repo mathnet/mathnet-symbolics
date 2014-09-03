@@ -56,4 +56,7 @@ packages/*
 !packages/NUnit.*
 !packages/FsUnit.*
 !packages/TaskParallelLibrary.*
+!packages/FSharp.Core.*
+!packages/FParsec.*
+!packages/MathNet.*
 packages/NUnit.Runners.*
