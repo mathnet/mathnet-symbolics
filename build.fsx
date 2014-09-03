@@ -64,8 +64,8 @@ let releaseNotes = release.Notes |> List.map (fun l -> l.Replace("*","").Replace
 trace (sprintf " Math.NET Symbolics  v%s" packageVersion)
 trace ""
 
-let summary = "Math.NET Symbolics is a basic opensource computer algebra library for .Net and Mono. Written in F# but works well in C# as well."
-let description = "Math.NET Symbolics. "
+let summary = "Math.NET Symbolics is a basic open source computer algebra library for .Net and Mono. Written in F# but works well in C# as well."
+let description = "Math.NET Symbolics is a basic open source computer algebra library. Written in F# but works well in C# as well. "
 let support = "Supports .Net 4.0 and Mono on Windows, Linux and Mac."
 let tags = "math symbolics algebra simplify solve cas fsharp parse"
 

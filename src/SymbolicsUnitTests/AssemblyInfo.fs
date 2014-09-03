@@ -9,8 +9,8 @@ open System.Runtime.InteropServices
 [<assembly: AssemblyCompany("Math.NET Project")>]
 [<assembly: AssemblyProduct("Math.NET Symbolics")>]
 
-[<assembly: AssemblyVersion("0.2.0.0")>]
-[<assembly: AssemblyFileVersion("0.2.0.0")>]
-[<assembly: AssemblyInformationalVersion("0.2.0-alpha")>]
+[<assembly: AssemblyVersion("0.2.1.0")>]
+[<assembly: AssemblyFileVersion("0.2.1.0")>]
+[<assembly: AssemblyInformationalVersion("0.2.1-alpha")>]
 
 ()
