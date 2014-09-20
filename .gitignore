@@ -59,3 +59,7 @@ packages/*
 !packages/FSharp.Core.Microsoft.Signed
 !packages/FParsec
 !packages/MathNet.*
+
+# FAKE & Paket
+packages/FAKE
+tools/paket/paket.exe

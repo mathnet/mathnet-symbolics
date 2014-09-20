@@ -115,8 +115,6 @@ Target "Clean" (fun _ ->
     CleanDirs [ "out/lib/Net40"; "out/lib/Profile47"; "out/lib/Profile344" ]
     CleanDirs [ "out/test/Net40"; "out/test/Profile47"; "out/test/Profile344" ])
 
-Target "RestorePackages" RestorePackages
-
 Target "ApplyVersion" (fun _ ->
     let patchAssemblyInfo path assemblyVersion packageVersion =
         BulkReplaceAssemblyInfoVersions path (fun f ->
@@ -130,7 +128,6 @@ Target "ApplyVersion" (fun _ ->
 Target "Prepare" DoNothing
 "Start"
   =?> ("Clean", not (hasBuildParam "incremental"))
-  ==> "RestorePackages"
   ==> "ApplyVersion"
   ==> "Prepare"
 
