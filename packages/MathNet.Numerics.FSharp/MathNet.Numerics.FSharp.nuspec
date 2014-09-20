@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>MathNet.Numerics.FSharp</id>
-    <version>3.2.1</version>
+    <version>3.2.3</version>
     <title>Math.NET Numerics for F#</title>
     <authors>Christoph Ruegg, Marcus Cuda, Jurgen Van Gael</authors>
     <owners>Christoph Ruegg, Marcus Cuda, Jurgen Van Gael</owners>
@@ -12,10 +12,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Math.NET Numerics is the numerical foundation of the Math.NET project, aiming to provide methods and algorithms for numerical computations in science, engineering and every day use. Supports F# 3.0 on .Net 4.0, .Net 3.5 and Mono on Windows, Linux and Mac; Silverlight 5, WindowsPhone/SL 8, WindowsPhone 8.1 and Windows 8 with PCL Portable Profiles 47 and 328; Android/iOS with Xamarin.</description>
     <summary>F# Modules for Math.NET Numerics, providing methods and algorithms for numerical computations in science, engineering and every day use.</summary>
-    <releaseNotes>Package fix: make sure .Net 3.5-only dependencies are not installed on .Net 4 and newer.</releaseNotes>
+    <releaseNotes>Bug fix: MatrixNormal distribution: density for non-square matrices ~Evelina Gabasova</releaseNotes>
     <tags>fsharp F# math numeric statistics probability integration interpolation regression solve fit linear algebra matrix fft</tags>
     <dependencies>
-      <dependency id="MathNet.Numerics" version="[3.2.1]" />
+      <dependency id="MathNet.Numerics" version="[3.2.3]" />
     </dependencies>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System.Numerics" targetFramework=".NETFramework4.0, .NETFramework4.5, .NETCore4.5, Silverlight5.0, MonoAndroid1.0, MonoTouch1.0" />

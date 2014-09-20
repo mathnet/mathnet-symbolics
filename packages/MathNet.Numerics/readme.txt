@@ -8,7 +8,13 @@
  Math.NET Numerics - http://numerics.mathdotnet.com
  Copyright (c) Math.NET - Open Source MIT/X11 License
 
- Math.NET Numerics v3.2.1
+ Math.NET Numerics v3.2.3
+
+### 3.2.3 - 2014-09-06
+* Bug fix: MatrixNormal distribution: density for non-square matrices *~Evelina Gabasova*
+
+### 3.2.2 - 2014-09-05
+* Bug fix: MatrixNormal distribution: density computation switched row and column covariance *~Evelina Gabasova*
 
 ### 3.2.1 - 2014-08-05
 * Package fix: make sure .Net 3.5-only dependencies are not installed on .Net 4 and newer.
