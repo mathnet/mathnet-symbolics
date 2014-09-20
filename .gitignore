@@ -53,10 +53,9 @@ Desktop.ini
 packages/*
 !packages/.gitattributes
 !packages/repositories.config
-!packages/NUnit.*
-!packages/FsUnit.*
-!packages/TaskParallelLibrary.*
-!packages/FSharp.Core.*
-!packages/FParsec.*
+!packages/NUnit
+!packages/FsUnit
+!packages/TaskParallelLibrary
+!packages/FSharp.Core.Microsoft.Signed
+!packages/FParsec
 !packages/MathNet.*
-packages/NUnit.Runners.*
