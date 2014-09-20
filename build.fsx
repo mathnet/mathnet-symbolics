@@ -83,7 +83,11 @@ let symbolicsPack =
       ReleaseNotes = releaseNotes
       Tags = tags
       Authors = [ "Christoph Ruegg" ]
-      Dependencies = getDependencies "src/Symbolics/packages.config"
+      Dependencies =
+        [ "FParsec", GetPackageVersion "packages" "FParsec"
+          "FSharp.Core.Microsoft.Signed", GetPackageVersion "packages" "FSharp.Core.Microsoft.Signed"
+          "MathNet.Numerics", GetPackageVersion "packages" "MathNet.Numerics"
+          "MathNet.Numerics.FSharp", GetPackageVersion "packages" "MathNet.Numerics.FSharp" ]
       Files = [ @"..\..\out\lib\Net40\MathNet.Symbolics.*", Some libnet40, None;
                 @"..\..\out\lib\Profile47\MathNet.Symbolics.*", Some libpcl47, None;
                 @"..\..\out\lib\Profile344\MathNet.Symbolics.*", Some libpcl344, None;
