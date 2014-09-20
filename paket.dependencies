@@ -1,7 +1,7 @@
 source http://nuget.org/api/v2
 
 nuget NUnit.Runners ~> 2.6
-nuget FSharp.Formatting != 2.4.4
+nuget FSharp.Formatting !~> 2.4.24
 nuget FParsec ~> 1.0
 nuget FSharp.Core.Microsoft.Signed ~> 3.1
 nuget MathNet.Numerics.FSharp ~> 3.2
