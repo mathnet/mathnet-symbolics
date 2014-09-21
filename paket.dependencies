@@ -4,6 +4,7 @@ nuget FParsec ~> 1.0.1
 nuget FSharp.Core.Microsoft.Signed ~> 3.1.1
 nuget MathNet.Numerics.FSharp ~> 3.2.1
 
+nuget FAKE ~> 3.5
 nuget NUnit.Runners ~> 2.6
 nuget FSharp.Formatting !~> 2.4
 nuget FsUnit ~> 1.3
