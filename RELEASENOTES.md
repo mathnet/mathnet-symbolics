@@ -1,3 +1,7 @@
+### 0.3.0 - 2014-09-21
+* Use official FSharp.Core 3.1.1 NuGet package, drop alpha suffix
+* Now using Paket internally to maintain NuGet dependencies
+
 ### 0.2.1-alpha - 2014-09-03
 * Package fix to include explicit FSharp.Core reference
 
