@@ -34,6 +34,17 @@ trace header
 // PROJECT INFO
 // --------------------------------------------------------------------------------------
 
+// VERSION OVERVIEW
+
+let release = LoadReleaseNotes "RELEASENOTES.md"
+let buildPart = "0"
+let assemblyVersion = release.AssemblyVersion + "." + buildPart
+let packageVersion = release.NugetVersion
+let releaseNotes = release.Notes |> List.map (fun l -> l.Replace("*","").Replace("`","")) |> toLines
+trace (sprintf " Math.NET Symbolics  v%s" packageVersion)
+trace ""
+
+
 // CORE PACKAGES
 
 type Package =
@@ -55,14 +66,6 @@ type Bundle =
       ReleaseNotesFile: string
       FsLoader: bool
       Packages: Package list }
-
-let release = LoadReleaseNotes "RELEASENOTES.md"
-let buildPart = "0"
-let assemblyVersion = release.AssemblyVersion + "." + buildPart
-let packageVersion = release.NugetVersion
-let releaseNotes = release.Notes |> List.map (fun l -> l.Replace("*","").Replace("`","")) |> toLines
-trace (sprintf " Math.NET Symbolics  v%s" packageVersion)
-trace ""
 
 let summary = "Math.NET Symbolics is a basic open source computer algebra library for .Net and Mono. Written in F# but works well in C# as well."
 let description = "Math.NET Symbolics is a basic open source computer algebra library. Written in F# but works well in C# as well. "
@@ -88,11 +91,12 @@ let symbolicsPack =
           "FSharp.Core.Microsoft.Signed", GetPackageVersion "packages" "FSharp.Core.Microsoft.Signed"
           "MathNet.Numerics", GetPackageVersion "packages" "MathNet.Numerics"
           "MathNet.Numerics.FSharp", GetPackageVersion "packages" "MathNet.Numerics.FSharp" ]
-      Files = [ @"..\..\out\lib\Net40\MathNet.Symbolics.*", Some libnet40, None;
-                @"..\..\out\lib\Profile47\MathNet.Symbolics.*", Some libpcl47, None;
-                @"..\..\out\lib\Profile344\MathNet.Symbolics.*", Some libpcl344, None;
-                @"MathNet.Symbolics.fsx", None, None;
-                @"..\..\src\Symbolics\**\*.fs", Some "src/Common", None ] }
+      Files =
+        [ @"..\..\out\lib\Net40\MathNet.Symbolics.*", Some libnet40, None;
+          @"..\..\out\lib\Profile47\MathNet.Symbolics.*", Some libpcl47, None;
+          @"..\..\out\lib\Profile344\MathNet.Symbolics.*", Some libpcl344, None;
+          @"MathNet.Symbolics.fsx", None, None;
+          @"..\..\src\Symbolics\**\*.fs", Some "src/Common", None ] }
 
 let coreBundle =
     { Id = symbolicsPack.Id
@@ -224,7 +228,7 @@ Target "Zip" (fun _ ->
 // NUGET
 
 let updateNuspec (pack:Package) outPath symbols updateFiles spec =
-    { spec with ToolPath = "tools/NuGet/NuGet.exe"
+    { spec with ToolPath = "packages/NuGet.CommandLine/tools/NuGet.exe"
                 OutputPath = outPath
                 WorkingDir = "obj/NuGet"
                 Version = pack.Version
@@ -353,7 +357,7 @@ let publishNuGet packageFiles =
             let args = sprintf "push \"%s\"" (FullName file)
             let result =
                 ExecProcess (fun info ->
-                    info.FileName <- "tools/NuGet/NuGet.exe"
+                    info.FileName <- "packages/NuGet.CommandLine/tools/NuGet.exe"
                     info.WorkingDirectory <- FullName "obj/NuGet"
                     info.Arguments <- args) (TimeSpan.FromMinutes 10.)
             if result <> 0 then failwith "Error during NuGet push."

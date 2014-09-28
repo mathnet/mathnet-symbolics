@@ -52,13 +52,13 @@ Desktop.ini
 # NOTE: we do NOT use package restore in the core projects, but do use it with FAKE builds.
 packages/*
 !packages/.gitattributes
-!packages/repositories.config
 !packages/NUnit
 !packages/FsUnit
+!packages/FParsec
 !packages/TaskParallelLibrary
 !packages/FSharp.Core.Microsoft.Signed
-!packages/FParsec
-!packages/MathNet.*
+!packages/FSharp.Core.4.3.0.0.Microsoft.Signed
+!packages/MathNet.Numerics
 
 # FAKE & Paket
 packages/FAKE

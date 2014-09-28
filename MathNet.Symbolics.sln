@@ -18,16 +18,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Readme", "Readme", "{7177AD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{6A8FB80F-8A1F-447D-AAF7-574B85D8600E}"
 	ProjectSection(SolutionItems) = preProject
+		docs\tools\build-docs.fsx = docs\tools\build-docs.fsx
 		build.fsx = build.fsx
 		build\MathNet.Symbolics.Extension.nuspec = build\MathNet.Symbolics.Extension.nuspec
 		build\MathNet.Symbolics.nuspec = build\MathNet.Symbolics.nuspec
-		build\packages.config = build\packages.config
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{6BC9D192-5754-4F4E-8957-94B19E25F7D8}"
-	ProjectSection(SolutionItems) = preProject
-		docs\tools\build-docs.fsx = docs\tools\build-docs.fsx
-		docs\tools\packages.config = docs\tools\packages.config
+		paket.dependencies = paket.dependencies
+		paket.lock = paket.lock
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{37C7BBC6-A637-45BC-9EBF-1733771CDE56}"
@@ -53,8 +49,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{6BC9D192-5754-4F4E-8957-94B19E25F7D8} = {6A8FB80F-8A1F-447D-AAF7-574B85D8600E}
 	EndGlobalSection
 EndGlobal
