@@ -181,7 +181,7 @@
 </member>
 <member name="M:MathNet.Numerics.Complex32Module.atanh(MathNet.Numerics.Complex32)">
 <summary>
- Inverse Hyperbolic Tagent
+ Inverse Hyperbolic Tangent
 </summary>
 </member>
 <member name="M:MathNet.Numerics.Complex32Module.acosh(MathNet.Numerics.Complex32)">
@@ -211,7 +211,7 @@
 </member>
 <member name="M:MathNet.Numerics.Complex32Module.tanh(MathNet.Numerics.Complex32)">
 <summary>
- Hyperbolic Tagent
+ Hyperbolic Tangent
 </summary>
 </member>
 <member name="M:MathNet.Numerics.Complex32Module.cosh(MathNet.Numerics.Complex32)">
@@ -241,7 +241,7 @@
 </member>
 <member name="M:MathNet.Numerics.Complex32Module.atan(MathNet.Numerics.Complex32)">
 <summary>
- Arc Tagent
+ Arc Tangent
 </summary>
 </member>
 <member name="M:MathNet.Numerics.Complex32Module.acos(MathNet.Numerics.Complex32)">
@@ -271,7 +271,7 @@
 </member>
 <member name="M:MathNet.Numerics.Complex32Module.tan(MathNet.Numerics.Complex32)">
 <summary>
- Tagent
+ Tangent
 </summary>
 </member>
 <member name="M:MathNet.Numerics.Complex32Module.cos(MathNet.Numerics.Complex32)">
@@ -495,7 +495,7 @@
 </member>
 <member name="M:MathNet.Numerics.ComplexModule.atanh(System.Numerics.Complex)">
 <summary>
- Inverse Hyperbolic Tagent
+ Inverse Hyperbolic Tangent
 </summary>
 </member>
 <member name="M:MathNet.Numerics.ComplexModule.acosh(System.Numerics.Complex)">
@@ -525,7 +525,7 @@
 </member>
 <member name="M:MathNet.Numerics.ComplexModule.tanh(System.Numerics.Complex)">
 <summary>
- Hyperbolic Tagent
+ Hyperbolic Tangent
 </summary>
 </member>
 <member name="M:MathNet.Numerics.ComplexModule.cosh(System.Numerics.Complex)">
@@ -555,7 +555,7 @@
 </member>
 <member name="M:MathNet.Numerics.ComplexModule.atan(System.Numerics.Complex)">
 <summary>
- Arc Tagent
+ Arc Tangent
 </summary>
 </member>
 <member name="M:MathNet.Numerics.ComplexModule.acos(System.Numerics.Complex)">
@@ -585,7 +585,7 @@
 </member>
 <member name="M:MathNet.Numerics.ComplexModule.tan(System.Numerics.Complex)">
 <summary>
- Tagent
+ Tangent
 </summary>
 </member>
 <member name="M:MathNet.Numerics.ComplexModule.cos(System.Numerics.Complex)">
@@ -2236,6 +2236,17 @@
 <member name="M:MathNet.Numerics.LinearAlgebra.VectorModule.foldBack``3(Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.FSharpFunc{``1,``1}},``1,``2)">
 <summary>
  Fold all entries of a vector in reverse order.
+</summary>
+</member>
+<member name="M:MathNet.Numerics.LinearAlgebra.VectorModule.fold2SkipZeros``5(Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.FSharpFunc{``1,Microsoft.FSharp.Core.FSharpFunc{``2,``0}}},``0,``3,``4)">
+<summary>
+ Folds two vectors by applying a function to update the status for each element pair.
+ Zero-Zero value-pairs may be skipped (relevant mostly for sparse vectors).
+</summary>
+</member>
+<member name="M:MathNet.Numerics.LinearAlgebra.VectorModule.fold2``5(Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.FSharpFunc{``1,Microsoft.FSharp.Core.FSharpFunc{``2,``0}}},``0,``3,``4)">
+<summary>
+ Folds two vectors by applying a function to update the status for each element pair.
 </summary>
 </member>
 <member name="M:MathNet.Numerics.LinearAlgebra.VectorModule.map2SkipZeros``3(Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.FSharpFunc{``0,``0}},``1,``2)">
