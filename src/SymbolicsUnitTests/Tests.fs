@@ -304,19 +304,12 @@ let ``Differentiation and Taylor Series`` () =
     Calculus.differentiate x (a*x**b) ==> "a*b*x^(-1 + b)"
     Calculus.differentiate x (a*x**2 + b*x + c) ==> "b + 2*a*x"
 
-    /// Taylor expansion of x(symbol) at symbol=a of the first k terms
-    let taylor1 (k:int) symbol x a =
-        let rec taylor n nf acc dxn =
-            if n = k then acc else
-            taylor (n+1) (nf*(n+1)) (acc + (dxn |> Structure.substitute symbol a)/nf*(symbol-a)**n) (Calculus.differentiate symbol dxn)
-        taylor 0 1 zero x |> Algebraic.expand
-
-    taylor1 3 x (1/(1-x)) 0Q ==> "1 + x + x^2"
-    taylor1 3 x (1/x) 1Q ==> "3 - 3*x + x^2"
-    taylor1 3 x (ln(x)) 1Q ==> "-3/2 + 2*x - (1/2)*x^2"
-    taylor1 4 x (ln(x)) 1Q ==> "-11/6 + 3*x - (3/2)*x^2 + (1/3)*x^3"
-    taylor1 3 x (sin(x)+cos(x)) 0Q ==> "1 + x - (1/2)*x^2"
-    taylor1 4 x (sin(x)+cos(x)) 0Q ==> "1 + x - (1/2)*x^2 - (1/6)*x^3"
+    Calculus.taylor 3 x (1/(1-x)) 0Q ==> "1 + x + x^2"
+    Calculus.taylor 3 x (1/x) 1Q ==> "3 - 3*x + x^2"
+    Calculus.taylor 3 x (ln(x)) 1Q ==> "-3/2 + 2*x - (1/2)*x^2"
+    Calculus.taylor 4 x (ln(x)) 1Q ==> "-11/6 + 3*x - (3/2)*x^2 + (1/3)*x^3"
+    Calculus.taylor 3 x (sin(x)+cos(x)) 0Q ==> "1 + x - (1/2)*x^2"
+    Calculus.taylor 4 x (sin(x)+cos(x)) 0Q ==> "1 + x - (1/2)*x^2 - (1/6)*x^3"
 
 
 [<Test>]

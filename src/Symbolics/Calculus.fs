@@ -28,3 +28,11 @@ module Calculus =
         | Function (Abs, _) | FunctionN _ -> failwith "not supported"
         | Product [] -> failwith "invalid expression"
         | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined as x -> x
+
+    /// Taylor expansion of x(symbol) at symbol=a of the first k terms
+    [<CompiledName("Taylor")>]
+    let taylor (k:int) symbol x a =
+        let rec impl n nf acc dxn =
+            if n = k then acc else
+            impl (n+1) (nf*(n+1)) (acc + (dxn |> Structure.substitute symbol a)/nf*(symbol-a)**n) (differentiate symbol dxn)
+        impl 0 1 zero x |> Algebraic.expand

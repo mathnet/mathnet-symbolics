@@ -1,3 +1,8 @@
+### 0.4.0 - 2014-11-26
+* Calculus: add taylor expansion function
+* Better Paket compatibility (and NuGet with -ExcludeVersion)
+* Use MathNet.Numerics v3.3.0
+
 ### 0.3.0 - 2014-09-21
 * Use official FSharp.Core 3.1.1 NuGet package, drop alpha suffix
 * Now using Paket internally to maintain NuGet dependencies
