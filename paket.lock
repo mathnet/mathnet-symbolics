@@ -1,28 +1,25 @@
 NUGET
   remote: http://nuget.org/api/v2
   specs:
-    FAKE (3.9.9)
+    FAKE (3.13.0)
     FParsec (1.0.1)
-    FSharp.Compiler.Service (0.0.67)
+    FSharp.Compiler.Service (0.0.81)
     FSharp.Core.Microsoft.Signed (3.1.1.1)
-    FSharp.Formatting (2.4.36)
-      FSharp.Compiler.Service (0.0.67)
-      Microsoft.AspNet.Razor (2.0.30506.0)
+    FSharp.Formatting (2.5.0)
+      FSharp.Compiler.Service (>= 0.0.81)
+      Microsoft.AspNet.Razor (2.0.30506)
       RazorEngine (3.3.0)
     FsUnit (1.3.0.1)
       NUnit (>= 2.6.3)
     MathNet.Numerics (3.3.0)
-      TaskParallelLibrary (>= 1.0.2856) - net35
+      TaskParallelLibrary (>= 1.0.2856) - >= net35 < net40
     MathNet.Numerics.FSharp (3.3.0)
       FSharp.Core.Microsoft.Signed (>= 3.1.1.1)
-      FSharp.Core.Microsoft.Signed (>= 3.1.1.1) - net40
       MathNet.Numerics (3.3.0)
-      MathNet.Numerics (3.3.0) - net35
-      MathNet.Numerics (3.3.0) - net40
-    Microsoft.AspNet.Razor (2.0.30506.0)
+    Microsoft.AspNet.Razor (2.0.30506)
     NuGet.CommandLine (2.8.3)
-    NUnit (2.6.3)
-    NUnit.Runners (2.6.3)
+    NUnit (2.6.4)
+    NUnit.Runners (2.6.4)
     RazorEngine (3.3.0)
       Microsoft.AspNet.Razor (>= 2.0.30506.0)
-    TaskParallelLibrary (1.0.2856) - net35
+    TaskParallelLibrary (1.0.2856.0) - >= net35 < net40
