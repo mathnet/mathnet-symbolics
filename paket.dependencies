@@ -2,8 +2,8 @@ source http://nuget.org/api/v2
 
 # Core Dependencies
 nuget FParsec ~> 1.0.1
-nuget FSharp.Core.Microsoft.Signed ~> 3.1.1
-nuget MathNet.Numerics.FSharp ~> 3.3.0
+nuget FSharp.Core ~> 3.1.2
+nuget MathNet.Numerics.FSharp ~> 3.4
 
 # Development Dependencies
 nuget FsUnit ~> 1.3

@@ -17700,6 +17700,45 @@
             If calling this method fails, consider to fall back to alternatives like the managed provider.
             </summary>
         </member>
+        <member name="M:MathNet.Numerics.Providers.LinearAlgebra.Mkl.MklLinearAlgebraProvider.FreeBuffers">
+            <summary>
+            Frees the memory allocated to the MKL memory pool.
+            </summary>
+        </member>
+        <member name="M:MathNet.Numerics.Providers.LinearAlgebra.Mkl.MklLinearAlgebraProvider.ThreadFreeBuffers">
+            <summary>
+            Frees the memory allocated to the MKL memory pool on the current thread.
+            </summary>
+        </member>
+        <member name="M:MathNet.Numerics.Providers.LinearAlgebra.Mkl.MklLinearAlgebraProvider.DisableMemoryPool">
+            <summary>
+            Disable the MKL memory pool. May impact performance.
+            </summary>
+        </member>
+        <member name="M:MathNet.Numerics.Providers.LinearAlgebra.Mkl.MklLinearAlgebraProvider.MemoryStatistics(System.Int32@)">
+            <summary>
+            Retrieves information about the MKL memory pool.
+            </summary>
+            <param name="allocatedBuffers">On output, returns the number of memory buffers allocated.</param>
+            <returns>Returns the number of bytes allocated to all memory buffers.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Providers.LinearAlgebra.Mkl.MklLinearAlgebraProvider.EnablePeakMemoryStatistics">
+            <summary>
+            Enable gathering of peak memory statistics of the MKL memory pool.
+            </summary>
+        </member>
+        <member name="M:MathNet.Numerics.Providers.LinearAlgebra.Mkl.MklLinearAlgebraProvider.DisablePeakMemoryStatistics">
+            <summary>
+            Disable gathering of peak memory statistics of the MKL memory pool.
+            </summary>
+        </member>
+        <member name="M:MathNet.Numerics.Providers.LinearAlgebra.Mkl.MklLinearAlgebraProvider.PeakMemoryStatistics(System.Boolean)">
+            <summary>
+            Measures peak memory usage of the MKL memory pool.
+            </summary>
+            <param name="reset">Whether the usage counter should be reset.</param>
+            <returns>The peak number of bytes allocated to all memory buffers.</returns>
+        </member>
         <member name="M:MathNet.Numerics.Providers.LinearAlgebra.Mkl.MklLinearAlgebraProvider.MatrixNorm(MathNet.Numerics.Providers.LinearAlgebra.Norm,System.Int32,System.Int32,System.Double[])">
             <summary>
             Computes the requested <see cref="T:MathNet.Numerics.Providers.LinearAlgebra.Norm"/> of the matrix.
@@ -18526,6 +18565,26 @@
         </member>
         <member name="F:MathNet.Numerics.Providers.LinearAlgebra.Mkl.MklConsistency.AVX2">
             <summary>Consistent on Intel CPUs supporting AVX2 or later</summary>
+        </member>
+        <member name="F:MathNet.Numerics.Providers.LinearAlgebra.Mkl.MklMemoryRequestMode.Disable">
+            <summary>
+            Disable gathering memory usage
+            </summary>
+        </member>
+        <member name="F:MathNet.Numerics.Providers.LinearAlgebra.Mkl.MklMemoryRequestMode.Enable">
+            <summary>
+            Enable gathering memory usage
+            </summary>
+        </member>
+        <member name="F:MathNet.Numerics.Providers.LinearAlgebra.Mkl.MklMemoryRequestMode.PeakMemory">
+            <summary>
+            Return peak memory usage
+            </summary>
+        </member>
+        <member name="F:MathNet.Numerics.Providers.LinearAlgebra.Mkl.MklMemoryRequestMode.PeakMemoryReset">
+            <summary>
+            Return peak memory usage and reset counter
+            </summary>
         </member>
         <member name="T:MathNet.Numerics.Providers.LinearAlgebra.Mkl.SafeNativeMethods">
             <summary>
@@ -22318,6 +22377,27 @@
             <summary>
             Auxiliary variable when evaluating the <see cref="M:MathNet.Numerics.SpecialFunctions.GammaLn(System.Double)"/> function.
             </summary>
+        </member>
+        <member name="M:MathNet.Numerics.SpecialFunctions.ExponentialIntegral(System.Double,System.Int32)">
+            <summary>
+            Computes the generalized Exponential Integral function (En).
+            </summary>
+            <param name="x">The argument of the Exponential Integral function.</param>
+            <param name="n">Integer power of the denominator term. Generalization index.</param>
+            <returns>The value of the Exponential Integral function.</returns>
+            <remarks>
+            <para>This implementation of the computation of the Exponential Integral function follows the derivation in
+                "Handbook of Mathematical Functions, Applied Mathematics Series, Volume 55", Abramowitz, M., and Stegun, I.A. 1964,  reprinted 1968 by
+                Dover Publications, New York), Chapters 6, 7, and 26.
+                AND
+                "Advanced mathematical methods for scientists and engineers", Bender, Carl M.; Steven A. Orszag (1978). page 253
+            </para>
+            <para>
+                for x &gt; 1  uses continued fraction approach that is often used to compute incomplete gamma.
+                for 0 &lt; x &lt;= 1 uses Taylor series expansion
+            </para>
+            <para>Our unit tests suggest that the accuracy of the Exponential Integral function is correct up to 13 floating point digits.</para>
+            </remarks>
         </member>
         <member name="M:MathNet.Numerics.SpecialFunctions.StruveL0(System.Double)">
             <summary>
@@ -43731,6 +43811,15 @@
             <param name="dataA">Sample data A.</param>
             <param name="dataB">Sample data B.</param>
             <returns>The Pearson product-moment correlation coefficient.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Statistics.Correlation.WeightedPearson(System.Collections.Generic.IEnumerable{System.Double},System.Collections.Generic.IEnumerable{System.Double},System.Collections.Generic.IEnumerable{System.Double})">
+            <summary>
+            Computes the Weighted Pearson Product-Moment Correlation coefficient.
+            </summary>
+            <param name="dataA">Sample data A.</param>
+            <param name="dataB">Sample data B.</param>
+            <param name="weights">Corresponding weights of data.</param>
+            <returns>The Weighted Pearson product-moment correlation coefficient.</returns>
         </member>
         <member name="M:MathNet.Numerics.Statistics.Correlation.PearsonMatrix(System.Double[][])">
             <summary>

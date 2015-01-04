@@ -40360,6 +40360,27 @@
             <param name="s">Third intermediate parameter.</param>
             <returns>the inverse error function.</returns>
         </member>
+        <member name="M:MathNet.Numerics.SpecialFunctions.ExponentialIntegral(System.Double,System.Int32)">
+            <summary>
+            Computes the generalized Exponential Integral function (En).
+            </summary>
+            <param name="x">The argument of the Exponential Integral function.</param>
+            <param name="n">Integer power of the denominator term. Generalization index.</param>
+            <returns>The value of the Exponential Integral function.</returns>
+            <remarks>
+            <para>This implementation of the computation of the Exponential Integral function follows the derivation in
+                "Handbook of Mathematical Functions, Applied Mathematics Series, Volume 55", Abramowitz, M., and Stegun, I.A. 1964,  reprinted 1968 by
+                Dover Publications, New York), Chapters 6, 7, and 26.
+                AND
+                "Advanced mathematical methods for scientists and engineers", Bender, Carl M.; Steven A. Orszag (1978). page 253
+            </para>
+            <para>
+                for x &gt; 1  uses continued fraction approach that is often used to compute incomplete gamma.
+                for 0 &lt; x &lt;= 1 uses Taylor series expansion
+            </para>
+            <para>Our unit tests suggest that the accuracy of the Exponential Integral function is correct up to 13 floating point digits.</para>
+            </remarks>
+        </member>
         <member name="M:MathNet.Numerics.SpecialFunctions.#cctor">
             <summary>
             Initializes static members of the SpecialFunctions class.
@@ -41175,6 +41196,15 @@
             <param name="dataA">Sample data A.</param>
             <param name="dataB">Sample data B.</param>
             <returns>The Pearson product-moment correlation coefficient.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Statistics.Correlation.WeightedPearson(System.Collections.Generic.IEnumerable{System.Double},System.Collections.Generic.IEnumerable{System.Double},System.Collections.Generic.IEnumerable{System.Double})">
+            <summary>
+            Computes the Weighted Pearson Product-Moment Correlation coefficient.
+            </summary>
+            <param name="dataA">Sample data A.</param>
+            <param name="dataB">Sample data B.</param>
+            <param name="weights">Corresponding weights of data.</param>
+            <returns>The Weighted Pearson product-moment correlation coefficient.</returns>
         </member>
         <member name="M:MathNet.Numerics.Statistics.Correlation.PearsonMatrix(System.Double[][])">
             <summary>
