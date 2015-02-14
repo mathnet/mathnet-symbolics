@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>MathNet.Numerics.FSharp</id>
-    <version>3.4.0</version>
+    <version>3.5.0</version>
     <title>Math.NET Numerics for F#</title>
     <authors>Christoph Ruegg, Marcus Cuda, Jurgen Van Gael</authors>
     <owners>Christoph Ruegg, Marcus Cuda, Jurgen Van Gael</owners>
@@ -12,15 +12,16 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Math.NET Numerics is the numerical foundation of the Math.NET project, aiming to provide methods and algorithms for numerical computations in science, engineering and every day use. Supports F# 3.0 on .Net 4.0, .Net 3.5 and Mono on Windows, Linux and Mac; Silverlight 5 and Windows 8 with PCL portable profile 47; Android/iOS with Xamarin.</description>
     <summary>F# Modules for Math.NET Numerics, providing methods and algorithms for numerical computations in science, engineering and every day use.</summary>
-    <releaseNotes>Special Functions: Generalized Exponential Integral ~Ashley Messer
-Special Functions: Regularized Incomplete Gamma domain extended to a=0 ~Ashley Messer
-MKL Native Provider: memory functions to free buffers and gather usage statistics ~Marcus Cuda
-F#: depend on new official FSharp.Core NuGet package instead of FSharp.Core.Microsoft.Signed
-F#: simpler NuGet package dependencies (no more need for framework groups)
-Build: vagrant bootstrap now uses the latest xamarin mono packages</releaseNotes>
+    <releaseNotes>Differentiation: derivative, partial and mixed partial; hessian &amp; jacobian ~Hythem Sidky
+Differentiation: Differentiate facade class for simple use cases
+Differentiation: F# module for better F# function support.
+Linear Algebra: matrix ToRowArrays/ToColumnArrays
+Linear Algebra: F# insertRow, appendRow, prependRow and same also for columns
+Linear Algebra: F# append, stack and ofMatrixList2
+Precision: measured machine epsilon, positive vs negative epsilon</releaseNotes>
     <tags>fsharp F# math numeric statistics probability integration interpolation regression solve fit linear algebra matrix fft</tags>
     <dependencies>
-      <dependency id="MathNet.Numerics" version="[3.4.0]" />
+      <dependency id="MathNet.Numerics" version="[3.5.0]" />
       <dependency id="FSharp.Core" version="3.1.2.1" />
     </dependencies>
     <frameworkAssemblies>

@@ -613,6 +613,60 @@
 <member name="">
 
 </member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:MathNet.Numerics.DifferentiateModule">
+
+</member>
+<member name="">
+
+</member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.zipf(System.Double,System.Int32,System.Random)">
 <summary>
  Zipf with s and n parameters.
@@ -1010,6 +1064,16 @@
 <member name="T:MathNet.Numerics.GenerateModule">
 
 </member>
+<member name="M:MathNet.Numerics.LinearAlgebra.DenseMatrixModule.stack``1(Microsoft.FSharp.Collections.FSharpList{MathNet.Numerics.LinearAlgebra.Matrix{``0}})">
+<summary>
+ Create a matrix by stacking a list of matrices vertically, the first matrix on the top.
+</summary>
+</member>
+<member name="M:MathNet.Numerics.LinearAlgebra.DenseMatrixModule.append``1(Microsoft.FSharp.Collections.FSharpList{MathNet.Numerics.LinearAlgebra.Matrix{``0}})">
+<summary>
+ Create a matrix by appending a list of matrices horizontally, the first matrix on the left.
+</summary>
+</member>
 <member name="M:MathNet.Numerics.LinearAlgebra.DenseMatrixModule.ofDiagArray2``1(System.Int32,System.Int32,``0[])">
 <summary>
  Create a matrix with the array elements on the diagonal.
@@ -1088,6 +1152,11 @@
 <member name="M:MathNet.Numerics.LinearAlgebra.DenseMatrixModule.ofRows``1(Microsoft.FSharp.Collections.FSharpList{MathNet.Numerics.LinearAlgebra.Vector{``0}})">
 <summary>
  Create a matrix from a list of row vectors.
+</summary>
+</member>
+<member name="M:MathNet.Numerics.LinearAlgebra.DenseMatrixModule.ofMatrixList2``1(Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Collections.FSharpList{MathNet.Numerics.LinearAlgebra.Matrix{``0}}})">
+<summary>
+ Create a matrix from a list of matrix lists forming a 2D grid.
 </summary>
 </member>
 <member name="M:MathNet.Numerics.LinearAlgebra.DenseMatrixModule.ofMatrixArray2``1(MathNet.Numerics.LinearAlgebra.Matrix{``0}[0:,0:])">
@@ -1463,6 +1532,24 @@
  In-place matrix addition.
 </summary>
 </member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
 <member name="M:MathNet.Numerics.LinearAlgebra.MatrixModule.foldByRow``2(Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.FSharpFunc{``0,``0}},``0,``1)">
 <summary>
  Fold all rows into one column vector.
@@ -1817,6 +1904,16 @@
  Transform a matrix into a sequence.
 </summary>
 </member>
+<member name="M:MathNet.Numerics.LinearAlgebra.MatrixModule.toRowArrays``2(``0)">
+<summary>
+ Transform a matrix into an array of row arrays.
+</summary>
+</member>
+<member name="M:MathNet.Numerics.LinearAlgebra.MatrixModule.toColArrays``2(``0)">
+<summary>
+ Transform a matrix into an array of column arrays.
+</summary>
+</member>
 <member name="M:MathNet.Numerics.LinearAlgebra.MatrixModule.toArray2``2(``0)">
 <summary>
  Transform a matrix into a 2D array.
@@ -1825,6 +1922,16 @@
 <member name="T:MathNet.Numerics.LinearAlgebra.MatrixModule">
 <summary>
  A module which implements functional matrix operations.
+</summary>
+</member>
+<member name="M:MathNet.Numerics.LinearAlgebra.SparseMatrixModule.stack``1(Microsoft.FSharp.Collections.FSharpList{MathNet.Numerics.LinearAlgebra.Matrix{``0}})">
+<summary>
+ Create a matrix by stacking a list of matrices vertically, the first matrix on the top.
+</summary>
+</member>
+<member name="M:MathNet.Numerics.LinearAlgebra.SparseMatrixModule.append``1(Microsoft.FSharp.Collections.FSharpList{MathNet.Numerics.LinearAlgebra.Matrix{``0}})">
+<summary>
+ Create a matrix by appending a list of matrices horizontally, the first matrix on the left.
 </summary>
 </member>
 <member name="M:MathNet.Numerics.LinearAlgebra.SparseMatrixModule.ofDiagArray2``1(System.Int32,System.Int32,``0[])">
@@ -1905,6 +2012,11 @@
 <member name="M:MathNet.Numerics.LinearAlgebra.SparseMatrixModule.ofRows``1(Microsoft.FSharp.Collections.FSharpList{MathNet.Numerics.LinearAlgebra.Vector{``0}})">
 <summary>
  Create a matrix from a list of row vectors.
+</summary>
+</member>
+<member name="M:MathNet.Numerics.LinearAlgebra.SparseMatrixModule.ofMatrixList2``1(Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Collections.FSharpList{MathNet.Numerics.LinearAlgebra.Matrix{``0}}})">
+<summary>
+ Create a matrix from a list of matrix lists forming a 2D grid.
 </summary>
 </member>
 <member name="M:MathNet.Numerics.LinearAlgebra.SparseMatrixModule.ofMatrixArray2``1(MathNet.Numerics.LinearAlgebra.Matrix{``0}[0:,0:])">

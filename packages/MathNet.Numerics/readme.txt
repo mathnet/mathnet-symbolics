@@ -8,11 +8,21 @@
  Math.NET Numerics - http://numerics.mathdotnet.com
  Copyright (c) Math.NET - Open Source MIT/X11 License
 
- Math.NET Numerics v3.4.0
+ Math.NET Numerics v3.5.0
+
+### 3.5.0 - 2015-01-10
+* Differentiation: derivative, partial and mixed partial; hessian & jacobian *~Hythem Sidky*
+* Differentiation: Differentiate facade class for simple use cases
+* Differentiation: F# module for better F# function support.
+* Linear Algebra: matrix ToRowArrays/ToColumnArrays
+* Linear Algebra: F# insertRow, appendRow, prependRow and same also for columns
+* Linear Algebra: F# append, stack and ofMatrixList2
+* Precision: measured machine epsilon, positive vs negative epsilon
 
 ### 3.4.0 - 2015-01-04
 * Special Functions: Generalized Exponential Integral *~Ashley Messer*
 * Special Functions: Regularized Incomplete Gamma domain extended to a=0 *~Ashley Messer*
+* Statistics: weighted Pearson correlation *~ViK*
 * MKL Native Provider: memory functions to free buffers and gather usage statistics *~Marcus Cuda*
 * F#: depend on new official FSharp.Core NuGet package instead of FSharp.Core.Microsoft.Signed
 * F#: simpler NuGet package dependencies (no more need for framework groups)

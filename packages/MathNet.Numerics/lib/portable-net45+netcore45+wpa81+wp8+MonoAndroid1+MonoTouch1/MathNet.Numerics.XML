@@ -2372,6 +2372,512 @@
             </summary>
             <value>Number of elements. Default 300, must be at least 3.</value>
         </member>
+        <member name="T:MathNet.Numerics.Differentiate">
+            <summary>
+            Numerical Derivative.
+            </summary>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiate.Points(System.Int32,System.Int32)">
+            <summary>
+            Initialized a NumericalDerivative with the given points and center.
+            </summary>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiate.Order(System.Int32)">
+            <summary>
+            Initialized a NumericalDerivative with the default points and center for the given order.
+            </summary>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiate.Derivative(System.Func{System.Double,System.Double},System.Double,System.Int32)">
+            <summary>
+            Evaluates the derivative of a scalar univariate function.
+            </summary>
+            <param name="f">Univariate function handle.</param>
+            <param name="x">Point at which to evaluate the derivative.</param>
+            <param name="order">Derivative order.</param>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiate.DerivativeFunc(System.Func{System.Double,System.Double},System.Int32)">
+            <summary>
+            Creates a function handle for the derivative of a scalar univariate function.
+            </summary>
+            <param name="f">Univariate function handle.</param>
+            <param name="order">Derivative order.</param>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiate.FirstDerivative(System.Func{System.Double,System.Double},System.Double)">
+            <summary>
+            Evaluates the first derivative of a scalar univariate function.
+            </summary>
+            <param name="f">Univariate function handle.</param>
+            <param name="x">Point at which to evaluate the derivative.</param>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiate.FirstDerivativeFunc(System.Func{System.Double,System.Double})">
+            <summary>
+            Creates a function handle for the first derivative of a scalar univariate function.
+            </summary>
+            <param name="f">Univariate function handle.</param>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiate.SecondDerivative(System.Func{System.Double,System.Double},System.Double)">
+            <summary>
+            Evaluates the second derivative of a scalar univariate function.
+            </summary>
+            <param name="f">Univariate function handle.</param>
+            <param name="x">Point at which to evaluate the derivative.</param>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiate.SecondDerivativeFunc(System.Func{System.Double,System.Double})">
+            <summary>
+            Creates a function handle for the second derivative of a scalar univariate function.
+            </summary>
+            <param name="f">Univariate function handle.</param>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiate.PartialDerivative(System.Func{System.Double[],System.Double},System.Double[],System.Int32,System.Int32)">
+            <summary>
+            Evaluates the partial derivative of a multivariate function.
+            </summary>
+            <param name="f">Multivariate function handle.</param>
+            <param name="x">Vector at which to evaluate the derivative.</param>
+            <param name="parameterIndex">Index of independent variable for partial derivative.</param>
+            <param name="order">Derivative order.</param>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiate.PartialDerivativeFunc(System.Func{System.Double[],System.Double},System.Int32,System.Int32)">
+            <summary>
+            Creates a function handle for the partial derivative of a multivariate function.
+            </summary>
+            <param name="f">Multivariate function handle.</param>
+            <param name="parameterIndex">Index of independent variable for partial derivative.</param>
+            <param name="order">Derivative order.</param>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiate.FirstPartialDerivative(System.Func{System.Double[],System.Double},System.Double[],System.Int32)">
+            <summary>
+            Evaluates the first partial derivative of a multivariate function.
+            </summary>
+            <param name="f">Multivariate function handle.</param>
+            <param name="x">Vector at which to evaluate the derivative.</param>
+            <param name="parameterIndex">Index of independent variable for partial derivative.</param>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiate.FirstPartialDerivativeFunc(System.Func{System.Double[],System.Double},System.Int32)">
+            <summary>
+            Creates a function handle for the first partial derivative of a multivariate function.
+            </summary>
+            <param name="f">Multivariate function handle.</param>
+            <param name="parameterIndex">Index of independent variable for partial derivative.</param>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiate.PartialDerivative2(System.Func{System.Double,System.Double,System.Double},System.Double,System.Double,System.Int32,System.Int32)">
+            <summary>
+            Evaluates the partial derivative of a bivariate function.
+            </summary>
+            <param name="f">Bivariate function handle.</param>
+            <param name="x">First argument at which to evaluate the derivative.</param>
+            <param name="y">Second argument at which to evaluate the derivative.</param>
+            <param name="parameterIndex">Index of independent variable for partial derivative.</param>
+            <param name="order">Derivative order.</param>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiate.PartialDerivative2Func(System.Func{System.Double,System.Double,System.Double},System.Int32,System.Int32)">
+            <summary>
+            Creates a function handle for the partial derivative of a bivariate function.
+            </summary>
+            <param name="f">Bivariate function handle.</param>
+            <param name="parameterIndex">Index of independent variable for partial derivative.</param>
+            <param name="order">Derivative order.</param>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiate.FirstPartialDerivative2(System.Func{System.Double,System.Double,System.Double},System.Double,System.Double,System.Int32)">
+            <summary>
+            Evaluates the first partial derivative of a bivariate function.
+            </summary>
+            <param name="f">Bivariate function handle.</param>
+            <param name="x">First argument at which to evaluate the derivative.</param>
+            <param name="y">Second argument at which to evaluate the derivative.</param>
+            <param name="parameterIndex">Index of independent variable for partial derivative.</param>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiate.FirstPartialDerivative2Func(System.Func{System.Double,System.Double,System.Double},System.Int32)">
+            <summary>
+            Creates a function handle for the first partial derivative of a bivariate function.
+            </summary>
+            <param name="f">Bivariate function handle.</param>
+            <param name="parameterIndex">Index of independent variable for partial derivative.</param>
+        </member>
+        <member name="T:MathNet.Numerics.Differentiation.FiniteDifferenceCoefficients">
+            <summary>
+            Class to calculate finite difference coefficients using Taylor series expansion method.
+            <remarks>
+            <para>
+            For n points, coefficients are calculated up to the maximum derivative order possible (n-1).
+            The current function value position specifies the "center" for surrounding coefficients.
+            Selecting the first, middle or last positions represent forward, backwards and central difference methods.
+            </para>
+            </remarks>
+            </summary>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.FiniteDifferenceCoefficients.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:MathNet.Numerics.Differentiation.FiniteDifferenceCoefficients"/> class.
+            </summary>
+            <param name="points">Number of finite difference coefficients.</param>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.FiniteDifferenceCoefficients.GetCoefficients(System.Int32,System.Int32)">
+            <summary>
+            Gets the finite difference coefficients for a specified center and order.
+            </summary>
+            <param name="center">Current function position with respect to coefficients. Must be within point range.</param>
+            <param name="order">Order of finite difference coefficients.</param>
+            <returns>Vector of finite difference coefficients.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.FiniteDifferenceCoefficients.GetCoefficientsForAllOrders(System.Int32)">
+            <summary>
+            Gets the finite difference coefficients for all orders at a specified center.
+            </summary>
+            <param name="center">Current function position with respect to coefficients. Must be within point range.</param>
+            <returns>Rectangular array of coefficients, with columns specifing order.</returns>
+        </member>
+        <member name="P:MathNet.Numerics.Differentiation.FiniteDifferenceCoefficients.Points">
+            <summary>
+            Number of points for finite difference coefficients. Changing this value recalculates the coefficients table.
+            </summary>
+        </member>
+        <member name="T:MathNet.Numerics.Differentiation.StepType">
+            <summary>
+            Type of finite different step size.
+            </summary>
+        </member>
+        <member name="F:MathNet.Numerics.Differentiation.StepType.Absolute">
+            <summary>
+            The absolute step size value will be used in numerical derivatives, regardless of order or function parameters.
+            </summary>
+        </member>
+        <member name="F:MathNet.Numerics.Differentiation.StepType.RelativeX">
+            <summary>
+            A base step size value, h, will be scaled according to the function input parameter. A common example is hx = h*(1+abs(x)), however
+            this may vary depending on implementation. This definition only guarantees that the only scaling will be relative to the
+            function input parameter and not the order of the finite difference derivative.
+            </summary>
+        </member>
+        <member name="F:MathNet.Numerics.Differentiation.StepType.Relative">
+            <summary>
+            A base step size value, eps (typically machine precision), is scaled according to the finite difference coefficient order
+            and function input parameter. The initial scaling according to finite different coefficient order can be thought of as producing a
+            base step size, h, that is equivalent to <see cref="F:MathNet.Numerics.Differentiation.StepType.RelativeX"/> scaling. This stepsize is then scaled according to the function
+            input parameter. Although implementation may vary, an example of second order accurate scaling may be (eps)^(1/3)*(1+abs(x)).
+            </summary>
+        </member>
+        <member name="T:MathNet.Numerics.Differentiation.NumericalDerivative">
+            <summary>
+            Class to evaluate the numerical derivative of a function using finite difference approximations.
+            Variable point and center methods can be initialized <seealso cref="T:MathNet.Numerics.Differentiation.FiniteDifferenceCoefficients"/>.
+            This class can also be used to return function handles (delegates) for a fixed derivative order and variable.
+            It is possible to evaluate the derivative and partial derivative of univariate and multivariate functions respectively.
+            </summary>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalDerivative.#ctor">
+            <summary>
+            Initializes a NumericalDerivative class with the default 3 point center difference method.
+            </summary>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalDerivative.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Initialized a NumericalDerivative class.
+            </summary>
+            <param name="points">Number of points for finite difference derivatives.</param>
+            <param name="center">Location of the center with respect to other points. Value ranges from zero to points-1.</param>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalDerivative.EvaluateDerivative(System.Double[],System.Int32,System.Double)">
+            <summary>
+            Evaluates the derivative of equidistant points using the finite difference method.
+            </summary>
+            <param name="points">Vector of points StepSize apart.</param>
+            <param name="order">Derivative order.</param>
+            <param name="stepSize">Finite difference step size.</param>
+            <returns>Derivative of points of the specified order.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalDerivative.EvaluateDerivative(System.Func{System.Double,System.Double},System.Double,System.Int32,System.Nullable{System.Double})">
+            <summary>
+            Evaluates the derivative of a scalar univariate function.
+            </summary>
+            <remarks>
+            Supplying the optional argument currentValue will reduce the number of function evaluations
+            required to calculate the finite difference derivative.
+            </remarks>
+            <param name="f">Function handle.</param>
+            <param name="x">Point at which to compute the derivative.</param>
+            <param name="order">Derivative order.</param>
+            <param name="currentValue">Current function value at center.</param>
+            <returns>Function derivative at x of the specified order.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalDerivative.CreateDerivativeFunctionHandle(System.Func{System.Double,System.Double},System.Int32)">
+            <summary>
+            Creates a function handle for the derivative of a scalar univariate function.
+            </summary>
+            <param name="f">Input function handle.</param>
+            <param name="order">Derivative order.</param>
+            <returns>Function handle that evaluates the derivative of input function at a fixed order.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalDerivative.EvaluatePartialDerivative(System.Func{System.Double[],System.Double},System.Double[],System.Int32,System.Int32,System.Nullable{System.Double})">
+            <summary>
+            Evaluates the partial derivative of a multivariate function.
+            </summary>
+            <param name="f">Multivariate function handle.</param>
+            <param name="x">Vector at which to evaluate the derivative.</param>
+            <param name="parameterIndex">Index of independent variable for partial derivative.</param>
+            <param name="order">Derivative order.</param>
+            <param name="currentValue">Current function value at center.</param>
+            <returns>Function partial derivative at x of the specified order.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalDerivative.EvaluatePartialDerivative(System.Func{System.Double[],System.Double}[],System.Double[],System.Int32,System.Int32,System.Nullable{System.Double}[])">
+            <summary>
+            Evaluates the partial derivatives of a multivariate function array.
+            </summary>
+            <remarks>
+            This function assumes the input vector x is of the correct length for f.
+            </remarks>
+            <param name="f">Multivariate vector function array handle.</param>
+            <param name="x">Vector at which to evaluate the derivatives.</param>
+            <param name="parameterIndex">Index of independent variable for partial derivative.</param>
+            <param name="order">Derivative order.</param>
+            <param name="currentValue">Current function value at center.</param>
+            <returns>Vector of functions partial derivatives at x of the specified order.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalDerivative.CreatePartialDerivativeFunctionHandle(System.Func{System.Double[],System.Double},System.Int32,System.Int32)">
+            <summary>
+            Creates a function handle for the partial derivative of a multivariate function.
+            </summary>
+            <param name="f">Input function handle.</param>
+            <param name="parameterIndex">Index of the independent variable for partial derivative.</param>
+            <param name="order">Derivative order.</param>
+            <returns>Function handle that evaluates partial derivative of input function at a fixed order.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalDerivative.CreatePartialDerivativeFunctionHandle(System.Func{System.Double[],System.Double}[],System.Int32,System.Int32)">
+            <summary>
+            Creates a function handle for the partial derivative of a vector multivariate function.
+            </summary>
+            <param name="f">Input function handle.</param>
+            <param name="parameterIndex">Index of the independent variable for partial derivative.</param>
+            <param name="order">Derivative order.</param>
+            <returns>Function handle that evaluates partial derivative of input function at fixed order.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalDerivative.EvaluateMixedPartialDerivative(System.Func{System.Double[],System.Double},System.Double[],System.Int32[],System.Int32,System.Nullable{System.Double})">
+            <summary>
+            Evaluates the mixed partial derivative of variable order for multivariate functions.
+            </summary>
+            <remarks>
+            This function recursively uses <see cref="M:MathNet.Numerics.Differentiation.NumericalDerivative.EvaluatePartialDerivative(System.Func{System.Double[],System.Double},System.Double[],System.Int32,System.Int32,System.Nullable{System.Double})"/> to evaluate mixed partial derivative.
+            Therefore, it is more efficient to call <see cref="M:MathNet.Numerics.Differentiation.NumericalDerivative.EvaluatePartialDerivative(System.Func{System.Double[],System.Double},System.Double[],System.Int32,System.Int32,System.Nullable{System.Double})"/> for higher order derivatives of 
+            a single independent variable.
+            </remarks>
+            <param name="f">Multivariate function handle.</param>
+            <param name="x">Points at which to evaluate the derivative.</param>
+            <param name="parameterIndex">Vector of indices for the independent variables at descending derivative orders.</param>
+            <param name="order">Highest order of differentiation.</param>
+            <param name="currentValue">Current function value at center.</param>
+            <returns>Function mixed partial derivative at x of the specified order.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalDerivative.EvaluateMixedPartialDerivative(System.Func{System.Double[],System.Double}[],System.Double[],System.Int32[],System.Int32,System.Nullable{System.Double}[])">
+            <summary>
+            Evaluates the mixed partial derivative of variable order for multivariate function arrays.
+            </summary>
+            <remarks>
+            This function recursively uses <see cref="M:MathNet.Numerics.Differentiation.NumericalDerivative.EvaluatePartialDerivative(System.Func{System.Double[],System.Double}[],System.Double[],System.Int32,System.Int32,System.Nullable{System.Double}[])"/> to evaluate mixed partial derivative.
+            Therefore, it is more efficient to call <see cref="M:MathNet.Numerics.Differentiation.NumericalDerivative.EvaluatePartialDerivative(System.Func{System.Double[],System.Double}[],System.Double[],System.Int32,System.Int32,System.Nullable{System.Double}[])"/> for higher order derivatives of
+            a single independent variable.
+            </remarks>
+            <param name="f">Multivariate function array handle.</param>
+            <param name="x">Vector at which to evaluate the derivative.</param>
+            <param name="parameterIndex">Vector of indices for the independent variables at descending derivative orders.</param>
+            <param name="order">Highest order of differentiation.</param>
+            <param name="currentValue">Current function value at center.</param>
+            <returns>Function mixed partial derivatives at x of the specified order.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalDerivative.CreateMixedPartialDerivativeFunctionHandle(System.Func{System.Double[],System.Double},System.Int32[],System.Int32)">
+            <summary>
+            Creates a function handle for the mixed partial derivative of a multivariate function.
+            </summary>
+            <param name="f">Input function handle.</param>
+            <param name="parameterIndex">Vector of indices for the independent variables at descending derivative orders.</param>
+            <param name="order">Highest derivative order.</param>
+            <returns>Function handle that evaluates the fixed mixed partial derivative of input function at fixed order.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalDerivative.CreateMixedPartialDerivativeFunctionHandle(System.Func{System.Double[],System.Double}[],System.Int32[],System.Int32)">
+            <summary>
+            Creates a function handle for the mixed partial derivative of a multivariate vector function.
+            </summary>
+            <param name="f">Input vector function handle.</param>
+            <param name="parameterIndex">Vector of indices for the independent variables at descending derivative orders.</param>
+            <param name="order">Highest derivative order.</param>
+            <returns>Function handle that evaluates the fixed mixed partial derivative of input function at fixed order.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalDerivative.ResetEvaluations">
+            <summary>
+            Resets the evaluation counter.
+            </summary>
+        </member>
+        <member name="P:MathNet.Numerics.Differentiation.NumericalDerivative.StepSize">
+            <summary>
+            Sets and gets the finite difference step size. This value is for each function evaluation if relative stepsize types are used.
+            If the base step size used in scaling is desired, see <see cref="P:MathNet.Numerics.Differentiation.NumericalDerivative.Epsilon"/>.
+            </summary>
+            <remarks>
+            Setting then getting the StepSize may return a different value. This is not unusual since a user-defined step size is converted to a
+            base-2 representable number to improve finite difference accuracy.
+            </remarks>
+        </member>
+        <member name="P:MathNet.Numerics.Differentiation.NumericalDerivative.BaseStepSize">
+            <summary>
+            Sets and gets the base fininte difference step size. This assigned value to this parameter is only used if <see cref="P:MathNet.Numerics.Differentiation.NumericalDerivative.StepType"/> is set to RelativeX.
+            However, if the StepType is Relative, it will contain the base step size computed from <see cref="P:MathNet.Numerics.Differentiation.NumericalDerivative.Epsilon"/> based on the finite difference order.
+            </summary>
+        </member>
+        <member name="P:MathNet.Numerics.Differentiation.NumericalDerivative.Epsilon">
+            <summary>
+            Sets and gets the base finite difference step size. This parameter is only used if <see cref="P:MathNet.Numerics.Differentiation.NumericalDerivative.StepType"/> is set to Relative.
+            By default this is set to machine epsilon, from which <see cref="P:MathNet.Numerics.Differentiation.NumericalDerivative.BaseStepSize"/> is computed.
+            </summary>
+        </member>
+        <member name="P:MathNet.Numerics.Differentiation.NumericalDerivative.Center">
+            <summary>
+            Sets and gets the location of the center point for the finite difference derivative.
+            </summary>
+        </member>
+        <member name="P:MathNet.Numerics.Differentiation.NumericalDerivative.Evaluations">
+            <summary>
+            Number of times a function is evaluated for numerical derivatives.
+            </summary>
+        </member>
+        <member name="P:MathNet.Numerics.Differentiation.NumericalDerivative.StepType">
+            <summary>
+            Type of step size for computing finite differences. If set to absolute, dx = h.
+            If set to relative, dx = (1+abs(x))*h^(2/(order+1)). This provides accurate results when
+            h is approximately equal to the square-root of machine accuracy, epsilon.
+            </summary>
+        </member>
+        <member name="T:MathNet.Numerics.Differentiation.NumericalHessian">
+            <summary>
+            Class for evaluating the Hessian of a smooth continuously differentiable function using finite differences.
+            By default, a central 3-point method is used.
+            </summary>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalHessian.#ctor">
+            <summary>
+            Creates a numerical Hessian object with a three point central difference method.
+            </summary>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalHessian.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Creates a numerical Hessian with a specified differentiation scheme.
+            </summary>
+            <param name="points">Number of points for Hessian evaluation.</param>
+            <param name="center">Center point for differentiation.</param>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalHessian.Evaluate(System.Func{System.Double,System.Double},System.Double)">
+            <summary>
+            Evaluates the Hessian of the scalar univariate function f at points x.
+            </summary>
+            <param name="f">Scalar univariate function handle.</param>
+            <param name="x">Point at which to evaluate Hessian.</param>
+            <returns>Hessian tensor.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalHessian.Evaluate(System.Func{System.Double[],System.Double},System.Double[])">
+            <summary>
+            Evaluates the Hessian of a multivariate function f at points x.
+            </summary>
+            <remarks>
+            This method of computing the Hessian is only vaid for Lipschitz continuous functions.
+            The function mirrors the Hessian along the diagonal since d2f/dxdy = d2f/dydx for continuously differentiable functions.
+            </remarks>
+            <param name="f">Multivariate function handle.></param>
+            <param name="x">Points at which to evaluate Hessian.></param>
+            <returns>Hessian tensor.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalHessian.ResetFunctionEvaluations">
+            <summary>
+            Resets the function evaluation counter for the Hessian.
+            </summary>
+        </member>
+        <member name="P:MathNet.Numerics.Differentiation.NumericalHessian.FunctionEvaluations">
+            <summary>
+            Number of function evaluations.
+            </summary>
+        </member>
+        <member name="T:MathNet.Numerics.Differentiation.NumericalJacobian">
+            <summary>
+            Class for evaluating the Jacobian of a function using finite differences.
+            By default, a central 3-point method is used.
+            </summary>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalJacobian.#ctor">
+            <summary>
+            Creates a numerical Jacobian object with a three point central difference method.
+            </summary>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalJacobian.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Creates a numerical Jacobian with a specified differentiation scheme.
+            </summary>
+            <param name="points">Number of points for Jacobian evaluation.</param>
+            <param name="center">Center point for differentiation.</param>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalJacobian.Evaluate(System.Func{System.Double,System.Double},System.Double)">
+            <summary>
+            Evaluates the Jacobian of scalar univariate function f at point x.
+            </summary>
+            <param name="f">Scalar univariate function handle.</param>
+            <param name="x">Point at which to evaluate Jacobian.</param>
+            <returns>Jacobian vector.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalJacobian.Evaluate(System.Func{System.Double[],System.Double},System.Double[])">
+            <summary>
+            Evaluates the Jacobian of a multivariate function f at vector x.
+            </summary>
+            <remarks>
+            This function assumes that the length of vector x consistent with the argument count of f.
+            </remarks>
+            <param name="f">Multivariate function handle.</param>
+            <param name="x">Points at which to evaluate Jacobian.</param>
+            <returns>Jacobian vector.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalJacobian.Evaluate(System.Func{System.Double[],System.Double},System.Double[],System.Double)">
+            <summary>
+            Evaluates the Jacobian of a multivariate function f at vector x given a current function value.
+            </summary>
+            <remarks>
+            To minimize the number of function evaluations, a user can supply the current value of the function
+            to be used in computing the Jacobian. This value must correspond to the "center" location for the
+            finite differencing. If a scheme is used where the center value is not evaluated, this will provide no
+            added efficiency. This method also assumes that the length of vector x consistent with the argument count of f.
+            </remarks>
+            <param name="f">Multivariate function handle.</param>
+            <param name="x">Points at which to evaluate Jacobian.</param>
+            <param name="currentValue">Current function value at finite difference center.</param>
+            <returns>Jacobian vector.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalJacobian.Evaluate(System.Func{System.Double[],System.Double}[],System.Double[])">
+            <summary>
+            Evaluates the Jacobian of a multivariate function array f at vector x.
+            </summary>
+            <param name="f">Multivariate function array handle.</param>
+            <param name="x">Vector at which to evaluate Jacobian.</param>
+            <returns>Jacobian matrix.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalJacobian.Evaluate(System.Func{System.Double[],System.Double}[],System.Double[],System.Double[])">
+            <summary>
+            Evaluates the Jacobian of a multivariate function array f at vector x given a vector of current function values.
+            </summary>
+            <remarks>
+            To minimize the number of function evaluations, a user can supply a vector of current values of the functions
+            to be used in computing the Jacobian. These value must correspond to the "center" location for the
+            finite differencing. If a scheme is used where the center value is not evaluated, this will provide no
+            added efficiency. This method also assumes that the length of vector x consistent with the argument count of f.
+            </remarks>
+            <param name="f">Multivariate function array handle.</param>
+            <param name="x">Vector at which to evaluate Jacobian.</param>
+            <param name="currentValues">Vector of current function values.</param>
+            <returns>Jacobian matrix.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Differentiation.NumericalJacobian.ResetFunctionEvaluations">
+            <summary>
+            Resets the function evaluation counter for the Jacobian.
+            </summary>
+        </member>
+        <member name="P:MathNet.Numerics.Differentiation.NumericalJacobian.FunctionEvaluations">
+            <summary>
+            Number of function evaluations.
+            </summary>
+        </member>
         <member name="T:MathNet.Numerics.Distance">
             <summary>
             Metrics to measure the distance between two structures.
@@ -11776,7 +12282,7 @@
         </member>
         <member name="T:MathNet.Numerics.Integrate">
             <summary>
-            Numeric Integration (Quadrature).
+            Numerical Integration (Quadrature).
             </summary>
         </member>
         <member name="M:MathNet.Numerics.Integrate.OnClosedInterval(System.Func{System.Double,System.Double},System.Double,System.Double,System.Double)">
@@ -15292,6 +15798,16 @@
             <returns>An array containing the matrix's elements.</returns>
             <seealso cref="M:MathNet.Numerics.LinearAlgebra.Matrix`1.ToColumnWiseArray"/>
             <seealso cref="M:MathNet.Numerics.LinearAlgebra.Matrix`1.Enumerate(MathNet.Numerics.LinearAlgebra.Zeros)"/>
+        </member>
+        <member name="M:MathNet.Numerics.LinearAlgebra.Matrix`1.ToRowArrays">
+            <summary>
+            Returns this matrix as array of row arrays.
+            </summary>
+        </member>
+        <member name="M:MathNet.Numerics.LinearAlgebra.Matrix`1.ToColumnArrays">
+            <summary>
+            Returns this matrix as array of column arrays.
+            </summary>
         </member>
         <member name="M:MathNet.Numerics.LinearAlgebra.Matrix`1.Enumerate">
             <summary>
@@ -36100,12 +36616,40 @@
         </member>
         <member name="F:MathNet.Numerics.Precision.DoublePrecision">
             <summary>
-            The maximum relative precision of of double-precision floating numbers (64 bit)
+            Standard epsilon, the maximum relative precision of IEEE 754 double-precision floating numbers (64 bit).
+            According to the definition of Prof. Demmel and used in LAPACK and Scilab.
+            </summary>
+        </member>
+        <member name="F:MathNet.Numerics.Precision.PositiveDoublePrecision">
+            <summary>
+            Standard epsilon, the maximum relative precision of IEEE 754 double-precision floating numbers (64 bit).
+            According to the definition of Prof. Higham and used in the ISO C standard and MATLAB.
             </summary>
         </member>
         <member name="F:MathNet.Numerics.Precision.SinglePrecision">
             <summary>
-            The maximum relative precision of of single-precision floating numbers (32 bit)
+            Standard epsilon, the maximum relative precision of IEEE 754 single-precision floating numbers (32 bit).
+            According to the definition of Prof. Demmel and used in LAPACK and Scilab.
+            </summary>
+        </member>
+        <member name="F:MathNet.Numerics.Precision.PositiveSinglePrecision">
+            <summary>
+            Standard epsilon, the maximum relative precision of IEEE 754 single-precision floating numbers (32 bit).
+            According to the definition of Prof. Higham and used in the ISO C standard and MATLAB.
+            </summary>
+        </member>
+        <member name="F:MathNet.Numerics.Precision.MachineEpsilon">
+            <summary>
+            Actual machine epsilon, the smallest number that can be subtracted from 1, yielding a results different than 1.
+            This is also known as unit roundoff error. According to the definition of Prof. Demmel.
+            On a standard machine this is equivalent to `DoublePrecision`.
+            </summary>
+        </member>
+        <member name="F:MathNet.Numerics.Precision.PositiveMachineEpsilon">
+            <summary>
+            Actual machine epsilon, the smallest number that can be added to 1, yielding a results different than 1.
+            This is also known as unit roundoff error. According to the definition of Prof. Higham.
+            On a standard machine this is equivalent to `PositiveDoublePrecision`.
             </summary>
         </member>
         <member name="F:MathNet.Numerics.Precision.DoubleDecimalPlaces">
@@ -36333,10 +36877,24 @@
         </member>
         <member name="M:MathNet.Numerics.Precision.FloatToInt32Bits(System.Single)">
             <summary>
-            Converts a float valut to a bit array stored in an int.
+            Converts a float value to a bit array stored in an int.
             </summary>
             <param name="value">The value to convert.</param>
             <returns>The bit array.</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Precision.MeasureMachineEpsilon">
+            <summary>
+            Calculates the actual positive double precision machine epsilon - the smallest number that can be added to 1, yielding a results different than 1.
+            This is also known as unit roundoff error. According to the definition of Prof. Demmel.
+            </summary>
+            <returns>Positive Machine epsilon</returns>
+        </member>
+        <member name="M:MathNet.Numerics.Precision.MeasurePositiveMachineEpsilon">
+            <summary>
+            Calculates the actual positive double precision machine epsilon - the smallest number that can be added to 1, yielding a results different than 1.
+            This is also known as unit roundoff error. According to the definition of Prof. Higham.
+            </summary>
+            <returns>Machine epsilon</returns>
         </member>
         <member name="M:MathNet.Numerics.Precision.AlmostEqualNorm(System.Double,System.Double,System.Double,System.Double)">
             <summary>
