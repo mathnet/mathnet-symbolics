@@ -4,8 +4,16 @@
 #load @"..\..\src\Symbolics\MathNet.Symbolics.fsx"
 
 (**
-Getting Started
-===============
+Math.NET Symbolics
+==================
+
+Math.NET Symbolics is a basic open source computer algebra library for .Net and Mono written in F#.
+
+This project does not aim to become a full computer algebra system. If you need such a system,
+have a look at Axiom or Maxima instead, or for commercial solutions Maple, Mathematica or Wolfram Alpha.
+
+Math.NET Symbolics is part of the [Math.NET initiative](http://www.mathdotnet.com/).
+Available for free under the [MIT/X11 License](License.html).
 
 NuGet Packages
 --------------
@@ -14,7 +22,7 @@ The recommended way to get Math.NET Symbolics is to use NuGet. The following pac
 
 Core Package:
 
-- **MathNet.Symbolics** - core package
+- [**MathNet.Symbolics**](https://www.nuget.org/packages/MathNet.Symbolics/) - core package
 
 Platform Support and Dependencies
 ---------------------------------
@@ -26,8 +34,8 @@ Package Dependencies:
 - [FParsec](http://www.nuget.org/packages/FParsec) (isolated usage only for infix parsing)
 
 
-Using Math.NET Symbolics with F# and F# Interactive
----------------------------------------------------
+Math.NET Symbolics with F# and F# Interactive
+---------------------------------------------
 
 With NuGet you can start quickly by installing the `MathNet.Symbolics` package,
 which automatically loads its dependencies `MathNet.Numerics` and `MathNet.Numerics.FSharp`.
@@ -160,8 +168,8 @@ Let's use this routine to approximate $\sin{x}+\cos{x}$ at $x = 0$ using the fir
 taylor 4 x 0Q (sin(x)+cos(x))  // Returns 1 + x - (1/2)*x^2 - (1/6)*x^3
 
 (**
-Using Math.NET Symbolics with C#
---------------------------------
+Math.NET Symbolics with C#
+--------------------------
 
 Even though Math.NET Symbolics is written entirely in F#, it can be used in C#
 almost exactly the same way. The equivalent C# code to the F# code above could look as follows:
@@ -223,46 +231,5 @@ almost exactly the same way. The equivalent C# code to the F# code above could l
 
     // Returns 1 + x - (1/2)*x^2 - (1/6)*x^3
     Infix.Print(Taylor(4, x, 0, Expr.Sin(x)+Expr.Cos(x)));
-
-
-Building Math.NET Symbolics
----------------------------
-
-If you do not want to use the official binaries, or if you like to modify, debug or contribute, you can compile Math.NET Symbolics locally either using Visual Studio or manually with the build scripts.
-
-* The Visual Studio solutions should build out of the box, without any preparation steps or package restores.
-* Instead of a compatible IDE you can also build the solutions with `msbuild`, or on Mono with `xbuild`.
-* The full build including unit tests, docs, NuGet and Zip packages is using [FAKE](http://fsharp.github.io/FAKE/).
-
-### How to build with MSBuild/XBuild
-
-    [lang=sh]
-    msbuild MathNet.Symbolics.sln            # only build for .Net 4 (main solution)
-    xbuild MathNet.Symbolics.sln             # build with Mono, e.g. on Linux or Mac
-
-### How to build with FAKE
-
-    [lang=sh]
-    build.cmd    # normal build (.Net 4.0), run unit tests (.Net on Windows)
-    ./build.sh   # normal build (.Net 4.0), run unit tests (Mono on Linux/Mac, .Net on Windows)
-
-    build.cmd Build              # normal build (.Net 4.0)
-    build.cmd Build incremental  # normal build, incremental (.Net 4.0)
-
-    build.cmd Test        # normal build (.Net 4.0), run unit tests
-    build.cmd Test quick  # normal build (.Net 4.0), run unit tests except long running ones
-
-    build.cmd Clean  # cleanup build artifacts
-    build.cmd Docs   # generate documentation
-    build.cmd Api    # generate api reference
-
-    build.cmd NuGet all     # generate normal NuGet packages
-
-    build.cmd All          # build, test, docs, api reference (.Net 4.0)
-    build.cmd All release  # release build
-
-FAKE itself is not included in the repository but it will download and bootstrap itself automatically when build.cmd is run the first time. Note that this step is *not* required when using Visual Studio or `msbuild` directly.
-
-If the build or tests fail claiming that FSharp.Core was not be found, see [fsharp.org](http://fsharp.org/use/windows/) or install the [Visual F# 3.0 Tools](http://go.microsoft.com/fwlink/?LinkId=261286) directly.
 
 *)

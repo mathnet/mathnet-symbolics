@@ -6,7 +6,7 @@
 // Binaries that have XML documentation (in a corresponding generated XML file)
 let referenceBinaries = [ "MathNet.Symbolics.dll"; "MathNet.Numerics.dll" ]
 // Web site location for the generated documentation
-let website = "http://symbolics.mathdotnet.com/docs"
+let website = "http://symbolics.mathdotnet.com"
 let githubLink = "http://github.com/mathnet/mathnet-symbolics"
 
 // Specify more information about your project

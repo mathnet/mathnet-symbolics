@@ -376,8 +376,7 @@ Target "PublishTag" (fun _ -> publishReleaseTag "Math.NET Symbolics" "" packageV
 Target "PublishDocs" (fun _ ->
     let repo = "../mathnet-websites"
     Git.Branches.pull repo "origin" "master"
-    CleanDir "../mathnet-websites/symbolics/docs"
-    CopyRecursive "out/docs" "../mathnet-websites/symbolics/docs" true |> printfn "%A"
+    CopyRecursive "out/docs" "../mathnet-websites/symbolics" true |> printfn "%A"
     Git.Staging.StageAll repo
     Git.Commit.Commit repo (sprintf "Symbolics: %s docs update" packageVersion)
     Git.Branches.pushBranch repo "origin" "master")
