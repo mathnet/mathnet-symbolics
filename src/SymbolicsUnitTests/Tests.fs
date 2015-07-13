@@ -206,6 +206,20 @@ let ``Parse infix expressions`` () =
 
     Infix.parseOrUndefined "(y-1)*10 + 2" ==> "2 + 10*(-1 + y)"
 
+    Infix.parseOrUndefined "15" ==> "15"
+    Infix.parseOrUndefined "1.5" ==> "3/2"
+    Infix.parseOrUndefined "0.25" ==> "1/4"
+    Infix.parseOrUndefined "0.0250" ==> "1/40"
+    Infix.parseOrUndefined "2.25" ==> "9/4"
+    Infix.parseOrUndefined "2.250" ==> "9/4"
+    Infix.parseOrUndefined "0.001" ==> "1/1000"
+    Infix.parseOrUndefined "2.00" ==> "2"
+
+    Infix.parseOrUndefined "1.5*a + o" ==> "(3/2)*a + o"
+
+    Infix.parseOrUndefined ".001" ==> "Undefined"
+    Infix.parseOrUndefined "1." ==> "Undefined"
+
 
 [<Test>]
 let ``Algebraic Expansion`` () =

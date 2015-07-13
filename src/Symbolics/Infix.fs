@@ -24,10 +24,30 @@ module private InfixParser =
     let parens p = between (str_ws "(") (str_ws ")") p
     let abs p = between (str_ws "|") (str_ws "|") p |>> Expression.Abs
 
-    let number : Expression parser =
+    let str_num : string parser =
+        let options = NumberLiteralOptions.None
+        numberLiteral options "number"
+        |>> fun nl -> nl.String
+
+    let integer : BigInteger parser =
+        str_num
+        |>> BigInteger.Parse
+
+    let fraction : BigRational parser =
+        str_num
+        |>> fun num ->
+            let ival = BigInteger.Parse num
+            if ival = BigInteger.Zero then BigRational.Zero
+            else BigRational.FromBigIntFraction (ival, BigInteger.Pow (10I, num.Length))
+
+    let numberZ : Expression parser =
         let options = NumberLiteralOptions.AllowMinusSign ||| NumberLiteralOptions.AllowPlusSign ||| NumberLiteralOptions.AllowSuffix
-        numberLiteral options "number" .>> ws
-        |>> fun nl -> BigInteger.Parse (nl.String) |> Expression.FromInteger
+        integer .>> ws
+        |>> Expression.FromInteger
+
+    let numberQ : Expression parser =
+        integer .>>. ((pstring "." >>. fraction) <|>% BigRational.Zero) .>> ws
+        |>> fun (intPart, fractionPart) -> (BigRational.FromBigInt intPart) + fractionPart |> Expression.FromRational
 
     let identifier : Expression parser =
         let isIdentifierFirstChar c = isLetter c
@@ -35,7 +55,7 @@ module private InfixParser =
         many1Satisfy2L isIdentifierFirstChar isIdentifierChar "identifier" .>> ws
         |>> Expression.Symbol
 
-    let value : Expression parser = number <|> identifier
+    let value : Expression parser = numberQ <|> identifier
 
     let functionName : Function parser =
         let cases =
@@ -58,7 +78,7 @@ module private InfixParser =
         let functionArgs = sepBy expr (str_ws ",") |> parens
         let functionTerm = functionName .>>. functionArgs |>> applyFunction
 
-        let term = number <|> parensTerm <|> absTerm <|> attempt functionTerm <|> identifier
+        let term = numberQ <|> parensTerm <|> absTerm <|> attempt functionTerm <|> identifier
 
         opp.TermParser <- term
         opp.AddOperator(InfixOperator("+", ws, 1, Associativity.Left, add))
