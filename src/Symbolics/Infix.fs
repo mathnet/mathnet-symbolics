@@ -25,8 +25,8 @@ module private InfixParser =
     let abs p = between (str_ws "|") (str_ws "|") p |>> Expression.Abs
 
     let number : Expression parser =
-        let options = NumberLiteralOptions.AllowMinusSign ||| NumberLiteralOptions.AllowPlusSign
-        numberLiteral options "number"
+        let options = NumberLiteralOptions.AllowMinusSign ||| NumberLiteralOptions.AllowPlusSign ||| NumberLiteralOptions.AllowSuffix
+        numberLiteral options "number" .>> ws
         |>> fun nl -> BigInteger.Parse (nl.String) |> Expression.FromInteger
 
     let identifier : Expression parser =

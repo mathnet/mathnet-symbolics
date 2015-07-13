@@ -204,6 +204,8 @@ let ``Parse infix expressions`` () =
     Infix.parseOrUndefined "a^b^c" ==> "a^(b^c)"
     Infix.parseOrUndefined "|a-2|-1" ==> "-1 + |-2 + a|"
 
+    Infix.parseOrUndefined "(y-1)*10 + 2" ==> "2 + 10*(-1 + y)"
+
 
 [<Test>]
 let ``Algebraic Expansion`` () =
