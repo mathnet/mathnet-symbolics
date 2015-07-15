@@ -5,7 +5,7 @@ Math.NET Symbolics is a basic opensource **computer algebra library for .Net, Si
 
 This project does *not* aim to become a full computer algebra system. If you need such a system, have a look at Axiom or Maxima instead, or for proprietary commercial solutions Maple, Mathematica or Wolfram Alpha.
 
-You'll find a large set of expression and algebraic operator examples in the [Unit Tests](src/UnitTests/Tests.fs) (yes, they're actually very readable). A few examples:
+You'll find a large set of expression and algebraic operator examples in the [Unit Tests](src/SymbolicsUnitTests/Tests.fs) (yes, they're actually very readable). A few examples:
 
 * `(3Q + 2)*4/6` → `10/3`.
 * `(a/b/(c*a))*(c*d/a)/d` → `1/(a*b)`
