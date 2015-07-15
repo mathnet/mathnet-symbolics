@@ -329,6 +329,15 @@ let ``Differentiation and Taylor Series`` () =
 
 
 [<Test>]
+let ``Tangent and Normal Lines`` () =
+
+    (1/z) |> Calculus.tangentLine z 3Q ==> "2/3 - (1/9)*z"
+    (x**3 - 12*x**2 - c) |> Calculus.tangentLine x 1Q ==> "10 - c - 21*x"
+
+    (1/z) |> Calculus.normalLine z 3Q ==> "-80/3 + 9*z"
+
+
+[<Test>]
 let ``Polynomial Division`` () =
 
     Polynomial.divide x (5*x**2 + 4*x + 1) (2*x + 3) ==|> ("-7/4 + (5/2)*x", "25/4")
@@ -401,15 +410,6 @@ let ``Polynomial Euclidean/GCD`` () =
     let a0, ax = Polynomial.partialFraction x (x**2+3*x) [x+1; x**2-2*x+1]
     a0 ==> "0"
     ax ==+> ["-1/2"; "1/2 + (3/2)*x"]
-
-
-[<Test>]
-let ``Tangent and Normal Lines`` () =
-
-    (1/z) |> Curve.tangentLine z 3Q ==> "2/3 - (1/9)*z"
-    (x**3 - 12*x**2 - c) |> Curve.tangentLine x 1Q ==> "10 - c - 21*x"
-
-    (1/z) |> Curve.normalLine z 3Q ==> "-80/3 + 9*z"
 
 
 [<Test>]

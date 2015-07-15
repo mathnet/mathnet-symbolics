@@ -61,7 +61,6 @@
     <Compile Include="Rational.fs" />
     <Compile Include="Exponential.fs" />
     <Compile Include="Calculus.fs" />
-    <Compile Include="Curve.fs" />
     <Compile Include="Evaluate.fs" />
     <Compile Include="Quotations.fs" />
     <Compile Include="Linq.fs" />

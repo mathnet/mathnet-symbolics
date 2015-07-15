@@ -36,3 +36,15 @@ module Calculus =
             if n = k then acc else
             impl (n+1) (nf*(n+1)) (acc + (dxn |> Structure.substitute symbol a)/nf*(symbol-a)**n) (differentiate symbol dxn)
         impl 0 1 zero x |> Algebraic.expand
+
+    /// Find tangent line function for x(symbol) at symbol=a
+    [<CompiledName("TangentLine")>]
+    let tangentLine symbol a x =
+        let m = differentiate symbol x |> Structure.substitute symbol a
+        m*(symbol - a) + Structure.substitute symbol a x |> Algebraic.expand
+
+    /// Find normal line (perpendicular to tangent) function for x(symbol) at symbol=a
+    [<CompiledName("NormalLine")>]
+    let normalLine symbol a x =
+        let m = differentiate symbol x |> Structure.substitute symbol a
+        -(1/m)*(symbol - a) + Structure.substitute symbol a x |> Algebraic.expand
