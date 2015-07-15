@@ -163,7 +163,7 @@ module Algebraic =
     let separateFactors symbol x =
         match x with
         | Product ax -> let f, d = List.partition (Structure.freeOf symbol) ax in (product f, product d)
-        | a when Structure.freeOf symbol a -> (a,one)
+        | a when Structure.freeOf symbol a -> (a, one)
         | a -> (one, a)
 
     let rec private expandProduct x y =

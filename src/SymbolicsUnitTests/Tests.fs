@@ -404,6 +404,15 @@ let ``Polynomial Euclidean/GCD`` () =
 
 
 [<Test>]
+let ``Tangent and Normal Lines`` () =
+
+    (1/z) |> Curve.tangentLine z 3Q ==> "2/3 - (1/9)*z"
+    (x**3 - 12*x**2 - c) |> Curve.tangentLine x 1Q ==> "10 - c - 21*x"
+
+    (1/z) |> Curve.normalLine z 3Q ==> "-80/3 + 9*z"
+
+
+[<Test>]
 let ``Evaluate some expression to floating point numbers`` () =
 
     let (=!=) x expected = x.ToString() |> should equal (expected.ToString())
