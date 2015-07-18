@@ -320,12 +320,13 @@ let ``Differentiation and Taylor Series`` () =
     Calculus.differentiate x (a*x**b) ==> "a*b*x^(-1 + b)"
     Calculus.differentiate x (a*x**2 + b*x + c) ==> "b + 2*a*x"
 
-    Calculus.taylor 3 x (1/(1-x)) 0Q ==> "1 + x + x^2"
-    Calculus.taylor 3 x (1/x) 1Q ==> "3 - 3*x + x^2"
-    Calculus.taylor 3 x (ln(x)) 1Q ==> "-3/2 + 2*x - (1/2)*x^2"
-    Calculus.taylor 4 x (ln(x)) 1Q ==> "-11/6 + 3*x - (3/2)*x^2 + (1/3)*x^3"
-    Calculus.taylor 3 x (sin(x)+cos(x)) 0Q ==> "1 + x - (1/2)*x^2"
-    Calculus.taylor 4 x (sin(x)+cos(x)) 0Q ==> "1 + x - (1/2)*x^2 - (1/6)*x^3"
+    Calculus.taylor 3 x 0Q (1/(1-x)) ==> "1 + x + x^2"
+    Calculus.taylor 3 x 1Q (1/x) ==> "3 - 3*x + x^2"
+    Calculus.taylor 3 x 1Q (ln(x)) ==> "-3/2 + 2*x - (1/2)*x^2"
+    Calculus.taylor 4 x 1Q (ln(x)) ==> "-11/6 + 3*x - (3/2)*x^2 + (1/3)*x^3"
+    Calculus.taylor 3 x 0Q (sin(x)+cos(x)) ==> "1 + x - (1/2)*x^2"
+    Calculus.taylor 4 x 0Q (sin(x)+cos(x)) ==> "1 + x - (1/2)*x^2 - (1/6)*x^3"
+    (sin(x)+cos(x)) |> Calculus.taylor 4 x 0Q ==> "1 + x - (1/2)*x^2 - (1/6)*x^3"
 
 
 [<Test>]
@@ -334,6 +335,7 @@ let ``Tangent and Normal Lines`` () =
     (1/z) |> Calculus.tangentLine z 3Q ==> "2/3 - (1/9)*z"
     (x**3 - 12*x**2 - c) |> Calculus.tangentLine x 1Q ==> "10 - c - 21*x"
 
+    Calculus.normalLine z 3Q (1/z) ==> "-80/3 + 9*z"
     (1/z) |> Calculus.normalLine z 3Q ==> "-80/3 + 9*z"
 
 

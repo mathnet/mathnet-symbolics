@@ -29,22 +29,24 @@ module Calculus =
         | Product [] -> failwith "invalid expression"
         | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined as x -> x
 
-    /// Taylor expansion of x(symbol) at symbol=a of the first k terms
+    /// Taylor expansion of expression(symbol) at symbol=value of the first k terms
     [<CompiledName("Taylor")>]
-    let taylor (k:int) symbol x a =
+    let taylor (k:int) symbol value expression =
         let rec impl n nf acc dxn =
             if n = k then acc else
-            impl (n+1) (nf*(n+1)) (acc + (dxn |> Structure.substitute symbol a)/nf*(symbol-a)**n) (differentiate symbol dxn)
-        impl 0 1 zero x |> Algebraic.expand
+            impl (n+1) (nf*(n+1)) (acc + (dxn |> Structure.substitute symbol value)/nf*(symbol-value)**n) (differentiate symbol dxn)
+        impl 0 1 zero expression |> Algebraic.expand
 
-    /// Find tangent line function for x(symbol) at symbol=a
+    /// Find tangent line function for expression(symbol) at symbol=value
     [<CompiledName("TangentLine")>]
-    let tangentLine symbol a x =
-        let m = differentiate symbol x |> Structure.substitute symbol a
-        m*(symbol - a) + Structure.substitute symbol a x |> Algebraic.expand
+    let tangentLine symbol value expression =
+        let slope = expression |> differentiate symbol |> Structure.substitute symbol value
+        let intercept = expression |> Structure.substitute symbol value
+        slope*(symbol - value) + intercept |> Algebraic.expand
 
-    /// Find normal line (perpendicular to tangent) function for x(symbol) at symbol=a
+    /// Find normal line (perpendicular to tangent) function for expression(symbol) at symbol=value
     [<CompiledName("NormalLine")>]
-    let normalLine symbol a x =
-        let m = differentiate symbol x |> Structure.substitute symbol a
-        -(1/m)*(symbol - a) + Structure.substitute symbol a x |> Algebraic.expand
+    let normalLine symbol value expression =
+        let slope = expression |> differentiate symbol |> Structure.substitute symbol value
+        let intercept = expression |> Structure.substitute symbol value
+        -(1/slope)*(symbol - value) + intercept |> Algebraic.expand

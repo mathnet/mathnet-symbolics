@@ -91,7 +91,9 @@ let taylor (k:int) symbol x a =
         if n = k then acc else
         impl (n+1) (nf*(n+1)) (acc + (dxn |> Structure.substitute symbol a)/nf*(symbol-a)**n) (Calculus.differentiate symbol dxn)
     impl 0 1 zero x |> Algebraic.expand
+
 taylor 4 x (sin(x)+cos(x)) 0Q // 1 + x - (1/2)*x^2 - (1/6)*x^3
+(sin(x)+cos(x)) |> Calculus.taylor 4 x 0Q // 1 + x - (1/2)*x^2 - (1/6)*x^3
 
 
 Polynomial.divide x (5*x**2 + 4*x + 1) (2*x + 3) // (-7/4 + (5/2)*x, 25/4)
@@ -114,6 +116,7 @@ let tangent symbol x a =
 
 tangent x (x**3 - 12*x**2 - c) 1Q // 10 - c - 21*x
 tangent z (1/z) 3Q // 2/3 - (1/9)*z
+1/z |> Calculus.tangentLine z 3Q // 2/3 - (1/9)*z
 
 // 1 + x + (2 + x)*y + (3 + x)*y^2
 let ex = Polynomial.polynomialExpansion x y (x**5 + 11*x**4 + 51*x**3 + 124*x**2 + 159*x + 86) (x**2 + 4*x + 5)
