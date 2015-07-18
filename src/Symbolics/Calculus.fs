@@ -29,6 +29,11 @@ module Calculus =
         | Product [] -> failwith "invalid expression"
         | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined as x -> x
 
+    /// Differentiate expression to symbol and substitute symbol with value
+    [<CompiledName("DifferentiateAt")>]
+    let differentiateAt symbol value expression =
+        expression |> differentiate symbol |> Structure.substitute symbol value
+
     /// Taylor expansion of expression(symbol) at symbol=value of the first k terms
     [<CompiledName("Taylor")>]
     let taylor (k:int) symbol value expression =
