@@ -1,3 +1,10 @@
+### 0.5.0 - 2015-07-18
+* Infix Parser: interpret decimal notation as exact rational numbers ("0.2" -> "1/5")
+* Infix Parser: allow white space after number literal
+* Calculus: modified argument order for `taylor` for better currying (breaking!)
+* Calculus: new `tangentLine`, `normalLine`
+* Calculus: new `differentiateAt` as shortcut for `differentiate >> substitute`
+
 ### 0.4.0 - 2014-11-26
 * Calculus: add taylor expansion function
 * Better Paket compatibility (and NuGet with -ExcludeVersion)
