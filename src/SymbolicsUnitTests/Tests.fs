@@ -523,6 +523,14 @@ let ``General Polynomial Expressions`` () =
     Polynomial.collectTermsMV (Polynomial.symbols [a;b]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b) ==> "a*(4*x + 2*x*y) + b*(5*x + 3*x*y)"
     Polynomial.collectTermsMV (Polynomial.symbols [x;ln(a)]) (2*x*ln(a)*y + 4*x*ln(a) + 3*x*y*b + 5*x*b + c) ==> "c + x*(5*b + 3*b*y) + x*(4 + 2*y)*ln(a)"
 
+    Polynomial.isSquareFree x (x**3 + 1) --> true
+    Polynomial.isSquareFree x (x**2 - 2) --> true
+    Polynomial.isSquareFree x (8*x**3 + 12*x**2 + 6*x + 1) --> false
+
+    let sf = Polynomial.squareFreeFactor x (x**5 + 6*x**4 + 10*x**3 - 4*x**2 - 24*x - 16)
+    sf ==> "(2 + x)^3*(-2 + x^2)"
+    Algebraic.expand sf ==> "-16 - 24*x - 4*x^2 + 10*x^3 + 6*x^4 + x^5"
+
 
 [<Test>]
 let ``General Rational Expressions`` () =

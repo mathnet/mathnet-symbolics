@@ -277,6 +277,24 @@ module Polynomial =
             | _ -> (a0, [])
         impl numerator denominatorFactors
 
+    [<CompiledName("IsSquareFree")>]
+    let isSquareFree symbol x =
+        one = gcd symbol x (Calculus.differentiate symbol x)
+
+    [<CompiledName("SquareFreeFactor")>]
+    let squareFreeFactor symbol x =
+        let rec impl j r f p =
+            if r = one then p*(f**j) else
+            let g = gcd symbol r f
+            let s = quot symbol f g
+            impl (j+1) (quot symbol r g) g p*(s**j)
+        if x = zero then x else
+        let c = leadingCoefficient symbol x
+        let u = Algebraic.expand (x/c)
+        let r = gcd symbol u (Calculus.differentiate symbol u)
+        let f = quot symbol u r
+        c * impl 1 r f one
+
 
 /// Single-Variable Polynomial (2*x+3*x^2)
 module SingleVariablePolynomial =
