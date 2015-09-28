@@ -281,8 +281,8 @@ module Polynomial =
     let isSquareFree symbol x =
         one = gcd symbol x (Calculus.differentiate symbol x)
 
-    [<CompiledName("SquareFreeFactor")>]
-    let squareFreeFactor symbol x =
+    [<CompiledName("FactorSquareFree")>]
+    let factorSquareFree symbol x =
         let rec impl j r f p =
             if r = one then p*(f**j) else
             let g = gcd symbol r f

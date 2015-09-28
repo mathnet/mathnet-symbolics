@@ -526,8 +526,10 @@ let ``General Polynomial Expressions`` () =
     Polynomial.isSquareFree x (x**3 + 1) --> true
     Polynomial.isSquareFree x (x**2 - 2) --> true
     Polynomial.isSquareFree x (8*x**3 + 12*x**2 + 6*x + 1) --> false
+    
+    Polynomial.factorSquareFree x (x**8 + 6*x**6 + 12*x**4 + 8*x**2) ==> "x^2*(2 + x^2)^3"
 
-    let sf = Polynomial.squareFreeFactor x (x**5 + 6*x**4 + 10*x**3 - 4*x**2 - 24*x - 16)
+    let sf = Polynomial.factorSquareFree x (x**5 + 6*x**4 + 10*x**3 - 4*x**2 - 24*x - 16)
     sf ==> "(2 + x)^3*(-2 + x^2)"
     Algebraic.expand sf ==> "-16 - 24*x - 4*x^2 + 10*x^3 + 6*x^4 + x^5"
 
