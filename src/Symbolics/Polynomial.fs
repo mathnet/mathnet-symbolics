@@ -1,7 +1,8 @@
 ﻿namespace MathNet.Symbolics
 
 open System.Collections.Generic
-open MathNet.Symbolics
+open System.Numerics
+open MathNet.Numerics
 
 open ExpressionPatterns
 open Operators
@@ -91,6 +92,45 @@ module Polynomial =
 
     [<CompiledName("TotalDegree")>]
     let totalDegree x = degreeMV (variables x) x
+
+    [<CompiledName("CommonMonomialFactors")>]
+    let commonMonomialFactors xs =
+        let normalizePowers = List.map (fun (r, p) -> pow r (Expression.FromInteger p))
+        let denormalizePowers = List.map (function
+            | PosIntPower (r, (Integer n)) -> (r, n.Numerator)
+            | x -> (x, 1I))
+        let monomialFactors x =
+            let n, xs = Algebraic.factorsInteger x
+            n, denormalizePowers xs
+        let intersect ((n1:BigInteger),x1) ((n2:BigInteger),x2) =
+            let n' = Euclid.GreatestCommonDivisor (n1, n2)
+            let x' = x1 |> List.choose (fun (r1, p1) -> x2 |> List.tryPick (fun (r2,p2) -> if r2 = r1 then Some (r1, min p1 p2) else None))
+            n', x'
+        let (n, x') = xs |> List.map monomialFactors |> List.reduce intersect
+        (Expression.FromInteger n)::(normalizePowers x') |> product
+
+    [<CompiledName("CommonFactors")>]
+    let commonFactors x =
+        if x = zero then x else
+        Algebraic.summands x |> commonMonomialFactors
+
+    [<CompiledName("MonomialCoefficient")>]
+    let rec coefficientMonomial symbol = function
+        | x when x = symbol -> one
+        | Number _ as x -> x
+        | PosIntPower (r, p) when r = symbol -> one
+        | Product ax -> List.map (coefficientMonomial symbol) ax |> product
+        | x when Structure.freeOf symbol x -> x
+        | _ -> Undefined
+
+    [<CompiledName("MultivariateMonomialCoefficient")>]
+    let rec coefficientMonomialMV (symbols: HashSet<Expression>) = function
+        | x when symbols.Contains(x) -> one
+        | Number _ as x -> x
+        | PosIntPower (r, p) when symbols.Contains(r) -> one
+        | Product ax -> List.map (coefficientMonomialMV symbols) ax |> product
+        | x when Structure.freeOfSet symbols x -> x
+        | _ -> Undefined
 
     [<CompiledName("MonomialCoefficientDegree")>]
     let rec coefficientDegreeMonomial symbol = function

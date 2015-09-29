@@ -487,8 +487,36 @@ let ``General Polynomial Expressions`` () =
     Polynomial.isPolynomial x (x**2 + 2*x) --> true
     Polynomial.isPolynomial x ((x+1)*(x+3)) --> false
 
+    Polynomial.isMonomialMV (Polynomial.symbols [x;y]) (a * x**2 * y**2) --> true
+    Polynomial.isMonomialMV (Polynomial.symbols [x;y]) (ln(a) * x**2 * y**2) --> true
+    Polynomial.isMonomialMV (Polynomial.symbols [x;y]) (x**2 + y**2) --> false
+    Polynomial.isPolynomialMV (Polynomial.symbols [x;y]) (x**2 + y**2) --> true
+    Polynomial.isPolynomialMV (Polynomial.symbols [x+1]) ((x+1)**2 + 2*(x+1)) --> true
+    Polynomial.isPolynomialMV (Polynomial.symbols [x]) ((x+1)*(x+3)) --> false
+
     Polynomial.degreeMonomial x (a * x**2 * x * b**2) ==> "3"
     Polynomial.degree x (a*x**2 + b*x + c) ==> "2"
+
+    Polynomial.degreeMonomialMV (Polynomial.symbols [x;y]) (a * x**2 * y * b**2) ==> "3" // (x:2 + y:1)
+    Polynomial.degreeMV (Polynomial.symbols [x;y]) (a*x**2 + b*x + c) ==> "2"
+    Polynomial.degreeMV (Polynomial.symbols [x;z]) (2*x**2*y**8*z**2 + a*x*z**6) ==> "7"
+
+    Polynomial.variables (a * x**2 * y**2) ==*> ["a"; "x"; "y"]
+    Polynomial.variables ((x+1)**2 + 2*(x+1)) ==*> ["1 + x"]
+    Polynomial.variables ((x+1)*(x+3)) ==*> ["1 + x"; "3 + x"]
+    Polynomial.variables ((x+1)*(x+3)*sin(x)) ==*> ["1 + x"; "3 + x"; "sin(x)"]
+    Polynomial.totalDegree (2*x**2*y*z**2 + a*x*z**6) ==> "8"
+
+    Polynomial.commonFactors (8*a*x + 6*a*x**2) ==> "2*a*x"
+    Polynomial.commonFactors ((3Q/2)*x*y**2 + (5Q/8)*x**2*y + 7*x + (9Q/10)) ==> "1"
+    Polynomial.commonFactors (512*x*y*z + 512*x**2*y*z + 3072*x*y**2*z + 3072*x**2*y**2*z + 1024*x*y**3*z) ==> "512*x*y*z"
+
+    Polynomial.coefficientMonomial x (2*a * b * x**2) ==> "2*a*b"
+
+    Polynomial.coefficientMonomialMV (Polynomial.symbols [x;y]) (2*a * b * x**2) ==> "2*a*b"
+    Polynomial.coefficientMonomialMV (Polynomial.symbols [x;y]) (2*a * b * x**2 * y) ==> "2*a*b"
+    Polynomial.coefficientMonomialMV (Polynomial.symbols [x;y]) (2*a * b * x**2 * y * z) ==> "2*a*b*z"
+    Polynomial.coefficientMonomialMV (Polynomial.symbols [x;y;z;a;b]) (2*a * b * x**2 * y * z) ==> "2"
 
     Polynomial.coefficient x 2 (a*x**2 + b*x + c) ==> "a"
     Polynomial.coefficient x 2 (a*x*x + b*x + c) ==> "a"
@@ -501,37 +529,13 @@ let ``General Polynomial Expressions`` () =
     Polynomial.collectTermsMonomial x (2*a*x*b*3) ==|> ("6*a*b", "x")
     Polynomial.collectTermsMonomial x (2*a*x**3*b*x*3) ==|> ("6*a*b", "x^4")
 
-    Polynomial.collectTerms x (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b) ==> "x*(4*a + 5*b + 2*a*y + 3*b*y)"
-    Polynomial.collectTerms a (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b) ==> "5*b*x + 3*b*x*y + a*(4*x + 2*x*y)"
-    Polynomial.collectTerms (ln(a)) (2*x*ln(a)*y + 4*x*ln(a) + 3*x*y*b + 5*x*b + c) ==> "c + 5*b*x + 3*b*x*y + (4*x + 2*x*y)*ln(a)"
-
-    Polynomial.isMonomialMV (Polynomial.symbols [x;y]) (a * x**2 * y**2) --> true
-    Polynomial.isMonomialMV (Polynomial.symbols [x;y]) (ln(a) * x**2 * y**2) --> true
-    Polynomial.isMonomialMV (Polynomial.symbols [x;y]) (x**2 + y**2) --> false
-    Polynomial.isPolynomialMV (Polynomial.symbols [x;y]) (x**2 + y**2) --> true
-    Polynomial.isPolynomialMV (Polynomial.symbols [x+1]) ((x+1)**2 + 2*(x+1)) --> true
-    Polynomial.isPolynomialMV (Polynomial.symbols [x]) ((x+1)*(x+3)) --> false
-
-    Polynomial.degreeMonomialMV (Polynomial.symbols [x;y]) (a * x**2 * y * b**2) ==> "3" // (x:2 + y:1)
-    Polynomial.degreeMV (Polynomial.symbols [x;y]) (a*x**2 + b*x + c) ==> "2"
-    Polynomial.degreeMV (Polynomial.symbols [x;z]) (2*x**2*y**8*z**2 + a*x*z**6) ==> "7"
-
-    Polynomial.variables (a * x**2 * y**2) ==*> ["a"; "x"; "y"]
-    Polynomial.variables ((x+1)**2 + 2*(x+1)) ==*> ["1 + x"]
-    Polynomial.variables ((x+1)*(x+3)) ==*> ["1 + x"; "3 + x"]
-    Polynomial.variables ((x+1)*(x+3)*sin(x)) ==*> ["1 + x"; "3 + x"; "sin(x)"]
-    Polynomial.totalDegree (2*x**2*y*z**2 + a*x*z**6) ==> "8"
-
-    Polynomial.coefficient x 2 (a*x**2 + b*x + c) ==> "a"
-    Polynomial.coefficient x 2 (a*x*x + b*x + c) ==> "a"
-    Polynomial.coefficient x 1 (3*x*y**2 + 5*x**2*y + 7*x + 9) ==> "7 + 3*y^2"
-    Polynomial.coefficient x 3 (3*x*y**2 + 5*x**2*y + 7*x + 9) ==> "0"
-    Polynomial.leadingCoefficient x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) ==> "5*y + 7*y^3"
-    Polynomial.coefficients x (3*x*y**2 + 5*x**2*y + 7*x**2*y**3 + 9) ==-> [|"9"; "3*y^2"; "5*y + 7*y^3"|]
-
     Polynomial.collectTermsMonomialMV (Polynomial.symbols [x;y]) (2*x*a) ==|> ("2*a", "x")
     Polynomial.collectTermsMonomialMV (Polynomial.symbols [x;y]) (2*a*x*b*y*3) ==|> ("6*a*b", "x*y")
     Polynomial.collectTermsMonomialMV (Polynomial.symbols [x;y]) (2*a*x*b*y**3*x*3) ==|> ("6*a*b", "x^2*y^3")
+
+    Polynomial.collectTerms x (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b) ==> "x*(4*a + 5*b + 2*a*y + 3*b*y)"
+    Polynomial.collectTerms a (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b) ==> "5*b*x + 3*b*x*y + a*(4*x + 2*x*y)"
+    Polynomial.collectTerms (ln(a)) (2*x*ln(a)*y + 4*x*ln(a) + 3*x*y*b + 5*x*b + c) ==> "c + 5*b*x + 3*b*x*y + (4*x + 2*x*y)*ln(a)"
 
     Polynomial.collectTermsMV (Polynomial.symbols [x;y]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b) ==> "(4*a + 5*b)*x + (2*a + 3*b)*x*y"
     Polynomial.collectTermsMV (Polynomial.symbols [a;b]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b) ==> "a*(4*x + 2*x*y) + b*(5*x + 3*x*y)"
@@ -540,7 +544,7 @@ let ``General Polynomial Expressions`` () =
     Polynomial.isSquareFree x (x**3 + 1) --> true
     Polynomial.isSquareFree x (x**2 - 2) --> true
     Polynomial.isSquareFree x (8*x**3 + 12*x**2 + 6*x + 1) --> false
-    
+
     Polynomial.factorSquareFree x (x**8 + 6*x**6 + 12*x**4 + 8*x**2) ==> "x^2*(2 + x^2)^3"
 
     let sf = Polynomial.factorSquareFree x (x**5 + 6*x**4 + 10*x**3 - 4*x**2 - 24*x - 16)
