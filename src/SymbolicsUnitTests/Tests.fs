@@ -260,6 +260,11 @@ let ``Algebaric Operators`` () =
     Structure.map (fun x -> -x) (x + y**2) ==> "-x - y^2"
     negate (x + y**2) ==> "-(x + y^2)"
 
+    Algebraic.factors (b*cos(x)*ln(d)*x) ==+> ["b"; "x"; "ln(d)"; "cos(x)"]
+    Algebraic.factors (b+cos(x)) ==+> ["b + cos(x)"]
+    Algebraic.summands (b+cos(x)+ln(d)+x) ==+> ["b"; "x"; "ln(d)"; "cos(x)"]
+    Algebraic.summands (b*cos(x)) ==+> ["b*cos(x)"]
+
     Algebraic.separateFactors x (b*cos(x)*ln(d)*x) ==|> ("b*ln(d)", "x*cos(x)")
     Algebraic.separateFactors x (c*x*sin(x)/2) ==|> ("(1/2)*c", "x*sin(x)")
 

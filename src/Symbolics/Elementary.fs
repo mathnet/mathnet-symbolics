@@ -201,6 +201,16 @@ module Algebraic =
             |> sum
         | a, b -> a**(number b)
 
+    [<CompiledName("Factors")>]
+    let factors = function
+        | Product ax -> ax
+        | x  -> [x]
+
+    [<CompiledName("Summands")>]
+    let summands = function
+        | Sum ax -> ax
+        | x  -> [x]
+
     /// Algebraically expand the expression recursively
     [<CompiledName("Expand")>]
     let rec expand = function
