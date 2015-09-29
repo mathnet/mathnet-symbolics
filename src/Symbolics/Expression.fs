@@ -26,6 +26,7 @@ type Expression =
     static member FromInt32 (x:int) = Number (BigRational.FromInt x)
     static member FromInt64 (x:int64) = Number (BigRational.FromBigInt (BigInteger(x)))
     static member FromInteger (x:BigInteger) = Number (BigRational.FromBigInt x)
+    static member FromIntegerFraction (n:BigInteger, d:BigInteger) = Number (BigRational.FromBigIntFraction (n, d))
     static member FromRational (x:BigRational) = Number x
     static member Symbol (name:string) = Identifier (Symbol name)
 
@@ -294,7 +295,7 @@ module ExpressionPatterns =
         | PositiveInfinity | NegativeInfinity | ComplexInfinity -> Some Infinity
         | _ -> None
 
-    /// Terminal node, either a number, identifier/symbol or infinity. 
+    /// Terminal node, either a number, identifier/symbol or infinity.
     /// Warning: Undefined is *not* included.
     let (|Terminal|_|) = function
         | Number _ | Identifier _ -> Some Terminal

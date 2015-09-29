@@ -178,6 +178,26 @@ module Algebraic =
     open ExpressionPatterns
     open Operators
 
+    [<CompiledName("Summands")>]
+    let summands = function
+        | Sum ax -> ax
+        | x -> [x]
+
+    [<CompiledName("Factors")>]
+    let factors = function
+        | Product ax -> ax
+        | x -> [x]
+
+    [<CompiledName("FactorsInteger")>]
+    let factorsInteger x =
+        let denom (n:BigRational) = Expression.FromIntegerFraction (1I, n.Denominator)
+        match x with
+        | Integer n -> (n.Numerator, [])
+        | Number n -> (n.Numerator, [denom n])
+        | Product ((Integer n)::ax) -> (n.Numerator, ax)
+        | Product ((Number n)::ax) -> (n.Numerator, (denom n)::ax)
+        | x -> (1I, [x])
+
     /// Splits a product into a tuple (free of a symbol, dependent on symbol)
     [<CompiledName("SeparateFactors")>]
     let separateFactors symbol x =
@@ -200,16 +220,6 @@ module Algebraic =
             |> List.map (fun (k,c) -> expandProduct (c * a**number(e-k)) (expandPower (Sum ax) k))
             |> sum
         | a, b -> a**(number b)
-
-    [<CompiledName("Factors")>]
-    let factors = function
-        | Product ax -> ax
-        | x  -> [x]
-
-    [<CompiledName("Summands")>]
-    let summands = function
-        | Sum ax -> ax
-        | x  -> [x]
 
     /// Algebraically expand the expression recursively
     [<CompiledName("Expand")>]

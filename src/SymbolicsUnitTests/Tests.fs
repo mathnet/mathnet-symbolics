@@ -265,6 +265,8 @@ let ``Algebaric Operators`` () =
     Algebraic.summands (b+cos(x)+ln(d)+x) ==+> ["b"; "x"; "ln(d)"; "cos(x)"]
     Algebraic.summands (b*cos(x)) ==+> ["b*cos(x)"]
 
+    Algebraic.factorsInteger (2Q/3*b*cos(x)) --> (2I, [1Q/3; b; cos(x)])
+
     Algebraic.separateFactors x (b*cos(x)*ln(d)*x) ==|> ("b*ln(d)", "x*cos(x)")
     Algebraic.separateFactors x (c*x*sin(x)/2) ==|> ("(1/2)*c", "x*sin(x)")
 
