@@ -599,6 +599,11 @@ let ``General Rational Expressions`` () =
     Rational.simplify x ((x+1)/(x**2 - 1 - (x+1)*(x-1))) ==> "ComplexInfinity"
     Rational.simplify x (1/(1+1/(x+1)) + 2/(x+2))  ==> "(3 + x)/(2 + x)"
 
+    // http://stackoverflow.com/questions/32791138/extracting-common-terms-with-mathnet-symbolics
+    let pn = (1Q/8)*x*y*z + (1Q/2)*x*(y**2)*z
+    let pd = (1Q/8)*x*y*z + (1Q/8)*(x**2)*y*z + (3Q/4)*x*(y**2)*z + (3Q/4)*(x**2)*(y**2)*z + (1Q/4)*x*(y**3)*z
+    Rational.expand (pn / pd) ==> "(1 + 4*y)/(1 + x + 6*y + 6*x*y + 2*y^2)"
+
 
 [<Test>]
 let ``Single Variable Polynomials`` () =

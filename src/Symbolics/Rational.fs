@@ -37,6 +37,15 @@ module Rational =
     let isRationalMV symbols x =
         (numerator x |> Polynomial.isPolynomialMV symbols) && (denominator x |> Polynomial.isPolynomialMV symbols)
 
+    [<CompiledName("Reduce")>]
+    let reduce x =
+        let n = numerator x
+        let d = denominator x
+        let ncf = Polynomial.commonFactors n
+        let dcf = Polynomial.commonFactors d
+        let cf = Polynomial.commonMonomialFactors [ncf; dcf]
+        if cf = one then x else (Algebraic.expand (n/cf))/(Algebraic.expand (d/cf))
+
     let rec private rationalizeSum d x y =
         let a = denominator x
         let b = denominator y
@@ -51,11 +60,13 @@ module Rational =
         | x -> x
 
     [<CompiledName("Expand")>]
-    let rec expand x =
-        let n = numerator x |> Algebraic.expand
-        let d = denominator x |> Algebraic.expand
-        let z = rationalize (n/d)
-        if x = z then z else expand z
+    let expand x =
+        let rec expandRationalize x =
+            let n = numerator x |> Algebraic.expand
+            let d = denominator x |> Algebraic.expand
+            let z = rationalize (n/d)
+            if x = z then z else expandRationalize z
+        expandRationalize x |> reduce
 
     [<CompiledName("Simplify")>]
     let simplify symbol x =
