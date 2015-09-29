@@ -62,6 +62,13 @@ let ``Number Expressions`` () =
     Numbers.compare PositiveInfinity 1Q --> 1
     Numbers.compare NegativeInfinity 1Q --> -1
 
+    Numbers.max [ 2Q; 4Q; 7Q/2 ] --> 4Q
+    Numbers.max [ 2Q; 4Q; 9Q/2 ] --> 9Q/2
+    Numbers.max [ -2Q; -4Q; -7Q/2 ] --> -2Q
+
+    Numbers.gcd [ 4Q; 6Q; 10Q ] --> 2Q
+    Numbers.lcm [ 4Q; 6Q; 10Q ] --> 60Q
+
 
 [<Test>]
 let ``Expressions are always in auto-simplified form`` () =

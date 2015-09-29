@@ -77,6 +77,26 @@ module Numbers =
         | NegativeInfinity, Number _ -> -1
         | _ -> failwith "only numbers and +/-infinity are supported"
 
+    [<CompiledName("GreatestCommonDivisor2")>]
+    let gcd2 u v =
+        match u, v with
+        | Number a, Number b when a.IsInteger && b.IsInteger ->
+            Euclid.GreatestCommonDivisor(a.Numerator, b.Numerator) |> Expression.FromInteger
+        | _ -> Undefined
+
+    [<CompiledName("LeastCommonMultiple2")>]
+    let lcm2 u v =
+        match u, v with
+        | Number a, Number b when a.IsInteger && b.IsInteger ->
+            Euclid.LeastCommonMultiple(a.Numerator, b.Numerator) |> Expression.FromInteger
+        | _ -> Undefined
+
+    [<CompiledName("GreatestCommonDivisor")>]
+    let gcd ax = List.reduce gcd2 ax
+
+    [<CompiledName("LeastCommonMultiple")>]
+    let lcm ax = List.reduce lcm2 ax
+
 
 [<RequireQualifiedAccess>]
 module Structure =
