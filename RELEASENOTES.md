@@ -1,3 +1,11 @@
+### 0.6.0 - 2015-09-29
+* Polynomial: square-free factorization
+* Polynomial: commonFactors, coefficientMonomial
+* Rational: reduce to cancel common simple factors (part of expand)
+* Numbers: integer gcd and lcm routines
+* Algebraic: summands, factors, factorsInteger
+* Expression: FromIntegerFraction
+
 ### 0.5.0 - 2015-07-18
 * Infix Parser: interpret decimal notation as exact rational numbers ("0.2" -> "1/5")
 * Infix Parser: allow white space after number literal
