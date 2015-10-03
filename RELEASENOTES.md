@@ -1,3 +1,7 @@
+### 0.7.0 - 2015-10-03
+* Updated package dependencies (no functional changes)
+* NuGet package now lists the proper FSharp.Core package
+
 ### 0.6.0 - 2015-09-29
 * Polynomial: square-free factorization
 * Polynomial: commonFactors, coefficientMonomial
