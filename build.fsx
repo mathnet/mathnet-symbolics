@@ -89,7 +89,7 @@ let symbolicsPack =
       Authors = [ "Christoph Ruegg" ]
       Dependencies =
         [ "FParsec", GetPackageVersion "packages" "FParsec"
-          "FSharp.Core.Microsoft.Signed", GetPackageVersion "packages" "FSharp.Core.Microsoft.Signed"
+          "FSharp.Core", GetPackageVersion "packages" "FSharp.Core"
           "MathNet.Numerics", GetPackageVersion "packages" "MathNet.Numerics"
           "MathNet.Numerics.FSharp", GetPackageVersion "packages" "MathNet.Numerics.FSharp" ]
       Files =

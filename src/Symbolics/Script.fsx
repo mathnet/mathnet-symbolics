@@ -64,9 +64,9 @@ Exponential.simplify (1/(exp(x)*(exp(y)+exp(-x))) - (exp(x+y)-1)/((exp(x+y))**2-
 
 Trigonometric.expand (sin(2*x)) // 2*sin(x)*cos(x)
 Trigonometric.expand (sin(a+x)) // sin(x)*cos(a) + sin(a)*cos(x)
-Trigonometric.expand (sin(2*x + 3*y)) // ((-1)*sin(x)^2 + cos(x)^2)*((-1)*sin(y)^3 + 3*sin(y)*cos(y)^2) + 2*sin(x)*cos(x)*((-3)*sin(y)^2*cos(y) + cos(y)^3)
-Trigonometric.expand (sin(2*(x+y))) // (-sin(x)^2 + cos(x)^2)*(-sin(y)^3 + 3*sin(y)*cos(y)^2) + 2*sin(x)*cos(x)*(-3*sin(y)^2*cos(y) + cos(y)^3)
-|> Algebraic.expand //-2*sin(x)*sin(y)^2*cos(x) - 2*sin(x)^2*sin(y)*cos(y) + 2*sin(y)*cos(x)^2*cos(y) + 2*sin(x)*cos(x)*cos(y)^2
+Trigonometric.expand (sin(2*x + 3*y)) // (-sin(x)^2 + cos(x)^2)*(-sin(y)^3 + 3*sin(y)*cos(y)^2) + 2*sin(x)*cos(x)*(-3*sin(y)^2*cos(y) + cos(y)^3)
+Trigonometric.expand (sin(2*(x+y))) // 2*sin(y)*(-sin(x)^2 + cos(x)^2)*cos(y) + 2*sin(x)*cos(x)*(-sin(y)^2 + cos(y)^2)
+|> Algebraic.expand // -2*sin(x)*sin(y)^2*cos(x) - 2*sin(x)^2*sin(y)*cos(y) + 2*sin(y)*cos(x)^2*cos(y) + 2*sin(x)*cos(x)*cos(y)^2
 Trigonometric.expand (cos(5*x)) // 5*sin(x)^4*cos(x) - 10*sin(x)^2*cos(x)^3 + cos(x)^5
 
 // TODO: expected Undefined
@@ -228,7 +228,7 @@ LaTeX.print (1/(a*b))        // "\frac{1}{ab}"
 Infix.parse "1/(a*b)"
 Infix.parse "sin(x)"
 Infix.parse "sin (x)"
-Infix.parse "sin x"
+Infix.parse "sin x" // ParseFailure, as it should
 Infix.parse "sin"
 
 Infix.parseOrUndefined "sin x - 1" // -1 + sin(x)

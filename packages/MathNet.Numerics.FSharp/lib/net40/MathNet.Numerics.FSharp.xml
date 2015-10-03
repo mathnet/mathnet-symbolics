@@ -2,168 +2,6 @@
 <doc>
 <assembly><name>MathNet.Numerics.FSharp</name></assembly>
 <members>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="T:MathNet.Numerics.Compatibility">
-
-</member>
 <member name="M:MathNet.Numerics.Complex32Module.acsch(MathNet.Numerics.Complex32)">
 <summary>
  Inverse Hyperbolic Cosecant
@@ -404,9 +242,6 @@
  The complex number 0+0i
 </summary>
 </member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Complex32Module.cis(System.Single)">
 <summary>
  A complex of magnitude 1 and the given phase and , i.e. cis x = mkPolar 1.0 x
@@ -421,9 +256,6 @@
 <summary>
  Create a complex number using real and imaginary parts
 </summary>
-</member>
-<member name="T:MathNet.Numerics.Complex32Module">
-
 </member>
 <member name="M:MathNet.Numerics.ComplexExtensions.Complex32.CreatePolar.Static(System.Single,System.Single)">
 <summary>
@@ -474,9 +306,6 @@
 <summary>
  Constructs a double precision complex number from both the real and imaginary part.
 </summary>
-</member>
-<member name="T:MathNet.Numerics.ComplexExtensions">
-
 </member>
 <member name="M:MathNet.Numerics.ComplexModule.acsch(System.Numerics.Complex)">
 <summary>
@@ -718,9 +547,6 @@
  The complex number 0+0i
 </summary>
 </member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.ComplexModule.cis(System.Double)">
 <summary>
  A complex of magnitude 1 and the given phase and , i.e. cis x = mkPolar 1.0 x
@@ -736,348 +562,150 @@
  Create a complex number using real and imaginary parts
 </summary>
 </member>
-<member name="T:MathNet.Numerics.ComplexModule">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="T:MathNet.Numerics.DifferentiateModule">
-
-</member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.zipf(System.Double,System.Int32,System.Random)">
 <summary>
  Zipf with s and n parameters.
 </summary>
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.weibull(System.Double,System.Double,System.Random)">
 <summary>
  Weibull with shape (k) and scale (λ).
 </summary>
 </member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.studentT(System.Double,System.Double,System.Double,System.Random)">
 <summary>
  Student-T with location (μ), scale (σ) and degrees of freedom (ν).
 </summary>
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.stable(System.Double,System.Double,System.Double,System.Double,System.Random)">
 <summary>
  Stable with stability (α), skewness (β), scale (c) and location (μ).
 </summary>
 </member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.rayleigh(System.Double,System.Random)">
 <summary>
  Rayleigh with scale (σ).
 </summary>
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.poisson(System.Double,System.Random)">
 <summary>
  Poisson with lambda (λ).
 </summary>
 </member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.pareto(System.Double,System.Double,System.Random)">
 <summary>
  Pareto with scale (xm) and shape (α).
 </summary>
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.standard(System.Random)">
 <summary>
  Standard Gaussian.
 </summary>
 </member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.normal(System.Double,System.Double,System.Random)">
 <summary>
  Normal with mean (μ) and standard deviation (σ).
 </summary>
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.negativeBinomial(System.Double,System.Double,System.Random)">
 <summary>
  Negative-Binomial with number of failures (r) until the experiment stopped and probability (p) of a trial resulting in success.
 </summary>
 </member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.logNormal(System.Double,System.Double,System.Random)">
 <summary>
  Log-Normal with log-scale (μ) and shape (σ).
 </summary>
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.laplace(System.Double,System.Double,System.Random)">
 <summary>
  Laplace with location (μ) and scale (b).
 </summary>
 </member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.inverseGamma(System.Double,System.Double,System.Random)">
 <summary>
  Inverse-Gamma with shape (α) and scale (β)
 </summary>
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.hypergeometric(System.Int32,System.Int32,System.Int32,System.Random)">
 <summary>
  Hypergeometric with size of the population (N), number successes within the population (K, M) and number of draws without replacement (n).
 </summary>
 </member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.geometric(System.Double,System.Random)">
 <summary>
  Geometric with probability (p) of generating one.
 </summary>
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.gamma(System.Double,System.Double,System.Random)">
 <summary>
  Gamma with shape (k, α) and rate or inverse scale (β).
 </summary>
 </member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.fisherSnedecor(System.Double,System.Double,System.Random)">
 <summary>
  Fisher-Snedecor (F-Distribution) with first (d1) and second (d2) degree of freedom.
 </summary>
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.exponential(System.Double,System.Random)">
 <summary>
  Exponential with rate (λ).
 </summary>
 </member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.erlang(System.Int32,System.Double,System.Random)">
 <summary>
  Erlang with shape (k) and rate or inverse scale (λ).
 </summary>
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.discreteUniform(System.Int32,System.Int32,System.Random)">
 <summary>
  Discrete-Uniform with lower and upper bounds (both inclusive).
 </summary>
 </member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.conwayMaxwellPoisson(System.Double,System.Double,System.Random)">
 <summary>
  Conway-Maxwell-Poisson with lambda (λ) and rate of decay (ν).
 </summary>
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.continuousUniform(System.Double,System.Double,System.Random)">
 <summary>
  Continuous-Uniform with lower and upper bounds.
 </summary>
 </member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.chiSquared(System.Double,System.Random)">
 <summary>
  Chi-Squared with degrees of freedom (k).
 </summary>
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.chi(System.Int32,System.Random)">
 <summary>
  Chi with degrees of freedom (k).
 </summary>
 </member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.cauchy(System.Double,System.Double,System.Random)">
 <summary>
  Cauchy with location (x0) and scale (γ).
 </summary>
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.categorical(System.Double[],System.Random)">
 <summary>
  Categorical with an array of nonnegative ratios defining the relative probability mass (unnormalized).
 </summary>
 </member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.binomial(System.Double,System.Int32,System.Random)">
 <summary>
  Binomial with success probability (p) in each trial and number of trials (n).
 </summary>
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.beta(System.Double,System.Double,System.Random)">
 <summary>
  Beta with α and β shape parameters.
 </summary>
 </member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Distributions.SampleModule.bernoulli(System.Double,System.Random)">
 <summary>
  Bernoulli with probability (p).
 </summary>
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="T:MathNet.Numerics.Distributions.SampleModule">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="T:MathNet.Numerics.FindRootsModule">
-
 </member>
 <member name="M:MathNet.Numerics.FitModule.linearFunc``1(Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Core.FSharpFunc{``0,System.Double}},``0[],System.Double[])">
 <summary>
@@ -1126,72 +754,6 @@
  Least-Squares fitting the points (x,y) to a line y : x -&gt; a+b*x,
  returning its best fitting parameters as (a, b) tuple.
 </summary>
-</member>
-<member name="">
-
-</member>
-<member name="T:MathNet.Numerics.FitModule">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="T:MathNet.Numerics.GenerateModule">
-
 </member>
 <member name="M:MathNet.Numerics.LinearAlgebra.DenseMatrixModule.stack``1(Microsoft.FSharp.Collections.FSharpList{MathNet.Numerics.LinearAlgebra.Matrix{``0}})">
 <summary>
@@ -1318,12 +880,6 @@
  Initialize a matrix by calling a construction function for every element.
 </summary>
 </member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.LinearAlgebra.DenseMatrixModule.diag2``1(System.Int32,System.Int32,``0)">
 <summary>
  Create a matrix with the given dimension and set all diagonal values to x. All other values are zero.
@@ -1338,18 +894,6 @@
 <summary>
  Create a matrix with the given dimension and set all values to x.
 </summary>
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.LinearAlgebra.DenseMatrixModule.raw``1(System.Int32,System.Int32,``0[])">
 <summary>
@@ -1411,18 +955,6 @@
  Initialize an x-valued vector with the given dimension.
 </summary>
 </member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.LinearAlgebra.DenseVectorModule.raw``1(``0[])">
 <summary>
  Create a vector that directly binds to a raw storage array, without copying.
@@ -1468,12 +1000,6 @@
  Initialize a square matrix by calling a construction function for every element.
 </summary>
 </member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.LinearAlgebra.DiagonalMatrixModule.create2``1(System.Int32,System.Int32,``0)">
 <summary>
  Create a matrix with the given dimension and set all diagonal values to x.
@@ -1483,9 +1009,6 @@
 <summary>
  Create a square matrix with the given order and set all diagonal values to x.
 </summary>
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.LinearAlgebra.DiagonalMatrixModule.raw2``1(System.Int32,System.Int32,``0[])">
 <summary>
@@ -1555,75 +1078,6 @@
  Module that contains implementation of useful F#-specific extension members for generic matrices
 </summary>
 </member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.LinearAlgebra.MatrixModule.sumRowsBy``3(Microsoft.FSharp.Core.FSharpFunc{System.Int32,Microsoft.FSharp.Core.FSharpFunc{MathNet.Numerics.LinearAlgebra.Vector{``0},``1}},``2)">
 <summary>
  Returns the sum of the results generated by applying a position dependent function to each row of the matrix.
@@ -1633,18 +1087,6 @@
 <summary>
  Returns the sum of the results generated by applying a position dependent function to each column of the matrix.
 </summary>
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.LinearAlgebra.MatrixModule.sum``2(``0)">
 <summary>
@@ -1660,24 +1102,6 @@
 <summary>
  In-place matrix addition.
 </summary>
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.LinearAlgebra.MatrixModule.foldByRow``2(Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.FSharpFunc{``0,``0}},``0,``1)">
 <summary>
@@ -2178,12 +1602,6 @@
  Initialize a matrix by calling a construction function for every element.
 </summary>
 </member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.LinearAlgebra.SparseMatrixModule.diag2``1(System.Int32,System.Int32,``0)">
 <summary>
  Create a matrix with the given dimension and set all diagonal values to x. All other values are zero.
@@ -2198,9 +1616,6 @@
 <summary>
  Create a matrix with the given dimension and set all values to x. Note that a dense matrix would likely be more appropriate.
 </summary>
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.LinearAlgebra.SparseMatrixModule.ofStorage``1(MathNet.Numerics.LinearAlgebra.Storage.SparseCompressedRowMatrixStorage{``0})">
 <summary>
@@ -2247,9 +1662,6 @@
  Initialize an x-valued vector with the given dimension.
 </summary>
 </member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.LinearAlgebra.SparseVectorModule.ofStorage``1(MathNet.Numerics.LinearAlgebra.Storage.SparseVectorStorage{``0})">
 <summary>
  Create a vector that directly binds to a storage object.
@@ -2283,42 +1695,6 @@
 <summary>
  Module that contains implementation of useful F#-specific extension members for generic vectors
 </summary>
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.LinearAlgebra.VectorModule.subInPlace``3(``0,``2)">
 <summary>
@@ -2561,254 +1937,65 @@
  A module which implements functional vector operations.
 </summary>
 </member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="T:MathNet.Numerics.NumericLiteralN">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Probability.returnM``1(``0)">
 <summary>
  Inject a value into the RandomVariable type
 </summary>
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Probability.RandomVariableModule.map``2(Microsoft.FSharp.Core.FSharpFunc{``0,``1},System.Collections.Generic.IEnumerable{MathNet.Numerics.Probability.Outcome{``0}})">
 <summary>
  Transforms a RandomVariable value by using a specified mapping function.
 </summary>
 </member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="T:MathNet.Numerics.Probability.RandomVariableModule">
-
-</member>
-<member name="T:MathNet.Numerics.Probability">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Random.RandomModule.mrg32k3a">
 <summary>
  Creates a 32-bit combined multiple recursive generator with 2 components of order 3 pRNG with a robust seed
 </summary>
-</member>
-<member name="">
-
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Random.RandomModule.mcg31m1">
 <summary>
  Creates a Multiplicative congruential generator using a modulus of 2^31-1 and a multiplier of 1132489760 pRNG with a robust seed
 </summary>
 </member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Random.RandomModule.mcg59">
 <summary>
  Creates a Multiplicative congruential generator using a modulus of 2^59 and a multiplier of 13^13 pRNG with a robust seed
 </summary>
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Random.RandomModule.palf">
 <summary>
  Creates a Parallel Additive Lagged Fibonacci pRNG with a robust seed
 </summary>
 </member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Random.RandomModule.wh2006">
 <summary>
  Creates a Wichmann-Hill’s 2006 combined multiplicative congruential pRNG with a robust seed
 </summary>
-</member>
-<member name="">
-
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Random.RandomModule.wh1982">
 <summary>
  Creates a Wichmann-Hill’s 1982 combined multiplicative congruential pRNG with a robust seed
 </summary>
 </member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Random.RandomModule.xorshift">
 <summary>
  Creates a multiply-with-carry Xorshift (Xn = a * Xn−3 + c mod 2^32) pRNG with a robust seed
 </summary>
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
 </member>
 <member name="P:MathNet.Numerics.Random.RandomModule.mersenneTwisterShared">
 <summary>
  Creates a Mersenne Twister 19937 pRNG with a robust seed
 </summary>
 </member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
 <member name="M:MathNet.Numerics.Random.RandomModule.crypto">
 <summary>
  Creates a default .Net cryptographic system pRNG
 </summary>
 </member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
 <member name="P:MathNet.Numerics.Random.RandomModule.systemShared">
 <summary>
  Creates a default .Net system pRNG with a robust seed
 </summary>
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
 </member>
 <member name="M:MathNet.Numerics.Random.RandomModule.doubles(System.Int32)">
 <summary>
@@ -2819,39 +2006,6 @@
 <summary>
  Returns the default random source, thread-safe and also thread-locally shared
 </summary>
-</member>
-<member name="T:MathNet.Numerics.Random.RandomModule">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="">
-
-</member>
-<member name="T:MathNet.Numerics.Statistics.StatisticsModule">
-
 </member>
 </members>
 </doc>
