@@ -1,3 +1,6 @@
+### 0.7.1 - 2015-10-03
+* Revert FParsec dependency from 1.0.2 back to 1.0.1
+
 ### 0.7.0 - 2015-10-03
 * Updated package dependencies (no functional changes)
 * NuGet package now lists the proper FSharp.Core package
