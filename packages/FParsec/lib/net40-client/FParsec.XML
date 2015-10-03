@@ -2,10 +2,58 @@
 <doc>
 <assembly><name>FParsec</name></assembly>
 <members>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
 <member name="T:FParsec.CharParsers.NumberLiteralResultFlags">
 <summary>
  Encodes various bits of information about a parsed number literal.
 </summary>
+</member>
+<member name="">
+
 </member>
 <member name="P:FParsec.CharParsers.NumberLiteral.SuffixChar4">
 <summary>
@@ -33,10 +81,55 @@
  `NumberLiteralOptions` passed to the `numberLiteral` parser have the `IncludeSuffixCharsInString` flag set.
 </summary>
 </member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
 <member name="P:FParsec.CharParsers.NumberLiteral.Info">
 <summary>
  Eencodes various bits of information on the string literal.
 </summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
 </member>
 <member name="T:FParsec.CharParsers.NumberLiteral">
 <summary>
@@ -48,10 +141,67 @@
  Any parsed suffix chars are always available through the `SuffixChar1` - `4` members.
 </summary>
 </member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
 <member name="T:FParsec.CharParsers.NumberLiteralOptions">
 <summary>
  Encodes the various options of the `numberLiteral` parser.
 </summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
 </member>
 <member name="T:FParsec.CharParsers.ParserResult`2.Failure">
 <summary>
@@ -991,6 +1141,21 @@
  The parser&apos;s `Reply` is captured and returned as a `ParserResult` value.
 </summary>
 </member>
+<member name="T:FParsec.CharParsers">
+
+</member>
+<member name="T:FParsec.Emit">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
 <member name="M:FParsec.Error.ParserError.WriteTo(System.IO.TextWriter,Microsoft.FSharp.Core.FSharpOption{Microsoft.FSharp.Core.FSharpFunc{System.IO.TextWriter,Microsoft.FSharp.Core.FSharpFunc{FParsec.Position,Microsoft.FSharp.Core.FSharpFunc{System.String,Microsoft.FSharp.Core.FSharpFunc{System.Int32,Microsoft.FSharp.Core.Unit}}}}},Microsoft.FSharp.Core.FSharpOption{System.Int32},Microsoft.FSharp.Core.FSharpOption{System.String},Microsoft.FSharp.Core.FSharpOption{System.String})">
 <summary>
  Writes a string representation of the `ParserError` to the given `TextWriter` value.
@@ -1043,10 +1208,52 @@
  Returns a string representation of the `ParserError`.
 </summary>
 </member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
 <member name="T:FParsec.Error.ParserError">
 <summary>
  Represents a simple container type that brings together the position, user state and error messages of a parser error.
 </summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
 </member>
 <member name="M:FParsec.Error.mergeErrors(FParsec.ErrorMessageList,FParsec.ErrorMessageList)">
 <summary>
@@ -1107,21 +1314,243 @@
  `expectedError label` creates an `ErrorMessageList` with a single `Expected label` message.
 </summary>
 </member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:FParsec.Error">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
 <member name="M:FParsec.InternalsModule.LineWrapper.Break(System.String)">
 <summary>
  breaks a string into multiple lines along text element boundaries.
 </summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
 </member>
 <member name="T:FParsec.InternalsModule.LineWrapper">
 <summary>
  A primitive pretty printer.
 </summary>
 </member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:FParsec.InternalsModule">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
 <member name="T:FParsec.Primitives.ParserCombinator">
 <summary>
  The type of the &quot;builder object&quot; that can be used to build parsers with
  F#&apos;s &quot;computation expression&quot; syntax a.k.a. &quot;workflow&quot; syntax.
 </summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
 </member>
 <member name="T:FParsec.Primitives.Parser`2">
 <summary>
@@ -1173,6 +1602,9 @@
  `x_1` to `x_n+1` are the values returned by `p`. If only a single occurance
  of `p` and no occurance of `op` is parsed, the result of `p` is returned directly.
 </summary>
+</member>
+<member name="">
+
 </member>
 <member name="M:FParsec.Primitives.many1Till``3(Microsoft.FSharp.Core.FSharpFunc{FParsec.CharStream{``1},FParsec.Reply{``0}},Microsoft.FSharp.Core.FSharpFunc{FParsec.CharStream{``1},FParsec.Reply{``2}})">
 <summary>
@@ -1533,6 +1965,12 @@
 <summary>
  The parser succeeded.
 </summary>
+</member>
+<member name="T:FParsec.Primitives">
+
+</member>
+<member name="T:FParsec.StaticMapping">
+
 </member>
 </members>
 </doc>

@@ -29,6 +29,11 @@
         <member name="F:FParsec.CharStream.StringToStreamIndexOffset">
             <summary>IndexOfFirstChar - IndexBegin</summary>
         </member>
+        <member name="M:FParsec.CharStream.Dispose">
+            <summary>The low trust version of the CharStream class implements the IDisposable
+            interface only for API compatibility. The Dispose method does not need to be called on
+            low trust CharStream instances, because the instances hold no resources that need to be disposed.</summary>
+        </member>
         <member name="P:FParsec.CharStream.IsBeginOfStream">
             <summary>Indicates whether the Iterator points to the beginning of the CharStream.
             If the CharStream is empty, this property is always true.</summary>
@@ -39,11 +44,6 @@
         </member>
         <member name="P:FParsec.CharStream.Column">
             <summary>The UTF‐16 column number of the next char, i.e. Index ‐ LineBegin  + 1.</summary>
-        </member>
-        <member name="M:FParsec.CharStream.Dispose">
-            <summary>The low trust version of the CharStream class implements the IDisposable
-            interface only for API compatibility. The Dispose method does not need to be called on
-            low trust CharStream instances, because the instances hold no resources that need to be disposed.</summary>
         </member>
         <member name="T:FParsec.CharStream`1">
             <summary>Provides read‐access to a sequence of UTF‐16 chars.</summary>

@@ -2,7 +2,7 @@ NUGET
   remote: http://nuget.org/api/v2
   specs:
     FAKE (4.4.5)
-    FParsec (1.0.2)
+    FParsec (1.0.1)
     FSharp.Compiler.Service (0.0.90)
     FSharp.Core (3.1.2.5)
     FSharp.Formatting (2.11.0)
