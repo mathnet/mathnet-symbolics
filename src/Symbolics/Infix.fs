@@ -41,7 +41,6 @@ module private InfixParser =
             else BigRational.FromBigIntFraction (ival, BigInteger.Pow (10I, num.Length))
 
     let numberZ : Expression parser =
-        let options = NumberLiteralOptions.AllowMinusSign ||| NumberLiteralOptions.AllowPlusSign ||| NumberLiteralOptions.AllowSuffix
         integer .>> ws
         |>> Expression.FromInteger
 
@@ -49,13 +48,21 @@ module private InfixParser =
         integer .>>. ((pstring "." >>. fraction) <|>% BigRational.Zero) .>> ws
         |>> fun (intPart, fractionPart) -> (BigRational.FromBigInt intPart) + fractionPart |> Expression.FromRational
 
+    let number : Expression parser =
+        let options = NumberLiteralOptions.AllowFraction ||| NumberLiteralOptions.AllowFractionWOIntegerPart ||| NumberLiteralOptions.AllowInfinity
+        numberLiteral options "number" .>> ws
+        |>> fun num ->
+            if num.IsInteger then BigInteger.Parse(num.String) |> Expression.FromInteger
+            elif num.IsInfinity then Expression.PositiveInfinity
+            else Expression.Real(float num.String)
+
     let identifier : Expression parser =
         let isIdentifierFirstChar c = isLetter c
         let isIdentifierChar c = isLetter c || isDigit c
         many1Satisfy2L isIdentifierFirstChar isIdentifierChar "identifier" .>> ws
         |>> Expression.Symbol
 
-    let value : Expression parser = numberQ <|> identifier
+    let value : Expression parser = number <|> identifier
 
     let functionName : Function parser =
         let cases =
@@ -78,7 +85,7 @@ module private InfixParser =
         let functionArgs = sepBy expr (str_ws ",") |> parens
         let functionTerm = functionName .>>. functionArgs |>> applyFunction
 
-        let term = numberQ <|> parensTerm <|> absTerm <|> attempt functionTerm <|> identifier
+        let term = number <|> parensTerm <|> absTerm <|> attempt functionTerm <|> identifier
 
         opp.TermParser <- term
         opp.AddOperator(InfixOperator("+", ws, 1, Associativity.Left, add))
