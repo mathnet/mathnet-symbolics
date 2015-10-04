@@ -13,6 +13,12 @@ module Operators =
     let two = Expression.Two
     let minusOne = Expression.MinusOne
 
+    let posInfty = Expression.PositiveInfinity
+    let negInfty = Expression.NegativeInfinity
+    let complexInfty = Expression.ComplexInfinity
+
+    let pi = Expression.Pi
+
     let add (x:Expression) (y:Expression) = x + y
     let subtract (x:Expression) (y:Expression) = x - y
     let negate (x:Expression) = -x
@@ -43,22 +49,40 @@ module Operators =
 [<RequireQualifiedAccess>]
 module Numbers =
 
+    /// Represent the constant as a real number if possible
+    let (|RealConstant|_|) = function
+        | Constant (Real r) -> Some r
+        | Constant E -> Some Constants.E
+        | Constant Pi -> Some Constants.Pi
+        | Constant PositiveInfinity -> Some System.Double.PositiveInfinity
+        | Constant NegativeInfinity -> Some System.Double.NegativeInfinity
+        | Constant ComplexInfinity -> Some System.Double.PositiveInfinity
+        | _ -> None
+
     [<CompiledName("Max2")>]
     let max2 u v =
         match u, v with
         | Undefined, _ | _, Undefined -> Undefined
+        | Constant ComplexInfinity, _ | _, Constant ComplexInfinity -> Constant ComplexInfinity
         | Constant PositiveInfinity, _ | _, Constant PositiveInfinity -> Constant PositiveInfinity
         | Constant NegativeInfinity, b | b, Constant NegativeInfinity -> b
-        | Number a, Number b -> Number (if b > a then b else a)
+        | Number un, Number vn -> if vn > un then v else u
+        | RealConstant ur, RealConstant vr -> if vr > ur then v else u
+        | (RealConstant ar as aa), (Number bn as bb) | (Number bn as bb), (RealConstant ar as aa)
+            -> let br = float bn in if br > ar then bb else aa
         | _ -> failwith "number expected"
 
     [<CompiledName("Min2")>]
     let min2 u v =
         match u, v with
         | Undefined, _ | _, Undefined -> Undefined
+        | Constant ComplexInfinity, b | b, Constant ComplexInfinity -> b
         | Constant PositiveInfinity, b | b, Constant PositiveInfinity -> b
         | Constant NegativeInfinity, _ | _, Constant NegativeInfinity -> Constant NegativeInfinity
-        | Number a, Number b -> Number (if b < a then b else a)
+        | Number un, Number vn -> if vn < un then v else u
+        | RealConstant ur, RealConstant vr -> if vr < ur then v else u
+        | (RealConstant ar as aa), (Number bn as bb) | (Number bn as bb), (RealConstant ar as aa)
+            -> let br = float bn in if br < ar then bb else aa
         | _ -> failwith "number expected"
 
     [<CompiledName("Max")>]
@@ -71,11 +95,15 @@ module Numbers =
     let compare x y =
         match x, y with
         | a, b when a = b -> 0
-        | Number a, Number b -> compare a b
         | Number _, Constant PositiveInfinity -> -1
         | Number _, Constant NegativeInfinity -> 1
+        | Number _, Constant ComplexInfinity -> -1
         | Constant PositiveInfinity, Number _ -> 1
         | Constant NegativeInfinity, Number _ -> -1
+        | Constant ComplexInfinity, Number _ -> 1
+        | Number a, Number b -> compare a b
+        | Number a, RealConstant b -> compare (float a) b
+        | RealConstant a, Number b -> compare a (float b)
         | _ -> failwith "only numbers and +/-infinity are supported"
 
     [<CompiledName("GreatestCommonDivisor2")>]

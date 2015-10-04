@@ -57,8 +57,8 @@ type Expression =
             | x, Sum ys -> compareZip [x] (List.rev ys)
             | Function (xf, x), FunctionN (yf, ys) -> if xf <> yf then xf < yf else compareZip [x] (List.rev ys)
             | FunctionN (xf, xs), Function (yf, y) -> if xf <> yf then xf < yf else compareZip (List.rev xs) [y]
-            | Function _, Identifier _ | FunctionN _, Identifier _ -> false
-            | Identifier _, Function _ | Identifier _, FunctionN _ -> true
+            | Identifier _, _ -> true
+            | _, Identifier _ -> false
             | Undefined, _ -> false
             | _, Undefined -> true
         and compareZip a b =
