@@ -56,12 +56,12 @@ module LaTeX =
                 if priority > 2 then write "\\right)"
         | Identifier (Symbol name) -> write name
         | Undefined -> write "\\mathrm{undefined}"
-        | PositiveInfinity -> write "\\infty"
-        | NegativeInfinity ->
+        | Constant PositiveInfinity -> write "\\infty"
+        | Constant NegativeInfinity ->
             if priority > 0 then write "\\left("
             write "-\\infty"
             if priority > 0 then write "\\right)"
-        | ComplexInfinity -> write "\\infty"
+        | Constant ComplexInfinity -> write "\\infty"
         | Sum (x::xs) ->
             if priority > 1 then write "\\left("
             texSummand write true x

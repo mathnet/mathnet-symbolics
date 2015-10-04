@@ -9,14 +9,12 @@ open MathNet.Symbolics
 type Expression =
     | Number of BigRational
     | Identifier of Symbol
+    | Constant of Constant
     | Sum of Expression list
     | Product of Expression list
     | Power of Expression * Expression
     | Function of Function * Expression
     | FunctionN of Function * (Expression list)
-    | NegativeInfinity
-    | PositiveInfinity
-    | ComplexInfinity
     | Undefined
 
     static member Zero = Number BigRational.Zero
@@ -29,18 +27,22 @@ type Expression =
     static member FromIntegerFraction (n:BigInteger, d:BigInteger) = Number (BigRational.FromBigIntFraction (n, d))
     static member FromRational (x:BigRational) = Number x
     static member Symbol (name:string) = Identifier (Symbol name)
+    static member Real (floatingPoint:float) = Constant (Real floatingPoint)
 
     static member private OrderRelation (x:Expression) (y:Expression) =
         let rec compare a b =
             match a, b with
             | Number x, Number y -> x < y
             | Identifier x, Identifier y -> x < y
+            | Constant x, Constant y -> x < y
             | Sum xs, Sum ys | Product xs, Product ys -> compareZip (List.rev xs) (List.rev ys)
             | Power (xr,xp), Power (yr,yp) -> if xr <> yr then compare xr yr else compare xp yp
             | Function (xf, x), Function (yf, y) -> if xf <> yf then xf < yf else compare x y
             | FunctionN (xf, xs), FunctionN (yf, ys) -> if xf <> yf then xf < yf else compareZip (List.rev xs) (List.rev ys)
             | Number _, _ -> true
             | _, Number _ -> false
+            | Constant _, _ -> true
+            | _, Constant _ -> false
             | Product xs, y -> compareZip (List.rev xs) [y]
             | x, Product ys -> compareZip [x] (List.rev ys)
             | Power (xr, xp), y -> if xr <> y then compare xr y else compare xp Expression.One
@@ -51,8 +53,8 @@ type Expression =
             | FunctionN (xf, xs), Function (yf, y) -> if xf <> yf then xf < yf else compareZip (List.rev xs) [y]
             | Function _, Identifier _ | FunctionN _, Identifier _ -> false
             | Identifier _, Function _ | Identifier _, FunctionN _ -> true
-            | Undefined, _ | ComplexInfinity, _ | PositiveInfinity, _ | NegativeInfinity, _ -> false
-            | _, Undefined | _, ComplexInfinity | _, PositiveInfinity | _, NegativeInfinity -> true
+            | Undefined, _ -> false
+            | _, Undefined -> true
         and compareZip a b =
             match a, b with
             | x::xs, y::ys when x <> y -> compare x y
@@ -109,7 +111,7 @@ type Expression =
         match x, y with
         | a, b | b, a when a = Expression.Zero -> b
         | Undefined, _ | _, Undefined -> Undefined
-        | ComplexInfinity, _ | _, ComplexInfinity -> ComplexInfinity
+        | Constant ComplexInfinity, _ | _, Constant ComplexInfinity -> Constant ComplexInfinity
         | Number a, b | b, Number a -> numAdd a b
         | Sum ((Number a)::ax), Sum ((Number b)::bx) -> numAdd (a+b) (merge ax bx)
         | Sum ((Number a)::ax), Sum bx | Sum bx, Sum ((Number a)::ax) -> numAdd a (merge ax bx)
@@ -164,7 +166,7 @@ type Expression =
         | a, b | b, a when a = Expression.One -> b
         | a, _ | _, a when a = Expression.Zero -> Expression.Zero
         | Undefined, _ | _, Undefined -> Undefined
-        | ComplexInfinity, _ | _, ComplexInfinity -> ComplexInfinity
+        | Constant ComplexInfinity, _ | _, Constant ComplexInfinity -> Constant ComplexInfinity
         | Number a, b | b, Number a -> numMul a b
         | Product ((Number a)::ax), Product ((Number b)::bx) -> numMul (a*b) (merge ax bx)
         | Product ((Number a)::ax), Product bx | Product bx, Product ((Number a)::ax) -> numMul a (merge ax bx)
@@ -184,7 +186,7 @@ type Expression =
         | Undefined, _ | _, Undefined -> Undefined
         | Number a, Number b when b.IsInteger ->
             if b.IsNegative then
-                if a.IsZero then ComplexInfinity
+                if a.IsZero then Constant ComplexInfinity
                 // workaround bug in BigRational with negative powers - drop after upgrading to > v3.0.0-alpha9
                 else Number (BigRational.Pow(BigRational.Reciprocal a, -int(b.Numerator)))
             else Number (BigRational.Pow(a, int(b.Numerator)))
@@ -195,8 +197,8 @@ type Expression =
     static member Invert (x) =
         match x with
         | Undefined -> Undefined
-        | PositiveInfinity | NegativeInfinity | ComplexInfinity -> Expression.Zero
-        | Number a when a.IsZero -> ComplexInfinity // no direction
+        | Constant PositiveInfinity | Constant NegativeInfinity | Constant ComplexInfinity -> Expression.Zero
+        | Number a when a.IsZero -> Constant ComplexInfinity // no direction
         | Number a -> Number (BigRational.Reciprocal a)
         | Product ax -> Product (ax |> List.map (Expression.Invert))
         | Power (r, p) -> Expression.Pow(r, -p)
@@ -295,11 +297,10 @@ module ExpressionPatterns =
         | PositiveInfinity | NegativeInfinity | ComplexInfinity -> Some Infinity
         | _ -> None
 
-    /// Terminal node, either a number, identifier/symbol or infinity.
+    /// Terminal node, either a number, identifier/symbol or constant (including infinity).
     /// Warning: Undefined is *not* included.
     let (|Terminal|_|) = function
-        | Number _ | Identifier _ -> Some Terminal
-        | PositiveInfinity | NegativeInfinity | ComplexInfinity -> Some Terminal
+        | Number _ | Identifier _ | Constant _ -> Some Terminal
         | _ -> None
 
     /// Recognizes a sin or cos expression

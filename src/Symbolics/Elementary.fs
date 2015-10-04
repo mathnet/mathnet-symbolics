@@ -7,6 +7,7 @@ module Operators =
 
     let symbol name = Expression.Symbol name
     let number (x:int) = Expression.FromInt32 x
+    let real (x:float) = Expression.Real x
     let zero = Expression.Zero
     let one = Expression.One
     let two = Expression.Two
@@ -46,8 +47,8 @@ module Numbers =
     let max2 u v =
         match u, v with
         | Undefined, _ | _, Undefined -> Undefined
-        | PositiveInfinity, _ | _, PositiveInfinity -> PositiveInfinity
-        | NegativeInfinity, b | b, NegativeInfinity -> b
+        | Constant PositiveInfinity, _ | _, Constant PositiveInfinity -> Constant PositiveInfinity
+        | Constant NegativeInfinity, b | b, Constant NegativeInfinity -> b
         | Number a, Number b -> Number (if b > a then b else a)
         | _ -> failwith "number expected"
 
@@ -55,8 +56,8 @@ module Numbers =
     let min2 u v =
         match u, v with
         | Undefined, _ | _, Undefined -> Undefined
-        | PositiveInfinity, b | b, PositiveInfinity -> b
-        | NegativeInfinity, _ | _, NegativeInfinity -> NegativeInfinity
+        | Constant PositiveInfinity, b | b, Constant PositiveInfinity -> b
+        | Constant NegativeInfinity, _ | _, Constant NegativeInfinity -> Constant NegativeInfinity
         | Number a, Number b -> Number (if b < a then b else a)
         | _ -> failwith "number expected"
 
@@ -71,10 +72,10 @@ module Numbers =
         match x, y with
         | a, b when a = b -> 0
         | Number a, Number b -> compare a b
-        | Number _, PositiveInfinity -> -1
-        | Number _, NegativeInfinity -> 1
-        | PositiveInfinity, Number _ -> 1
-        | NegativeInfinity, Number _ -> -1
+        | Number _, Constant PositiveInfinity -> -1
+        | Number _, Constant NegativeInfinity -> 1
+        | Constant PositiveInfinity, Number _ -> 1
+        | Constant NegativeInfinity, Number _ -> -1
         | _ -> failwith "only numbers and +/-infinity are supported"
 
     [<CompiledName("GreatestCommonDivisor2")>]
@@ -111,8 +112,8 @@ module Structure =
         | Power _ -> 2
         | Function _ -> 1
         | FunctionN (_, xs) -> List.length xs
-        | Number _ | Identifier _ -> 0
-        | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined -> 0
+        | Terminal _ -> 0
+        | Undefined -> 0
 
     [<CompiledName("Operand")>]
     let operand i = function
@@ -120,7 +121,7 @@ module Structure =
         | Power (r, _) when i = 0 -> r
         | Power (_, p) when i = 1 -> p
         | Function (_, x) when i = 0 -> x
-        | Number _ | Identifier _ -> failwith "numbers and identifiers have no operands"
+        | Terminal _ -> failwith "terminals have no operands"
         | _ -> failwith "no such operand"
 
     [<CompiledName("IsFreeOf")>]
@@ -130,8 +131,8 @@ module Structure =
         | Sum ax | Product ax | FunctionN (_, ax) -> List.forall (freeOf symbol) ax
         | Power (r, p) -> freeOf symbol r && freeOf symbol p
         | Function (_, x) -> freeOf symbol x
-        | Number _ | Identifier _ -> true
-        | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined -> true
+        | Terminal _ -> true
+        | Undefined -> true
 
     [<CompiledName("IsFreeOfSet")>]
     let rec freeOfSet (symbols: HashSet<Expression>) x =
@@ -140,8 +141,8 @@ module Structure =
         | Sum ax | Product ax | FunctionN (_, ax) -> List.forall (freeOfSet symbols) ax
         | Power (r, p) -> freeOfSet symbols r && freeOfSet symbols p
         | Function (_, x) -> freeOfSet symbols x
-        | Number _ | Identifier _  -> true
-        | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined -> true
+        | Terminal _ -> true
+        | Undefined -> true
 
     [<CompiledName("Substitute")>]
     let rec substitute y r x =
@@ -152,8 +153,8 @@ module Structure =
         | Power (radix, p) -> (substitute y r radix) ** (substitute y r p)
         | Function (fn, x) -> apply fn (substitute y r x)
         | FunctionN (fn, xs) -> applyN fn (List.map (substitute y r) xs)
-        | Number _ | Identifier _ -> x
-        | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined -> x
+        | Terminal _ -> x
+        | Undefined -> x
 
     [<CompiledName("Map")>]
     let map f = function

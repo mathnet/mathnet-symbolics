@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Symbolics", "src\Symbolics\Symbolics.fsproj", "{A8667C7D-CC10-4519-ACFE-1B4D3C190E97}"
 EndProject
@@ -29,7 +29,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{37C7BBC6-A637-45BC-9EBF-1733771CDE56}"
 	ProjectSection(SolutionItems) = preProject
 		docs\content\Build.md = docs\content\Build.md
-		docs\content\index.fsx = docs\content\index.fsx
+		docs\content\index.md = docs\content\index.md
 		docs\tools\templates\template.cshtml = docs\tools\templates\template.cshtml
 	EndProjectSection
 EndProject

@@ -154,9 +154,13 @@ module Evaluate =
     let rec evaluate (symbols:IDictionary<string, FloatingPoint>) = function
         | Number n -> Real (float n) |> fnormalize
         | Undefined -> Undef
-        | PositiveInfinity -> PosInf
-        | NegativeInfinity -> NegInf
-        | ComplexInfinity -> ComplexInf
+        | Constant PositiveInfinity -> PosInf
+        | Constant NegativeInfinity -> NegInf
+        | Constant ComplexInfinity -> ComplexInf
+        | Constant E -> Real (Constants.E)
+        | Constant Pi -> Real (Constants.Pi)
+        | Constant I -> Complex (Complex.ImaginaryOne)
+        | Constant (Constant.Real fp) -> Real fp
         | Identifier (Symbol s) -> symbols.[s] |> fnormalize
         | Sum xs -> xs |> List.map (evaluate symbols) |> List.reduce fadd |> fnormalize
         | Product xs -> xs |> List.map (evaluate symbols) |> List.reduce fmultiply |> fnormalize

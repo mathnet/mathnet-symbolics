@@ -6,10 +6,13 @@ open Operators
 [<RequireQualifiedAccess>]
 module Calculus =
 
+    open ExpressionPatterns
+
     [<CompiledName("Differentiate")>]
     let rec differentiate symbol = function
         | x when x = symbol -> one
-        | Number _ | Identifier _ -> zero
+        | Undefined as x -> x
+        | Terminal _ -> zero
         | Sum xs -> sum <| List.map (differentiate symbol) xs
         | Product [x] -> differentiate symbol x
         | Product (x::xs) ->
@@ -27,7 +30,6 @@ module Calculus =
         | Function (Tan, x) -> 2*(differentiate symbol x) / (cos(2*x)+1)
         | Function (Abs, _) | FunctionN _ -> failwith "not supported"
         | Product [] -> failwith "invalid expression"
-        | PositiveInfinity | NegativeInfinity | ComplexInfinity | Undefined as x -> x
 
     /// Differentiate expression to symbol and substitute symbol with value
     [<CompiledName("DifferentiateAt")>]

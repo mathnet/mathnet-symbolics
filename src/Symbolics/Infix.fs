@@ -119,9 +119,9 @@ module private InfixPrinter =
             if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write ")"
         | Identifier (Symbol name) -> write name
         | Undefined -> write "Undefined"
-        | PositiveInfinity -> write "PositiveInfinity"
-        | NegativeInfinity -> write "NegativeInfinity"
-        | ComplexInfinity -> write "ComplexInfinity"
+        | Constant PositiveInfinity -> write "PositiveInfinity"
+        | Constant NegativeInfinity -> write "NegativeInfinity"
+        | Constant ComplexInfinity -> write "ComplexInfinity"
         | Sum (x::xs) ->
             if priority > 1 then write "("
             strict write 1 x
@@ -194,9 +194,9 @@ module private InfixPrinter =
             if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write ")"
         | Identifier (Symbol name) -> write name
         | Undefined -> write "Undefined"
-        | PositiveInfinity -> write "PositiveInfinity"
-        | NegativeInfinity -> write "NegativeInfinity"
-        | ComplexInfinity -> write "ComplexInfinity"
+        | Constant PositiveInfinity -> write "PositiveInfinity"
+        | Constant NegativeInfinity -> write "NegativeInfinity"
+        | Constant ComplexInfinity -> write "ComplexInfinity"
         | Sum (x::xs) ->
             if priority > 1 then write "("
             niceSummand write true x

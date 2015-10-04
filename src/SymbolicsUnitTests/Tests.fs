@@ -57,10 +57,10 @@ let ``Number Expressions`` () =
     Numbers.compare 1Q (1Q/2Q) --> 1
     Numbers.compare (1Q/2Q) 0Q --> 1
     Numbers.compare (1Q/2Q) 1Q --> -1
-    Numbers.compare 1Q PositiveInfinity --> -1
-    Numbers.compare 1Q NegativeInfinity --> 1
-    Numbers.compare PositiveInfinity 1Q --> 1
-    Numbers.compare NegativeInfinity 1Q --> -1
+    Numbers.compare 1Q (Constant PositiveInfinity) --> -1
+    Numbers.compare 1Q (Constant NegativeInfinity) --> 1
+    Numbers.compare (Constant PositiveInfinity) 1Q --> 1
+    Numbers.compare (Constant NegativeInfinity) 1Q --> -1
 
     Numbers.max [ 2Q; 4Q; 7Q/2 ] --> 4Q
     Numbers.max [ 2Q; 4Q; 9Q/2 ] --> 9Q/2
@@ -433,12 +433,12 @@ let ``Evaluate some expression to floating point numbers`` () =
 
     let (=!=) x expected = x.ToString() |> should equal (expected.ToString())
 
-    let symbols = Map.ofList ["a", Real 2.0; "b", Real 3.0; "c", Complex (complex 1.0 -1.0)]
-    Evaluate.evaluate symbols (a) =!= Real 2.0
-    Evaluate.evaluate symbols (1Q/2) =!= Real 0.5
-    Evaluate.evaluate symbols (sin(a) + ln(b)) =!= Real 2.007909715
-    Evaluate.evaluate symbols (a*x**2 + b*x + c |> Structure.substitute x (number 1/2)) =!= Complex (complex 3.0 -1.0)
-    Evaluate.evaluate symbols (1Q/0Q) =!= ComplexInf
+    let symbols = Map.ofList ["a", FloatingPoint.Real 2.0; "b", FloatingPoint.Real 3.0; "c", FloatingPoint.Complex (complex 1.0 -1.0)]
+    Evaluate.evaluate symbols (a) =!= FloatingPoint.Real 2.0
+    Evaluate.evaluate symbols (1Q/2) =!= FloatingPoint.Real 0.5
+    Evaluate.evaluate symbols (sin(a) + ln(b)) =!= FloatingPoint.Real 2.007909715
+    Evaluate.evaluate symbols (a*x**2 + b*x + c |> Structure.substitute x (number 1/2)) =!= FloatingPoint.Complex (complex 3.0 -1.0)
+    Evaluate.evaluate symbols (1Q/0Q) =!= FloatingPoint.ComplexInf
 
 
 [<Test>]
