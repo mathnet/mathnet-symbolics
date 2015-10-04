@@ -140,7 +140,7 @@ module Structure =
         | Power _ -> 2
         | Function _ -> 1
         | FunctionN (_, xs) -> List.length xs
-        | Terminal _ -> 0
+        | Number _ | Identifier _ | Constant _ -> 0
         | Undefined -> 0
 
     [<CompiledName("Operand")>]
@@ -149,7 +149,6 @@ module Structure =
         | Power (r, _) when i = 0 -> r
         | Power (_, p) when i = 1 -> p
         | Function (_, x) when i = 0 -> x
-        | Terminal _ -> failwith "terminals have no operands"
         | _ -> failwith "no such operand"
 
     [<CompiledName("IsFreeOf")>]
@@ -159,7 +158,7 @@ module Structure =
         | Sum ax | Product ax | FunctionN (_, ax) -> List.forall (freeOf symbol) ax
         | Power (r, p) -> freeOf symbol r && freeOf symbol p
         | Function (_, x) -> freeOf symbol x
-        | Terminal _ -> true
+        | Number _ | Identifier _ | Constant _ -> true
         | Undefined -> true
 
     [<CompiledName("IsFreeOfSet")>]
@@ -169,7 +168,7 @@ module Structure =
         | Sum ax | Product ax | FunctionN (_, ax) -> List.forall (freeOfSet symbols) ax
         | Power (r, p) -> freeOfSet symbols r && freeOfSet symbols p
         | Function (_, x) -> freeOfSet symbols x
-        | Terminal _ -> true
+        | Number _ | Identifier _ | Constant _ -> true
         | Undefined -> true
 
     [<CompiledName("Substitute")>]
@@ -181,7 +180,7 @@ module Structure =
         | Power (radix, p) -> (substitute y r radix) ** (substitute y r p)
         | Function (fn, x) -> apply fn (substitute y r x)
         | FunctionN (fn, xs) -> applyN fn (List.map (substitute y r) xs)
-        | Terminal _ -> x
+        | Number _ | Identifier _ | Constant _ -> x
         | Undefined -> x
 
     [<CompiledName("Map")>]

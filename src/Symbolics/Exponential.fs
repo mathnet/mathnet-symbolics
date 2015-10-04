@@ -85,7 +85,7 @@ module Trigonometric =
     let separateFactors x =
         let rec isSinCosPart = function
             | PosIntPower (r, _) -> isSinCosPart r
-            | SinCos -> true
+            | SinCos _ -> true
             | _ -> false
         match x with
         | Product ax -> let s, r = List.partition isSinCosPart ax in (product r, product s)
@@ -133,7 +133,7 @@ module Trigonometric =
                 let c, d = separateFactors a
                 match d with
                 | v when v = one -> a
-                | SinCos -> a
+                | SinCos _ -> a
                 | Power (r, p) -> c * powerRules r p |> Algebraic.expandMain
                 | Product ax -> c * productRules ax |> Algebraic.expandMain
                 | v -> c*d

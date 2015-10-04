@@ -306,12 +306,12 @@ module ExpressionPatterns =
     /// Terminal node, either a number, identifier/symbol or constant (including infinity).
     /// Warning: Undefined is *not* included.
     let (|Terminal|_|) = function
-        | Number _ | Identifier _ | Constant _ -> Some Terminal
+        | Number _ | Identifier _ | Constant _ as t -> Some t
         | _ -> None
 
     /// Recognizes a sin or cos expression
     let (|SinCos|_|) = function
-        | Function (Sin, _) | Function (Cos, _) -> Some SinCos
+        | Function (Sin, _) | Function (Cos, _) as t -> Some t
         | _ -> None
 
     let (|SinCosPosIntPower|_|) = function
