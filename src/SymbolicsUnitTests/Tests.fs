@@ -40,10 +40,6 @@ let d = symbol "d"
 let e = symbol "e"
 let f = symbol "f"
 
-let infinityString = "\u221E" // "∞"
-let positiveInfinityString = "+\u221E" // "+∞"
-let negativeInfinityString = "-\u221E" // "-∞"
-
 
 [<Test>]
 let ``Number Expressions`` () =
@@ -72,6 +68,28 @@ let ``Number Expressions`` () =
 
     Numbers.gcd [ 4Q; 6Q; 10Q ] --> 2Q
     Numbers.lcm [ 4Q; 6Q; 10Q ] --> 60Q
+
+
+[<Test>]
+let ``Constant Expressions`` () =
+
+    Expression.ComplexInfinity ==> "∞"
+    Expression.PositiveInfinity ==> "+∞"
+    Expression.NegativeInfinity ==> "-∞"
+    Expression.Pi ==> "π"
+    Expression.E ==> "e"
+    Expression.I ==> "j"
+    Expression.Real(1.23) ==> "1.23"
+    Expression.Real(-0.23) ==> "-0.23"
+
+    Infix.print (1/(a*b)) --> "1/(a*b)"
+    Infix.printStrict (1/(a*b)) --> "a^(-1)*b^(-1)"
+
+    LaTeX.print (1/(a*b)) --> "\\frac{1}{ab}"
+    LaTeX.print Expression.MinusOne --> "-1"
+    LaTeX.print Expression.ComplexInfinity --> "\\infty"
+    LaTeX.print Expression.Pi --> "\\pi"
+    LaTeX.print (Expression.Real -0.23) --> "-0.23"
 
 
 [<Test>]
@@ -296,7 +314,7 @@ let ``Algebaric Operators`` () =
     Exponential.expand (exp(2*x+y)) ==> "exp(x)^2*exp(y)"
     Exponential.expand (exp(2*a*x + 3*y*z)) ==> "exp(a*x)^2*exp(y*z)^3"
     Exponential.expand (exp(2*(x+y))) ==> "exp(x)^2*exp(y)^2"
-    Exponential.expand (1/(exp(2*x) - (exp(x))**2)) ==>  infinityString
+    Exponential.expand (1/(exp(2*x) - (exp(x))**2)) ==>  "∞"
     Exponential.expand (exp((x+y)*(x-y))) ==> "exp(x^2)/exp(y^2)"
     Exponential.expand (ln((c*x)**a) + ln(y**b*z)) ==> "a*ln(c) + a*ln(x) + b*ln(y) + ln(z)"
 
@@ -600,7 +618,7 @@ let ``General Rational Expressions`` () =
     Rational.simplify z (x/z + y/z**2) ==> "(y + x*z)/z^2"
 
     Rational.simplify x ((x**2-1)/(x+1)) ==> "-1 + x"
-    Rational.simplify x ((x+1)/(x**2 - 1 - (x+1)*(x-1))) ==> infinityString
+    Rational.simplify x ((x+1)/(x**2 - 1 - (x+1)*(x-1))) ==> "∞"
     Rational.simplify x (1/(1+1/(x+1)) + 2/(x+2))  ==> "(3 + x)/(2 + x)"
 
     // http://stackoverflow.com/questions/32791138/extracting-common-terms-with-mathnet-symbolics
@@ -617,7 +635,7 @@ let ``Single Variable Polynomials`` () =
     SingleVariablePolynomial.isMonomialSV x (3*(x*x)) --> true
     SingleVariablePolynomial.isMonomialSV x (a*x) --> false
     SingleVariablePolynomial.isMonomialSV y (3*x) --> false
-    SingleVariablePolynomial.degreeMonomialSV x 0Q ==> negativeInfinityString
+    SingleVariablePolynomial.degreeMonomialSV x 0Q ==> "-∞"
     SingleVariablePolynomial.degreeMonomialSV x 1Q ==> "0"
     SingleVariablePolynomial.degreeMonomialSV x (3*x) ==> "1"
     SingleVariablePolynomial.degreeMonomialSV x (3 * x*x) ==> "2"
@@ -630,7 +648,7 @@ let ``Single Variable Polynomials`` () =
     SingleVariablePolynomial.coefficientMonomialSV x (3 * x*x) ==> "3"
     SingleVariablePolynomial.coefficientMonomialSV x (3 * x*x * y) ==> "Undefined"
     SingleVariablePolynomial.coefficientMonomialSV x (3 + x) ==> "Undefined"
-    SingleVariablePolynomial.coefficientDegreeMonomialSV x 0Q ==|> ("0", negativeInfinityString)
+    SingleVariablePolynomial.coefficientDegreeMonomialSV x 0Q ==|> ("0", "-∞")
     SingleVariablePolynomial.coefficientDegreeMonomialSV x 1Q ==|> ("1", "0")
     SingleVariablePolynomial.coefficientDegreeMonomialSV x (3*x) ==|> ("3", "1")
     SingleVariablePolynomial.coefficientDegreeMonomialSV x (3*x*x) ==|> ("3", "2")

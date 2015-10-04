@@ -39,13 +39,11 @@ module LaTeX =
     and private tex write priority = function
         | Number n ->
             if n.IsInteger then
-                if n.Sign >= 0 then write (n.ToString());
+                if n.Sign >= 0 then write (n.ToString())
                 else
-                    if priority > 0 then write "\\left("
-                    write "{"
+                    if priority > 0 then write "\\left({"
                     write (n.ToString());
-                    write "}"
-                    if priority > 0 then write "\\right)"
+                    if priority > 0 then write "}\\right)"
             else
                 if priority > 2 then write "\\left("
                 write "\\frac{"
@@ -54,14 +52,23 @@ module LaTeX =
                 write (n.Denominator.ToString());
                 write "}"
                 if priority > 2 then write "\\right)"
-        | Identifier (Symbol name) -> write name
-        | Undefined -> write "\\mathrm{undefined}"
+        | Constant (Constant.Real fp) ->
+            if fp >= 0.0 then write (fp.ToString())
+            else
+                if priority > 0 then write "\\left({"
+                write (fp.ToString());
+                if priority > 0 then write "}\\right)"
+        | Constant Pi -> write "\\pi"
+        | Constant E -> write "e"
+        | Constant I -> write "\\jmath"
         | Constant PositiveInfinity -> write "\\infty"
         | Constant NegativeInfinity ->
             if priority > 0 then write "\\left("
             write "-\\infty"
             if priority > 0 then write "\\right)"
         | Constant ComplexInfinity -> write "\\infty"
+        | Identifier (Symbol name) -> write name
+        | Undefined -> write "\\mathrm{undefined}"
         | Sum (x::xs) ->
             if priority > 1 then write "\\left("
             texSummand write true x

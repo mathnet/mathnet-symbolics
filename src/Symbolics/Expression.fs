@@ -28,6 +28,12 @@ type Expression =
     static member FromRational (x:BigRational) = Number x
     static member Symbol (name:string) = Identifier (Symbol name)
     static member Real (floatingPoint:float) = Constant (Real floatingPoint)
+    static member NegativeInfinity = Constant NegativeInfinity
+    static member PositiveInfinity = Constant PositiveInfinity
+    static member ComplexInfinity = Constant ComplexInfinity
+    static member I = Constant I
+    static member E = Constant E
+    static member Pi = Constant Pi
 
     static member private OrderRelation (x:Expression) (y:Expression) =
         let rec compare a b =

@@ -119,9 +119,18 @@ module private InfixPrinter =
             if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write ")"
         | Identifier (Symbol name) -> write name
         | Undefined -> write "Undefined"
-        | Constant PositiveInfinity -> write "+\u221E"
-        | Constant NegativeInfinity -> write "-\u221E"
-        | Constant ComplexInfinity -> write "\u221E"
+        | Constant PositiveInfinity -> write "PositiveInfinity"
+        | Constant NegativeInfinity -> write "NegativeInfinity"
+        | Constant ComplexInfinity -> write "ComplexInfinity"
+        | Constant E -> write "e"
+        | Constant Pi -> write "pi"
+        | Constant I -> write "j"
+        | Constant (Constant.Real fp) ->
+            if fp >= 0.0 then write (fp.ToString())
+            else
+                if priority > 0 then write "("
+                write (fp.ToString());
+                if priority > 0 then write ")"
         | Sum (x::xs) ->
             if priority > 1 then write "("
             strict write 1 x
@@ -194,9 +203,18 @@ module private InfixPrinter =
             if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write ")"
         | Identifier (Symbol name) -> write name
         | Undefined -> write "Undefined"
-        | Constant PositiveInfinity -> write "+\u221E"
-        | Constant NegativeInfinity -> write "-\u221E"
-        | Constant ComplexInfinity -> write "\u221E"
+        | Constant PositiveInfinity -> write "+\u221E" // "+∞"
+        | Constant NegativeInfinity -> write "-\u221E" // "-∞"
+        | Constant ComplexInfinity -> write "\u221E" // "∞"
+        | Constant E -> write "e"
+        | Constant Pi -> write "\u03C0" // "π"
+        | Constant I -> write "j"
+        | Constant (Constant.Real fp) ->
+            if fp >= 0.0 then write (fp.ToString())
+            else
+                if priority > 0 then write "("
+                write (fp.ToString());
+                if priority > 0 then write ")"
         | Sum (x::xs) ->
             if priority > 1 then write "("
             niceSummand write true x
