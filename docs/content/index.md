@@ -1,9 +1,3 @@
-(*** hide ***)
-#I "../../out/lib/net40"
-#load @"..\..\packages\MathNet.Numerics.FSharp.3.2.1\MathNet.Numerics.fsx"
-#load @"..\..\src\Symbolics\MathNet.Symbolics.fsx"
-
-(**
 Math.NET Symbolics
 ==================
 
@@ -37,6 +31,11 @@ Package Dependencies:
 Math.NET Symbolics with F# and F# Interactive
 ---------------------------------------------
 
+    [hide]
+    #I "../../out/lib/net40"
+    #load @"..\..\packages\MathNet.Numerics.FSharp.3.2.1\MathNet.Numerics.fsx"
+    #load @"..\..\src\Symbolics\MathNet.Symbolics.fsx"
+
 With NuGet you can start quickly by installing the `MathNet.Symbolics` package,
 which automatically loads its dependencies `MathNet.Numerics` and `MathNet.Numerics.FSharp`.
 In F# interactive you can reference them by loading two scripts, along the lines of
@@ -47,56 +46,50 @@ In F# interactive you can reference them by loading two scripts, along the lines
 
 To get started, open the namespaces and the Operators module and declare the variables
 and constants you intend to use as symbols:
-*)
 
-open System.Numerics
-open MathNet.Numerics
-open MathNet.Symbolics
+    open System.Numerics
+    open MathNet.Numerics
+    open MathNet.Symbolics
 
-open Operators
+    open Operators
 
-let x = symbol "x"
-let y = symbol "y"
-let z = symbol "z"
-let a = symbol "a"
-let b = symbol "b"
-let c = symbol "c"
-let d = symbol "d"
-let e = symbol "e"
-let f = symbol "f"
+    let x = symbol "x"
+    let y = symbol "y"
+    let z = symbol "z"
+    let a = symbol "a"
+    let b = symbol "b"
+    let c = symbol "c"
+    let d = symbol "d"
+    let e = symbol "e"
+    let f = symbol "f"
 
-(**
 Then we're all set to start writing expressions:
-*)
 
-a + a                  // returns 2*a
-a * a                  // returns a^2
-2 + 1/x - 1            // returns 1 + 1/x
-(a/b/(c*a))*(c*d/a)/d  // returns 1/(a*b)
 
-(**
+    a + a                  // returns 2*a
+    a * a                  // returns a^2
+    2 + 1/x - 1            // returns 1 + 1/x
+    (a/b/(c*a))*(c*d/a)/d  // returns 1/(a*b)
+
 Math.NET Symbolics expressions are always in a simplified form according to a set of rules.
 Expressions are tree structures, but F# interactive shows them in a readable infix form thanks
 to a display printer added in the script loaded above. You can also use these printers manually
 to format any expression as infix string, LaTeX expression or in strict mode to see the actual
 internal representation:
-*)
 
-Infix.print (1/(a*b))        // returns string "1/(a*b)"
-Infix.printStrict (1/(a*b))  // returns string "a^(-1)*b^(-1)"
-LaTeX.print (1/(a*b))        // returns string "\frac{1}{ab}"
+    Infix.print (1/(a*b))        // returns string "1/(a*b)"
+    Infix.printStrict (1/(a*b))  // returns string "a^(-1)*b^(-1)"
+    LaTeX.print (1/(a*b))        // returns string "\frac{1}{ab}"
 
-(**
 Strings in infix notation can be parsed back into expressions:
-*)
 
-Infix.parse "1/(a*b)"     // Returns ParsedExpression 1/(a*b)
-Infix.parse "1/(a*b"      // Returns ParseFailure, 7: Expecting infix operator or ')'
-Infix.tryParse "1/(a*b)"  // Returns Some (1/(a*b))
-Infix.parseOrUndefined "1/(a*b)"  // Returns 1/(a*b)
-Infix.parseOrThrow "1/(a*b)"      // Returns 1/(a*b)
 
-(**
+    Infix.parse "1/(a*b)"     // Returns ParsedExpression 1/(a*b)
+    Infix.parse "1/(a*b"      // Returns ParseFailure, 7: Expecting infix operator or ')'
+    Infix.tryParse "1/(a*b)"  // Returns Some (1/(a*b))
+    Infix.parseOrUndefined "1/(a*b)"  // Returns 1/(a*b)
+    Infix.parseOrThrow "1/(a*b)"      // Returns 1/(a*b)
+
 ### Number Literals
 
 Numbers can be forced to become expressions using the `Q` suffix, e.g. `3Q`
@@ -117,12 +110,10 @@ Often you need to evaluate the resulting number value of an expression given the
 for all its symbols. To do so, prepare the value set as map or dictionary and pass it
 to the evaluate function. Values need to be of type FloatingPoint which is a discriminated
 union that can represent not only float and complex but also vectors and matrices of the same.
-*)
 
-let symbols = Map.ofList [ "a", Real 2.0; "b", Real 3.0 ]
-Evaluate.evaluate symbols (1/(a*b))  // Returns Real 0.1666666667 (as float)
+    let symbols = Map.ofList [ "a", Real 2.0; "b", Real 3.0 ]
+    Evaluate.evaluate symbols (1/(a*b))  // Returns Real 0.1666666667 (as float)
 
-(**
 ### Manipulating Expressions
 
 There are various modules to help you combine and manipulate expressions:
@@ -138,11 +129,9 @@ There are various modules to help you combine and manipulate expressions:
 
 For example, let's try to contract the trigonometric expression $(\cos{x})^4$
 into $\frac{3}{8} + \frac{1}{2}\cos{2x} + \frac{1}{8}\cos{4x}$:
-*)
 
-Trigonometric.contract (cos(x)**4)  // Returns 3/8 + (1/2)*cos(2*x) + (1/8)*cos(4*x)
+    Trigonometric.contract (cos(x)**4)  // Returns 3/8 + (1/2)*cos(2*x) + (1/8)*cos(4*x)
 
-(**
 ### Algebraic Algorithms
 
 These modules can also be combined to build more interesting manipulations.
@@ -151,23 +140,20 @@ routine to approximate the shape of a differentiable function $x(\zeta)$ at
 some point $\zeta = a$ by its $k-1$ first derivatives at that point (order $k$). We can leverage the existing
 structural substitute routine to substitute $\zeta$ with $a$ to get the resulting expression at $a$,
 and the differentiate routine to evaluate the partial derivative $\frac{\partial{x}}{\partial\zeta}$.
-*)
 
-let taylor (k:int) symbol a x =
-    let rec impl n nf acc dxn =
-        if n = k then acc else
-        let dxn_a = dxn |> Structure.substitute symbol a
-        let dxn'  = dxn |> Calculus.differentiate symbol
-        impl (n+1) (nf*(n+1)) (acc + dxn_a/nf*(symbol-a)**n) dxn'
-    impl 0 1 zero x |> Algebraic.expand
 
-(**
+    let taylor (k:int) symbol a x =
+        let rec impl n nf acc dxn =
+            if n = k then acc else
+            let dxn_a = dxn |> Structure.substitute symbol a
+            let dxn'  = dxn |> Calculus.differentiate symbol
+            impl (n+1) (nf*(n+1)) (acc + dxn_a/nf*(symbol-a)**n) dxn'
+        impl 0 1 zero x |> Algebraic.expand
+
 Let's use this routine to approximate $\sin{x}+\cos{x}$ at $x = 0$ using the first 4 derivatives:
-*)
 
-taylor 4 x 0Q (sin(x)+cos(x))  // Returns 1 + x - (1/2)*x^2 - (1/6)*x^3
+    taylor 4 x 0Q (sin(x)+cos(x))  // Returns 1 + x - (1/2)*x^2 - (1/6)*x^3
 
-(**
 Math.NET Symbolics with C#
 --------------------------
 
@@ -231,5 +217,3 @@ almost exactly the same way. The equivalent C# code to the F# code above could l
 
     // Returns 1 + x - (1/2)*x^2 - (1/6)*x^3
     Infix.Print(Taylor(4, x, 0, Expr.Sin(x)+Expr.Cos(x)));
-
-*)
