@@ -112,7 +112,11 @@ module private InfixPrinter =
 
     let functionName = function
         | Abs -> "abs"
-        | Ln -> "ln" | Exp -> "exp"
+        | Ln -> "ln" 
+        | Exp -> "exp"
+        | Sqrt -> "sqrt"
+        | ArcCos -> "acos" | ArcSin -> "asin" | ArcTan -> "atan"
+        | Sinh -> "sinh" | Cosh -> "cosh" | Tanh -> "tanh"
         | Sin -> "sin" | Cos -> "cos" | Tan -> "tan"
 
     // priority: 1=additive 2=product 3=power

@@ -13,8 +13,11 @@ module LaTeX =
     // priority: 1=additive 2=product 3=power
 
     let functionName = function
+        | Sqrt -> "\\sqrt"
         | Abs -> "\\mathrm{abs}"
-        | Ln -> "\\ln" | Exp -> "\\exp"
+        | Ln -> "\\ln" | Exp -> "\\exp" 
+        | Sinh -> "\\sinh" | Cosh -> "\\cosh" | Tanh -> "\\tanh"
+        | ArcSin -> "\\asin" | ArcCos -> "\\acos" | ArcTan -> "\\atan"
         | Sin -> "\\sin" | Cos -> "\\cos" | Tan -> "\\tan"
 
     let rec private texFractionPart write priority = function

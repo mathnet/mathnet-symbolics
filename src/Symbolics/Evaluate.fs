@@ -130,6 +130,8 @@ module Evaluate =
 
     let fapply f u =
         match f, u with
+        | Sqrt, Real x -> Real (Math.Sqrt(x))
+        | Sqrt, Complex x -> Complex (Complex.Sqrt(x))
         | Abs, Real x -> Real (Math.Abs(x))
         | Abs, Complex x -> Real (Complex.Abs(x))
         | Abs, RealVector x -> Real (x.L2Norm())
@@ -146,6 +148,18 @@ module Evaluate =
         | Cos, Complex x -> Complex (Complex.Cos(x))
         | Tan, Real x -> Real (Math.Tan(x))
         | Tan, Complex x -> Complex (Complex.Tan(x))
+        | Cosh, Real x -> Real(Math.Cosh(x))
+        | Cosh, Complex x -> Complex (Complex.Cosh(x))
+        | Sinh, Real x -> Real (Math.Sinh(x))
+        | Sinh, Complex x -> Complex (Complex.Sinh(x))
+        | Tanh, Real x -> Real (Math.Tanh(x))
+        | Tanh, Complex x -> Complex (Complex.Tanh(x))
+        | ArcSin, Real x -> Real (Math.Asin(x))
+        | ArcSin, Complex x -> Complex (Complex.Asin(x))
+        | ArcCos, Real x -> Real (Math.Acos(x))
+        | ArcCos, Complex x -> Complex (Complex.Acos(x))
+        | ArcTan, Real x -> Real (Math.Atan(x))
+        | ArcTan, Complex x -> Complex (Complex.Atan(x))
         | _ -> failwith "not supported"
 
     let fapplyN f xs = failwith "not supported"
