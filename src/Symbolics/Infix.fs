@@ -112,7 +112,7 @@ module private InfixPrinter =
 
     let functionName = function
         | Abs -> "abs"
-        | Ln -> "ln" 
+        | Ln -> "ln"  | Log -> "log"
         | Exp -> "exp"
         | Sqrt -> "sqrt"
         | ArcCos -> "acos" | ArcSin -> "asin" | ArcTan -> "atan"

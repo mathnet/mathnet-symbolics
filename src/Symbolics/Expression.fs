@@ -248,6 +248,7 @@ type Expression =
 
     static member Sqrt (x) = Power(x, Number (1N/2N))
 
+    static member Log(b, x) = (Expression.One/Expression.Ln(Number(b))) * Expression.Ln(x)
 
     static member Tan (x) =
         match x with
@@ -272,7 +273,10 @@ type Expression =
         | ArcTan -> Expression.ArcTan x
         | Sqrt -> Expression.Sqrt x
 
-    static member ApplyN (f, xs) = FunctionN (f, xs)
+    static member ApplyN (f, xs) = 
+        match f,xs with 
+        | Log,[Number b; x] -> Expression.Log(b, x)
+        | _                 -> FunctionN (f, xs)
 
 
     // Simpler usage

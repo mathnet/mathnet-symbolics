@@ -5,7 +5,7 @@ type Symbol = Symbol of string
 type Function =
     | Abs
     | Sqrt
-    | Ln | Exp
+    | Ln | Exp | Log
     | Sin | Cos | Tan
     | Cosh | Sinh | Tanh
     | ArcSin

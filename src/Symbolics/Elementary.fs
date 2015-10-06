@@ -51,6 +51,7 @@ module Operators =
     let arccos x = Expression.ArcCos x
     let arctan x = Expression.ArcTan x
     let sqrt x = Expression.Sqrt x
+    let log b x = Expression.Log(b, x)
 
 
 

@@ -15,7 +15,9 @@ module LaTeX =
     let functionName = function
         | Sqrt -> "\\sqrt"
         | Abs -> "\\mathrm{abs}"
-        | Ln -> "\\ln" | Exp -> "\\exp" 
+        | Ln -> "\\ln" 
+        | Exp -> "\\exp" 
+        | Log -> "\\log"
         | Sinh -> "\\sinh" | Cosh -> "\\cosh" | Tanh -> "\\tanh"
         | ArcSin -> "\\asin" | ArcCos -> "\\acos" | ArcTan -> "\\atan"
         | Sin -> "\\sin" | Cos -> "\\cos" | Tan -> "\\tan"
