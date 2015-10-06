@@ -245,10 +245,12 @@ type Expression =
     static member ArcCos (x) = Function (ArcCos, x)
 
     static member ArcTan (x) = Function (ArcTan, x)
+    
+    static member Root(n, x) = Power (x, Power(n, Expression.MinusOne))
 
-    static member Sqrt (x) = Power(x, Number (1N/2N))
+    static member Sqrt (x) = Expression.Root(Number(1N/2N), x)
 
-    static member Log(b, x) = (Expression.One/Expression.Ln(Number(b))) * Expression.Ln(x)
+    static member Log(b, x) = Expression.Ln(x) / Expression.Ln(b)
 
     static member Tan (x) =
         match x with
@@ -271,12 +273,8 @@ type Expression =
         | ArcSin -> Expression.ArcSin x
         | ArcCos -> Expression.ArcCos x
         | ArcTan -> Expression.ArcTan x
-        | Sqrt -> Expression.Sqrt x
 
-    static member ApplyN (f, xs) = 
-        match f,xs with 
-        | Log,[Number b; x] -> Expression.Log(b, x)
-        | _                 -> FunctionN (f, xs)
+    static member ApplyN (f, xs) = failwith "not supported yet"
 
 
     // Simpler usage

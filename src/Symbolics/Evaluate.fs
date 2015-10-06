@@ -162,14 +162,7 @@ module Evaluate =
         | ArcTan, Complex x -> Complex (Complex.Atan(x))
         | _ -> failwith "not supported"
 
-    let rec fapplyN f xs = 
-        match f with
-        | Log -> 
-            match xs with // first the base, then the value x of which the log should be evaluated
-             | [Real b; x] -> fapplyN Log [Complex(complex b 0.0); x]
-             | [Complex b as y; x] -> fmultiply (fpower (fapply Ln y) (Real(-1.0))) (fapply Ln x)
-             | _ ->  failwith "invalid arguments"
-        | _ ->  failwith "not supported yet"
+    let rec fapplyN f xs = failwith "not supported yet"
 
     [<CompiledName("Evaluate")>]
     let rec evaluate (symbols:IDictionary<string, FloatingPoint>) = function
@@ -178,8 +171,7 @@ module Evaluate =
         | Constant PositiveInfinity -> PosInf
         | Constant NegativeInfinity -> NegInf
         | Constant ComplexInfinity -> ComplexInf
-        | Constant E -> Real (Constants
-        .E)
+        | Constant E -> Real (Constants.E)
         | Constant Pi -> Real (Constants.Pi)
         | Constant I -> Complex (Complex.ImaginaryOne)
         | Constant (Constant.Real fp) -> Real fp
