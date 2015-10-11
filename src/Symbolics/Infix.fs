@@ -60,7 +60,12 @@ module private InfixParser =
         let isIdentifierFirstChar c = isLetter c
         let isIdentifierChar c = isLetter c || isDigit c
         many1Satisfy2L isIdentifierFirstChar isIdentifierChar "identifier" .>> ws
-        |>> Expression.Symbol
+        |>> function // differentating between constants and identifiers
+            | "pi"  -> Expression.Constant Pi
+            | "e" -> Expression.Constant E
+            | "oo" | "inf" -> Expression.Constant PositiveInfinity // 'oo' from sympy
+            | "j" -> Expression.Constant I
+            | id -> Expression.Symbol id
 
     let value : Expression parser = number <|> identifier
 
