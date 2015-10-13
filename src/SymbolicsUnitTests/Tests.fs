@@ -57,10 +57,14 @@ let ``Number Expressions`` () =
     Numbers.compare 1Q (1Q/2Q) --> 1
     Numbers.compare (1Q/2Q) 0Q --> 1
     Numbers.compare (1Q/2Q) 1Q --> -1
-    Numbers.compare 1Q (Constant PositiveInfinity) --> -1
-    Numbers.compare 1Q (Constant NegativeInfinity) --> 1
-    Numbers.compare (Constant PositiveInfinity) 1Q --> 1
-    Numbers.compare (Constant NegativeInfinity) 1Q --> -1
+    Numbers.compare 1Q infinity --> -1
+    Numbers.compare 1Q complexInfinity --> -1
+    Numbers.compare 1Q negativeInfinity --> 1
+    Numbers.compare infinity 1Q --> 1
+    Numbers.compare complexInfinity 1Q --> 1
+    Numbers.compare negativeInfinity 1Q --> -1
+    Numbers.compare negativeInfinity infinity --> -1
+    Numbers.compare infinity negativeInfinity --> 1
 
     Numbers.max [ 2Q; 4Q; 7Q/2 ] --> 4Q
     Numbers.max [ 2Q; 4Q; 9Q/2 ] --> 9Q/2
@@ -69,27 +73,54 @@ let ``Number Expressions`` () =
     Numbers.gcd [ 4Q; 6Q; 10Q ] --> 2Q
     Numbers.lcm [ 4Q; 6Q; 10Q ] --> 60Q
 
+    number 2 + number 5 ==> "7"
+    2 * number 2 ==> "4"
+
 
 [<Test>]
 let ``Constant Expressions`` () =
 
-    Expression.ComplexInfinity ==> "∞"
-    Expression.PositiveInfinity ==> "+∞"
-    Expression.NegativeInfinity ==> "-∞"
     Expression.Pi ==> "π"
     Expression.E ==> "e"
     Expression.I ==> "j"
     Expression.Real(1.23) ==> "1.23"
     Expression.Real(-0.23) ==> "-0.23"
 
-    Infix.print (1/(a*b)) --> "1/(a*b)"
-    Infix.printStrict (1/(a*b)) --> "a^(-1)*b^(-1)"
+    real 1.1 + real 2.2 ==> "3.3"
+    real 1.1 * real 2.2 ==> "2.42"
 
-    LaTeX.print (1/(a*b)) --> "\\frac{1}{ab}"
-    LaTeX.print Expression.MinusOne --> "-1"
-    LaTeX.print Expression.ComplexInfinity --> "\\infty"
-    LaTeX.print Expression.Pi --> "\\pi"
-    LaTeX.print (Expression.Real -0.23) --> "-0.23"
+    2 * real 2.0 ==> "4"
+
+
+[<Test>]
+let ``Real Infinity Expressions`` () =
+
+    infinity ==> "∞"
+    -infinity ==> "-∞"
+    infinity + infinity ==> "∞"
+    infinity - infinity ==> "Undefined"
+    -infinity - infinity ==> "-∞"
+    2*infinity ==> "∞"
+    -2*infinity ==> "-∞"
+    infinity + 2Q ==> "∞"
+    infinity*infinity ==> "∞"
+    infinity*(-2*infinity) ==> "-∞"
+
+
+[<Test>]
+let ``Complex Infinity Expressions`` () =
+
+    complexInfinity ==> "⧝"
+    -complexInfinity ==> "⧝"
+    complexInfinity + complexInfinity ==> "Undefined"
+    complexInfinity - complexInfinity ==> "Undefined"
+    2*complexInfinity ==> "⧝"
+    complexInfinity + 2Q ==> "⧝"
+    complexInfinity*complexInfinity ==> "⧝"
+    complexInfinity*(-2*complexInfinity) ==> "⧝"
+
+    complexInfinity + infinity ==> "Undefined"
+    complexInfinity - infinity ==> "Undefined"
 
 
 [<Test>]
@@ -210,6 +241,19 @@ let ``Parse F# quotations`` () =
 
 
 [<Test>]
+let ``Print infix and LaTeX expressions`` () =
+
+    Infix.print (1/(a*b)) --> "1/(a*b)"
+    Infix.printStrict (1/(a*b)) --> "a^(-1)*b^(-1)"
+
+    LaTeX.print (1/(a*b)) --> "\\frac{1}{ab}"
+    LaTeX.print Expression.MinusOne --> "-1"
+    LaTeX.print Expression.ComplexInfinity --> "\\infty"
+    LaTeX.print Expression.Pi --> "\\pi"
+    LaTeX.print (Expression.Real -0.23) --> "-0.23"
+
+
+[<Test>]
 let ``Parse infix expressions`` () =
 
     Infix.parseOrUndefined "-3" ==> "-3"
@@ -252,6 +296,9 @@ let ``Parse infix expressions`` () =
     Infix.parseOrUndefined "1." --> Expression.Real(1.0)
     Infix.parseOrUndefined "1" ==> "1"
     Infix.parseOrUndefined "1" --> Expression.FromInt32(1)
+
+
+
 
 
 [<Test>]
@@ -318,7 +365,7 @@ let ``Algebaric Operators`` () =
     Exponential.expand (exp(2*x+y)) ==> "exp(x)^2*exp(y)"
     Exponential.expand (exp(2*a*x + 3*y*z)) ==> "exp(a*x)^2*exp(y*z)^3"
     Exponential.expand (exp(2*(x+y))) ==> "exp(x)^2*exp(y)^2"
-    Exponential.expand (1/(exp(2*x) - (exp(x))**2)) ==>  "∞"
+    Exponential.expand (1/(exp(2*x) - (exp(x))**2)) ==> "⧝"
     Exponential.expand (exp((x+y)*(x-y))) ==> "exp(x^2)/exp(y^2)"
     Exponential.expand (ln((c*x)**a) + ln(y**b*z)) ==> "a*ln(c) + a*ln(x) + b*ln(y) + ln(z)"
 
@@ -622,7 +669,7 @@ let ``General Rational Expressions`` () =
     Rational.simplify z (x/z + y/z**2) ==> "(y + x*z)/z^2"
 
     Rational.simplify x ((x**2-1)/(x+1)) ==> "-1 + x"
-    Rational.simplify x ((x+1)/(x**2 - 1 - (x+1)*(x-1))) ==> "∞"
+    Rational.simplify x ((x+1)/(x**2 - 1 - (x+1)*(x-1))) ==> "⧝"
     Rational.simplify x (1/(1+1/(x+1)) + 2/(x+2))  ==> "(3 + x)/(2 + x)"
 
     // http://stackoverflow.com/questions/32791138/extracting-common-terms-with-mathnet-symbolics

@@ -56,7 +56,7 @@ module Polynomial =
 
     [<CompiledName("MonomialDegree")>]
     let rec degreeMonomial symbol = function
-        | x when x = zero -> Constant NegativeInfinity
+        | x when x = zero -> negate infinity
         | x when x = symbol -> one
         | Number _ -> zero
         | PosIntPower (r, p) when r = symbol -> p
@@ -66,7 +66,7 @@ module Polynomial =
 
     [<CompiledName("MultivariateMonomialDegree")>]
     let rec degreeMonomialMV (symbols: HashSet<Expression>) = function
-        | x when x = zero -> Constant NegativeInfinity
+        | x when x = zero -> negate infinity
         | x when symbols.Contains(x) -> one
         | Number _ -> zero
         | PosIntPower (r, p) when symbols.Contains(r) -> p
@@ -355,7 +355,7 @@ module SingleVariablePolynomial =
 
     [<CompiledName("MonomialDegree")>]
     let rec degreeMonomialSV symbol = function
-        | x when x = zero -> Constant NegativeInfinity
+        | x when x = zero -> negate infinity
         | x when x = symbol -> one
         | Number _ -> zero
         | PosIntPower (r, p) when r = symbol -> p
@@ -380,7 +380,7 @@ module SingleVariablePolynomial =
 
     [<CompiledName("MonomialCoefficientDegree")>]
     let rec coefficientDegreeMonomialSV symbol = function
-        | x when x = zero -> x, Constant NegativeInfinity
+        | x when x = zero -> x, negate infinity
         | x when x = symbol -> one, one
         | Number _ as x -> x, zero
         | PosIntPower (r, p) when r = symbol -> one, p

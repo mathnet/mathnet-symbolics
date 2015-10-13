@@ -5,6 +5,8 @@ open System.Numerics
 open MathNet.Numerics
 open MathNet.Symbolics
 
+open ConstantPatterns
+
 [<StructuralEquality;NoComparison>]
 type Expression =
     | Number of BigRational
@@ -15,6 +17,8 @@ type Expression =
     | Power of Expression * Expression
     | Function of Function * Expression
     | FunctionN of Function * (Expression list)
+    | Infinity
+    | ComplexInfinity
     | Undefined
 
     static member Zero = Number BigRational.Zero
@@ -27,10 +31,13 @@ type Expression =
     static member FromIntegerFraction (n:BigInteger, d:BigInteger) = Number (BigRational.FromBigIntFraction (n, d))
     static member FromRational (x:BigRational) = Number x
     static member Symbol (name:string) = Identifier (Symbol name)
-    static member Real (floatingPoint:float) = Constant (Real floatingPoint)
-    static member NegativeInfinity = Constant NegativeInfinity
-    static member PositiveInfinity = Constant PositiveInfinity
-    static member ComplexInfinity = Constant ComplexInfinity
+    static member NegativeInfinity = Product [Expression.MinusOne; Infinity]
+    static member Real (floatingPoint:float) =
+        if Double.IsPositiveInfinity floatingPoint then Infinity
+        elif Double.IsNegativeInfinity floatingPoint then Expression.NegativeInfinity
+        elif Double.IsNaN floatingPoint then Undefined
+        else Constant (Real floatingPoint)
+
     static member I = Constant I
     static member E = Constant E
     static member Pi = Constant Pi
@@ -59,6 +66,10 @@ type Expression =
             | FunctionN (xf, xs), Function (yf, y) -> if xf <> yf then xf < yf else compareZip (List.rev xs) [y]
             | Identifier _, _ -> true
             | _, Identifier _ -> false
+            | Infinity, _ -> true
+            | _, Infinity -> false
+            | ComplexInfinity, _ -> true
+            | _, ComplexInfinity -> false
             | Undefined, _ -> false
             | _, Undefined -> true
         and compareZip a b =
@@ -117,7 +128,13 @@ type Expression =
         match x, y with
         | a, b | b, a when a = Expression.Zero -> b
         | Undefined, _ | _, Undefined -> Undefined
-        | Constant ComplexInfinity, _ | _, Constant ComplexInfinity -> Constant ComplexInfinity
+        | ComplexInfinity, ComplexInfinity -> Undefined
+        | ComplexInfinity, (Infinity | Product [Number _; Infinity]) | (Infinity | Product [Number _; Infinity]), ComplexInfinity -> Undefined
+        | ComplexInfinity, _ | _, ComplexInfinity -> ComplexInfinity
+        | Infinity, Product [Number n; Infinity] | Product [Number n; Infinity], Infinity when n.IsNegative -> Undefined
+        | Infinity, _ | _, Infinity -> Infinity
+        | Constant (Real a), Constant (Real b) -> Expression.Real (a+b)
+        | Constant (Real r), Number n | Number n, Constant (Real r) -> Expression.Real (r + float n)
         | Number a, b | b, Number a -> numAdd a b
         | Sum ((Number a)::ax), Sum ((Number b)::bx) -> numAdd (a+b) (merge ax bx)
         | Sum ((Number a)::ax), Sum bx | Sum bx, Sum ((Number a)::ax) -> numAdd a (merge ax bx)
@@ -172,7 +189,14 @@ type Expression =
         | a, b | b, a when a = Expression.One -> b
         | a, _ | _, a when a = Expression.Zero -> Expression.Zero
         | Undefined, _ | _, Undefined -> Undefined
-        | Constant ComplexInfinity, _ | _, Constant ComplexInfinity -> Constant ComplexInfinity
+        | ComplexInfinity, (Number _ | Constant _ | Infinity | ComplexInfinity) | (Number _ | Constant _ | Infinity | ComplexInfinity), ComplexInfinity -> ComplexInfinity
+        | Infinity, Number n | Number n, Infinity -> if n.IsNegative then Expression.NegativeInfinity else Infinity
+        | Infinity, (Constant PositiveReal | Infinity) | (Constant PositiveReal | Infinity), Infinity -> Infinity
+        | Infinity, Constant NegativeReal | Constant NegativeReal, Infinity -> Expression.NegativeInfinity
+        | Product [Number n; Infinity], (Constant PositiveReal | Infinity) | (Constant PositiveReal | Infinity), Product [Number n; Infinity] when n.IsNegative -> Expression.NegativeInfinity
+        | Product [Number n; Infinity], Constant NegativeReal | Constant NegativeReal, Product [Number n; Infinity] when n.IsNegative -> Infinity
+        | Constant (Real a), Constant (Real b) -> Expression.Real (a*b)
+        | Constant (Real r), Number n | Number n, Constant (Real r) -> Expression.Real (r * float n)
         | Number a, b | b, Number a -> numMul a b
         | Product ((Number a)::ax), Product ((Number b)::bx) -> numMul (a*b) (merge ax bx)
         | Product ((Number a)::ax), Product bx | Product bx, Product ((Number a)::ax) -> numMul a (merge ax bx)
@@ -192,7 +216,7 @@ type Expression =
         | Undefined, _ | _, Undefined -> Undefined
         | Number a, Number b when b.IsInteger ->
             if b.IsNegative then
-                if a.IsZero then Constant ComplexInfinity
+                if a.IsZero then ComplexInfinity
                 // workaround bug in BigRational with negative powers - drop after upgrading to > v3.0.0-alpha9
                 else Number (BigRational.Pow(BigRational.Reciprocal a, -int(b.Numerator)))
             else Number (BigRational.Pow(a, int(b.Numerator)))
@@ -203,8 +227,8 @@ type Expression =
     static member Invert (x) =
         match x with
         | Undefined -> Undefined
-        | Constant PositiveInfinity | Constant NegativeInfinity | Constant ComplexInfinity -> Expression.Zero
-        | Number a when a.IsZero -> Constant ComplexInfinity // no direction
+        | Infinity | ComplexInfinity -> Expression.Zero
+        | Number a when a.IsZero -> ComplexInfinity // no direction
         | Number a -> Number (BigRational.Reciprocal a)
         | Product ax -> Product (ax |> List.map (Expression.Invert))
         | Power (r, p) -> Expression.Pow(r, -p)
@@ -287,6 +311,16 @@ module ExpressionPatterns =
         | Number n when n.IsInteger -> Some (n)
         | _ -> None
 
+    let (|Zero|One|MinusOne|Other|) = function
+        | Number n when n.IsZero -> Zero
+        | Number n when n.IsOne -> One
+        | Number n when n.IsInteger && n.Numerator = BigInteger.MinusOne -> MinusOne
+        | _ -> Other
+
+    let (|NegativeInfinity|_|) = function
+        | Product [MinusOne; Infinity] -> Some NegativeInfinity
+        | _ -> None
+
     let (|PosIntPower|_|) = function
         | Power (r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
         | _ -> None
@@ -297,10 +331,6 @@ module ExpressionPatterns =
 
     let (|NegRationalPower|_|) = function
         | Power (r, (Number n as p)) when n.IsNegative -> Some (r, p)
-        | _ -> None
-
-    let (|Infinity|_|) = function
-        | PositiveInfinity | NegativeInfinity | ComplexInfinity -> Some Infinity
         | _ -> None
 
     /// Terminal node, either a number, identifier/symbol or constant (including infinity).

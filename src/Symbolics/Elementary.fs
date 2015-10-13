@@ -13,9 +13,9 @@ module Operators =
     let two = Expression.Two
     let minusOne = Expression.MinusOne
 
-    let posInfty = Expression.PositiveInfinity
-    let negInfty = Expression.NegativeInfinity
-    let complexInfty = Expression.ComplexInfinity
+    let infinity = Expression.Infinity
+    let complexInfinity = Expression.ComplexInfinity
+    let negativeInfinity = Expression.NegativeInfinity
 
     let pi = Expression.Pi
 
@@ -49,62 +49,45 @@ module Operators =
 [<RequireQualifiedAccess>]
 module Numbers =
 
+    open ExpressionPatterns
+
     /// Represent the constant as a real number if possible
     let (|RealConstant|_|) = function
         | Constant (Real r) -> Some r
         | Constant E -> Some Constants.E
         | Constant Pi -> Some Constants.Pi
-        | Constant PositiveInfinity -> Some System.Double.PositiveInfinity
-        | Constant NegativeInfinity -> Some System.Double.NegativeInfinity
-        | Constant ComplexInfinity -> Some System.Double.PositiveInfinity
+        | Infinity -> Some System.Double.PositiveInfinity
+        | ComplexInfinity -> Some System.Double.PositiveInfinity
+        | NegativeInfinity -> Some System.Double.NegativeInfinity
         | _ -> None
 
+    [<CompiledName("Compare")>]
+    let compare x y =
+        match x, y with
+        | a, b when a = b -> 0
+        | Number _, Infinity -> -1
+        | Number _, ComplexInfinity -> -1
+        | Number _, NegativeInfinity -> 1
+        | Infinity, Number _ -> 1
+        | ComplexInfinity, Number _ -> 1
+        | NegativeInfinity, Number _ -> -1
+        | Number a, Number b -> compare a b
+        | Number a, RealConstant b -> compare (float a) b
+        | RealConstant a, Number b -> compare a (float b)
+        | RealConstant a, RealConstant b -> compare a b
+        | _ -> failwith "only numbers and +/-infinity are supported"
+
     [<CompiledName("Max2")>]
-    let max2 u v =
-        match u, v with
-        | Undefined, _ | _, Undefined -> Undefined
-        | Constant ComplexInfinity, _ | _, Constant ComplexInfinity -> Constant ComplexInfinity
-        | Constant PositiveInfinity, _ | _, Constant PositiveInfinity -> Constant PositiveInfinity
-        | Constant NegativeInfinity, b | b, Constant NegativeInfinity -> b
-        | Number un, Number vn -> if vn > un then v else u
-        | RealConstant ur, RealConstant vr -> if vr > ur then v else u
-        | (RealConstant ar as aa), (Number bn as bb) | (Number bn as bb), (RealConstant ar as aa)
-            -> let br = float bn in if br > ar then bb else aa
-        | _ -> failwith "number expected"
+    let max2 u v = if compare u v >= 0 then u else v
 
     [<CompiledName("Min2")>]
-    let min2 u v =
-        match u, v with
-        | Undefined, _ | _, Undefined -> Undefined
-        | Constant ComplexInfinity, b | b, Constant ComplexInfinity -> b
-        | Constant PositiveInfinity, b | b, Constant PositiveInfinity -> b
-        | Constant NegativeInfinity, _ | _, Constant NegativeInfinity -> Constant NegativeInfinity
-        | Number un, Number vn -> if vn < un then v else u
-        | RealConstant ur, RealConstant vr -> if vr < ur then v else u
-        | (RealConstant ar as aa), (Number bn as bb) | (Number bn as bb), (RealConstant ar as aa)
-            -> let br = float bn in if br < ar then bb else aa
-        | _ -> failwith "number expected"
+    let min2 u v = if compare u v <= 0 then u else v
 
     [<CompiledName("Max")>]
     let max ax = List.reduce max2 ax
 
     [<CompiledName("Min")>]
     let min ax = List.reduce min2 ax
-
-    [<CompiledName("Compare")>]
-    let compare x y =
-        match x, y with
-        | a, b when a = b -> 0
-        | Number _, Constant PositiveInfinity -> -1
-        | Number _, Constant NegativeInfinity -> 1
-        | Number _, Constant ComplexInfinity -> -1
-        | Constant PositiveInfinity, Number _ -> 1
-        | Constant NegativeInfinity, Number _ -> -1
-        | Constant ComplexInfinity, Number _ -> 1
-        | Number a, Number b -> compare a b
-        | Number a, RealConstant b -> compare (float a) b
-        | RealConstant a, Number b -> compare a (float b)
-        | _ -> failwith "only numbers and +/-infinity are supported"
 
     [<CompiledName("GreatestCommonDivisor2")>]
     let gcd2 u v =
@@ -140,7 +123,7 @@ module Structure =
         | Power _ -> 2
         | Function _ -> 1
         | FunctionN (_, xs) -> List.length xs
-        | Number _ | Identifier _ | Constant _ -> 0
+        | Number _ | Identifier _ | Constant _ | Infinity | ComplexInfinity -> 0
         | Undefined -> 0
 
     [<CompiledName("Operand")>]
@@ -158,7 +141,7 @@ module Structure =
         | Sum ax | Product ax | FunctionN (_, ax) -> List.forall (freeOf symbol) ax
         | Power (r, p) -> freeOf symbol r && freeOf symbol p
         | Function (_, x) -> freeOf symbol x
-        | Number _ | Identifier _ | Constant _ -> true
+        | Number _ | Identifier _ | Constant _ | Infinity | ComplexInfinity -> true
         | Undefined -> true
 
     [<CompiledName("IsFreeOfSet")>]
@@ -168,7 +151,7 @@ module Structure =
         | Sum ax | Product ax | FunctionN (_, ax) -> List.forall (freeOfSet symbols) ax
         | Power (r, p) -> freeOfSet symbols r && freeOfSet symbols p
         | Function (_, x) -> freeOfSet symbols x
-        | Number _ | Identifier _ | Constant _ -> true
+        | Number _ | Identifier _ | Constant _ | Infinity | ComplexInfinity -> true
         | Undefined -> true
 
     [<CompiledName("Substitute")>]
@@ -180,7 +163,7 @@ module Structure =
         | Power (radix, p) -> (substitute y r radix) ** (substitute y r p)
         | Function (fn, x) -> apply fn (substitute y r x)
         | FunctionN (fn, xs) -> applyN fn (List.map (substitute y r) xs)
-        | Number _ | Identifier _ | Constant _ -> x
+        | Number _ | Identifier _ | Constant _ | Infinity | ComplexInfinity -> x
         | Undefined -> x
 
     [<CompiledName("Map")>]

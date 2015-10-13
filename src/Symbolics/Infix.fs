@@ -53,7 +53,7 @@ module private InfixParser =
         numberLiteral options "number" .>> ws
         |>> fun num ->
             if num.IsInteger then BigInteger.Parse(num.String) |> Expression.FromInteger
-            elif num.IsInfinity then Expression.PositiveInfinity
+            elif num.IsInfinity then Expression.Infinity
             else Expression.Real(float num.String)
 
     let identifier : Expression parser =
@@ -126,9 +126,8 @@ module private InfixPrinter =
             if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write ")"
         | Identifier (Symbol name) -> write name
         | Undefined -> write "Undefined"
-        | Constant PositiveInfinity -> write "PositiveInfinity"
-        | Constant NegativeInfinity -> write "NegativeInfinity"
-        | Constant ComplexInfinity -> write "ComplexInfinity"
+        | Infinity -> write "Infinity"
+        | ComplexInfinity -> write "ComplexInfinity"
         | Constant E -> write "e"
         | Constant Pi -> write "pi"
         | Constant I -> write "j"
@@ -210,9 +209,8 @@ module private InfixPrinter =
             if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write ")"
         | Identifier (Symbol name) -> write name
         | Undefined -> write "Undefined"
-        | Constant PositiveInfinity -> write "+\u221E" // "+∞"
-        | Constant NegativeInfinity -> write "-\u221E" // "-∞"
-        | Constant ComplexInfinity -> write "\u221E" // "∞"
+        | Infinity -> write "\u221E" // "∞"
+        | ComplexInfinity -> write "\u29DD" // "⧝"
         | Constant E -> write "e"
         | Constant Pi -> write "\u03C0" // "π"
         | Constant I -> write "j"

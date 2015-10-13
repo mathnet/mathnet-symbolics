@@ -12,6 +12,14 @@ type Constant =
     | Pi
     | I
     | Real of float
-    | NegativeInfinity
-    | PositiveInfinity
-    | ComplexInfinity
+
+
+module ConstantPatterns =
+
+    let (|PositiveReal|NegativeReal|ZeroReal|UndefinedReal|Complex|) = function
+        | E | Pi -> PositiveReal
+        | I -> Complex
+        | Real x when x > 0.0 -> PositiveReal
+        | Real x when x < 0.0 -> NegativeReal
+        | Real x when x = 0.0 -> ZeroReal
+        | Real x -> UndefinedReal

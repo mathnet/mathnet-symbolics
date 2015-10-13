@@ -61,12 +61,8 @@ module LaTeX =
         | Constant Pi -> write "\\pi"
         | Constant E -> write "e"
         | Constant I -> write "\\jmath"
-        | Constant PositiveInfinity -> write "\\infty"
-        | Constant NegativeInfinity ->
-            if priority > 0 then write "\\left("
-            write "-\\infty"
-            if priority > 0 then write "\\right)"
-        | Constant ComplexInfinity -> write "\\infty"
+        | Infinity -> write "\\infty"
+        | ComplexInfinity -> write "\\infty"
         | Identifier (Symbol name) -> write name
         | Undefined -> write "\\mathrm{undefined}"
         | Sum (x::xs) ->
