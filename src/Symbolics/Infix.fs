@@ -63,7 +63,7 @@ module private InfixParser =
         |>> function // differentating between constants and identifiers
             | "pi"  -> Expression.Constant Pi
             | "e" -> Expression.Constant E
-            | "oo" | "inf" -> Expression.Constant PositiveInfinity // 'oo' from sympy
+            | "oo" | "inf" -> Expression.Infinity // 'oo' from sympy
             | "j" -> Expression.Constant I
             | id -> Expression.Symbol id
 

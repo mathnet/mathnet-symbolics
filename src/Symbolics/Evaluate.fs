@@ -162,7 +162,7 @@ module Evaluate =
         | ArcTan, Complex x -> Complex (Complex.Atan(x))
         | _ -> failwith "not supported"
 
-    let rec fapplyN f xs = failwith "not supported yet"
+    let fapplyN f xs = failwith "not supported yet"
 
     [<CompiledName("Evaluate")>]
     let rec evaluate (symbols:IDictionary<string, FloatingPoint>) = function

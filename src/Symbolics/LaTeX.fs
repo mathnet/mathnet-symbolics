@@ -15,8 +15,8 @@ module LaTeX =
     let functionName = function
         | Sqrt -> "\\sqrt"
         | Abs -> "\\mathrm{abs}"
-        | Ln -> "\\ln" 
-        | Exp -> "\\exp" 
+        | Ln -> "\\ln"
+        | Exp -> "\\exp"
         | Log -> "\\log"
         | Sinh -> "\\sinh" | Cosh -> "\\cosh" | Tanh -> "\\tanh"
         | ArcSin -> "\\asin" | ArcCos -> "\\acos" | ArcTan -> "\\atan"
@@ -41,8 +41,6 @@ module LaTeX =
         | x ->
             if first then tex write 1 x
             else write " + "; tex write 1 x
-
-
     and private tex write priority = function
         | Number n ->
             if n.IsInteger then
@@ -108,10 +106,10 @@ module LaTeX =
                 tex write 3 -p
             write "}"
             if priority > 2 then write "\\right)"
-        | Power (x, Power(n, minusOne)) when minusOne = Expression.MinusOne -> 
+        | Power (x, Power(n, minusOne)) when minusOne = Expression.MinusOne ->
             if priority > 3 then write "\\left("
             write "\\sqrt["
-            tex write 4 n 
+            tex write 4 n
             write "]{"
             tex write 4 x
             write "}"

@@ -1,14 +1,12 @@
 ﻿namespace MathNet.Symbolics
 
 open MathNet.Symbolics
-open MathNet.Numerics
 open Operators
 
 [<RequireQualifiedAccess>]
 module Calculus =
 
     open ExpressionPatterns
-
 
     [<CompiledName("Differentiate")>]
     let rec differentiate symbol = function
