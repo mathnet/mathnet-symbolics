@@ -130,8 +130,6 @@ module Evaluate =
 
     let fapply f u =
         match f, u with
-        | Sqrt, Real x -> Real (Math.Sqrt(x))
-        | Sqrt, Complex x -> Complex (Complex.Sqrt(x))
         | Abs, Real x -> Real (Math.Abs(x))
         | Abs, Complex x -> Real (Complex.Abs(x))
         | Abs, RealVector x -> Real (x.L2Norm())
