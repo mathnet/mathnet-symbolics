@@ -52,18 +52,20 @@ module private InfixParser =
         let options = NumberLiteralOptions.AllowFraction ||| NumberLiteralOptions.AllowFractionWOIntegerPart ||| NumberLiteralOptions.AllowInfinity
         numberLiteral options "number" .>> ws
         |>> fun num ->
-            if num.IsInteger then BigInteger.Parse(num.String) |> Expression.FromInteger
-            elif num.IsInfinity then Expression.Infinity
+            if num.IsInfinity then Expression.Infinity
+            elif num.IsInteger then BigInteger.Parse(num.String) |> Expression.FromInteger
             else Expression.Real(float num.String)
 
     let identifier : Expression parser =
-        let isIdentifierFirstChar c = isLetter c
-        let isIdentifierChar c = isLetter c || isDigit c
+        let isMathChar = function | '\u03C0' | '\u221E' | '\u29DD' -> true | _ -> false
+        let isIdentifierFirstChar c = isLetter c || isMathChar c
+        let isIdentifierChar c = isLetter c || isDigit c || isMathChar c
         many1Satisfy2L isIdentifierFirstChar isIdentifierChar "identifier" .>> ws
         |>> function // differentating between constants and identifiers
-            | "pi"  -> Expression.Constant Pi
+            | "pi" | "\u03C0" -> Expression.Constant Pi
             | "e" -> Expression.Constant E
-            | "oo" | "inf" -> Expression.Infinity // 'oo' from sympy
+            | "oo" | "inf" | "\u221E" -> Expression.Infinity // 'oo' from sympy
+            | "\u29DD" -> Expression.ComplexInfinity
             | "j" -> Expression.Constant I
             | id -> Expression.Symbol id
 

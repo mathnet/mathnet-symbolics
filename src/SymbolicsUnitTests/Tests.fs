@@ -272,33 +272,37 @@ let ``Parse infix expressions`` () =
     Infix.parseOrUndefined "sin -x" ==> "sin - x"
     Infix.parseOrUndefined "sin" ==> "sin"
 
-    Infix.parseOrUndefined "1/(a*b)" ==> "1/(a*b)"
-    Infix.parseOrUndefined "exp(a)^exp(b)" ==> "exp(a)^exp(b)"
-    Infix.parseOrUndefined "a^b^c" ==> "a^(b^c)"
-    Infix.parseOrUndefined "|a-2|-1" ==> "-1 + |-2 + a|"
+    Infix.parseOrThrow "1/(a*b)" ==> "1/(a*b)"
+    Infix.parseOrThrow "exp(a)^exp(b)" ==> "exp(a)^exp(b)"
+    Infix.parseOrThrow "a^b^c" ==> "a^(b^c)"
+    Infix.parseOrThrow "|a-2|-1" ==> "-1 + |-2 + a|"
 
-    Infix.parseOrUndefined "(y-1)*10 + 2" ==> "2 + 10*(-1 + y)"
+    Infix.parseOrThrow "(y-1)*10 + 2" ==> "2 + 10*(-1 + y)"
 
-    Infix.parseOrUndefined "15" ==> "15"
-    Infix.parseOrUndefined "1.5" ==> "1.5"
-    Infix.parseOrUndefined "0.25" ==> "0.25"
-    Infix.parseOrUndefined "0.0250" ==> "0.025"
-    Infix.parseOrUndefined "2.25" ==> "2.25"
-    Infix.parseOrUndefined "2.250" ==> "2.25"
-    Infix.parseOrUndefined "0.001" ==> "0.001"
-    Infix.parseOrUndefined "2.00" ==> "2"
+    Infix.parseOrThrow "15" ==> "15"
+    Infix.parseOrThrow "1.5" ==> "1.5"
+    Infix.parseOrThrow "0.25" ==> "0.25"
+    Infix.parseOrThrow "0.0250" ==> "0.025"
+    Infix.parseOrThrow "2.25" ==> "2.25"
+    Infix.parseOrThrow "2.250" ==> "2.25"
+    Infix.parseOrThrow "0.001" ==> "0.001"
+    Infix.parseOrThrow "2.00" ==> "2"
 
-    Infix.parseOrUndefined "1.5*a + o" ==> "1.5*a + o"
+    Infix.parseOrThrow "1.5*a + o" ==> "1.5*a + o"
 
-    Infix.parseOrUndefined ".001" ==> "0.001"
-    Infix.parseOrUndefined ".001" --> Expression.Real(0.001)
-    Infix.parseOrUndefined "1." ==> "1"
-    Infix.parseOrUndefined "1." --> Expression.Real(1.0)
-    Infix.parseOrUndefined "1" ==> "1"
-    Infix.parseOrUndefined "1" --> Expression.FromInt32(1)
+    Infix.parseOrThrow ".001" ==> "0.001"
+    Infix.parseOrThrow ".001" --> Expression.Real(0.001)
+    Infix.parseOrThrow "1." ==> "1"
+    Infix.parseOrThrow "1." --> Expression.Real(1.0)
+    Infix.parseOrThrow "1" ==> "1"
+    Infix.parseOrThrow "1" --> Expression.FromInt32(1)
 
-
-
+    Infix.parseOrThrow "pi" --> Expression.Pi
+    Infix.parseOrThrow "π" --> Expression.Pi
+    Infix.parseOrThrow "∞" --> Expression.Infinity
+    Infix.parseOrThrow "inf" --> Expression.Infinity
+    Infix.parseOrThrow "-∞" --> Expression.NegativeInfinity
+    Infix.parseOrThrow "⧝" --> Expression.ComplexInfinity
 
 
 [<Test>]
