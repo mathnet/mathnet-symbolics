@@ -28,7 +28,14 @@ module Calculus =
         | Function (Sin, x) -> (differentiate symbol x) * cos(x)
         | Function (Cos, x) -> -(differentiate symbol x) * sin(x)
         | Function (Tan, x) -> 2*(differentiate symbol x) / (cos(2*x)+1)
-        | Function (Abs, _) | FunctionN _ -> failwith "not supported"
+        | Function (Cosh, x) -> (differentiate symbol x) * sinh (x)
+        | Function (Sinh, x) -> (differentiate symbol x) * cosh (x)
+        | Function (Tanh, x) -> 2*(differentiate symbol x) / (cosh(2*x)+1)
+        | Function (ArcSin, x) -> (1Q/sqrt(1Q+pow x 2Q)) * (differentiate symbol x)
+        | Function (ArcCos, x) -> (-1Q/sqrt(1Q+pow x 2Q)) * (differentiate symbol x)
+        | Function (ArcTan, x) -> (1Q/1Q+pow x 2Q) * (differentiate symbol x)
+        | FunctionN (f, xs) -> failwith "not supported"
+        | Function (Abs, _) -> failwith "not supported"
         | Product [] -> failwith "invalid expression"
 
     /// Differentiate expression to symbol and substitute symbol with value

@@ -60,7 +60,12 @@ module private InfixParser =
         let isIdentifierFirstChar c = isLetter c
         let isIdentifierChar c = isLetter c || isDigit c
         many1Satisfy2L isIdentifierFirstChar isIdentifierChar "identifier" .>> ws
-        |>> Expression.Symbol
+        |>> function // differentating between constants and identifiers
+            | "pi"  -> Expression.Constant Pi
+            | "e" -> Expression.Constant E
+            | "oo" | "inf" -> Expression.Infinity // 'oo' from sympy
+            | "j" -> Expression.Constant I
+            | id -> Expression.Symbol id
 
     let value : Expression parser = number <|> identifier
 
@@ -112,7 +117,11 @@ module private InfixPrinter =
 
     let functionName = function
         | Abs -> "abs"
-        | Ln -> "ln" | Exp -> "exp"
+        | Ln -> "ln"  | Log -> "log"
+        | Exp -> "exp"
+        | Sqrt -> "sqrt"
+        | ArcCos -> "acos" | ArcSin -> "asin" | ArcTan -> "atan"
+        | Sinh -> "sinh" | Cosh -> "cosh" | Tanh -> "tanh"
         | Sin -> "sin" | Cos -> "cos" | Tan -> "tan"
 
     // priority: 1=additive 2=product 3=power

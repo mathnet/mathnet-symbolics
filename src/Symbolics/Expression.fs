@@ -258,6 +258,24 @@ type Expression =
         | Product ((Number n)::ax) when n.IsNegative -> Function (Cos, (Number -n) * Product ax)
         | x -> Function (Cos, x)
 
+    static member Cosh (x) = Function (Cosh, x)
+
+    static member Sinh (x) = Function (Sinh, x)
+
+    static member Tanh (x) = Function (Tanh, x)
+
+    static member ArcSin (x) = Function (ArcSin, x)
+
+    static member ArcCos (x) = Function (ArcCos, x)
+
+    static member ArcTan (x) = Function (ArcTan, x)
+
+    static member Root (n, x) = Power (x, Power(n, Expression.MinusOne))
+
+    static member Sqrt (x) = Expression.Root(Number(1N/2N), x)
+
+    static member Log (b, x) = Expression.Ln(x) / Expression.Ln(b)
+
     static member Tan (x) =
         match x with
         | Number n when n.IsZero -> Expression.Zero
@@ -273,8 +291,14 @@ type Expression =
         | Sin -> Expression.Sin x
         | Cos -> Expression.Cos x
         | Tan -> Expression.Tan x
+        | Cosh -> Expression.Cosh x
+        | Sinh -> Expression.Sinh x
+        | Tanh -> Expression.Tanh x
+        | ArcSin -> Expression.ArcSin x
+        | ArcCos -> Expression.ArcCos x
+        | ArcTan -> Expression.ArcTan x
 
-    static member ApplyN (f, xs) = FunctionN (f, xs)
+    static member ApplyN (f, xs) = failwith "not supported yet"
 
 
     // Simpler usage

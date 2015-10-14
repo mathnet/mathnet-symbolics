@@ -44,6 +44,16 @@ module Operators =
     let cot x = tan x |> invert
     let sec x = cos x |> invert
     let csc x = sin x |> invert
+    let cosh x = Expression.Cosh x
+    let sinh x = Expression.Sinh x
+    let tanh x = Expression.Tanh x
+    let arcsin x = Expression.ArcSin x
+    let arccos x = Expression.ArcCos x
+    let arctan x = Expression.ArcTan x
+    let sqrt x = Expression.Root (1Q/2Q, x)
+    let log b x = Expression.Log (b, x)
+    let root n x = Expression.Root (n, x)
+
 
 
 [<RequireQualifiedAccess>]

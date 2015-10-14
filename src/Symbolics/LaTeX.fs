@@ -13,8 +13,13 @@ module LaTeX =
     // priority: 1=additive 2=product 3=power
 
     let functionName = function
+        | Sqrt -> "\\sqrt"
         | Abs -> "\\mathrm{abs}"
-        | Ln -> "\\ln" | Exp -> "\\exp"
+        | Ln -> "\\ln"
+        | Exp -> "\\exp"
+        | Log -> "\\log"
+        | Sinh -> "\\sinh" | Cosh -> "\\cosh" | Tanh -> "\\tanh"
+        | ArcSin -> "\\asin" | ArcCos -> "\\acos" | ArcTan -> "\\atan"
         | Sin -> "\\sin" | Cos -> "\\cos" | Tan -> "\\tan"
 
     let rec private texFractionPart write priority = function
@@ -97,6 +102,14 @@ module LaTeX =
                 tex write 3 -p
             write "}"
             if priority > 2 then write "\\right)"
+        | Power (x, Power(n, minusOne)) when minusOne = Expression.MinusOne ->
+            if priority > 3 then write "\\left("
+            write "\\sqrt["
+            tex write 4 n
+            write "]{"
+            tex write 4 x
+            write "}"
+            if priority > 3 then write "\\right)"
         | Power (r, p) ->
             if priority > 3 then write "\\left("
             tex write 4 r
