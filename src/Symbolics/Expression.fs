@@ -272,9 +272,9 @@ type Expression =
 
     static member Root (n, x) = Power (x, Power(n, Expression.MinusOne))
 
-    static member Sqrt (x) = Expression.Root(Number(1N/2N), x)
+    static member Sqrt (x) = Expression.Root (Number(2N), x)
 
-    static member Log (b, x) = Expression.Ln(x) / Expression.Ln(b)
+    static member Log (b, x) = (Expression.Ln x) / (Expression.Ln b)
 
     static member Tan (x) =
         match x with
