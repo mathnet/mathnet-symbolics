@@ -241,8 +241,12 @@ type Expression =
         | Product ((Number n)::ax) when n.IsNegative -> Function (Abs, (Number -n) * Product ax)
         | x -> Function (Abs, x)
 
+    static member Root (n, x) = Power (x, Power(n, Expression.MinusOne))
+    static member Sqrt (x) = Expression.Root (Expression.Two, x)
+
     static member Exp (x) = if x = Expression.Zero then Expression.One else Function (Exp, x)
     static member Ln (x) = if x = Expression.One then Expression.Zero else Function (Ln, x)
+    static member Log (b, x) = (Expression.Ln x) / (Expression.Ln b)
 
     static member Sin (x) =
         match x with
@@ -258,6 +262,13 @@ type Expression =
         | Product ((Number n)::ax) when n.IsNegative -> Function (Cos, (Number -n) * Product ax)
         | x -> Function (Cos, x)
 
+    static member Tan (x) =
+        match x with
+        | Number n when n.IsZero -> Expression.Zero
+        | Number n when n.IsNegative -> -Function (Tan, Number -n)
+        | Product ((Number n)::ax) when n.IsNegative -> -Function (Tan, (Number -n) * Product ax)
+        | x -> Function (Tan, x)
+
     static member Cosh (x) = Function (Cosh, x)
 
     static member Sinh (x) = Function (Sinh, x)
@@ -270,18 +281,6 @@ type Expression =
 
     static member ArcTan (x) = Function (ArcTan, x)
 
-    static member Root (n, x) = Power (x, Power(n, Expression.MinusOne))
-
-    static member Sqrt (x) = Expression.Root (Number(2N), x)
-
-    static member Log (b, x) = (Expression.Ln x) / (Expression.Ln b)
-
-    static member Tan (x) =
-        match x with
-        | Number n when n.IsZero -> Expression.Zero
-        | Number n when n.IsNegative -> -Function (Tan, Number -n)
-        | Product ((Number n)::ax) when n.IsNegative -> -Function (Tan, (Number -n) * Product ax)
-        | x -> Function (Tan, x)
 
     static member Apply (f, x) =
         match f with
