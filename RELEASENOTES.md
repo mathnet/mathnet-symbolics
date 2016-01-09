@@ -1,3 +1,17 @@
+### 0.8.0 - 2016-01-09
+* Simplification: more consistent behavior on infinity and complex infinity
+* Expression: new Constant expression leaf nodes (e, pi, I, real/floating-point)
+* Expression: merge Positive/NegativeInfinity with Infinity
+* Expression: Root, Sqrt, Sinh, Cosh, Tanh, ArcSin, ArcCos, ArcTan
+* Functions: Sinh, Cosh, Tanh, ArcSin, ArcCos, ArcTan
+* Operators: real, pi, infinity, complexInfinity, negativeInfinity
+* Operators: log, root, sqrt, sinh, cosh, tanh, arcsin, arccos, arctan
+* Numbers: compare/min/max can also handle the new constants
+* Structure: collect, collectIdentifiers, collectNumbers, collectFunctions etc.
+* Infix: decimal numbers are now parsed as real constant instead of interpreted as rational
+* Infix: unicode symbols for infinity, complex infinity and pi
+* Calculus: learnt to differentiate the new functions
+
 ### 0.7.1 - 2015-10-03
 * Revert FParsec dependency from 1.0.2 back to 1.0.1
 
