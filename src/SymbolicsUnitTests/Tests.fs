@@ -331,10 +331,25 @@ let ``Algebraic Expansion`` () =
 
 
 [<Test>]
-let ``Algebaric Operators`` () =
+let ``Structural Operators`` () =
 
     Structure.substitute 3Q 4Q (x**3) ==> "x^4"
     Structure.map (fun x -> -x) (x + y**2) ==> "-x - y^2"
+
+    Structure.collectIdentifierSymbols (x*cos(y)) --> [ Symbol "x"; Symbol "y" ]
+    Structure.collectIdentifiers (x*cos(y)) ==+> [ "x"; "y" ]
+    Structure.collectIdentifiers (z/x*cos(y)**x) ==+> [ "x"; "y"; "z" ]
+
+    Structure.collectFunctionTypes (x*cos(y)) --> [ Cos ]
+    Structure.collectFunctions (x*cos(y)) ==+> [ "cos(y)" ]
+
+    Structure.collectNumberValues (x*cos(2*y-4)/3) --> [ -4N; 1N/3N; 2N; ]
+    Structure.collectNumbers (x*cos(2*y-4)/3) ==+> [ "-4"; "1/3"; "2" ]
+
+
+[<Test>]
+let ``Algebaric Operators`` () =
+
     negate (x + y**2) ==> "-(x + y^2)"
 
     Algebraic.factors (b*cos(x)*ln(d)*x) ==+> ["b"; "x"; "ln(d)"; "cos(x)"]

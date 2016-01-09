@@ -42,7 +42,7 @@ type Expression =
     static member E = Constant E
     static member Pi = Constant Pi
 
-    static member private OrderRelation (x:Expression) (y:Expression) =
+    static member internal OrderRelation (x:Expression) (y:Expression) =
         let rec compare a b =
             match a, b with
             | Number x, Number y -> x < y

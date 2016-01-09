@@ -192,6 +192,69 @@ module Structure =
         | Function (_, x) -> f s x
         | _ -> s
 
+    /// Sort expressions in a list with standard expression ordering.
+    [<CompiledName("SortList")>]
+    let sortList list =
+        List.sortWith (fun a b -> if a = b then 0 elif Expression.OrderRelation a b then -1 else 1) list
+
+    /// Applies the given function to the expression tree and returns the result
+    /// for each node where the function returns Some with some value.
+    /// Subexpressions of an expression are only examined if the function returns
+    /// None when applied to the expression.
+    /// The results are returned as a list in reverse depth-first order.
+    [<CompiledName("Collect")>]
+    let collect (chooser:Expression->'T option) x =
+        let rec impl (acc:'T list) x =
+            match chooser x with
+            | Some result -> result::acc
+            | None -> fold impl acc x
+        impl [] x
+
+    /// Like collect but returns each result at most once.
+    [<CompiledName("CollectDistinct")>]
+    let collectDistinct chooser x =
+        collect chooser x |> Seq.distinct |> List.ofSeq //potential for optimization...
+
+    /// Collects all identifers of an expressions and returns their distinct expressions.
+    [<CompiledName("CollectIdentifiers")>]
+    let collectIdentifiers x =
+        x |> collectDistinct (function | Identifier _ as expression -> Some expression | _ -> None) |> sortList
+
+    /// Collects all identifers of an expressions and returns their distinct symbols.
+    [<CompiledName("CollectIdentifierSymbols")>]
+    let collectIdentifierSymbols x =
+        x |> collectDistinct (function | Identifier symbol -> Some symbol | _ -> None) |> List.sort
+
+    /// Collects all numbers of an expressions and returns their distinct expressions.
+    [<CompiledName("CollectNumbers")>]
+    let collectNumbers x =
+        x |> collectDistinct (function | Number _ as expression -> Some expression | _ -> None) |> sortList
+
+    /// Collects all numbers of an expressions and returns their distinct values.
+    [<CompiledName("CollectNumberValues")>]
+    let collectNumberValues x =
+        x |> collectDistinct (function | Number number -> Some number | _ -> None) |> List.sort
+
+    /// Collects all constants of an expressions and returns their distinct expressions.
+    [<CompiledName("CollectConstants")>]
+    let collectConstants x =
+        x |> collectDistinct (function | Constant _ as expression -> Some expression | _ -> None) |> sortList
+
+    /// Collects all constants of an expressions and returns their distinct values.
+    [<CompiledName("CollectConstantValues")>]
+    let collectConstantValues x =
+        x |> collectDistinct (function | Constant constant -> Some constant | _ -> None) |> List.sort
+
+    /// Collects all functions of an expressions and returns their distinct expressions.
+    [<CompiledName("CollectFunctions")>]
+    let collectFunctions x =
+        x |> collectDistinct (function | Function _ | FunctionN _ as expression -> Some expression | _ -> None) |> sortList
+
+    /// Collects all functions of an expressions and returns their distinct function types.
+    [<CompiledName("CollectFunctionTypes")>]
+    let collectFunctionTypes x =
+        x |> collectDistinct (function | Function (f, _) | FunctionN (f, _) -> Some f | _ -> None) |> List.sort
+
 
 [<RequireQualifiedAccess>]
 module Algebraic =
