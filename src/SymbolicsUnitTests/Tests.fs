@@ -7,6 +7,8 @@
 open NUnit.Framework
 open FsUnit
 open System.Collections.Generic
+open System.IO
+open System.Xml.Linq
 open System.Numerics
 open MathNet.Numerics
 open MathNet.Symbolics
@@ -28,6 +30,9 @@ let inline (==||>) (x1, x2, x3) expected = (Infix.print x1, Infix.print x2, Infi
 let inline (==+>) x expected = List.iter2 (fun x e -> Infix.print x |> should equal e) x expected
 let inline (==->) x expected = Array.iter2 (fun x e -> Infix.print x |> should equal e) x expected
 let inline (==*>) (x:HashSet<Expression>) (expected:string list) = HashSet(expected).SetEquals(x |> Seq.map Infix.print) |> should be True
+
+// extra test helper for MathML (just XML, really)
+let inline (==/>) (x:XElement) expected = x.ToString() |> should equal ((MathML.stringToXml expected).ToString())
 
 // variables
 let x = symbol "x"
@@ -228,29 +233,10 @@ let ``Expressions are always in auto-simplified form`` () =
 
 
 [<Test>]
-let ``Parse F# quotations`` () =
-
-    Quotations.parse <@ 3 @> ==> "3"
-    Quotations.parse <@ x @> ==> "x"
-    Quotations.parse <@ fun x -> x @> ==> "x"
-    Quotations.parse <@ 3/4 @> ==> "3/4"
-    Quotations.parse <@ fun x -> 3/x @> ==> "3/x"
-    Quotations.parse <@ -x*y/3 @> ==> "-(1/3)*x*y"
-    Quotations.parse <@ fun x y -> -x*y/3 @> ==> "-(1/3)*x*y"
-    Quotations.parse <@ fun (x, y) -> -x*y/3 @> ==> "-(1/3)*x*y"
-
-
-[<Test>]
 let ``Print infix and LaTeX expressions`` () =
 
     Infix.print (1/(a*b)) --> "1/(a*b)"
     Infix.printStrict (1/(a*b)) --> "a^(-1)*b^(-1)"
-
-    LaTeX.print (1/(a*b)) --> "\\frac{1}{ab}"
-    LaTeX.print Expression.MinusOne --> "-1"
-    LaTeX.print Expression.ComplexInfinity --> "\\infty"
-    LaTeX.print Expression.Pi --> "\\pi"
-    LaTeX.print (Expression.Real -0.23) --> "-0.23"
 
 
 [<Test>]
@@ -303,6 +289,79 @@ let ``Parse infix expressions`` () =
     Infix.parseOrThrow "inf" --> Expression.Infinity
     Infix.parseOrThrow "-∞" --> Expression.NegativeInfinity
     Infix.parseOrThrow "⧝" --> Expression.ComplexInfinity
+
+
+[<Test>]
+let ``Print LaTeX expressions`` () =
+
+    LaTeX.print (1/(a*b)) --> "\\frac{1}{ab}"
+    LaTeX.print Expression.MinusOne --> "-1"
+    LaTeX.print Expression.ComplexInfinity --> "\\infty"
+    LaTeX.print Expression.Pi --> "\\pi"
+    LaTeX.print (Expression.Real -0.23) --> "-0.23"
+
+
+[<Test>]
+let ``Format MathML3 Strict Content`` () =
+
+    MathML.formatContentStrict 1Q ==/> """<cn>1</cn>"""
+    MathML.formatContentStrict -1Q ==/> """<cn>-1</cn>"""
+    MathML.formatContentStrict (1Q/2) ==/> """<apply><csymbol cd="nums1">rational</csymbol><cn>1</cn><cn>2</cn></apply>"""
+    MathML.formatContentStrict x ==/> """<ci>x</ci>"""
+    MathML.formatContentStrict -x ==/> """<apply><csymbol cd="arith1">unary_minus</csymbol><ci>x</ci></apply>"""
+    MathML.formatContentStrict (-2*x) ==/> """<apply><csymbol cd="arith1">times</csymbol><cn>-2</cn><ci>x</ci></apply>"""
+    MathML.formatContentStrict pi ==/> """<csymbol cd="nums1">pi</csymbol>"""
+    MathML.formatContentStrict (1/x) ==/> """<apply><csymbol cd="arith1">divide</csymbol><cn>1</cn><ci>x</ci></apply>"""
+    MathML.formatContentStrict (1/(a*b)) ==/> """<apply><csymbol cd="arith1">divide</csymbol><cn>1</cn><apply><csymbol cd="arith1">times</csymbol><ci>a</ci><ci>b</ci></apply></apply>"""
+    MathML.formatContentStrict (x**2) ==/> """<apply><csymbol cd="arith1">power</csymbol><ci>x</ci><cn>2</cn></apply>"""
+    MathML.formatContentStrict (x**(1Q/2)) ==/> """<apply><csymbol cd="arith1">root</csymbol><ci>x</ci><cn>2</cn></apply>"""
+    MathML.formatContentStrict (x**(1Q/3)) ==/> """<apply><csymbol cd="arith1">root</csymbol><ci>x</ci><cn>3</cn></apply>"""
+
+
+[<Test>]
+let ``Format MathML3 Strict Content with Annotations`` () =
+
+    MathML.formatSemanticsAnnotated (1/x) ==/> """
+      <semantics>
+        <apply><csymbol cd="arith1">divide</csymbol><cn>1</cn><ci>x</ci></apply>
+        <annotation encoding="application/x-tex">\frac{1}{x}</annotation>
+        <annotation encoding="application/x-mathnet-infix">1/x</annotation>
+      </semantics>"""
+
+
+[<Test>]
+let ``Parse MathML3 Strict Content`` () =
+
+    MathML.parseString """<ci>x</ci>""" ==> "x"
+    MathML.parseString """<cn>1</cn>""" ==> "1"
+    MathML.parseString """<csymbol cd="nums1">pi</csymbol>""" ==> "π"
+    MathML.parseString """<apply> <csymbol cd="nums1">rational</csymbol> <cn>1</cn> <cn>2</cn> </apply>""" ==> "1/2"
+    MathML.parseString """<apply><csymbol cd="arith1">divide</csymbol><cn>1</cn><ci>x</ci></apply>""" ==> "1/x"
+    MathML.parseString """<apply><csymbol cd="arith1">divide</csymbol><cn>1</cn><apply><csymbol cd="arith1">times</csymbol><ci>a</ci><ci>b</ci></apply></apply>""" ==> "1/(a*b)"
+    MathML.parseString """<apply><csymbol cd="arith1">power</csymbol><ci>x</ci><cn>2</cn></apply>""" ==> "x^2"
+    MathML.parseString """<apply><csymbol cd="arith1">root</csymbol><ci>x</ci><cn>2</cn></apply>""" ==> "x^(1/2)"
+
+
+[<Test>]
+let ``Parse MathML Non-Strict Content`` () =
+
+    MathML.parseString """<apply><divide/><cn>1</cn><ci>x</ci></apply>""" ==> "1/x"
+    MathML.parseString """<apply><divide/><cn>1</cn><apply><times/><ci>a</ci><ci>b</ci></apply></apply>""" ==> "1/(a*b)"
+    MathML.parseString """<apply><power/><ci>x</ci><cn>2</cn></apply>""" ==> "x^2"
+    MathML.parseString """<apply><root/><degree><cn>2</cn></degree><ci>x</ci></apply>""" ==> "x^(1/2)"
+
+
+[<Test>]
+let ``Parse F# quotations`` () =
+
+    Quotations.parse <@ 3 @> ==> "3"
+    Quotations.parse <@ x @> ==> "x"
+    Quotations.parse <@ fun x -> x @> ==> "x"
+    Quotations.parse <@ 3/4 @> ==> "3/4"
+    Quotations.parse <@ fun x -> 3/x @> ==> "3/x"
+    Quotations.parse <@ -x*y/3 @> ==> "-(1/3)*x*y"
+    Quotations.parse <@ fun x y -> -x*y/3 @> ==> "-(1/3)*x*y"
+    Quotations.parse <@ fun (x, y) -> -x*y/3 @> ==> "-(1/3)*x*y"
 
 
 [<Test>]
