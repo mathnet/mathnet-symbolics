@@ -38,15 +38,22 @@ module MathML =
         | Constant I -> csymbol "nums1" "i"
         | Constant (Constant.Real f) -> cn f
         | Sum xs -> apply "arith1" "plus" (List.map formatContentStrict xs)
-        | Product (minusOne::xs) when minusOne = Expression.MinusOne -> apply "arith1" "unary_minus" [ formatContentStrict (product xs) ]
+        | Product (minusOne::xs) when minusOne = Expression.MinusOne ->
+            apply "arith1" "unary_minus" [ formatContentStrict (product xs) ]
         | Product xs as p ->
             let n = InfixPrinter.numerator p
             let d = InfixPrinter.denominator p
             if d = one then apply "arith1" "times" (List.map formatContentStrict xs)
             else apply "arith1" "divide" [ formatContentStrict n; formatContentStrict d ]
-        | NegIntPower (r, p) -> apply "arith1" "divide" [ cn 1; (if (p <> Expression.MinusOne) then apply "arith1" "power" [ formatContentStrict r; formatContentStrict -p ] else formatContentStrict r)]
-        | Power (x, Number n) when n.IsPositive && n.Numerator = BigInteger.One -> apply "arith1" "root" [ formatContentStrict x; formatContentStrict (Number (BigRational.Reciprocal n)) ]
-        | Power (x, Power(n, minusOne)) when minusOne = Expression.MinusOne -> apply "arith1" "root" [ formatContentStrict x; formatContentStrict n ]
+        | NegIntPower (r, minusOne) when minusOne = Expression.MinusOne ->
+            apply "arith1" "divide" [ cn 1; formatContentStrict r]
+        | NegIntPower (r, p) ->
+            let denom = apply "arith1" "power" [ formatContentStrict r; formatContentStrict -p ]
+            apply "arith1" "divide" [ cn 1; denom ]
+        | Power (x, Number n) when n.IsPositive && n.Numerator = BigInteger.One ->
+            apply "arith1" "root" [ formatContentStrict x; formatContentStrict (Number (BigRational.Reciprocal n)) ]
+        | Power (x, Power(n, minusOne)) when minusOne = Expression.MinusOne ->
+            apply "arith1" "root" [ formatContentStrict x; formatContentStrict n ]
         | Power (r, p) -> apply "arith1" "power" [ formatContentStrict r; formatContentStrict p ]
         | Function (f, x) -> failwith "not implemented"
         | FunctionN (f, xs) -> failwith "not implemented"
