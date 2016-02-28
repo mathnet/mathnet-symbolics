@@ -1,4 +1,4 @@
-namespace MathNet.Symbolics
+﻿namespace MathNet.Symbolics
 
 open System.Reflection
 open System.Resources;

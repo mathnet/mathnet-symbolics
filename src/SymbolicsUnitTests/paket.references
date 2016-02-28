@@ -1,6 +1,5 @@
 FParsec
-FSharp.Core
-FsUnit
 MathNet.Numerics
 MathNet.Numerics.FSharp
-NUnit
+FsUnit
+FSharp.Core
