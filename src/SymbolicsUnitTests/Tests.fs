@@ -7,9 +7,7 @@
 open NUnit.Framework
 open FsUnit
 open System.Collections.Generic
-open System.IO
 open System.Xml.Linq
-open System.Numerics
 open MathNet.Numerics
 open MathNet.Symbolics
 

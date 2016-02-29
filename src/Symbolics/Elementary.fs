@@ -3,59 +3,6 @@
 open MathNet.Numerics
 open MathNet.Symbolics
 
-module Operators =
-
-    let symbol name = Expression.Symbol name
-    let number (x:int) = Expression.FromInt32 x
-    let real (x:float) = Expression.Real x
-    let zero = Expression.Zero
-    let one = Expression.One
-    let two = Expression.Two
-    let minusOne = Expression.MinusOne
-
-    let infinity = Expression.Infinity
-    let complexInfinity = Expression.ComplexInfinity
-    let negativeInfinity = Expression.NegativeInfinity
-
-    let pi = Expression.Pi
-
-    let add (x:Expression) (y:Expression) = x + y
-    let subtract (x:Expression) (y:Expression) = x - y
-    let negate (x:Expression) = -x
-    let plus (x:Expression) = +x
-    let sum (xs:Expression list) = if xs.Length = 0 then zero else List.reduce (+) xs
-    let sumSeq (xs:Expression seq) = Seq.fold (+) zero xs
-    let multiply (x:Expression) (y:Expression) = x * y
-    let divide (x:Expression) (y:Expression) = x / y
-    let invert (x:Expression) = Expression.Invert(x)
-    let product (xs:Expression list) = if xs.Length = 0 then one else List.reduce (*) xs
-    let productSeq (xs:Expression seq) = Seq.fold (*) one xs
-    let pow (x:Expression) (y:Expression) = x ** y
-
-    let apply (f:Function) (x:Expression) = Expression.Apply (f, x)
-    let applyN (f:Function) (xs:Expression list) = Expression.ApplyN (f, xs)
-
-    let abs x = Expression.Abs x
-    let exp x = Expression.Exp x
-    let ln x = Expression.Ln x
-    let sin x = Expression.Sin x
-    let cos x = Expression.Cos x
-    let tan x = Expression.Tan x
-    let cot x = tan x |> invert
-    let sec x = cos x |> invert
-    let csc x = sin x |> invert
-    let cosh x = Expression.Cosh x
-    let sinh x = Expression.Sinh x
-    let tanh x = Expression.Tanh x
-    let arcsin x = Expression.ArcSin x
-    let arccos x = Expression.ArcCos x
-    let arctan x = Expression.ArcTan x
-    let sqrt x = Expression.Root (2Q, x)
-    let log b x = Expression.Log (b, x)
-    let root n x = Expression.Root (n, x)
-
-
-
 [<RequireQualifiedAccess>]
 module Numbers =
 
@@ -195,7 +142,7 @@ module Structure =
     /// Sort expressions in a list with standard expression ordering.
     [<CompiledName("SortList")>]
     let sortList list =
-        List.sortWith (fun a b -> if a = b then 0 elif Expression.OrderRelation a b then -1 else 1) list
+        List.sortWith (fun a b -> if a = b then 0 elif orderRelation a b then -1 else 1) list
 
     /// Applies the given function to the expression tree and returns the result
     /// for each node where the function returns Some with some value.
