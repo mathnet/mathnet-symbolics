@@ -3,11 +3,11 @@ nuget FParsec ~> 1.0.1
 nuget FSharp.Core ~> 3.1.2 redirects:force
 nuget MathNet.Numerics.FSharp ~> 3.8
 
-nuget FsUnit ~> 1.3
+nuget FsUnit ~> 2.0
 
 group Build
     source http://www.nuget.org/api/v2
     nuget FAKE ~> 4.1
-    nuget NUnit.Runners ~> 2.6
+    nuget NUnit.Runners ~> 3.0
     nuget FSharp.Formatting !~> 2.4
     nuget NuGet.CommandLine

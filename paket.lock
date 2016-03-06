@@ -3,15 +3,15 @@ NUGET
   specs:
     FParsec (1.0.1)
     FSharp.Core (3.1.2.5) - redirects: force
-    FsUnit (1.4.1)
+    FsUnit (2.0.0)
       FSharp.Core (>= 3.1.2.5)
-      NUnit (2.6.4)
+      NUnit (3.0.1)
     MathNet.Numerics (3.8.0)
       TaskParallelLibrary (>= 1.0.2856.0) - framework: net35
     MathNet.Numerics.FSharp (3.8.0)
       FSharp.Core (>= 3.1.2.5)
       MathNet.Numerics (3.8.0)
-    NUnit (2.6.4)
+    NUnit (3.0.1)
     TaskParallelLibrary (1.0.2856) - framework: net35
 
 GROUP Build
@@ -26,4 +26,14 @@ NUGET
     FSharpVSPowerTools.Core (2.3.0)
       FSharp.Compiler.Service (>= 2.0.0.3)
     NuGet.CommandLine (3.3.0)
-    NUnit.Runners (2.6.4)
+    NUnit.ConsoleRunner (3.2.0)
+    NUnit.Extension.NUnitProjectLoader (3.2.0)
+    NUnit.Extension.NUnitV2Driver (3.2.0)
+    NUnit.Extension.NUnitV2ResultWriter (3.2.0)
+    NUnit.Extension.VSProjectLoader (3.2.0)
+    NUnit.Runners (3.2.0)
+      NUnit.ConsoleRunner (3.2.0)
+      NUnit.Extension.NUnitProjectLoader (3.2.0)
+      NUnit.Extension.NUnitV2Driver (3.2.0)
+      NUnit.Extension.NUnitV2ResultWriter (3.2.0)
+      NUnit.Extension.VSProjectLoader (3.2.0)
