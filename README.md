@@ -48,6 +48,9 @@ taylor 4 x (sin(x)+cos(x)) 0Q → 1 + x - (1/2)*x^2 - (1/6)*x^3
 
 ### Project
 
+Windows (.Net): [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/6u71stf85qudifvv/branch/master)](https://ci.appveyor.com/project/cdrnet/mathnet-symbolics)  
+Linux (Mono): [![Travis Build Status](https://travis-ci.org/mathnet/mathnet-symbolics.svg?branch=master)](https://travis-ci.org/mathnet/mathnet-symbolics)
+
 Maintained by [Christoph Rüegg](http://christoph.ruegg.name/) and part of the [Math.NET initiative](http://www.mathdotnet.com) (see also [Math.NET Numerics](http://numerics.mathdotnet.com)). It is covered under the terms of the [MIT/X11](http://mathnetnumerics.codeplex.com/license) open source license. See also the [license](LICENSE.md) file in the root folder. **We accept contributions!**
 
 * [@MathDotNet](http://twitter.com/MathDotNet)

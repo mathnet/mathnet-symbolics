@@ -167,7 +167,7 @@ let test target =
             OutputFile = "TestResults.xml" } |> quick) target
 
 Target "Test" (fun _ -> test !! "out/test/**/*UnitTests*.dll")
-"Build" ==> "Test"
+"Build" ?=> "Test"
 
 
 // --------------------------------------------------------------------------------------
@@ -224,7 +224,7 @@ let zip zipDir filesDir filesFilter bundle =
 Target "Zip" (fun _ ->
     CleanDir "out/packages/Zip"
     coreBundle |> zip "out/packages/Zip" "out/lib" (fun f -> f.Contains("MathNet.Symbolics.") || f.Contains("MathNet.Numerics.") || f.Contains("FParsec") || f.Contains("FSharp.Core")))
-"Build" ==> "Zip"
+"Build" ?=> "Zip"
 
 
 // NUGET
@@ -273,7 +273,7 @@ Target "NuGet" (fun _ ->
     CleanDir "out/packages/NuGet"
     if hasBuildParam "all" || hasBuildParam "release" then
         nugetPack coreBundle "out/packages/NuGet")
-"Build" ==> "NuGet"
+"Build" ?=> "NuGet"
 
 
 // --------------------------------------------------------------------------------------
@@ -331,7 +331,8 @@ Target "DocsWatch" (fun _ ->
     watcher.EnableRaisingEvents <- false
     watcher.Dispose())
 
-"Build" ==> "CleanDocs" ==> "Docs"
+"CleanDocs" ==> "Docs"
+"Build" ?=> "CleanDocs"
 
 "Start"
   =?> ("CleanDocs", not (hasBuildParam "incremental"))
@@ -352,7 +353,8 @@ Target "Api" (fun _ ->
             TimeOut = TimeSpan.FromMinutes 10.
             OutputPath = "out/api/" }))
 
-"Build" ==> "CleanApi" ==> "Api"
+"CleanApi" ==> "Api"
+"Build" ?=> "CleanApi"
 
 
 // --------------------------------------------------------------------------------------
@@ -414,6 +416,42 @@ Target "Publish" DoNothing
 "PublishNuGet" ==> "Publish"
 "PublishDocs" ==> "Publish"
 "PublishApi" ==> "Publish"
+
+
+// --------------------------------------------------------------------------------------
+// ENVIRONMENT DEPENDENCIES
+// --------------------------------------------------------------------------------------
+
+match buildServer with
+
+| AppVeyor ->
+    trace "AppVeyor Continuous Integration Build"
+    // In AppVeyor we let its engine managed task dependencies
+    // an let it call into this script multiple times, incrementally.
+
+    // build --> test: do not enforce
+    // build --> package: do not enforce
+    // build --> docs: do not enforce
+    ()
+
+| _ ->
+    trace "Normal Build"
+    // In normal builds we need to set up proper dependencies between
+    // the targets so FAKE can build up and order the full work-flow properly
+
+    // build --> test
+    "Build" ==> "Test" |> ignore
+
+    // build --> package
+    "Build" ==> "Zip" |> ignore
+    "Build" ==> "NuGet" |> ignore
+
+    // build --> docs
+    "Build" ==> "CleanDocs" |> ignore
+    "Build" ==> "Docs" |> ignore
+    "Build" ==> "CleanApi" |> ignore
+    "Build" ==> "Api" |> ignore
+    ()
 
 
 // --------------------------------------------------------------------------------------
