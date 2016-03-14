@@ -16,9 +16,9 @@ module LaTeX =
         | Abs -> "\\mathrm{abs}"
         | Ln -> "\\ln"
         | Exp -> "\\exp"
-        | Sinh -> "\\sinh" | Cosh -> "\\cosh" | Tanh -> "\\tanh"
-        | ArcSin -> "\\asin" | ArcCos -> "\\acos" | ArcTan -> "\\atan"
         | Sin -> "\\sin" | Cos -> "\\cos" | Tan -> "\\tan"
+        | Sinh -> "\\sinh" | Cosh -> "\\cosh" | Tanh -> "\\tanh"
+        | ArcSin -> "\\arcsin" | ArcCos -> "\\arccos" | ArcTan -> "\\arctan"
 
     let rec private texFractionPart write priority = function
         | Product (x) ->
