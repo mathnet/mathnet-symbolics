@@ -1,3 +1,9 @@
+### 0.9.0 - 2016-03-14
+* MathML: basic strict MathML formatting and parsing support
+* Infix/LaTeX: fix missing paranthesis when formatting denominator-free powers
+* LaTeX: fix symbols when formatting arcsin, arccos or arctan
+* Expression: refactoring; operators are now implemented in module instead of class
+
 ### 0.8.0 - 2016-01-09
 * Simplification: more consistent behavior on infinity and complex infinity
 * Expression: new Constant expression leaf nodes (e, pi, I, real/floating-point)
