@@ -112,7 +112,7 @@ module private InfixParser =
         | ParserResult.Failure (error,_,_) -> ParseFailure error
 
 
-module private InfixPrinter =
+module private InfixFormatter =
 
     open Operators
     open ExpressionPatterns
@@ -288,26 +288,42 @@ module private InfixPrinter =
 module Infix =
 
     /// Strict formatting, prints an exact representation of the expression tree
-    [<CompiledName("PrintStrict")>]
-    let printStrict q =
+    [<CompiledName("FormatStrict")>]
+    let formatStrict expression =
         let sb = StringBuilder()
-        InfixPrinter.strict (sb.Append >> ignore) 0 q
+        InfixFormatter.strict (sb.Append >> ignore) 0 expression
         sb.ToString()
+
+    [<CompiledName("PrintStrict")>]
+    [<System.Obsolete("Use FormatStrict instead")>]
+    let printStrict q = formatStrict q
 
     /// Strict formatting, prints an exact representation of the expression tree
+    [<CompiledName("FormatStrictWriter")>]
+    let formatStrictWriter (writer:TextWriter) expression = InfixFormatter.strict (writer.Write) 0 expression
+
     [<CompiledName("PrintStrictToTextWriter")>]
-    let printStrictTextWriter (writer:TextWriter) q = InfixPrinter.strict (writer.Write) 0 q
+    [<System.Obsolete("Use FormatStrictWriter instead")>]
+    let printStrictTextWriter (writer:TextWriter) q = formatStrictWriter writer q
 
     /// Nicer human readable but slightly denormalized output
-    [<CompiledName("Print")>]
-    let print q =
+    [<CompiledName("Format")>]
+    let format expression =
         let sb = StringBuilder()
-        InfixPrinter.nice (sb.Append >> ignore) 0 q
+        InfixFormatter.nice (sb.Append >> ignore) 0 expression
         sb.ToString()
 
+    [<CompiledName("Print")>]
+    [<System.Obsolete("Use Format instead")>]
+    let print q = format q
+
     /// Nicer human readable but slightly denormalized output
+    [<CompiledName("FormatWriter")>]
+    let formatWriter (writer:TextWriter) expression = InfixFormatter.nice (writer.Write) 0 expression
+
     [<CompiledName("PrintToTextWriter")>]
-    let printTextWriter (writer:TextWriter) q = InfixPrinter.nice (writer.Write) 0 q
+    [<System.Obsolete("Use FormatWriter instead")>]
+    let printTextWriter (writer:TextWriter) q = formatWriter writer q
 
     [<CompiledName("Parse")>]
     let parse (infix: string) = InfixParser.parse infix

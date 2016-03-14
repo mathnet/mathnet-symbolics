@@ -79,8 +79,8 @@ module LaTeX =
             tex write 2 (product ((Number -n)::xs))
             if priority > 1 then write "\\right)"
         | Product _ as p ->
-            let n = InfixPrinter.numerator p
-            let d = InfixPrinter.denominator p
+            let n = InfixFormatter.numerator p
+            let d = InfixFormatter.denominator p
             if d = one then
                 if priority > 2 then write "\\left("
                 texFractionPart write 2 n

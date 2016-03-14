@@ -108,8 +108,8 @@ module private MathMLFormatter =
         | Product (minusOne::xs) when minusOne = Expression.MinusOne ->
             apply "arith1" "unary_minus" [ formatContentStrict (product xs) ]
         | Product xs as p ->
-            let n = InfixPrinter.numerator p
-            let d = InfixPrinter.denominator p
+            let n = InfixFormatter.numerator p
+            let d = InfixFormatter.denominator p
             if d = one then apply "arith1" "times" (List.map formatContentStrict xs)
             else apply "arith1" "divide" [ formatContentStrict n; formatContentStrict d ]
         | NegIntPower (r, minusOne) when minusOne = Expression.MinusOne ->
@@ -134,7 +134,7 @@ module private MathMLFormatter =
     let formatSemanticsAnnotated x =
         let contentStrict = formatContentStrict x
         let tex = LaTeX.print x
-        let infix = Infix.print x
+        let infix = Infix.format x
         [
             contentStrict
             element "annotation" [| attribute "encoding" "application/x-tex"; box tex |]

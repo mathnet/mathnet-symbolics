@@ -17,17 +17,17 @@ open Operators
 let inline (-->) x expected = x |> should equal expected
 
 // Test: x should evaluate to the expected string when formatted *nicely*
-let inline (==>) x expected = Infix.print x |> should equal expected
+let inline (==>) x expected = Infix.format x |> should equal expected
 
 // Test: x should evaluate to the expected string when formatted *strictly* (not denormalized)
-let inline (===>) x expected = Infix.printStrict x |> should equal expected
+let inline (===>) x expected = Infix.formatStrict x |> should equal expected
 
 // extra test helpers for tuples, list, arrays and hash-sets - maybe there's a better way?
-let inline (==|>) (x1, x2) expected = (Infix.print x1, Infix.print x2) |> should equal expected
-let inline (==||>) (x1, x2, x3) expected = (Infix.print x1, Infix.print x2, Infix.print x3) |> should equal expected
-let inline (==+>) x expected = List.iter2 (fun x e -> Infix.print x |> should equal e) x expected
-let inline (==->) x expected = Array.iter2 (fun x e -> Infix.print x |> should equal e) x expected
-let inline (==*>) (x:HashSet<Expression>) (expected:string list) = HashSet(expected).SetEquals(x |> Seq.map Infix.print) |> should be True
+let inline (==|>) (x1, x2) expected = (Infix.format x1, Infix.format x2) |> should equal expected
+let inline (==||>) (x1, x2, x3) expected = (Infix.format x1, Infix.format x2, Infix.format x3) |> should equal expected
+let inline (==+>) x expected = List.iter2 (fun x e -> Infix.format x |> should equal e) x expected
+let inline (==->) x expected = Array.iter2 (fun x e -> Infix.format x |> should equal e) x expected
+let inline (==*>) (x:HashSet<Expression>) (expected:string list) = HashSet(expected).SetEquals(x |> Seq.map Infix.format) |> should be True
 
 // extra test helper for MathML (just normalizing XML, really)
 let inline (==/>) (x:string) expected = x |> should equal (Xml.normalizeString expected)
@@ -233,8 +233,8 @@ let ``Expressions are always in auto-simplified form`` () =
 [<Test>]
 let ``Print infix and LaTeX expressions`` () =
 
-    Infix.print (1/(a*b)) --> "1/(a*b)"
-    Infix.printStrict (1/(a*b)) --> "a^(-1)*b^(-1)"
+    Infix.format (1/(a*b)) --> "1/(a*b)"
+    Infix.formatStrict (1/(a*b)) --> "a^(-1)*b^(-1)"
 
 
 [<Test>]
