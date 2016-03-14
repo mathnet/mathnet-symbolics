@@ -29,8 +29,8 @@ let inline (==+>) x expected = List.iter2 (fun x e -> Infix.print x |> should eq
 let inline (==->) x expected = Array.iter2 (fun x e -> Infix.print x |> should equal e) x expected
 let inline (==*>) (x:HashSet<Expression>) (expected:string list) = HashSet(expected).SetEquals(x |> Seq.map Infix.print) |> should be True
 
-// extra test helper for MathML (just XML, really)
-let inline (==/>) (x:XElement) expected = x.ToString() |> should equal ((MathML.stringToXml expected).ToString())
+// extra test helper for MathML (just normalizing XML, really)
+let inline (==/>) (x:string) expected = x |> should equal (Xml.normalizeString expected)
 
 // variables
 let x = symbol "x"
@@ -332,23 +332,23 @@ let ``Format MathML3 Strict Content with Annotations`` () =
 [<Test>]
 let ``Parse MathML3 Strict Content`` () =
 
-    MathML.parseString """<ci>x</ci>""" ==> "x"
-    MathML.parseString """<cn>1</cn>""" ==> "1"
-    MathML.parseString """<csymbol cd="nums1">pi</csymbol>""" ==> "π"
-    MathML.parseString """<apply> <csymbol cd="nums1">rational</csymbol> <cn>1</cn> <cn>2</cn> </apply>""" ==> "1/2"
-    MathML.parseString """<apply><csymbol cd="arith1">divide</csymbol><cn>1</cn><ci>x</ci></apply>""" ==> "1/x"
-    MathML.parseString """<apply><csymbol cd="arith1">divide</csymbol><cn>1</cn><apply><csymbol cd="arith1">times</csymbol><ci>a</ci><ci>b</ci></apply></apply>""" ==> "1/(a*b)"
-    MathML.parseString """<apply><csymbol cd="arith1">power</csymbol><ci>x</ci><cn>2</cn></apply>""" ==> "x^2"
-    MathML.parseString """<apply><csymbol cd="arith1">root</csymbol><ci>x</ci><cn>2</cn></apply>""" ==> "x^(1/2)"
+    MathML.parse """<ci>x</ci>""" ==> "x"
+    MathML.parse """<cn>1</cn>""" ==> "1"
+    MathML.parse """<csymbol cd="nums1">pi</csymbol>""" ==> "π"
+    MathML.parse """<apply> <csymbol cd="nums1">rational</csymbol> <cn>1</cn> <cn>2</cn> </apply>""" ==> "1/2"
+    MathML.parse """<apply><csymbol cd="arith1">divide</csymbol><cn>1</cn><ci>x</ci></apply>""" ==> "1/x"
+    MathML.parse """<apply><csymbol cd="arith1">divide</csymbol><cn>1</cn><apply><csymbol cd="arith1">times</csymbol><ci>a</ci><ci>b</ci></apply></apply>""" ==> "1/(a*b)"
+    MathML.parse """<apply><csymbol cd="arith1">power</csymbol><ci>x</ci><cn>2</cn></apply>""" ==> "x^2"
+    MathML.parse """<apply><csymbol cd="arith1">root</csymbol><ci>x</ci><cn>2</cn></apply>""" ==> "x^(1/2)"
 
 
 [<Test>]
 let ``Parse MathML Non-Strict Content`` () =
 
-    MathML.parseString """<apply><divide/><cn>1</cn><ci>x</ci></apply>""" ==> "1/x"
-    MathML.parseString """<apply><divide/><cn>1</cn><apply><times/><ci>a</ci><ci>b</ci></apply></apply>""" ==> "1/(a*b)"
-    MathML.parseString """<apply><power/><ci>x</ci><cn>2</cn></apply>""" ==> "x^2"
-    MathML.parseString """<apply><root/><degree><cn>2</cn></degree><ci>x</ci></apply>""" ==> "x^(1/2)"
+    MathML.parse """<apply><divide/><cn>1</cn><ci>x</ci></apply>""" ==> "1/x"
+    MathML.parse """<apply><divide/><cn>1</cn><apply><times/><ci>a</ci><ci>b</ci></apply></apply>""" ==> "1/(a*b)"
+    MathML.parse """<apply><power/><ci>x</ci><cn>2</cn></apply>""" ==> "x^2"
+    MathML.parse """<apply><root/><degree><cn>2</cn></degree><ci>x</ci></apply>""" ==> "x^(1/2)"
 
 
 [<Test>]

@@ -7,72 +7,11 @@ open System.IO
 open MathNet.Numerics
 open MathNet.Symbolics
 
-[<RequireQualifiedAccess>]
-module MathML =
+
+module private MathMLParser =
 
     open Operators
     open ExpressionPatterns
-
-    let textToXml (reader:TextReader) = (XDocument.Load reader).Root
-    let stringToXml (text:string) = use reader = new StringReader(text) in textToXml reader
-
-    let element name values = XElement(XName.Get(name), values)
-    let attribute name value = XAttribute(XName.Get(name), value)
-    let leaf name (body:string) = element name [|box body|]
-    let empty name = element name Array.empty
-    let node name (children:XElement list) = element name (children |> List.toArray |> Array.map box)
-
-    let csymbol (dict:string) (name:string) = element "csymbol" [|attribute "cd" dict; name|]
-    let cn value = leaf "cn" (sprintf "%A" value)
-    let ci (Symbol s) = leaf "ci" s
-    let apply dict operator args = node "apply" ((csymbol dict operator)::args)
-
-    /// Format the xml body equivalent to the provided expression, recursively, without headers, root and annotations.
-    /// MathML3 2nd Edition; Strict Content.
-    let rec formatContentStrict = function
-        | Integer i -> cn i.Numerator
-        | Number n -> apply "nums1" "rational" [ cn n.Numerator; cn n.Denominator ]
-        | Identifier s -> ci s
-        | Constant E -> csymbol "nums1" "e"
-        | Constant Pi -> csymbol "nums1" "pi"
-        | Constant I -> csymbol "nums1" "i"
-        | Constant (Constant.Real f) -> cn f
-        | Sum xs -> apply "arith1" "plus" (List.map formatContentStrict xs)
-        | Product (minusOne::xs) when minusOne = Expression.MinusOne ->
-            apply "arith1" "unary_minus" [ formatContentStrict (product xs) ]
-        | Product xs as p ->
-            let n = InfixPrinter.numerator p
-            let d = InfixPrinter.denominator p
-            if d = one then apply "arith1" "times" (List.map formatContentStrict xs)
-            else apply "arith1" "divide" [ formatContentStrict n; formatContentStrict d ]
-        | NegIntPower (r, minusOne) when minusOne = Expression.MinusOne ->
-            apply "arith1" "divide" [ cn 1; formatContentStrict r]
-        | NegIntPower (r, p) ->
-            let denom = apply "arith1" "power" [ formatContentStrict r; formatContentStrict -p ]
-            apply "arith1" "divide" [ cn 1; denom ]
-        | Power (x, Number n) when n.IsPositive && n.Numerator = BigInteger.One ->
-            apply "arith1" "root" [ formatContentStrict x; formatContentStrict (Number (BigRational.Reciprocal n)) ]
-        | Power (x, Power(n, minusOne)) when minusOne = Expression.MinusOne ->
-            apply "arith1" "root" [ formatContentStrict x; formatContentStrict n ]
-        | Power (r, p) -> apply "arith1" "power" [ formatContentStrict r; formatContentStrict p ]
-        | Function (f, x) -> failwith "not implemented"
-        | FunctionN (f, xs) -> failwith "not implemented"
-        | Infinity -> csymbol "nums1" "infinity"
-        | ComplexInfinity -> csymbol "nums1" "infinity"
-        | Undefined -> csymbol "nums1" "NaN"
-
-    /// Format a semantics xml element containing both strict content representation and annotations.
-    /// MathML3 2nd Edition; Strict Content. Annotations: TeX, Infix
-    /// Future: ideally this routine would also provide annotations in MathML Presentation format, and maybe OpenMath.
-    let formatSemanticsAnnotated x =
-        let contentStrict = formatContentStrict x
-        let tex = LaTeX.print x
-        let infix = Infix.print x
-        [
-            contentStrict
-            element "annotation" [| attribute "encoding" "application/x-tex"; box tex |]
-            element "annotation" [| attribute "encoding" "application/x-mathnet-infix"; box infix |]
-        ] |> node "semantics"
 
     let (|Element|) (xml:XElement) =
         xml.Name.LocalName, (xml.Attributes() |> Seq.toList), (xml.Elements() |> Seq.toList), xml.Value
@@ -138,5 +77,115 @@ module MathML =
             | _ -> Undefined
         | _ -> Undefined
 
-    let parseText (reader:TextReader) = textToXml reader |> parse
-    let parseString (text:string) = stringToXml text |> parse
+
+module private MathMLFormatter =
+
+    open Operators
+    open ExpressionPatterns
+
+    let element name values = XElement(XName.Get(name), values)
+    let attribute name value = XAttribute(XName.Get(name), value)
+    let leaf name (body:string) = element name [|box body|]
+    let empty name = element name Array.empty
+    let node name (children:XElement list) = element name (children |> List.toArray |> Array.map box)
+
+    let csymbol (dict:string) (name:string) = element "csymbol" [|attribute "cd" dict; name|]
+    let cn value = leaf "cn" (sprintf "%A" value)
+    let ci (Symbol s) = leaf "ci" s
+    let apply dict operator args = node "apply" ((csymbol dict operator)::args)
+
+    /// Format the xml body equivalent to the provided expression, recursively, without headers, root and annotations.
+    /// MathML3 2nd Edition; Strict Content.
+    let rec formatContentStrict = function
+        | Integer i -> cn i.Numerator
+        | Number n -> apply "nums1" "rational" [ cn n.Numerator; cn n.Denominator ]
+        | Identifier s -> ci s
+        | Constant E -> csymbol "nums1" "e"
+        | Constant Pi -> csymbol "nums1" "pi"
+        | Constant I -> csymbol "nums1" "i"
+        | Constant (Constant.Real f) -> cn f
+        | Sum xs -> apply "arith1" "plus" (List.map formatContentStrict xs)
+        | Product (minusOne::xs) when minusOne = Expression.MinusOne ->
+            apply "arith1" "unary_minus" [ formatContentStrict (product xs) ]
+        | Product xs as p ->
+            let n = InfixPrinter.numerator p
+            let d = InfixPrinter.denominator p
+            if d = one then apply "arith1" "times" (List.map formatContentStrict xs)
+            else apply "arith1" "divide" [ formatContentStrict n; formatContentStrict d ]
+        | NegIntPower (r, minusOne) when minusOne = Expression.MinusOne ->
+            apply "arith1" "divide" [ cn 1; formatContentStrict r]
+        | NegIntPower (r, p) ->
+            let denom = apply "arith1" "power" [ formatContentStrict r; formatContentStrict -p ]
+            apply "arith1" "divide" [ cn 1; denom ]
+        | Power (x, Number n) when n.IsPositive && n.Numerator = BigInteger.One ->
+            apply "arith1" "root" [ formatContentStrict x; formatContentStrict (Number (BigRational.Reciprocal n)) ]
+        | Power (x, Power(n, minusOne)) when minusOne = Expression.MinusOne ->
+            apply "arith1" "root" [ formatContentStrict x; formatContentStrict n ]
+        | Power (r, p) -> apply "arith1" "power" [ formatContentStrict r; formatContentStrict p ]
+        | Function (f, x) -> failwith "not implemented"
+        | FunctionN (f, xs) -> failwith "not implemented"
+        | Infinity -> csymbol "nums1" "infinity"
+        | ComplexInfinity -> csymbol "nums1" "infinity"
+        | Undefined -> csymbol "nums1" "NaN"
+
+    /// Format a semantics xml element containing both strict content representation and annotations.
+    /// MathML3 2nd Edition; Strict Content. Annotations: TeX, Infix
+    /// Future: ideally this routine would also provide annotations in MathML Presentation format, and maybe OpenMath.
+    let formatSemanticsAnnotated x =
+        let contentStrict = formatContentStrict x
+        let tex = LaTeX.print x
+        let infix = Infix.print x
+        [
+            contentStrict
+            element "annotation" [| attribute "encoding" "application/x-tex"; box tex |]
+            element "annotation" [| attribute "encoding" "application/x-mathnet-infix"; box infix |]
+        ] |> node "semantics"
+
+
+[<RequireQualifiedAccess>]
+module Xml =
+    let ofReader (reader:TextReader) = (XDocument.Load reader).Root
+    let ofString (text:string) = use reader = new StringReader(text) in ofReader reader
+    let toString (xml:XElement) = xml.ToString()
+    let normalizeString = ofString >> toString
+
+
+[<RequireQualifiedAccess>]
+module MathML =
+
+    /// Format the xml body equivalent to the provided expression, recursively, without headers, root and annotations.
+    /// MathML3 2nd Edition; Strict Content.
+    [<CompiledName("FormatContentStrict")>]
+    let formatContentStrict expression = MathMLFormatter.formatContentStrict expression |> Xml.toString
+
+    /// Format the xml body equivalent to the provided expression, recursively, without headers, root and annotations.
+    /// MathML3 2nd Edition; Strict Content.
+    [<CompiledName("FormatContentStrictXml")>]
+    let formatContentStrictXml expression = MathMLFormatter.formatContentStrict expression
+
+    /// Format a semantics xml element containing both strict content representation and annotations.
+    /// MathML3 2nd Edition; Strict Content. Annotations: TeX, Infix
+    /// Future: ideally this routine would also provide annotations in MathML Presentation format, and maybe OpenMath.
+    [<CompiledName("FormatSemanticsAnnotated")>]
+    let formatSemanticsAnnotated expression = MathMLFormatter.formatSemanticsAnnotated expression |> Xml.toString
+
+    /// Format a semantics xml element containing both strict content representation and annotations.
+    /// MathML3 2nd Edition; Strict Content. Annotations: TeX, Infix
+    /// Future: ideally this routine would also provide annotations in MathML Presentation format, and maybe OpenMath.
+    [<CompiledName("FormatSemanticsAnnotatedXml")>]
+    let formatSemanticsAnnotatedXml expression = MathMLFormatter.formatSemanticsAnnotated expression
+
+    /// Parse the provided xml string and interpret it as expressions.
+    /// Future: ideally could also handle presentation and semantics-tag with annotations.
+    [<CompiledName("Parse")>]
+    let parse (text:string) = Xml.ofString text |> MathMLParser.parse
+
+    /// Parse the provided xml text reader and interpret it as expressions.
+    /// Future: ideally could also handle presentation and semantics-tag with annotations.
+    [<CompiledName("ParseReader")>]
+    let parseReader (reader:TextReader) = Xml.ofReader reader |> MathMLParser.parse
+
+    /// Parse the provided xml and interpret it as expressions.
+    /// Future: ideally could also handle presentation and semantics-tag with annotations.
+    [<CompiledName("ParseXml")>]
+    let parseXml (xml:XElement) = MathMLParser.parse xml
