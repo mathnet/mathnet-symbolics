@@ -4,8 +4,8 @@ open System.IO
 open System.Text
 open MathNet.Symbolics
 
-[<RequireQualifiedAccess>]
-module LaTeX =
+
+module private LaTeXFormatter =
 
     open Operators
     open ExpressionPatterns
@@ -20,13 +20,13 @@ module LaTeX =
         | Sinh -> "\\sinh" | Cosh -> "\\cosh" | Tanh -> "\\tanh"
         | ArcSin -> "\\arcsin" | ArcCos -> "\\arccos" | ArcTan -> "\\arctan"
 
-    let rec private texFractionPart write priority = function
+    let rec texFractionPart write priority = function
         | Product (x) ->
             if priority > 2 then write "\\left("
             x |> List.iter (fun x -> tex write 2 x)
             if priority > 2 then write "\\right)"
         | x -> tex write priority x
-    and private texSummand write first = function
+    and texSummand write first = function
         | Number n as x when n.IsNegative ->
             write "-";
             tex write 1 (-x)
@@ -39,7 +39,7 @@ module LaTeX =
         | x ->
             if first then tex write 1 x
             else write " + "; tex write 1 x
-    and private tex write priority = function
+    and tex write priority = function
         | Number n ->
             if n.IsInteger then
                 if n.Sign >= 0 then write (n.ToString())
@@ -142,12 +142,26 @@ module LaTeX =
             if priority > 3 then write "\\right)"
         | Sum [] | Product [] | FunctionN (_, []) -> failwith "invalid expression"
 
+
+
+[<RequireQualifiedAccess>]
+module LaTeX =
+
     /// LaTeX output
-    [<CompiledName("Print")>]
-    let print q =
+    [<CompiledName("Format")>]
+    let format expression =
         let sb = StringBuilder()
-        tex (sb.Append >> ignore) 0 q
+        LaTeXFormatter.tex (sb.Append >> ignore) 0 expression
         sb.ToString()
 
+    /// LaTeX output
+    [<CompiledName("Print")>]
+    [<System.Obsolete("Use Format instead")>]
+    let print q = format q
+
+    [<CompiledName("FormatWriter")>]
+    let formatWriter (writer:TextWriter) expression = LaTeXFormatter.tex (writer.Write) 0 expression
+
     [<CompiledName("PrintToTextWriter")>]
-    let printTextWriter (writer:TextWriter) q = tex (writer.Write) 0 q
+    [<System.Obsolete("Use FormatWriter instead")>]
+    let printTextWriter (writer:TextWriter) q = formatWriter writer q

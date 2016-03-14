@@ -133,7 +133,7 @@ module private MathMLFormatter =
     /// Future: ideally this routine would also provide annotations in MathML Presentation format, and maybe OpenMath.
     let formatSemanticsAnnotated x =
         let contentStrict = formatContentStrict x
-        let tex = LaTeX.print x
+        let tex = LaTeX.format x
         let infix = Infix.format x
         [
             contentStrict

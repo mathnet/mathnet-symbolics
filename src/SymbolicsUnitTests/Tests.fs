@@ -294,11 +294,11 @@ let ``Parse infix expressions`` () =
 [<Test>]
 let ``Print LaTeX expressions`` () =
 
-    LaTeX.print (1/(a*b)) --> "\\frac{1}{ab}"
-    LaTeX.print Expression.MinusOne --> "-1"
-    LaTeX.print Expression.ComplexInfinity --> "\\infty"
-    LaTeX.print Expression.Pi --> "\\pi"
-    LaTeX.print (Expression.Real -0.23) --> "-0.23"
+    LaTeX.format (1/(a*b)) --> "\\frac{1}{ab}"
+    LaTeX.format Expression.MinusOne --> "-1"
+    LaTeX.format Expression.ComplexInfinity --> "\\infty"
+    LaTeX.format Expression.Pi --> "\\pi"
+    LaTeX.format (Expression.Real -0.23) --> "-0.23"
 
 
 [<Test>]
