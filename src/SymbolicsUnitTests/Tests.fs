@@ -263,6 +263,8 @@ let ``Parse infix expressions`` () =
 
     Infix.parseOrThrow "(y-1)*10 + 2" ==> "2 + 10*(-1 + y)"
 
+    Infix.parseOrThrow "2*x^(2*y) + e^(3*y)" ==> "e^(3*y) + 2*x^(2*y)"
+
     Infix.parseOrThrow "15" ==> "15"
     Infix.parseOrThrow "1.5" ==> "1.5"
     Infix.parseOrThrow "0.25" ==> "0.25"

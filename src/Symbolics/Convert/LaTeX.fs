@@ -82,7 +82,9 @@ module LaTeX =
             let n = InfixPrinter.numerator p
             let d = InfixPrinter.denominator p
             if d = one then
+                if priority > 2 then write "\\left("
                 texFractionPart write 2 n
+                if priority > 2 then write "\\right)"
             else
                 if priority > 2 then write "\\left("
                 write "\\frac{"

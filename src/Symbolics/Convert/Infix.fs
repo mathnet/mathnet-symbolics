@@ -242,7 +242,9 @@ module private InfixPrinter =
             let n = numerator p
             let d = denominator p
             if d = one then
+                if priority > 2 then write "("
                 niceFractionPart write 2 n
+                if priority > 2 then write ")"
             else
                 if priority > 2 then write "("
                 niceFractionPart write 3 n
