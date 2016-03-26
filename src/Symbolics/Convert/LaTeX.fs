@@ -112,9 +112,13 @@ module private LaTeXFormatter =
             if priority > 3 then write "\\right)"
         | Power (r, p) ->
             if priority > 3 then write "\\left("
+            write "{"
             tex write 4 r
+            write "}"
             write "^"
+            write "{"
             tex write 4 p
+            write "}"
             if priority > 3 then write "\\right)"
         | Function (Abs, x) ->
             write "\\left|"
