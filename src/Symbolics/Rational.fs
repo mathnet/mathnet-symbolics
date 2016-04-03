@@ -66,7 +66,10 @@ module Rational =
             let d = denominator x |> Algebraic.expand
             let z = rationalize (n/d)
             if x = z then z else expandRationalize z
-        expandRationalize x |> reduce
+        let expanded = expandRationalize x |> reduce
+        match denominator expanded with
+        | Number _ -> Algebraic.expand expanded
+        | _ -> expanded
 
     [<CompiledName("Simplify")>]
     let simplify symbol x =

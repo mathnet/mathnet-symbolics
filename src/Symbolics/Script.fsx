@@ -44,6 +44,15 @@ let f = symbol "f"
 (a/b/(c*a))*(c*d/a)/d // 1/(a*b)
 
 
+(8*a*x + 6*a*x**2)/(4*x*a)
+(8*a*x + 6*a*x**2)/(4*x*a) |> Rational.reduce // (1/2)*(4 + 3*x)
+(8*a*x + 6*a*x**2)/(4*x*a) |> Rational.expand // 2 + (3/2)*x
+(8*a*x + 6*a*x**2)/(4*x*a) |> Rational.simplify x // (1/2)*(4 + 3*x)
+(8*a*x + 6*a*x**2)/(4*x*a) |> Rational.rationalize // ((1/4)*(8*a*x + 6*a*x^2))/(a*x)
+(8*a*x + 6*a*x**2)/(4*x*a) |> Rational.expand |> Rational.rationalize // (1/2)*(4 + 3*x)
+
+Polynomial.commonFactors (8*a*x + 6*a*x**2) // ==> "2*a*x"
+
 
 Algebraic.separateFactors x (b*cos(x)*ln(d)*x) // (b*ln(d), x*cos(x))
 Algebraic.separateFactors x (c*x*sin(x)/2) // ((1/2)*c, x*sin(x))
