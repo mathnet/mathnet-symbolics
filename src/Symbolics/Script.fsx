@@ -12,7 +12,7 @@ open MathNet.Symbolics
 
 open Operators
 
-fsi.AddPrinter Infix.print
+fsi.AddPrinter Infix.format
 
 // variables:
 let x = symbol "x"
@@ -219,9 +219,9 @@ Rational.simplify x (1/(1+1/(x+1)) + 2/(x+2))  // (3 + x)/(2 + x)
 
 
 // Printing
-Infix.print (1/(a*b))        // "1/(a*b)"
-Infix.printStrict (1/(a*b))  // "a^(-1)*b^(-1)"
-LaTeX.print (1/(a*b))        // "\frac{1}{ab}"
+Infix.format (1/(a*b))        // "1/(a*b)"
+Infix.formatStrict (1/(a*b))  // "a^(-1)*b^(-1)"
+LaTeX.format (1/(a*b))        // "\frac{1}{ab}"
 
 
 // Parsing
