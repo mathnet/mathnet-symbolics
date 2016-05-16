@@ -595,6 +595,7 @@ let ``Evaluate some expression to floating point numbers`` () =
     Evaluate.evaluate symbols (sin(a) + ln(b)) =!= FloatingPoint.Real 2.007909715
     Evaluate.evaluate symbols (a*x**2 + b*x + c |> Structure.substitute x (number 1/2)) =!= FloatingPoint.Complex (complex 3.0 -1.0)
     Evaluate.evaluate symbols (1Q/0Q) =!= FloatingPoint.ComplexInf
+    (fun () -> Evaluate.evaluate symbols (f) |> ignore) |> should (throwWithMessage "Failed to find symbol: f") typeof<System.Exception>
 
 
 [<Test>]
