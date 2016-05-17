@@ -10,6 +10,17 @@ open Operators
 /// General Polynomial Expressions
 module Polynomial =
 
+    /// Generate a polynomial of degree n from the coefficients list of length n+1 
+    [<CompiledName("FromCoefficients")>]
+    let fromCoefficients symbol (coefficients: Expression list) = 
+        let mkMonomial idx coeff = 
+            if idx = 0 
+            then coeff // coeff * symbol^0 = coeff * 1 = coeff
+            else coeff * pow symbol (fromInt32 idx)
+        coefficients 
+            |> List.mapi mkMonomial
+            |> List.sum
+
     [<CompiledName("Symbols")>]
     let symbols (xs: Expression list) = HashSet(List.toSeq xs, HashIdentity.Structural)
 

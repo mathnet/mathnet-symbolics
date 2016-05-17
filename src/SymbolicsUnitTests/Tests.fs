@@ -546,6 +546,13 @@ let ``Polynomial Expansion`` () =
     // get back to original polynomial:
     Algebraic.expand exs ==> "86 + 159*x + 124*x^2 + 51*x^3 + 11*x^4 + x^5"
 
+[<Test>]
+let ``Polynomial From Coefficients`` () = 
+    Polynomial.fromCoefficients x [1Q; 1Q; 1Q] ==> "1 + x + x^2"
+    Polynomial.fromCoefficients x [1Q; 2Q; 3Q] ==> "1 + 2*x + 3*x^2"
+    Polynomial.fromCoefficients x [a; b; c] ==> "a + b*x + c*x^2"
+    Polynomial.fromCoefficients x [sin(y); cos(y)] ==> "sin(y) + x*cos(y)"
+    Polynomial.fromCoefficients x [] ==> "0"
 
 [<Test>]
 let ``Polynomial Euclidean/GCD`` () =
