@@ -220,7 +220,7 @@ module Polynomial =
         | x -> let c, v = collectTermsMonomialMV symbols x in if c <> Undefined then c*v else Undefined
 
     /// Euclidean division of polynomials.
-    /// Returns a tuple with the quotient q and remainder such that u = q*v + r
+    /// Returns a tuple with the quotient q and remainder r such that u = q*v + r
     [<CompiledName("Divide")>]
     let divide symbol u v =
         let dv = degree symbol v
@@ -296,7 +296,7 @@ module Polynomial =
         let b = quot symbol (z-a*u |> Algebraic.expand) v
         z, a, b
 
-    /// Returns a tuple a, b such that a*u = w (mod v)
+    /// Returns a, such that a*u = w (mod v)
     [<CompiledName("halfDiophantineGcd")>]
     let halfDiophantineGcd symbol u v w =
         let (g, s) = halfExtendedGcd symbol u v
