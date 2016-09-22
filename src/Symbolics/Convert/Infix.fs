@@ -75,6 +75,7 @@ module private InfixParser =
         let cases =
             FSharpType.GetUnionCases typeof<Function>
             |> Array.map (fun case -> (case.Name.ToLower(), FSharpValue.MakeUnion(case, [||]) :?> Function))
+            |> Array.sortBy (fun (name,_) -> -name.Length)
         choice [ for (name, union) in cases -> str_ws name |>> fun _ -> union ] .>> ws
 
     let applyFunction = function
