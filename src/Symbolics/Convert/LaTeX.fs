@@ -20,10 +20,20 @@ module private LaTeXFormatter =
         | Sinh -> "\\sinh" | Cosh -> "\\cosh" | Tanh -> "\\tanh"
         | ArcSin -> "\\arcsin" | ArcCos -> "\\arccos" | ArcTan -> "\\arctan"
 
+    let private nextNumber = function
+         | Power (Number _, _)
+            -> true
+         | _ -> false
+
     let rec texFractionPart write priority = function
-        | Product (x) ->
+        | Product (h::t) ->
             if priority > 2 then write "\\left("
-            x |> List.iter (fun x -> tex write 2 x)
+            tex write 2 h
+            match h with
+            | Number _ when t.Head |> nextNumber ->
+                    write "*"
+            | _ -> ()
+            t |> List.iter (fun x -> tex write 2 x)
             if priority > 2 then write "\\right)"
         | x -> tex write priority x
     and texSummand write first = function
