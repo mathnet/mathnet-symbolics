@@ -305,7 +305,12 @@ let ``Print LaTeX expressions`` () =
     LaTeX.format (a**(b**c)) --> """{a}^{\left({b}^{c}\right)}"""
     LaTeX.format ((a**b)**c) --> """{\left({a}^{b}\right)}^{c}"""
 
-
+    LaTeX.format (3Q*2Q**x) --> """3*{2}^{x}"""
+    LaTeX.format (5Q*x) --> """5x"""
+    LaTeX.format (Expression.Pi * 10Q) --> """10\pi"""
+    LaTeX.format (Expression.E * 2Q**(4Q*x)) --> """e{2}^{\left(4x\right)}"""
+    LaTeX.format (4Q * Expression.E ** x) --> """4{e}^{x}"""
+    
 [<Test>]
 let ``Format MathML3 Strict Content`` () =
 
