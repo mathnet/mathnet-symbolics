@@ -16,6 +16,11 @@ module private InfixParser =
     open Microsoft.FSharp.Reflection
     open FParsec
     open Operators
+    open System.Reflection
+
+    type Pseudo = 
+        | Sqrt
+        | Pow
 
     type 'a parser = Parser<'a, unit>
 
@@ -74,13 +79,31 @@ module private InfixParser =
     let functionName : Function parser =
         let cases =
             FSharpType.GetUnionCases typeof<Function>
-            |> Array.map (fun case -> (case.Name.ToLower(), FSharpValue.MakeUnion(case, [||]) :?> Function))
+            |> Array.map 
+                (fun case -> (case.Name.ToLower(), FSharpValue.MakeUnion(case, [||]) :?> Function))
             |> Array.sortBy (fun (name,_) -> -name.Length)
-        choice [ for (name, union) in cases -> str_ws name |>> fun _ -> union ] .>> ws
 
+        choice [ for (name, union) in cases -> str_ws name |>> fun _ -> union ] .>> ws
+    
     let applyFunction = function
         | f, [arg] -> Expression.Apply(f, arg)
         | f, args -> Expression.ApplyN(f, args)
+
+    let pseudoName : Pseudo parser =
+        let flags = BindingFlags.NonPublic ||| BindingFlags.Public
+        let cases =
+            FSharpType.GetUnionCases (typeof<Pseudo>, flags)
+            |> Array.map 
+                (fun case -> (case.Name.ToLower(), FSharpValue.MakeUnion(case, [||], flags) :?> Pseudo))
+            |> Array.sortBy (fun (name,_) -> -name.Length)
+
+        choice [ for (name, union) in cases -> str_ws name |>> fun _ -> union ] .>> ws
+
+    let applyPseudo = 
+        function
+        | Sqrt, [arg] -> arg |> Operators.sqrt
+        | Pow, [x;y] -> (x,y) |> Expression.Pow
+        | _ -> failwith "wrong matching"
 
     let expression : Expression parser =
 
@@ -93,7 +116,9 @@ module private InfixParser =
         let functionArgs = sepBy expr (str_ws ",") |> parens
         let functionTerm = functionName .>>. functionArgs |>> applyFunction
 
-        let term = number <|> parensTerm <|> absTerm <|> attempt functionTerm <|> identifier
+        let pseudoTerm = pseudoName .>>. functionArgs |>> applyPseudo
+
+        let term = number <|> parensTerm <|> absTerm <|> attempt functionTerm <|> attempt pseudoTerm  <|> identifier
 
         opp.TermParser <- term
         opp.AddOperator(InfixOperator("+", ws, 1, Associativity.Left, add))
