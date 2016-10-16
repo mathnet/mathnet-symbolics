@@ -1,4 +1,4 @@
-﻿module Tests
+module Tests
 
 #if INTERACTIVE
 #load "Interactive.fsx"
@@ -15,6 +15,10 @@ open Operators
 
 // Test: x should evaluate to expected
 let inline (-->) x expected = x |> should equal expected
+
+let inline (=!=) x expected = x.ToString() |> should equal (expected.ToString())
+
+let inline (-!=) x expected = Infix.format x |> should equal (expected.ToString())
 
 // Test: x should evaluate to the expected string when formatted *nicely*
 let inline (==>) x expected = Infix.format x |> should equal expected
@@ -86,11 +90,11 @@ let ``Constant Expressions`` () =
     Expression.Pi ==> "π"
     Expression.E ==> "e"
     Expression.I ==> "j"
-    Expression.Real(1.23) ==> "1.23"
-    Expression.Real(-0.23) ==> "-0.23"
+    Expression.Real(1.23) -!= 1.23
+    Expression.Real(-0.23) -!= -0.23
 
-    real 1.1 + real 2.2 ==> "3.3"
-    real 1.1 * real 2.2 ==> "2.42"
+    real 1.1 + real 2.2 -!= 3.3
+    real 1.1 * real 2.2 -!= 2.42
 
     2 * real 2.0 ==> "4"
 
@@ -266,17 +270,17 @@ let ``Parse infix expressions`` () =
     Infix.parseOrThrow "2*x^(2*y) + e^(3*y)" ==> "e^(3*y) + 2*x^(2*y)"
 
     Infix.parseOrThrow "15" ==> "15"
-    Infix.parseOrThrow "1.5" ==> "1.5"
-    Infix.parseOrThrow "0.25" ==> "0.25"
-    Infix.parseOrThrow "0.0250" ==> "0.025"
-    Infix.parseOrThrow "2.25" ==> "2.25"
-    Infix.parseOrThrow "2.250" ==> "2.25"
-    Infix.parseOrThrow "0.001" ==> "0.001"
+    Infix.parseOrThrow "1.5" -!= 1.5
+    Infix.parseOrThrow "0.25" -!= 0.25
+    Infix.parseOrThrow "0.0250" -!= 0.025
+    Infix.parseOrThrow "2.25" -!= 2.25
+    Infix.parseOrThrow "2.250" -!= 2.25
+    Infix.parseOrThrow "0.001" -!= 0.001
     Infix.parseOrThrow "2.00" ==> "2"
 
-    Infix.parseOrThrow "1.5*a + o" ==> "1.5*a + o"
+    Infix.parseOrThrow "1.5*a + o" ==> ((1.5).ToString() |> sprintf "%s*a + o")
 
-    Infix.parseOrThrow ".001" ==> "0.001"
+    Infix.parseOrThrow ".001" -!= 0.001
     Infix.parseOrThrow ".001" --> Expression.Real(0.001)
     Infix.parseOrThrow "1." ==> "1"
     Infix.parseOrThrow "1." --> Expression.Real(1.0)
@@ -298,7 +302,7 @@ let ``Print LaTeX expressions`` () =
     LaTeX.format Expression.MinusOne --> """-1"""
     LaTeX.format Expression.ComplexInfinity --> """\infty"""
     LaTeX.format Expression.Pi --> """\pi"""
-    LaTeX.format (Expression.Real -0.23) --> """-0.23"""
+    LaTeX.format (Expression.Real -0.23) --> (-0.23).ToString()
     LaTeX.format (a**b) --> """{a}^{b}"""
     LaTeX.format (a**(b+c)) --> """{a}^{\left(b + c\right)}"""
     LaTeX.format ((a+b)**c) --> """{\left(a + b\right)}^{c}"""
@@ -599,8 +603,6 @@ let ``Polynomial Euclidean/GCD`` () =
 [<Test>]
 let ``Evaluate some expression to floating point numbers`` () =
 
-    let (=!=) x expected = x.ToString() |> should equal (expected.ToString())
-
     let symbols = Map.ofList ["a", FloatingPoint.Real 2.0; "b", FloatingPoint.Real 3.0; "c", FloatingPoint.Complex (complex 1.0 -1.0)]
     Evaluate.evaluate symbols (a) =!= FloatingPoint.Real 2.0
     Evaluate.evaluate symbols (1Q/2) =!= FloatingPoint.Real 0.5
@@ -822,3 +824,13 @@ let ``Single Variable Polynomials`` () =
     SingleVariablePolynomial.leadingCoefficientDegreeSV x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1) ==|> ("2", "6")
     SingleVariablePolynomial.coefficientsSV x (3*x*x + 2*x)  ==-> [|"0"; "2"; "3"|]
     SingleVariablePolynomial.coefficientsSV x (3*x + 2*x*(x**5) + 2*(x**3) + x + 1) ==-> [|"1"; "4"; "0"; "2"; "0"; "0"; "2"|]
+
+
+[<Test>]
+let ``Pseudo Function Test`` () =
+
+    Infix.parseOrUndefined "sqrt(x)" ==> "x^(1/2)"
+    Infix.parseOrUndefined "pow(x,3)" ==> "x^3"
+    Infix.parseOrUndefined "pow(3*x,10*sin(x))" ==> "(3*x)^(10*sin(x))"
+    Infix.parseOrUndefined "sqrt(pow(x,1/2))" ==> "(x^(1/2))^(1/2)"
+  
