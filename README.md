@@ -23,7 +23,7 @@ You'll find a large set of expression and algebraic operator examples in the [Un
 * `Rational.rationalize (1+1/(1+1/x))` → `(1 + 2*x)/(1 + x)`
 * `Rational.simplify x ((x**2-1)/(x+1))` → `-1 + x`
 
-```
+```fsharp
 let taylor (k:int) symbol x a =
     let rec impl n nf acc dxn =
         if n = k then acc else
