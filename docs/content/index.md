@@ -41,8 +41,8 @@ which automatically loads its dependencies `MathNet.Numerics` and `MathNet.Numer
 In F# interactive you can reference them by loading two scripts, along the lines of
 
     [lang=text]
-    #load @"..\..\packages\MathNet.Numerics.FSharp.3.2.1\MathNet.Numerics.fsx"
-    #load @"..\..\packages\MathNet.Symbolics.0.2.0-alpha\MathNet.Symbolics.fsx"
+    #load @"..\..\packages\MathNet.Numerics.FSharp.3.8.0\MathNet.Numerics.fsx"
+    #load @"..\..\packages\MathNet.Symbolics.0.9.0\MathNet.Symbolics.fsx"
 
 To get started, open the namespaces and the Operators module and declare the variables
 and constants you intend to use as symbols:
@@ -77,9 +77,9 @@ to a display printer added in the script loaded above. You can also use these pr
 to format any expression as infix string, LaTeX expression or in strict mode to see the actual
 internal representation:
 
-    Infix.print (1/(a*b))        // returns string "1/(a*b)"
-    Infix.printStrict (1/(a*b))  // returns string "a^(-1)*b^(-1)"
-    LaTeX.print (1/(a*b))        // returns string "\frac{1}{ab}"
+    Infix.format (1/(a*b))        // returns string "1/(a*b)"
+    Infix.formatStrict (1/(a*b))  // returns string "a^(-1)*b^(-1)"
+    LaTeX.format (1/(a*b))        // returns string "\frac{1}{ab}"
 
 Strings in infix notation can be parsed back into expressions:
 
@@ -161,10 +161,8 @@ Even though Math.NET Symbolics is written entirely in F#, it can be used in C#
 almost exactly the same way. The equivalent C# code to the F# code above could look as follows:
 
     [lang=csharp]
-    using System.Numerics
-    using MathNet.Numerics
-    using MathNet.Symbolics
-    using Expr = MathNet.Symbolics.Expression
+    using MathNet.Symbolics;
+    using Expr = MathNet.Symbolics.Expression;
 
     var x = Expr.Symbol("x");
     var y = Expr.Symbol("y");
@@ -176,18 +174,18 @@ almost exactly the same way. The equivalent C# code to the F# code above could l
     var e = Expr.Symbol("e");
     var f = Expr.Symbol("f");
 
-    Infix.Print(a+a);                    // returns 2*a
-    Infix.Print(a*a);                    // returns a^2
-    Infix.Print(2 + 1/x - 1);            // returns 1 + 1/x
-    Infix.Print((a/b/(c*a))*(c*d/a)/d);  // returns 1/(a*b)
+    Infix.Format(a + a);                    // returns 2*a
+    Infix.Format(a * a);                    // returns a^2
+    Infix.Format(2 + 1 / x - 1);            // returns 1 + 1/x
+    Infix.Format((a / b / (c * a)) * (c * d / a) / d);  // returns 1/(a*b)
 
-    Infix.Print(1/(a*b));        // returns string "1/(a*b)"
-    Infix.PrintStrict(1/(a*b));  // returns string "a^(-1)*b^(-1)"
-    LaTeX.Print(1/(a*b));        // returns string "\frac{1}{ab}"
+    Infix.Format(1 / (a * b));        // returns string "1/(a*b)"
+    Infix.FormatStrict(1 / (a * b));  // returns string "a^(-1)*b^(-1)"
+    LaTeX.Format(1 / (a * b));        // returns string "\frac{1}{ab}"
 
-    Infix.Print(Infix.ParseOrUndefined("1/(a*b)")); // Returns 1/(a*b)
-    Infix.Print(Infix.ParseOrUndefined("1/(a*b"));  // Returns Undefined
-    Infix.Print(Infix.ParseOrThrow("1/(a*b)"));     // Returns 1/(a*b)
+    Infix.Format(Infix.ParseOrUndefined("1/(a*b)")); // Returns 1/(a*b)
+    Infix.Format(Infix.ParseOrUndefined("1/(a*b"));  // Returns Undefined
+    Infix.Format(Infix.ParseOrThrow("1/(a*b)"));     // Returns 1/(a*b)
 
     var symbols = new Dictionary<string,FloatingPoint>
        {{ "a", 2.0 },
@@ -197,7 +195,7 @@ almost exactly the same way. The equivalent C# code to the F# code above could l
     Evaluate.Evaluate(symbols, 1/(a*b)).RealValue;
 
     // Returns 3/8 + (1/2)*cos(2*x) + (1/8)*cos(4*x)
-    Infix.Print(Trigonometric.Contract(Expr.Pow(Expr.Cos(x), 4)));
+    Infix.Format(Trigonometric.Contract(Expr.Pow(Expr.Cos(x), 4)));
 
     // Taylor Expansion
     Expr Taylor(int k, Expr symbol, Expr a, Expr x)
@@ -216,4 +214,4 @@ almost exactly the same way. The equivalent C# code to the F# code above could l
     }
 
     // Returns 1 + x - (1/2)*x^2 - (1/6)*x^3
-    Infix.Print(Taylor(4, x, 0, Expr.Sin(x)+Expr.Cos(x)));
+    Infix.Format(Taylor(4, x, 0, Expr.Sin(x)+Expr.Cos(x)));
