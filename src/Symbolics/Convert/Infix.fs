@@ -18,7 +18,7 @@ module private InfixParser =
     open Operators
     open System.Reflection
 
-    type Pseudo = 
+    type Pseudo =
         | Sqrt
         | Pow
 
@@ -79,12 +79,12 @@ module private InfixParser =
     let functionName : Function parser =
         let cases =
             FSharpType.GetUnionCases typeof<Function>
-            |> Array.map 
+            |> Array.map
                 (fun case -> (case.Name.ToLower(), FSharpValue.MakeUnion(case, [||]) :?> Function))
             |> Array.sortBy (fun (name,_) -> -name.Length)
 
         choice [ for (name, union) in cases -> str_ws name |>> fun _ -> union ] .>> ws
-    
+
     let applyFunction = function
         | f, [arg] -> Expression.Apply(f, arg)
         | f, args -> Expression.ApplyN(f, args)
@@ -93,13 +93,13 @@ module private InfixParser =
         let flags = BindingFlags.NonPublic ||| BindingFlags.Public
         let cases =
             FSharpType.GetUnionCases (typeof<Pseudo>, flags)
-            |> Array.map 
+            |> Array.map
                 (fun case -> (case.Name.ToLower(), FSharpValue.MakeUnion(case, [||], flags) :?> Pseudo))
             |> Array.sortBy (fun (name,_) -> -name.Length)
 
         choice [ for (name, union) in cases -> str_ws name |>> fun _ -> union ] .>> ws
 
-    let applyPseudo = 
+    let applyPseudo =
         function
         | Sqrt, [arg] -> arg |> Operators.sqrt
         | Pow, [x;y] -> (x,y) |> Expression.Pow
@@ -167,7 +167,7 @@ module private InfixFormatter =
         | Constant E -> write "e"
         | Constant Pi -> write "pi"
         | Constant I -> write "j"
-        | Constant (Constant.Real fp) ->
+        | Approximation (Double fp) ->
             if fp >= 0.0 then write (fp.ToString())
             else
                 if priority > 0 then write "("
@@ -250,7 +250,7 @@ module private InfixFormatter =
         | Constant E -> write "e"
         | Constant Pi -> write "\u03C0" // "π"
         | Constant I -> write "j"
-        | Constant (Constant.Real fp) ->
+        | Approximation (Double fp) ->
             if fp >= 0.0 then write (fp.ToString())
             else
                 if priority > 0 then write "("

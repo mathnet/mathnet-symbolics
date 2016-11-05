@@ -5,11 +5,10 @@ open System.Numerics
 open MathNet.Numerics
 open MathNet.Symbolics
 
-open ConstantPatterns
-
 [<StructuralEquality;NoComparison>]
 type Expression =
     | Number of BigRational
+    | Approximation of Approximation
     | Identifier of Symbol
     | Constant of Constant
     | Sum of Expression list
@@ -22,7 +21,85 @@ type Expression =
     | Undefined
 
 
+module ExpressionPatterns =
+
+    let (|Zero|_|) = function
+        | Number n when n.IsZero -> Some Zero
+        | Approximation (Double x) when x = 0.0 -> Some Zero
+        | _ -> None
+
+    let (|One|_|) = function
+        | Number n when n.IsOne -> Some One
+        | Approximation (Double x) when x = 1.0 -> Some One
+        | _ -> None
+
+    let (|MinusOne|_|) = function
+        | Number n when n.IsInteger && n.Numerator = BigInteger.MinusOne -> Some MinusOne
+        | Approximation (Double x) when x = -1.0 -> Some MinusOne
+        | _ -> None
+
+    let (|NegativeInfinity|_|) = function
+        | Product [Number n; Infinity] when n.IsNegative -> Some NegativeInfinity
+        | _ -> None
+
+    let (|Negative|_|) = function
+        | Number n when n.IsNegative -> Some Negative
+        | Approximation (Double x) when x < 0.0 -> Some Negative
+        | NegativeInfinity -> Some Negative
+        | _ -> None
+
+    let (|Positive|_|) = function
+        | Number n when n.IsPositive -> Some Positive
+        | Constant E | Constant Pi -> Some Positive
+        | Approximation (Double x) when x > 0.0 -> Some Positive
+        | Infinity -> Some Positive
+        | _ -> None
+
+    let (|Integer|_|) = function
+        | Number n when n.IsInteger -> Some (n)
+        | _ -> None
+
+    let (|PosIntPower|_|) = function
+        | Power (r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
+        | _ -> None
+
+    let (|NegIntPower|_|) = function
+        | Power (r, (Number n as p)) when n.IsInteger && n.IsNegative -> Some (r, p)
+        | _ -> None
+
+    let (|NegRationalPower|_|) = function
+        | Power (r, (Number n as p)) when n.IsNegative -> Some (r, p)
+        | _ -> None
+
+    /// Terminal node, either a number, identifier/symbol or constant (including infinity).
+    /// Warning: Undefined is *not* included.
+    let (|Terminal|_|) = function
+        | Number _ | Identifier _ | Constant _ as t -> Some t
+        | _ -> None
+
+    /// Recognizes a sin or cos expression
+    let (|SinCos|_|) = function
+        | Function (Sin, _) | Function (Cos, _) as t -> Some t
+        | _ -> None
+
+    let (|SinCosPosIntPower|_|) = function
+        | Function (Sin, _) | Function (Cos, _) as r -> Some (r, Number BigRational.One)
+        | Power (Function (Sin, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
+        | Power (Function (Cos, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
+        | _ -> None
+
+
+module Approx =
+
+    let sum = function | Double a, Double b -> Double (a+b)
+    let product = function | Double a, Double b -> Double (a*b)
+
+    let fromRational (x:BigRational) = Double (float x)
+
+
 module Operators =
+
+    open ExpressionPatterns
 
     let zero = Number BigRational.Zero
     let one = Number BigRational.One
@@ -37,11 +114,14 @@ module Operators =
     let complexInfinity = Expression.ComplexInfinity
     let negativeInfinity = Product [minusOne; Infinity]
 
-    let real (floatingPoint:float) =
-        if Double.IsPositiveInfinity floatingPoint then Infinity
-        elif Double.IsNegativeInfinity floatingPoint then negativeInfinity
-        elif Double.IsNaN floatingPoint then Undefined
-        else Constant (Real floatingPoint)
+    let approximation = function
+        | Double x ->
+            if Double.IsPositiveInfinity x then Infinity
+            elif Double.IsNegativeInfinity x then negativeInfinity
+            elif Double.IsNaN x then Undefined
+            else Approximation (Double x)
+
+    let real floatingPoint = approximation (Double floatingPoint)
 
     let fromInt32 (x:int) = Number (BigRational.FromInt x)
     let fromInt64 (x:int64) = Number (BigRational.FromBigInt (BigInteger(x)))
@@ -55,6 +135,7 @@ module Operators =
         let rec compare a b =
             match a, b with
             | Number x, Number y -> x < y
+            | Approximation x, Approximation y -> x < y
             | Identifier x, Identifier y -> x < y
             | Constant x, Constant y -> x < y
             | Sum xs, Sum ys | Product xs, Product ys -> compareZip (List.rev xs) (List.rev ys)
@@ -63,6 +144,8 @@ module Operators =
             | FunctionN (xf, xs), FunctionN (yf, ys) -> if xf <> yf then xf < yf else compareZip (List.rev xs) (List.rev ys)
             | Number _, _ -> true
             | _, Number _ -> false
+            | Approximation _, _ -> true
+            | _, Approximation _ -> false
             | Constant _, _ -> true
             | _, Constant _ -> false
             | Product xs, y -> compareZip (List.rev xs) [y]
@@ -132,12 +215,12 @@ module Operators =
         | a, b | b, a when a = zero -> b
         | Undefined, _ | _, Undefined -> undefined
         | ComplexInfinity, ComplexInfinity -> undefined
-        | ComplexInfinity, (Infinity | Product [Number _; Infinity]) | (Infinity | Product [Number _; Infinity]), ComplexInfinity -> undefined
+        | ComplexInfinity, (Infinity | NegativeInfinity) | (Infinity | NegativeInfinity), ComplexInfinity -> undefined
         | ComplexInfinity, _ | _, ComplexInfinity -> complexInfinity
-        | Infinity, Product [Number n; Infinity] | Product [Number n; Infinity], Infinity when n.IsNegative -> undefined
+        | Infinity, NegativeInfinity | NegativeInfinity, Infinity -> undefined
         | Infinity, _ | _, Infinity -> infinity
-        | Constant (Real a), Constant (Real b) -> real (a+b)
-        | Constant (Real r), Number n | Number n, Constant (Real r) -> real (r + float n)
+        | Approximation a, Approximation b -> Approx.sum (a, b) |> approximation
+        | Approximation r, Number n | Number n, Approximation r -> Approx.sum (r, Approx.fromRational n) |> approximation
         | Number a, b | b, Number a -> numAdd a b
         | Sum ((Number a)::ax), Sum ((Number b)::bx) -> numAdd (a+b) (merge ax bx)
         | Sum ((Number a)::ax), Sum bx | Sum bx, Sum ((Number a)::ax) -> numAdd a (merge ax bx)
@@ -194,12 +277,12 @@ module Operators =
         | Undefined, _ | _, Undefined -> undefined
         | ComplexInfinity, (Number _ | Constant _ | Infinity | ComplexInfinity) | (Number _ | Constant _ | Infinity | ComplexInfinity), ComplexInfinity -> complexInfinity
         | Infinity, Number n | Number n, Infinity -> if n.IsNegative then negativeInfinity else infinity
-        | Infinity, (Constant PositiveReal | Infinity) | (Constant PositiveReal | Infinity), Infinity -> infinity
-        | Infinity, Constant NegativeReal | Constant NegativeReal, Infinity -> negativeInfinity
-        | Product [Number n; Infinity], (Constant PositiveReal | Infinity) | (Constant PositiveReal | Infinity), Product [Number n; Infinity] when n.IsNegative -> negativeInfinity
-        | Product [Number n; Infinity], Constant NegativeReal | Constant NegativeReal, Product [Number n; Infinity] when n.IsNegative -> infinity
-        | Constant (Real a), Constant (Real b) -> real (a*b)
-        | Constant (Real r), Number n | Number n, Constant (Real r) -> real (r * float n)
+        | Infinity, Positive | Positive, Infinity -> infinity
+        | Infinity, Negative | Negative, Infinity -> negativeInfinity
+        | NegativeInfinity, Positive | Positive, NegativeInfinity -> negativeInfinity
+        | NegativeInfinity, Negative | Negative, NegativeInfinity -> infinity
+        | Approximation a, Approximation b -> Approx.product (a, b) |> approximation
+        | Approximation r, Number n | Number n, Approximation r -> Approx.product (r, Approx.fromRational n) |> approximation
         | Number a, b | b, Number a -> numMul a b
         | Product ((Number a)::ax), Product ((Number b)::bx) -> numMul (a*b) (merge ax bx)
         | Product ((Number a)::ax), Product bx | Product bx, Product ((Number a)::ax) -> numMul a (merge ax bx)
@@ -242,9 +325,9 @@ module Operators =
 
     let divide x y = multiply x (invert y)
 
-    let sum (xs:Expression list) = if List.length xs = 0 then zero else List.reduce add xs
+    let sum (xs:Expression list) = if List.isEmpty xs then zero else List.reduce add xs
     let sumSeq (xs:Expression seq) = Seq.fold add zero xs
-    let product (xs:Expression list) = if List.length xs = 0 then one else List.reduce multiply xs
+    let product (xs:Expression list) = if List.isEmpty xs then one else List.reduce multiply xs
     let productSeq (xs:Expression seq) = Seq.fold multiply one xs
 
     let root n x = Power (x, Power(n, minusOne))
@@ -380,49 +463,3 @@ module NumericLiteralQ =
     let FromInt32 (x:int) = Expression.FromInt32 x
     let FromInt64 (x:int64) = Expression.FromInt64 x
     let FromString str = Expression.FromRational (BigRational.Parse str)
-
-
-module ExpressionPatterns =
-
-    let (|Integer|_|) = function
-        | Number n when n.IsInteger -> Some (n)
-        | _ -> None
-
-    let (|Zero|One|MinusOne|Other|) = function
-        | Number n when n.IsZero -> Zero
-        | Number n when n.IsOne -> One
-        | Number n when n.IsInteger && n.Numerator = BigInteger.MinusOne -> MinusOne
-        | _ -> Other
-
-    let (|NegativeInfinity|_|) = function
-        | Product [MinusOne; Infinity] -> Some NegativeInfinity
-        | _ -> None
-
-    let (|PosIntPower|_|) = function
-        | Power (r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
-        | _ -> None
-
-    let (|NegIntPower|_|) = function
-        | Power (r, (Number n as p)) when n.IsInteger && n.IsNegative -> Some (r, p)
-        | _ -> None
-
-    let (|NegRationalPower|_|) = function
-        | Power (r, (Number n as p)) when n.IsNegative -> Some (r, p)
-        | _ -> None
-
-    /// Terminal node, either a number, identifier/symbol or constant (including infinity).
-    /// Warning: Undefined is *not* included.
-    let (|Terminal|_|) = function
-        | Number _ | Identifier _ | Constant _ as t -> Some t
-        | _ -> None
-
-    /// Recognizes a sin or cos expression
-    let (|SinCos|_|) = function
-        | Function (Sin, _) | Function (Cos, _) as t -> Some t
-        | _ -> None
-
-    let (|SinCosPosIntPower|_|) = function
-        | Function (Sin, _) | Function (Cos, _) as r -> Some (r, Expression.One)
-        | Power (Function (Sin, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
-        | Power (Function (Cos, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
-        | _ -> None

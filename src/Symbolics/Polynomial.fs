@@ -10,14 +10,14 @@ open Operators
 /// General Polynomial Expressions
 module Polynomial =
 
-    /// Generate a polynomial of degree n from the coefficients list of length n+1 
+    /// Generate a polynomial of degree n from the coefficients list of length n+1
     [<CompiledName("FromCoefficients")>]
-    let fromCoefficients symbol (coefficients: Expression list) = 
-        let mkMonomial idx coeff = 
-            if idx = 0 
+    let fromCoefficients symbol (coefficients: Expression list) =
+        let mkMonomial idx coeff =
+            if idx = 0
             then coeff // coeff * symbol^0 = coeff * 1 = coeff
             else coeff * pow symbol (fromInt32 idx)
-        coefficients 
+        coefficients
             |> List.mapi mkMonomial
             |> List.sum
 
@@ -32,7 +32,7 @@ module Polynomial =
             | Power _ as p -> keep p
             | Sum ax -> ax |> List.iter (impl keep)
             | Product ax -> ax |> List.iter (fun a -> match a with | Sum _ as z -> keep z | _ -> impl keep a)
-            | _ as z -> keep z
+            | z -> keep z
         let hs = symbols []
         impl (hs.Add >> ignore) x
         hs

@@ -47,7 +47,7 @@ let f = symbol "f"
 (8*a*x + 6*a*x**2)/(4*x*a)
 (8*a*x + 6*a*x**2)/(4*x*a) |> Rational.reduce // (1/2)*(4 + 3*x)
 (8*a*x + 6*a*x**2)/(4*x*a) |> Rational.expand // 2 + (3/2)*x
-(8*a*x + 6*a*x**2)/(4*x*a) |> Rational.simplify x // (1/2)*(4 + 3*x)
+(8*a*x + 6*a*x**2)/(4*x*a) |> Rational.simplify x // 2 + (3/2)*x
 (8*a*x + 6*a*x**2)/(4*x*a) |> Rational.rationalize // ((1/4)*(8*a*x + 6*a*x^2))/(a*x)
 (8*a*x + 6*a*x**2)/(4*x*a) |> Rational.expand |> Rational.rationalize // (1/2)*(4 + 3*x)
 

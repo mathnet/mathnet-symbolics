@@ -65,7 +65,7 @@ module private LaTeXFormatter =
                 write (n.Denominator.ToString());
                 write "}"
                 if priority > 2 then write "\\right)"
-        | Constant (Constant.Real fp) ->
+        | Approximation (Double fp) ->
             if fp >= 0.0 then write (fp.ToString())
             else
                 if priority > 0 then write "\\left({"

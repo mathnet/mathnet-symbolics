@@ -314,7 +314,7 @@ let ``Print LaTeX expressions`` () =
     LaTeX.format (Expression.Pi * 10Q) --> """10\pi"""
     LaTeX.format (Expression.E * 2Q**(4Q*x)) --> """e{2}^{\left(4x\right)}"""
     LaTeX.format (4Q * Expression.E ** x) --> """4{e}^{x}"""
-    
+
 [<Test>]
 let ``Format MathML3 Strict Content`` () =
 
@@ -556,7 +556,7 @@ let ``Polynomial Expansion`` () =
     Algebraic.expand exs ==> "86 + 159*x + 124*x^2 + 51*x^3 + 11*x^4 + x^5"
 
 [<Test>]
-let ``Polynomial From Coefficients`` () = 
+let ``Polynomial From Coefficients`` () =
     Polynomial.fromCoefficients x [1Q; 1Q; 1Q] ==> "1 + x + x^2"
     Polynomial.fromCoefficients x [1Q; 2Q; 3Q] ==> "1 + 2*x + 3*x^2"
     Polynomial.fromCoefficients x [a; b; c] ==> "a + b*x + c*x^2"
@@ -833,4 +833,4 @@ let ``Pseudo Function Test`` () =
     Infix.parseOrUndefined "pow(x,3)" ==> "x^3"
     Infix.parseOrUndefined "pow(3*x,10*sin(x))" ==> "(3*x)^(10*sin(x))"
     Infix.parseOrUndefined "sqrt(pow(x,1/2))" ==> "(x^(1/2))^(1/2)"
-  
+

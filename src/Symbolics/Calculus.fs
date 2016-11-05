@@ -12,7 +12,7 @@ module Calculus =
     let rec differentiate symbol = function
         | x when x = symbol -> one
         | Undefined as x -> x
-        | Number _ | Identifier _ | Constant _ | Infinity | ComplexInfinity -> zero
+        | Number _ | Approximation _ | Identifier _ | Constant _ | Infinity | ComplexInfinity -> zero
         | Sum xs -> sum <| List.map (differentiate symbol) xs
         | Product [x] -> differentiate symbol x
         | Product (x::xs) ->

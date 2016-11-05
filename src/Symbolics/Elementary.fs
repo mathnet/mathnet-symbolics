@@ -10,7 +10,7 @@ module Numbers =
 
     /// Represent the constant as a real number if possible
     let (|RealConstant|_|) = function
-        | Constant (Real r) -> Some r
+        | Approximation (Double r) -> Some r
         | Constant E -> Some Constants.E
         | Constant Pi -> Some Constants.Pi
         | Infinity -> Some System.Double.PositiveInfinity
@@ -80,7 +80,7 @@ module Structure =
         | Power _ -> 2
         | Function _ -> 1
         | FunctionN (_, xs) -> List.length xs
-        | Number _ | Identifier _ | Constant _ | Infinity | ComplexInfinity -> 0
+        | Number _ | Approximation _ | Identifier _ | Constant _ | Infinity | ComplexInfinity -> 0
         | Undefined -> 0
 
     [<CompiledName("Operand")>]
@@ -98,7 +98,7 @@ module Structure =
         | Sum ax | Product ax | FunctionN (_, ax) -> List.forall (freeOf symbol) ax
         | Power (r, p) -> freeOf symbol r && freeOf symbol p
         | Function (_, x) -> freeOf symbol x
-        | Number _ | Identifier _ | Constant _ | Infinity | ComplexInfinity -> true
+        | Number _ | Approximation _ | Identifier _ | Constant _ | Infinity | ComplexInfinity -> true
         | Undefined -> true
 
     [<CompiledName("IsFreeOfSet")>]
@@ -108,7 +108,7 @@ module Structure =
         | Sum ax | Product ax | FunctionN (_, ax) -> List.forall (freeOfSet symbols) ax
         | Power (r, p) -> freeOfSet symbols r && freeOfSet symbols p
         | Function (_, x) -> freeOfSet symbols x
-        | Number _ | Identifier _ | Constant _ | Infinity | ComplexInfinity -> true
+        | Number _ | Approximation _ | Identifier _ | Constant _ | Infinity | ComplexInfinity -> true
         | Undefined -> true
 
     [<CompiledName("Substitute")>]
@@ -120,7 +120,7 @@ module Structure =
         | Power (radix, p) -> (substitute y r radix) ** (substitute y r p)
         | Function (fn, x) -> apply fn (substitute y r x)
         | FunctionN (fn, xs) -> applyN fn (List.map (substitute y r) xs)
-        | Number _ | Identifier _ | Constant _ | Infinity | ComplexInfinity -> x
+        | Number _ | Approximation _ | Identifier _ | Constant _ | Infinity | ComplexInfinity -> x
         | Undefined -> x
 
     [<CompiledName("Map")>]
@@ -130,7 +130,7 @@ module Structure =
         | Power (r, p) -> (f r) ** (f p)
         | Function (fn, x) -> apply fn (f x)
         | FunctionN (fn, xs) -> applyN fn (List.map f xs)
-        | _ as x -> x
+        | x -> x
 
     [<CompiledName("Fold")>]
     let fold f s = function
