@@ -1,3 +1,12 @@
+### 0.10.0 - 2016-11-05
+* LaTeX: always emit braces around power operands
+* LaTeX: formatter must not skip multiplication sign in some cases *~FoggyFinder*
+* Infix: parsing sqrt, pow *~FoggyFinder*
+* Infix: fix bug on parsing hyperbolic functions *~FoggyFinder*
+* Evaluate: better error message when a symbol is missing *~Cer Lewis*
+* Polynomial: generate from coefficients list *~Zaid-Ajaj*
+* Rational: expand to algebraically expand result if its denominator is a number
+
 ### 0.9.0 - 2016-03-14
 * MathML: basic strict MathML formatting and parsing support
 * Infix/LaTeX: fix missing paranthesis when formatting denominator-free powers
