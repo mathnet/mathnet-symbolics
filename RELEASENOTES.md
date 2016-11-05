@@ -1,3 +1,6 @@
+### 0.10.1 - 2016-11-05
+* Evaluate: fix CLI method signature of the evaluate function (cross-language support).
+
 ### 0.10.0 - 2016-11-05
 * LaTeX: always emit braces around power operands
 * LaTeX: formatter must not skip multiplication sign in some cases *~FoggyFinder*
