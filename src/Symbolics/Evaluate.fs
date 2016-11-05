@@ -163,25 +163,22 @@ module Evaluate =
     let fapplyN f xs = failwith "not supported yet"
 
     [<CompiledName("Evaluate")>]
-    let rec evaluate (symbols:IDictionary<string, FloatingPoint>) = 
-        let symbol s =
+    let rec evaluate (symbols:IDictionary<string, FloatingPoint>) = function
+        | Number n -> Real (float n) |> fnormalize
+        | Undefined -> Undef
+        | Expression.Infinity -> PosInf
+        | ComplexInfinity -> ComplexInf
+        | Constant E -> Real (Constants.E)
+        | Constant Pi -> Real (Constants.Pi)
+        | Constant I -> Complex (Complex.ImaginaryOne)
+        | Constant (Constant.Real fp) -> Real fp
+        | Identifier (Symbol s) ->
             try
-                symbols.[s]
+                symbols.[s] |> fnormalize
             with
             | :? KeyNotFoundException -> failwithf  "Failed to find symbol: %s" s
-
-        function
-            | Number n -> Real (float n) |> fnormalize
-            | Undefined -> Undef
-            | Expression.Infinity -> PosInf
-            | ComplexInfinity -> ComplexInf
-            | Constant E -> Real (Constants.E)
-            | Constant Pi -> Real (Constants.Pi)
-            | Constant I -> Complex (Complex.ImaginaryOne)
-            | Constant (Constant.Real fp) -> Real fp
-            | Identifier (Symbol s) -> symbol s |> fnormalize
-            | Sum xs -> xs |> List.map (evaluate symbols) |> List.reduce fadd |> fnormalize
-            | Product xs -> xs |> List.map (evaluate symbols) |> List.reduce fmultiply |> fnormalize
-            | Power (r, p) -> fpower (evaluate symbols r) (evaluate symbols p) |> fnormalize
-            | Function (f, x) -> fapply f (evaluate symbols x) |> fnormalize
-            | FunctionN (f, xs) -> xs |> List.map (evaluate symbols) |> fapplyN f |> fnormalize
+        | Sum xs -> xs |> List.map (evaluate symbols) |> List.reduce fadd |> fnormalize
+        | Product xs -> xs |> List.map (evaluate symbols) |> List.reduce fmultiply |> fnormalize
+        | Power (r, p) -> fpower (evaluate symbols r) (evaluate symbols p) |> fnormalize
+        | Function (f, x) -> fapply f (evaluate symbols x) |> fnormalize
+        | FunctionN (f, xs) -> xs |> List.map (evaluate symbols) |> fapplyN f |> fnormalize
