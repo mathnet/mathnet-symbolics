@@ -98,6 +98,9 @@ let ``Constant Expressions`` () =
 
     2 * real 2.0 ==> "4"
 
+    x + 2*x ==> "3*x"
+    x + 2.2*x ==> "3.2*x"
+
 
 [<Test>]
 let ``Real Infinity Expressions`` () =
@@ -125,6 +128,8 @@ let ``Complex Infinity Expressions`` () =
     complexInfinity + 2Q ==> "⧝"
     complexInfinity*complexInfinity ==> "⧝"
     complexInfinity*(-2*complexInfinity) ==> "⧝"
+    complexInfinity+x*complexInfinity ==> "Undefined"
+    complexInfinity*(x+complexInfinity) ==> "⧝"
 
     complexInfinity + infinity ==> "Undefined"
     complexInfinity - infinity ==> "Undefined"

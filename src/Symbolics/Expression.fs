@@ -20,22 +20,53 @@ type Expression =
     | ComplexInfinity
     | Undefined
 
+[<RequireQualifiedAccess>]
+module Values =
+
+    let (|Value|_|) = function
+        | Number n -> Some (Value.Number n)
+        | Approximation a -> Some (Value.Approximation a)
+        | ComplexInfinity -> Some Value.ComplexInfinity
+        | Infinity -> Some Value.PositiveInfinity
+        | Product [Number n; Infinity] when n.IsNegative -> Some Value.NegativeInfinity
+//        | Undefined -> Some Value.Undefined
+        | _ -> None
+
+    let unpack = function
+        | Value.Number n -> Number n
+        | Value.Approximation a -> Approximation a
+        | Value.ComplexInfinity -> ComplexInfinity
+        | Value.PositiveInfinity -> Infinity
+        | Value.NegativeInfinity -> Product [Number (BigRational.FromInt -1); Infinity]
+        | Value.Undefined -> Undefined
+
+    let double (x:float) = ValueOperations.double x |> unpack
+    let rational (x:BigRational) = Number x
+
+    let negate a = ValueOperations.negate a |> unpack
+    let abs a = ValueOperations.abs a |> unpack
+
+    let sum (a, b) = ValueOperations.sum (a, b) |> unpack
+    let product (a, b) = ValueOperations.product (a, b) |> unpack
+    let invert a = ValueOperations.invert a |> unpack
+    let power (a, b) = ValueOperations.power (a, b) |> unpack
+
 
 module ExpressionPatterns =
 
     let (|Zero|_|) = function
         | Number n when n.IsZero -> Some Zero
-        | Approximation (Double x) when x = 0.0 -> Some Zero
+        | Approximation x when ApproxOperations.isZero x -> Some Zero
         | _ -> None
 
     let (|One|_|) = function
         | Number n when n.IsOne -> Some One
-        | Approximation (Double x) when x = 1.0 -> Some One
+        | Approximation x when ApproxOperations.isOne x -> Some One
         | _ -> None
 
     let (|MinusOne|_|) = function
         | Number n when n.IsInteger && n.Numerator = BigInteger.MinusOne -> Some MinusOne
-        | Approximation (Double x) when x = -1.0 -> Some MinusOne
+        | Approximation x when ApproxOperations.isMinusOne x -> Some MinusOne
         | _ -> None
 
     let (|NegativeInfinity|_|) = function
@@ -44,14 +75,14 @@ module ExpressionPatterns =
 
     let (|Negative|_|) = function
         | Number n when n.IsNegative -> Some Negative
-        | Approximation (Double x) when x < 0.0 -> Some Negative
+        | Approximation x when ApproxOperations.isNegative x -> Some Negative
         | NegativeInfinity -> Some Negative
         | _ -> None
 
     let (|Positive|_|) = function
         | Number n when n.IsPositive -> Some Positive
         | Constant E | Constant Pi -> Some Positive
-        | Approximation (Double x) when x > 0.0 -> Some Positive
+        | Approximation x when ApproxOperations.isPositive x -> Some Positive
         | Infinity -> Some Positive
         | _ -> None
 
@@ -89,14 +120,6 @@ module ExpressionPatterns =
         | _ -> None
 
 
-module Approx =
-
-    let sum = function | Double a, Double b -> Double (a+b)
-    let product = function | Double a, Double b -> Double (a*b)
-
-    let fromRational (x:BigRational) = Double (float x)
-
-
 module Operators =
 
     open ExpressionPatterns
@@ -114,14 +137,7 @@ module Operators =
     let complexInfinity = Expression.ComplexInfinity
     let negativeInfinity = Product [minusOne; Infinity]
 
-    let approximation = function
-        | Double x ->
-            if Double.IsPositiveInfinity x then Infinity
-            elif Double.IsNegativeInfinity x then negativeInfinity
-            elif Double.IsNaN x then Undefined
-            else Approximation (Double x)
-
-    let real floatingPoint = approximation (Double floatingPoint)
+    let real floatingPoint = Values.double floatingPoint
 
     let fromInt32 (x:int) = Number (BigRational.FromInt x)
     let fromInt64 (x:int64) = Number (BigRational.FromBigInt (BigInteger(x)))
@@ -186,21 +202,22 @@ module Operators =
         // none of the summands is allowed to be a sum
         // only the first summand is allowed to be a number
 
-        /// Recognize terms of the form a*x -> (a,x) where a is a number
+        /// Recognize terms of the form a*x -> (v,x) where a is a value
         let (|Term|_|) = function
             | Number _ -> None
-            | Product [(Number a); b] -> Some (a, b)
-            | Product ((Number a)::xs) -> Some (a, Product xs)
-            | x -> Some (BigRational.One, x)
+            | Approximation _ -> None
+            | Product [(Values.Value v); b] -> Some (v, b)
+            | Product ((Values.Value v)::xs) -> Some (v, Product xs)
+            | x -> Some (ValueOperations.one, x)
 
         let merge (xs:Expression list) (ys:Expression list) =
             let rec gen acc u v =
                 match acc, u, v with
                 | Zero::cc, _, _ -> gen cc u v
                 | Term(ac,at)::cc, Term(xc,xt)::xs, y | Term(ac,at)::cc, y, Term(xc,xt)::xs when at = xt ->
-                    gen ((multiply (Number(ac+xc)) at)::cc) xs y
+                    gen ((multiply (ValueOperations.sum(ac,xc) |> Values.unpack) at)::cc) xs y
                 | _, Term(xc,xt)::xs, Term(yc,yt)::ys when xt = yt ->
-                    gen ((multiply (Number(xc+yc)) xt)::acc) xs ys
+                    gen ((multiply (ValueOperations.sum(xc,yc) |> Values.unpack) xt)::acc) xs ys
                 | _, x::xs, y::ys ->
                     if orderRelation x y then gen (x::acc) xs v
                     else gen (y::acc) u ys
@@ -211,30 +228,26 @@ module Operators =
             | [] -> zero
             | x -> Sum (List.rev x)
 
-        let rec numAdd n x =
+        let rec valueAdd (v:Value) x =
             match x with
-            | Number b -> Number (n+b)
-            | Sum [] -> Number n
-            | Sum [Number a] -> Number (a+n)
-            | Sum [a] -> if n.IsZero then a else Sum [Number n; a]
-            | Sum ((Number a)::ax) -> numAdd (a+n) (Sum ax)
-            | Sum ax -> if n.IsZero then x else Sum (Number n::ax)
-            | x -> if n.IsZero then x else Sum [Number n; x]
+            | Values.Value a | Sum [Values.Value a] -> Values.sum (v, a)
+            | Sum [] -> Values.unpack v
+            | Sum [a] -> if ValueOperations.isZero v then a else Sum [Values.unpack v; a]
+            | Sum ((Values.Value a)::ax) -> valueAdd (ValueOperations.sum (a,v)) (Sum ax)
+            | Sum ax -> if ValueOperations.isZero v then x else Sum (Values.unpack v::ax)
+            | x -> if ValueOperations.isZero v then x else Sum [Values.unpack v; x]
 
         match x, y with
-        | Zero, b | b, Zero -> b
         | Undefined, _ | _, Undefined -> undefined
-        | ComplexInfinity, ComplexInfinity -> undefined
-        | ComplexInfinity, (Infinity | NegativeInfinity) | (Infinity | NegativeInfinity), ComplexInfinity -> undefined
+        | Zero, b | b, Zero -> b
+        | Values.Value a, Values.Value b -> Values.sum (a, b)
         | ComplexInfinity, _ | _, ComplexInfinity -> complexInfinity
-        | Infinity, NegativeInfinity | NegativeInfinity, Infinity -> undefined
         | Infinity, _ | _, Infinity -> infinity
-        | Approximation a, Approximation b -> Approx.sum (a, b) |> approximation
-        | Approximation r, Number n | Number n, Approximation r -> Approx.sum (r, Approx.fromRational n) |> approximation
-        | Number a, b | b, Number a -> numAdd a b
-        | Sum ((Number a)::ax), Sum ((Number b)::bx) -> numAdd (a+b) (merge ax bx)
-        | Sum ((Number a)::ax), Sum bx | Sum bx, Sum ((Number a)::ax) -> numAdd a (merge ax bx)
-        | Sum ((Number a)::ax), b | b, Sum ((Number a)::ax) -> numAdd a (merge ax [b])
+        | NegativeInfinity, _ | _, NegativeInfinity -> negativeInfinity
+        | Values.Value a, b | b, Values.Value a -> valueAdd a b
+        | Sum ((Values.Value a)::ax), Sum ((Values.Value b)::bx) -> valueAdd (ValueOperations.sum (a, b)) (merge ax bx)
+        | Sum ((Values.Value a)::ax), Sum bx | Sum bx, Sum ((Values.Value a)::ax) -> valueAdd a (merge ax bx)
+        | Sum ((Values.Value a)::ax), b | b, Sum ((Values.Value a)::ax) -> valueAdd a (merge ax [b])
         | Sum ax, Sum bx -> merge ax bx
         | Sum ax, b -> merge ax [b]
         | a, Sum bx -> merge [a] bx
@@ -247,6 +260,7 @@ module Operators =
         /// Recognize terms of the form r^p -> (r,p)
         let (|Term|_|) = function
             | Number _ -> None
+            | Approximation _ -> None
             | Power (r,p) -> Some (r, p)
             | x -> Some (x, one)
 
@@ -270,33 +284,28 @@ module Operators =
             | x -> Product (List.rev x)
 
         /// Multiply a number with an expression (potentially a denormalized product)
-        let rec numMul (n:BigRational) x =
-            if n.IsZero then zero else
+        let rec valueMul (v:Value) x =
+            if ValueOperations.isZero v then zero else
             match x with
-            | Number b -> Number (n*b)
-            | Product [] -> Number n
-            | Product [Number a] -> Number (a*n)
-            | Product [a] -> if n.IsOne then a else Product [Number n; a]
-            | Product ((Number a)::ax) -> numMul (a*n) (Product ax)
-            | Product ax -> if n.IsOne then x else Product (Number n::ax)
-            | x -> if n.IsOne then x else Product [Number n; x]
+            | Values.Value a | Product [Values.Value a] -> Values.product (v, a)
+            | Product [] -> Values.unpack v
+            | Product [a] -> if ValueOperations.isOne v then a else Product [Values.unpack v; a]
+            | Product ((Values.Value a)::ax) -> valueMul (ValueOperations.product (a,v)) (Product ax)
+            | Product ax -> if ValueOperations.isOne v then x else Product (Values.unpack v::ax)
+            | x -> if ValueOperations.isOne v then x else Product [Values.unpack v; x]
 
         match x, y with
+        | Undefined, _ | _, Undefined -> undefined
         | One, b | b, One -> b
         | Zero, _ | _, Zero -> zero
-        | Undefined, _ | _, Undefined -> undefined
-        | ComplexInfinity, (Number _ | Constant _ | Infinity | ComplexInfinity) | (Number _ | Constant _ | Infinity | ComplexInfinity), ComplexInfinity -> complexInfinity
-        | Infinity, Number n | Number n, Infinity -> if n.IsNegative then negativeInfinity else infinity
-        | Infinity, Positive | Positive, Infinity -> infinity
-        | Infinity, Negative | Negative, Infinity -> negativeInfinity
-        | NegativeInfinity, Positive | Positive, NegativeInfinity -> negativeInfinity
-        | NegativeInfinity, Negative | Negative, NegativeInfinity -> infinity
-        | Approximation a, Approximation b -> Approx.product (a, b) |> approximation
-        | Approximation r, Number n | Number n, Approximation r -> Approx.product (r, Approx.fromRational n) |> approximation
-        | Number a, b | b, Number a -> numMul a b
-        | Product ((Number a)::ax), Product ((Number b)::bx) -> numMul (a*b) (merge ax bx)
-        | Product ((Number a)::ax), Product bx | Product bx, Product ((Number a)::ax) -> numMul a (merge ax bx)
-        | Product ((Number a)::ax), b | b, Product ((Number a)::ax) -> numMul a (merge ax [b])
+        | Values.Value a, Values.Value b -> Values.product (a, b)
+        | ComplexInfinity, _ | _, ComplexInfinity -> complexInfinity
+        | Infinity, _ | _, Infinity -> infinity
+        | NegativeInfinity, _ | _, NegativeInfinity -> negativeInfinity
+        | Values.Value a, b | b, Values.Value a -> valueMul a b
+        | Product ((Values.Value a)::ax), Product ((Values.Value b)::bx) -> valueMul (ValueOperations.product (a, b)) (merge ax bx)
+        | Product ((Values.Value a)::ax), Product bx | Product bx, Product ((Values.Value a)::ax) -> valueMul a (merge ax bx)
+        | Product ((Values.Value a)::ax), b | b, Product ((Values.Value a)::ax) -> valueMul a (merge ax [b])
         | Product ax, Product bx -> merge ax bx
         | Product ax, b -> merge ax [b]
         | a, Product bx -> merge [a] bx
@@ -309,13 +318,8 @@ module Operators =
         | _, Zero -> one
         | a, One -> a
         | One, _ -> one
-        | Undefined, _ | _, Undefined -> undefined
-        | Number a, Number b when b.IsInteger ->
-            if b.IsNegative then
-                if a.IsZero then complexInfinity
-                // workaround bug in BigRational with negative powers - drop after upgrading to > v3.0.0-alpha9
-                else Number (BigRational.Pow(BigRational.Reciprocal a, -int(b.Numerator)))
-            else Number (BigRational.Pow(a, int(b.Numerator)))
+        | Number a, Number b when not (b.IsInteger) -> Power (x,y)
+        | Values.Value a, Values.Value b -> Values.power (a, b)
         | Product ax, Number b when b.IsInteger -> Product (ax |> List.map (fun z -> pow z y))
         | Power (r, p), Number b when b.IsInteger -> pow r (multiply p y)
         | a, b -> Power(a, b)
@@ -325,10 +329,7 @@ module Operators =
     let subtract x y = add x (negate y)
 
     let rec invert = function
-        | Undefined -> undefined
-        | Infinity | ComplexInfinity -> zero
-        | Number a when a.IsZero -> complexInfinity // no direction
-        | Number a -> Number (BigRational.Reciprocal a)
+        | Values.Value v -> Values.invert v
         | Product ax -> Product (ax |> List.map invert)
         | Power (r, p) -> pow r (negate p)
         | x -> Power (x, minusOne)
@@ -344,9 +345,8 @@ module Operators =
     let sqrt x = root two x
 
     let abs = function
-        | Number n when n.IsNegative -> Number -n
-        | Number n as x -> x
-        | Product ((Number n)::ax) when n.IsNegative -> Function (Abs, multiply (Number -n) (Product ax))
+        | Values.Value v -> Values.abs v
+        | Product ((Values.Value v)::ax) when ValueOperations.isNegative v -> Function (Abs, multiply (Values.abs v) (Product ax))
         | x -> Function (Abs, x)
 
     let exp = function
@@ -461,6 +461,16 @@ type Expression with
     static member ( / ) (x, (y:int)) = x / (Operators.number y)
     static member ( / ) ((x:int), y) = (Operators.number x) / y
     static member Pow (x, (y:int)) = Operators.pow x (Operators.number y)
+
+    // Simpler usage - approximations
+    static member ( + ) (x, (y:float)) = x + (Operators.real y)
+    static member ( + ) ((x:float), y) = (Operators.real x) + y
+    static member ( - ) (x, (y:float)) = x - (Operators.real y)
+    static member ( - ) ((x:float), y) = (Operators.real x) - y
+    static member ( * ) (x, (y:float)) = x * (Operators.real y)
+    static member ( * ) ((x:float), y) = (Operators.real x) * y
+    static member ( / ) (x, (y:float)) = x / (Operators.real y)
+    static member ( / ) ((x:float), y) = (Operators.real x) / y
 
     // Simpler usage in C#
     static member op_Implicit (x:int) = Operators.fromInt32(x)
