@@ -9,6 +9,21 @@ type Approximation =
     | Real of float
     | Complex of Complex
 
+    // Simpler usage in C#
+    static member op_Implicit (x:float) = Real x
+    static member op_Implicit (x:complex) = Complex x
+    member x.RealValue =
+        match x with
+        | Real x -> x
+        | Complex x when x.IsReal() -> x.Real
+        | _ -> failwith "Value not convertible to a real number."
+    member x.ComplexValue =
+        match x with
+        | Real x -> complex x 0.0
+        | Complex x -> x
+        | _ -> failwith "Value not convertible to a complex number."
+
+
 [<RequireQualifiedAccess>]
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Approximation =
@@ -23,16 +38,16 @@ module Approximation =
     let sum = function
         | Real a, Real b -> Real (a+b)
         | Complex a, Complex b -> Complex (a+b)
-        | Complex a, Real b | Real b, Complex a -> Complex (a+C(b,0.0))
+        | Complex a, Real b | Real b, Complex a -> Complex (a + complex b 0.0)
     let product = function
         | Real a, Real b -> Real (a*b)
         | Complex a, Complex b -> Complex (a*b)
-        | Complex a, Real b | Real b, Complex a -> Complex (a*C(b,0.0))
+        | Complex a, Real b | Real b, Complex a -> Complex (a * complex b 0.0)
     let pow = function
         | Real a, Real b -> Real (a**b)
         | Complex a, Complex b -> Complex (C.Pow(a,b))
-        | Real a, Complex b -> Complex (C.Pow(C(a,0.0),b))
-        | Complex a, Real b -> Complex (C.Pow(a,C(b,0.0)))
+        | Real a, Complex b -> Complex (C.Pow(complex a 0.0, b))
+        | Complex a, Real b -> Complex (C.Pow(a, complex b 0.0))
     let invert = function
         | Real a -> Real (1.0/a)
         | Complex a -> Complex (C.Reciprocal a)

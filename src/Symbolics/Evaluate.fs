@@ -1,6 +1,7 @@
 ﻿namespace MathNet.Symbolics
 
 open System
+open System.Collections.Generic
 open System.Numerics
 open MathNet.Numerics
 open MathNet.Numerics.LinearAlgebra
@@ -56,9 +57,6 @@ type FloatingPoint =
 
 module Evaluate =
 
-    open System.Collections.Generic
-    type C = System.Numerics.Complex
-
     let (|Infinity|_|) = function
         | PosInf | NegInf | ComplexInf -> Some Infinity
         | _ -> None
@@ -83,7 +81,7 @@ module Evaluate =
     let fadd u v =
         match u, v with
         | Real x, Real y -> Real (x+y)
-        | Real x, Complex y | Complex y, Real x -> Complex (C(x,0.0)+y)
+        | Real x, Complex y | Complex y, Real x -> Complex ((complex x 0.0) + y)
         | Complex x, Complex y -> Complex (x+y)
         | RealVector x, RealVector y -> RealVector (x+y)
         | ComplexVector x, ComplexVector y -> ComplexVector (x+y)
@@ -99,7 +97,7 @@ module Evaluate =
     let fmultiply u v =
         match u, v with
         | Real x, Real y -> Real (x*y)
-        | Real x, Complex y | Complex y, Real x -> Complex (C(x,0.0)*y)
+        | Real x, Complex y | Complex y, Real x -> Complex ((complex x 0.0) * y)
         | Complex x, Complex y -> Complex (x*y)
         | RealVector x, RealVector y -> Real (x*y)
         | ComplexVector x, ComplexVector y -> Complex (x*y)
@@ -120,7 +118,7 @@ module Evaluate =
         match u, v with
         | Real x, Real y -> Real (Math.Pow(x, y))
         | Complex x, Real y -> Complex (Complex.Pow(x, y))
-        | Real x, Complex y -> Complex (Complex.Pow(C(x,0.0), y))
+        | Real x, Complex y -> Complex (Complex.Pow(complex x 0.0, y))
         | Complex x, Complex y -> Complex (Complex.Pow(x, y))
         | Undef, _ | _, Undef -> Undef
         | ComplexInf, Infinity | Infinity, ComplexInf -> ComplexInf
