@@ -9,6 +9,12 @@ module Approximate =
 
     open Operators
 
+    [<CompiledName("Real")>]
+    let real x = Approximation.Real(x)
+
+    [<CompiledName("Complex")>]
+    let complex r i = Approximation.Complex (System.Numerics.Complex(r, i))
+
     [<CompiledName("ApproximateSubstitute")>]
     let rec approximateSubstitute (symbols:IDictionary<string, Approximation>) x =
         match x with
@@ -28,7 +34,7 @@ module Approximate =
             | x -> apply f x
         | Identifier (Symbol s) ->
             match symbols.TryGetValue s with
-            | true, a -> a |> ValueOperations.approx |> Values.unpack
+            | true, a -> a |> Value.approx |> Values.unpack
             | _ -> x
         | FunctionN _
         | ComplexInfinity

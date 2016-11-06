@@ -14,7 +14,8 @@ type Value =
     | Undefined
 
 [<RequireQualifiedAccess>]
-module ValueOperations =
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+module Value =
 
     let real (x:float) =
         if Double.IsPositiveInfinity x then Value.PositiveInfinity
@@ -37,28 +38,28 @@ module ValueOperations =
 
     let (|Zero|_|) = function
         | Value.Number n when n.IsZero -> Some Zero
-        | Value.Approximation a when ApproxOperations.isZero a -> Some Zero
+        | Value.Approximation a when Approximation.isZero a -> Some Zero
         | _ -> None
 
     let (|One|_|) = function
         | Value.Number n when n.IsOne -> Some One
-        | Value.Approximation a when ApproxOperations.isOne a -> Some One
+        | Value.Approximation a when Approximation.isOne a -> Some One
         | _ -> None
 
     let (|MinusOne|_|) = function
         | Value.Number n when n.IsInteger && n.Numerator = BigInteger.MinusOne -> Some MinusOne
-        | Value.Approximation a when ApproxOperations.isMinusOne a -> Some MinusOne
+        | Value.Approximation a when Approximation.isMinusOne a -> Some MinusOne
         | _ -> None
 
     let (|Positive|_|) = function
         | Value.Number n when n.IsPositive -> Some Positive
-        | Value.Approximation x when ApproxOperations.isPositive x -> Some Positive
+        | Value.Approximation x when Approximation.isPositive x -> Some Positive
         | Value.PositiveInfinity -> Some Positive
         | _ -> None
 
     let (|Negative|_|) = function
         | Value.Number n when n.IsNegative -> Some Negative
-        | Value.Approximation x when ApproxOperations.isNegative x -> Some Negative
+        | Value.Approximation x when Approximation.isNegative x -> Some Negative
         | Value.NegativeInfinity -> Some Negative
         | _ -> None
 
@@ -70,7 +71,7 @@ module ValueOperations =
 
     let negate = function
         | Value.Number a -> Value.Number (-a)
-        | Value.Approximation a -> ApproxOperations.negate a |> approx
+        | Value.Approximation a -> Approximation.negate a |> approx
         | Value.NegativeInfinity -> Value.PositiveInfinity
         | Value.PositiveInfinity -> Value.NegativeInfinity
         | Value.ComplexInfinity -> Value.ComplexInfinity
@@ -79,7 +80,7 @@ module ValueOperations =
     let abs = function
         | Value.Number a when a.IsNegative -> Value.Number (-a)
         | Value.Number _ as x -> x
-        | Value.Approximation a -> ApproxOperations.abs a |> approx
+        | Value.Approximation a -> Approximation.abs a |> approx
         | Value.NegativeInfinity | Value.PositiveInfinity | Value.ComplexInfinity -> Value.PositiveInfinity
         | Value.Undefined -> Value.Undefined
 
@@ -87,8 +88,8 @@ module ValueOperations =
         | Value.Undefined, _ | _, Value.Undefined -> Value.Undefined
         | Zero, b | b, Zero -> b
         | Value.Number a, Value.Number b -> Value.Number (a + b)
-        | Value.Approximation a, Value.Approximation b -> ApproxOperations.sum (a, b) |> approx
-        | Value.Number a, Value.Approximation b | Value.Approximation b, Value.Number a -> ApproxOperations.sum (ApproxOperations.fromRational a, b) |> approx
+        | Value.Approximation a, Value.Approximation b -> Approximation.sum (a, b) |> approx
+        | Value.Number a, Value.Approximation b | Value.Approximation b, Value.Number a -> Approximation.sum (Approximation.fromRational a, b) |> approx
         | Value.ComplexInfinity, (Value.ComplexInfinity | Value.PositiveInfinity | Value.NegativeInfinity) -> Value.Undefined
         | (Value.ComplexInfinity | Value.PositiveInfinity | Value.NegativeInfinity),  Value.ComplexInfinity -> Value.Undefined
         | Value.ComplexInfinity, _ | _, Value.ComplexInfinity -> Value.ComplexInfinity
@@ -101,8 +102,8 @@ module ValueOperations =
         | One, b | b, One -> b
         | Zero, _ | _, Zero -> zero
         | Value.Number a, Value.Number b -> Value.Number (a * b)
-        | Value.Approximation a, Value.Approximation b -> ApproxOperations.product (a, b) |> approx
-        | Value.Number a, Value.Approximation b | Value.Approximation b, Value.Number a -> ApproxOperations.product (ApproxOperations.fromRational a, b) |> approx
+        | Value.Approximation a, Value.Approximation b -> Approximation.product (a, b) |> approx
+        | Value.Number a, Value.Approximation b | Value.Approximation b, Value.Number a -> Approximation.product (Approximation.fromRational a, b) |> approx
         | Value.ComplexInfinity, _ | _, Value.ComplexInfinity -> Value.ComplexInfinity
         | Value.PositiveInfinity, Positive | Positive, Value.PositiveInfinity -> Value.PositiveInfinity
         | Value.PositiveInfinity, Negative | Negative, Value.PositiveInfinity -> Value.NegativeInfinity
@@ -114,7 +115,7 @@ module ValueOperations =
     let invert = function
         | Zero -> Value.ComplexInfinity
         | Value.Number a -> Value.Number (BigRational.Reciprocal a)
-        | Value.Approximation a -> ApproxOperations.invert a |> approx
+        | Value.Approximation a -> Approximation.invert a |> approx
         | Value.ComplexInfinity | Value.PositiveInfinity | Value.NegativeInfinity -> zero
         | Value.Undefined -> Value.Undefined
 
@@ -130,14 +131,14 @@ module ValueOperations =
                 // workaround bug in BigRational with negative powers - drop after upgrading to > v3.0.0-alpha9
                 else Value.Number (BigRational.Pow(BigRational.Reciprocal a, -int(b.Numerator)))
             else Value.Number (BigRational.Pow(a, int(b.Numerator)))
-        | Value.Approximation a, Value.Approximation b -> ApproxOperations.pow (a, b) |> approx
-        | Value.Number a, Value.Number b -> ApproxOperations.pow (ApproxOperations.fromRational a, ApproxOperations.fromRational b) |> approx
-        | Value.Approximation a, Value.Number b -> ApproxOperations.pow (a, ApproxOperations.fromRational b) |> approx
-        | Value.Number a, Value.Approximation b -> ApproxOperations.pow (ApproxOperations.fromRational a, b) |> approx
+        | Value.Approximation a, Value.Approximation b -> Approximation.pow (a, b) |> approx
+        | Value.Number a, Value.Number b -> Approximation.pow (Approximation.fromRational a, Approximation.fromRational b) |> approx
+        | Value.Approximation a, Value.Number b -> Approximation.pow (a, Approximation.fromRational b) |> approx
+        | Value.Number a, Value.Approximation b -> Approximation.pow (Approximation.fromRational a, b) |> approx
 
     let apply f = function
-        | Value.Approximation a -> ApproxOperations.apply f a |> approx
-        | Value.Number a -> ApproxOperations.fromRational a |> ApproxOperations.apply f |> approx
+        | Value.Approximation a -> Approximation.apply f a |> approx
+        | Value.Number a -> Approximation.fromRational a |> Approximation.apply f |> approx
         | Value.Undefined _ -> Value.Undefined
         | Value.ComplexInfinity -> Value.Undefined // TODO
         | Value.PositiveInfinity -> Value.Undefined // TODO

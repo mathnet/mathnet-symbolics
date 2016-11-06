@@ -10,7 +10,8 @@ type Approximation =
     | Complex of Complex
 
 [<RequireQualifiedAccess>]
-module ApproxOperations =
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+module Approximation =
 
     type C = System.Numerics.Complex
 

@@ -40,48 +40,48 @@ module Values =
         | Value.NegativeInfinity -> NegativeInfinity
         | Value.Undefined -> Undefined
 
-    let real (x:float) = ValueOperations.real x |> unpack
-    let complex (x:Complex) = ValueOperations.complex x |> unpack
+    let real (x:float) = Value.real x |> unpack
+    let complex (x:Complex) = Value.complex x |> unpack
     let rational (x:BigRational) = Number x
 
-    let negate a = ValueOperations.negate a |> unpack
-    let abs a = ValueOperations.abs a |> unpack
+    let negate a = Value.negate a |> unpack
+    let abs a = Value.abs a |> unpack
 
-    let sum (a, b) = ValueOperations.sum (a, b) |> unpack
-    let product (a, b) = ValueOperations.product (a, b) |> unpack
-    let invert a = ValueOperations.invert a |> unpack
-    let power (a, b) = ValueOperations.power (a, b) |> unpack
+    let sum (a, b) = Value.sum (a, b) |> unpack
+    let product (a, b) = Value.product (a, b) |> unpack
+    let invert a = Value.invert a |> unpack
+    let power (a, b) = Value.power (a, b) |> unpack
 
-    let apply f x = ValueOperations.apply f x |> unpack
+    let apply f x = Value.apply f x |> unpack
 
 
 module ExpressionPatterns =
 
     let (|Zero|_|) = function
         | Number n when n.IsZero -> Some Zero
-        | Approximation x when ApproxOperations.isZero x -> Some Zero
+        | Approximation x when Approximation.isZero x -> Some Zero
         | _ -> None
 
     let (|One|_|) = function
         | Number n when n.IsOne -> Some One
-        | Approximation x when ApproxOperations.isOne x -> Some One
+        | Approximation x when Approximation.isOne x -> Some One
         | _ -> None
 
     let (|MinusOne|_|) = function
         | Number n when n.IsInteger && n.Numerator = BigInteger.MinusOne -> Some MinusOne
-        | Approximation x when ApproxOperations.isMinusOne x -> Some MinusOne
+        | Approximation x when Approximation.isMinusOne x -> Some MinusOne
         | _ -> None
 
     let (|Negative|_|) = function
         | Number n when n.IsNegative -> Some Negative
-        | Approximation x when ApproxOperations.isNegative x -> Some Negative
+        | Approximation x when Approximation.isNegative x -> Some Negative
         | NegativeInfinity -> Some Negative
         | _ -> None
 
     let (|Positive|_|) = function
         | Number n when n.IsPositive -> Some Positive
         | Constant E | Constant Pi -> Some Positive
-        | Approximation x when ApproxOperations.isPositive x -> Some Positive
+        | Approximation x when Approximation.isPositive x -> Some Positive
         | PositiveInfinity -> Some Positive
         | _ -> None
 
@@ -216,16 +216,16 @@ module Operators =
             | Approximation _ -> None
             | Product [(Values.Value v); b] -> Some (v, b)
             | Product ((Values.Value v)::xs) -> Some (v, Product xs)
-            | x -> Some (ValueOperations.one, x)
+            | x -> Some (Value.one, x)
 
         let merge (xs:Expression list) (ys:Expression list) =
             let rec gen acc u v =
                 match acc, u, v with
                 | Zero::cc, _, _ -> gen cc u v
                 | Term(ac,at)::cc, Term(xc,xt)::xs, y | Term(ac,at)::cc, y, Term(xc,xt)::xs when at = xt ->
-                    gen ((multiply (ValueOperations.sum(ac,xc) |> Values.unpack) at)::cc) xs y
+                    gen ((multiply (Value.sum(ac,xc) |> Values.unpack) at)::cc) xs y
                 | _, Term(xc,xt)::xs, Term(yc,yt)::ys when xt = yt ->
-                    gen ((multiply (ValueOperations.sum(xc,yc) |> Values.unpack) xt)::acc) xs ys
+                    gen ((multiply (Value.sum(xc,yc) |> Values.unpack) xt)::acc) xs ys
                 | _, x::xs, y::ys ->
                     if orderRelation x y then gen (x::acc) xs v
                     else gen (y::acc) u ys
@@ -240,10 +240,10 @@ module Operators =
             match x with
             | Values.Value a | Sum [Values.Value a] -> Values.sum (v, a)
             | Sum [] -> Values.unpack v
-            | Sum [a] -> if ValueOperations.isZero v then a else Sum [Values.unpack v; a]
-            | Sum ((Values.Value a)::ax) -> valueAdd (ValueOperations.sum (a,v)) (Sum ax)
-            | Sum ax -> if ValueOperations.isZero v then x else Sum (Values.unpack v::ax)
-            | x -> if ValueOperations.isZero v then x else Sum [Values.unpack v; x]
+            | Sum [a] -> if Value.isZero v then a else Sum [Values.unpack v; a]
+            | Sum ((Values.Value a)::ax) -> valueAdd (Value.sum (a,v)) (Sum ax)
+            | Sum ax -> if Value.isZero v then x else Sum (Values.unpack v::ax)
+            | x -> if Value.isZero v then x else Sum [Values.unpack v; x]
 
         match x, y with
         | Undefined, _ | _, Undefined -> undefined
@@ -253,7 +253,7 @@ module Operators =
         | PositiveInfinity, _ | _, PositiveInfinity -> infinity
         | NegativeInfinity, _ | _, NegativeInfinity -> negativeInfinity
         | Values.Value a, b | b, Values.Value a -> valueAdd a b
-        | Sum ((Values.Value a)::ax), Sum ((Values.Value b)::bx) -> valueAdd (ValueOperations.sum (a, b)) (merge ax bx)
+        | Sum ((Values.Value a)::ax), Sum ((Values.Value b)::bx) -> valueAdd (Value.sum (a, b)) (merge ax bx)
         | Sum ((Values.Value a)::ax), Sum bx | Sum bx, Sum ((Values.Value a)::ax) -> valueAdd a (merge ax bx)
         | Sum ((Values.Value a)::ax), b | b, Sum ((Values.Value a)::ax) -> valueAdd a (merge ax [b])
         | Sum ax, Sum bx -> merge ax bx
@@ -293,14 +293,14 @@ module Operators =
 
         /// Multiply a number with an expression (potentially a denormalized product)
         let rec valueMul (v:Value) x =
-            if ValueOperations.isZero v then zero else
+            if Value.isZero v then zero else
             match x with
             | Values.Value a | Product [Values.Value a] -> Values.product (v, a)
             | Product [] -> Values.unpack v
-            | Product [a] -> if ValueOperations.isOne v then a else Product [Values.unpack v; a]
-            | Product ((Values.Value a)::ax) -> valueMul (ValueOperations.product (a,v)) (Product ax)
-            | Product ax -> if ValueOperations.isOne v then x else Product (Values.unpack v::ax)
-            | x -> if ValueOperations.isOne v then x else Product [Values.unpack v; x]
+            | Product [a] -> if Value.isOne v then a else Product [Values.unpack v; a]
+            | Product ((Values.Value a)::ax) -> valueMul (Value.product (a,v)) (Product ax)
+            | Product ax -> if Value.isOne v then x else Product (Values.unpack v::ax)
+            | x -> if Value.isOne v then x else Product [Values.unpack v; x]
 
         match x, y with
         | Undefined, _ | _, Undefined -> undefined
@@ -311,7 +311,7 @@ module Operators =
         | PositiveInfinity, _ | _, PositiveInfinity -> infinity
         | NegativeInfinity, _ | _, NegativeInfinity -> negativeInfinity
         | Values.Value a, b | b, Values.Value a -> valueMul a b
-        | Product ((Values.Value a)::ax), Product ((Values.Value b)::bx) -> valueMul (ValueOperations.product (a, b)) (merge ax bx)
+        | Product ((Values.Value a)::ax), Product ((Values.Value b)::bx) -> valueMul (Value.product (a, b)) (merge ax bx)
         | Product ((Values.Value a)::ax), Product bx | Product bx, Product ((Values.Value a)::ax) -> valueMul a (merge ax bx)
         | Product ((Values.Value a)::ax), b | b, Product ((Values.Value a)::ax) -> valueMul a (merge ax [b])
         | Product ax, Product bx -> merge ax bx
@@ -354,7 +354,7 @@ module Operators =
 
     let abs = function
         | Values.Value v -> Values.abs v
-        | Product ((Values.Value v)::ax) when ValueOperations.isNegative v -> Function (Abs, multiply (Values.abs v) (Product ax))
+        | Product ((Values.Value v)::ax) when Value.isNegative v -> Function (Abs, multiply (Values.abs v) (Product ax))
         | x -> Function (Abs, x)
 
     let exp = function
