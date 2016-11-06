@@ -135,6 +135,7 @@ module Value =
         | Value.Number a, Value.Number b -> Approximation.pow (Approximation.fromRational a, Approximation.fromRational b) |> approx
         | Value.Approximation a, Value.Number b -> Approximation.pow (a, Approximation.fromRational b) |> approx
         | Value.Number a, Value.Approximation b -> Approximation.pow (Approximation.fromRational a, b) |> approx
+        | _ -> Value.Undefined // TODO
 
     let apply f = function
         | Value.Approximation a -> Approximation.apply f a |> approx

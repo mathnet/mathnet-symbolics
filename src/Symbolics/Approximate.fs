@@ -1,13 +1,12 @@
 ﻿namespace MathNet.Symbolics
 
-open System
 open System.Numerics
 open System.Collections.Generic
 
+open Operators
+
 [<RequireQualifiedAccess>]
 module Approximate =
-
-    open Operators
 
     [<CompiledName("Real")>]
     let real x = Approximation.Real(x)

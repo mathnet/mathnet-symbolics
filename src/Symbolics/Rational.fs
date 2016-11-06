@@ -5,7 +5,6 @@ open MathNet.Symbolics
 open ExpressionPatterns
 open Operators
 
-
 /// General Rational Expressions
 module Rational =
 

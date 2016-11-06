@@ -58,11 +58,14 @@
     <Compile Include="Approximation.fs" />
     <Compile Include="Value.fs" />
     <Compile Include="Expression.fs" />
-    <Compile Include="Elementary.fs" />
+    <Compile Include="Numbers.fs" />
+    <Compile Include="Structure.fs" />
+    <Compile Include="Algebraic.fs" />
     <Compile Include="Calculus.fs" />
     <Compile Include="Polynomial.fs" />
     <Compile Include="Rational.fs" />
     <Compile Include="Exponential.fs" />
+    <Compile Include="Trigonometric.fs" />
     <Compile Include="Approximate.fs" />
     <Compile Include="Evaluate.fs" />
     <Compile Include="Convert\Quotations.fs" />

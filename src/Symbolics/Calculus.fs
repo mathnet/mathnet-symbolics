@@ -6,8 +6,6 @@ open Operators
 [<RequireQualifiedAccess>]
 module Calculus =
 
-    open ExpressionPatterns
-
     [<CompiledName("Differentiate")>]
     let rec differentiate symbol = function
         | x when x = symbol -> one
