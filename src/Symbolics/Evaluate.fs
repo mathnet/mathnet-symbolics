@@ -174,10 +174,9 @@ module Evaluate =
         | Approximation (Approximation.Real fp) -> Real fp
         | Approximation (Approximation.Complex fp) -> Complex fp
         | Identifier (Symbol s) ->
-            try
-                symbols.[s] |> fnormalize
-            with
-            | :? KeyNotFoundException -> failwithf  "Failed to find symbol: %s" s
+            match symbols.TryGetValue s with
+            | true, a -> a |> fnormalize
+            | _ -> failwithf  "Failed to find symbol: %s" s
         | Sum xs -> xs |> List.map (evaluate symbols) |> List.reduce fadd |> fnormalize
         | Product xs -> xs |> List.map (evaluate symbols) |> List.reduce fmultiply |> fnormalize
         | Power (r, p) -> fpower (evaluate symbols r) (evaluate symbols p) |> fnormalize

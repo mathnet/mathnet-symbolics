@@ -35,6 +35,9 @@ let f = symbol "f"
 (3*a+4)**2 // (4 + 3*a)^2
 -x*y/3 // -(1/3)*x*y
 
+(3Q + 2)*4/6 |> Approximate.approximate // 3.33333333333333
+-x*y/3 |> Approximate.approximate // (-0.333333333333333)*x*y
+
 
 1 / x // 1/x
 -x // -x
@@ -44,12 +47,18 @@ let f = symbol "f"
 (a/b/(c*a))*(c*d/a)/d // 1/(a*b)
 
 
-(8*a*x + 6*a*x**2)/(4*x*a)
+(8*a*x + 6*a*x**2)/(4*x*a) // ((1/4)*(8*a*x + 6*a*x^2))/(a*x)
 (8*a*x + 6*a*x**2)/(4*x*a) |> Rational.reduce // (1/2)*(4 + 3*x)
 (8*a*x + 6*a*x**2)/(4*x*a) |> Rational.expand // 2 + (3/2)*x
 (8*a*x + 6*a*x**2)/(4*x*a) |> Rational.simplify x // 2 + (3/2)*x
 (8*a*x + 6*a*x**2)/(4*x*a) |> Rational.rationalize // ((1/4)*(8*a*x + 6*a*x^2))/(a*x)
 (8*a*x + 6*a*x**2)/(4*x*a) |> Rational.expand |> Rational.rationalize // (1/2)*(4 + 3*x)
+
+(8*a*x + 6*a*x**2)/(4*x*a) |> Approximate.approximate // (0.25*(8*a*x + 6*a*x^2))/(a*x)
+(8*a*x + 6*a*x**2)/(4*x*a) |> Approximate.approximateSubstitute (Map.ofList ["a", Real(0.5)]) // (0.5*(4*x + 3*x^2))/x
+(8*a*x + 6*a*x**2)/(4*x*a) |> Approximate.approximateSubstitute (Map.ofList ["a", Real(0.5)]) |> Rational.simplify x // 2 + 1.5*x
+(8*a*x + 6*a*x**2)/(4*x*a) |> Rational.expand |> Approximate.approximate // 2 + 1.5*x
+(8*a*x + 6*a*x**2)/(4*x*a) |> Approximate.approximateSubstitute (Map.ofList ["x", Real(2.2)]) // 5.3
 
 Polynomial.commonFactors (8*a*x + 6*a*x**2) // ==> "2*a*x"
 

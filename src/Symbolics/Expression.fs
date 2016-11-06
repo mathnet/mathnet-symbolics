@@ -52,6 +52,8 @@ module Values =
     let invert a = ValueOperations.invert a |> unpack
     let power (a, b) = ValueOperations.power (a, b) |> unpack
 
+    let apply f x = ValueOperations.apply f x |> unpack
+
 
 module ExpressionPatterns =
 
@@ -101,6 +103,10 @@ module ExpressionPatterns =
 
     let (|NegRationalPower|_|) = function
         | Power (r, (Number n as p)) when n.IsNegative -> Some (r, p)
+        | _ -> None
+
+    let (|NegPower|_|) = function
+        | Power (r, (Negative _ as p))-> Some (r, p)
         | _ -> None
 
     /// Terminal node, either a number, identifier/symbol or constant (including infinity).

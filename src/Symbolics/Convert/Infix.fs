@@ -214,11 +214,11 @@ module private InfixFormatter =
     // Nice Formatting:
 
     let rec numerator = function
-        | NegRationalPower _ -> one
+        | NegPower _ -> one
         | Product ax -> product <| List.map numerator ax
         | z -> z
     let rec denominator = function
-        | NegRationalPower (r, p) -> r ** -p
+        | NegPower (r, p) -> r ** -p
         | Product ax -> product <| List.map denominator ax
         | _ -> one
 

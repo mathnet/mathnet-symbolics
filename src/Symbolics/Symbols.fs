@@ -260,3 +260,11 @@ module ValueOperations =
         | Value.Number a, Value.Number b -> ApproxOperations.pow (ApproxOperations.rational a, ApproxOperations.rational b) |> approx
         | Value.Approximation a, Value.Number b -> ApproxOperations.pow (a, ApproxOperations.rational b) |> approx
         | Value.Number a, Value.Approximation b -> ApproxOperations.pow (ApproxOperations.rational a, b) |> approx
+
+    let apply f = function
+        | Value.Approximation a -> ApproxOperations.apply f a |> approx
+        | Value.Number a -> ApproxOperations.rational a |> ApproxOperations.apply f |> approx
+        | Value.Undefined _ -> Value.Undefined
+        | Value.ComplexInfinity -> Value.Undefined // TODO
+        | Value.PositiveInfinity -> Value.Undefined // TODO
+        | Value.NegativeInfinity -> Value.Undefined // TODO

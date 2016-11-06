@@ -61,6 +61,7 @@
     <Compile Include="Polynomial.fs" />
     <Compile Include="Rational.fs" />
     <Compile Include="Exponential.fs" />
+    <Compile Include="Approximate.fs" />
     <Compile Include="Evaluate.fs" />
     <Compile Include="Convert\Quotations.fs" />
     <Compile Include="Convert\Linq.fs" />
