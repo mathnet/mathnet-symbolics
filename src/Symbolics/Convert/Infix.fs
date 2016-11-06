@@ -167,7 +167,7 @@ module private InfixFormatter =
         | Constant E -> write "e"
         | Constant Pi -> write "pi"
         | Constant I -> write "j"
-        | Approximation (Double fp) ->
+        | Approximation (Approximation.Real fp) ->
             if fp >= 0.0 then write (fp.ToString())
             else
                 if priority > 0 then write "("
@@ -250,7 +250,7 @@ module private InfixFormatter =
         | Constant E -> write "e"
         | Constant Pi -> write "\u03C0" // "π"
         | Constant I -> write "j"
-        | Approximation (Double fp) ->
+        | Approximation (Approximation.Real fp) ->
             if fp >= 0.0 then write (fp.ToString())
             else
                 if priority > 0 then write "("

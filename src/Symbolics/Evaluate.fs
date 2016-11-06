@@ -171,7 +171,7 @@ module Evaluate =
         | Constant E -> Real (Constants.E)
         | Constant Pi -> Real (Constants.Pi)
         | Constant I -> Complex (Complex.ImaginaryOne)
-        | Approximation (Double fp) -> Real fp
+        | Approximation (Approximation.Real fp) -> Real fp
         | Identifier (Symbol s) ->
             try
                 symbols.[s] |> fnormalize

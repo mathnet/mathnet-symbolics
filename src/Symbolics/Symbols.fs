@@ -21,7 +21,7 @@ type Constant =
     | I
 
 type Approximation =
-    | Double of float
+    | Real of float
 
 
 [<RequireQualifiedAccess>]
@@ -37,30 +37,30 @@ type Value =
 [<RequireQualifiedAccess>]
 module ApproxOperations =
 
-    let double (x:float) = Double x
-    let rational (x:BigRational) = Double (float x)
+    let double (x:float) = Real x
+    let rational (x:BigRational) = Real (float x)
 
-    let negate = function | Double a -> Double (-a)
-    let sum = function | Double a, Double b -> Double (a+b)
-    let product = function | Double a, Double b -> Double (a*b)
-    let pow = function | Double a, Double b -> Double (a**b)
-    let invert = function | Double a -> Double (1.0/a)
-    let abs = function | Double a -> Double (Math.Abs a)
+    let negate = function | Real a -> Real (-a)
+    let sum = function | Real a, Real b -> Real (a+b)
+    let product = function | Real a, Real b -> Real (a*b)
+    let pow = function | Real a, Real b -> Real (a**b)
+    let invert = function | Real a -> Real (1.0/a)
+    let abs = function | Real a -> Real (Math.Abs a)
 
     let isZero = function
-        | Double x when x = 0.0 -> true
+        | Real x when x = 0.0 -> true
         | _ -> false
     let isOne = function
-        | Double x when x = 1.0 -> true
+        | Real x when x = 1.0 -> true
         | _ -> false
     let isMinusOne = function
-        | Double x when x = -1.0 -> true
+        | Real x when x = -1.0 -> true
         | _ -> false
     let isPositive = function
-        | Double x when x > 0.0 -> true
+        | Real x when x > 0.0 -> true
         | _ -> false
     let isNegative = function
-        | Double x when x < 0.0 -> true
+        | Real x when x < 0.0 -> true
         | _ -> false
 
 
@@ -71,10 +71,10 @@ module ValueOperations =
         if Double.IsPositiveInfinity x then Value.PositiveInfinity
         elif Double.IsNegativeInfinity x then Value.NegativeInfinity
         elif Double.IsNaN x then Value.Undefined
-        else Value.Approximation (Double x)
+        else Value.Approximation (Real x)
 
     let approx = function
-        | Double d -> double d
+        | Real d -> double d
 
     let zero = Value.Number (BigRational.Zero)
     let one = Value.Number (BigRational.One)
