@@ -487,6 +487,7 @@ type Expression with
     static member op_Implicit (x:int64) = Operators.fromInt64(x)
     static member op_Implicit (x:BigInteger) = Operators.fromInteger(x)
     static member op_Implicit (x:BigRational) = Operators.fromRational(x)
+    static member op_Implicit (x:float) = Operators.real x
     static member op_Implicit (name:string) = Operators.symbol(name)
 
 

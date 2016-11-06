@@ -55,6 +55,8 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Symbols.fs" />
+    <Compile Include="Approximation.fs" />
+    <Compile Include="Value.fs" />
     <Compile Include="Expression.fs" />
     <Compile Include="Elementary.fs" />
     <Compile Include="Calculus.fs" />
