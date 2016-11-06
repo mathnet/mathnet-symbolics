@@ -131,6 +131,16 @@ module Operators =
 
     let number = fromInt32
 
+    let isZero = function | Zero -> true | _ -> false
+    let isOne = function | One -> true | _ -> false
+    let isMinusOne = function | MinusOne -> true | _ -> false
+    let isPositive = function | Positive -> true | _ -> false
+    let isNegative = function | Negative -> true | _ -> false
+    let isPositiveInfinity = function | Infinity -> true | _ -> false
+    let isNegativeInfinity = function | NegativeInfinity -> true | _ -> false
+    let isComplexInfinity = function | ComplexInfinity -> true | _ -> false
+    let isInfinity = function | Infinity | ComplexInfinity | NegativeInfinity -> true | _ -> false
+
     let internal orderRelation (x:Expression) (y:Expression) =
         let rec compare a b =
             match a, b with
@@ -186,7 +196,7 @@ module Operators =
         let merge (xs:Expression list) (ys:Expression list) =
             let rec gen acc u v =
                 match acc, u, v with
-                | (Number n)::cc, _, _ when n = BigRational.Zero -> gen cc u v
+                | Zero::cc, _, _ -> gen cc u v
                 | Term(ac,at)::cc, Term(xc,xt)::xs, y | Term(ac,at)::cc, y, Term(xc,xt)::xs when at = xt ->
                     gen ((multiply (Number(ac+xc)) at)::cc) xs y
                 | _, Term(xc,xt)::xs, Term(yc,yt)::ys when xt = yt ->
@@ -212,7 +222,7 @@ module Operators =
             | x -> if n.IsZero then x else Sum [Number n; x]
 
         match x, y with
-        | a, b | b, a when a = zero -> b
+        | Zero, b | b, Zero -> b
         | Undefined, _ | _, Undefined -> undefined
         | ComplexInfinity, ComplexInfinity -> undefined
         | ComplexInfinity, (Infinity | NegativeInfinity) | (Infinity | NegativeInfinity), ComplexInfinity -> undefined
@@ -243,7 +253,7 @@ module Operators =
         let merge (xs:Expression list) (ys:Expression list) =
             let rec gen acc u v =
                 match acc, u, v with
-                | (Number n)::cc, _, _ when n = BigRational.One -> gen cc u v
+                | One::cc, _, _ -> gen cc u v
                 | Term(ab,ae)::cc, Term(xb,xe)::xs, y | Term(ab,ae)::cc, y, Term(xb,xe)::xs when ab = xb ->
                     gen ((pow ab (add ae xe))::cc) xs y
                 | _, Term(xb,xe)::xs, Term(yb,ye)::ys when xb = yb ->
@@ -272,8 +282,8 @@ module Operators =
             | x -> if n.IsOne then x else Product [Number n; x]
 
         match x, y with
-        | a, b | b, a when a = one -> b
-        | a, _ | _, a when a = zero -> zero
+        | One, b | b, One -> b
+        | Zero, _ | _, Zero -> zero
         | Undefined, _ | _, Undefined -> undefined
         | ComplexInfinity, (Number _ | Constant _ | Infinity | ComplexInfinity) | (Number _ | Constant _ | Infinity | ComplexInfinity), ComplexInfinity -> complexInfinity
         | Infinity, Number n | Number n, Infinity -> if n.IsNegative then negativeInfinity else infinity
@@ -295,10 +305,10 @@ module Operators =
     and pow x y =
         // if power is a number, radix must not be an integer, fraction, product or power
         match x, y with
-        | a, b when a = zero && b = zero -> undefined
-        | _, b when b = zero -> one
-        | a, b when b = one -> a
-        | a, _ when a = one -> one
+        | Zero, Zero -> undefined
+        | _, Zero -> one
+        | a, One -> a
+        | One, _ -> one
         | Undefined, _ | _, Undefined -> undefined
         | Number a, Number b when b.IsInteger ->
             if b.IsNegative then
@@ -339,22 +349,26 @@ module Operators =
         | Product ((Number n)::ax) when n.IsNegative -> Function (Abs, multiply (Number -n) (Product ax))
         | x -> Function (Abs, x)
 
-    let exp x = if x = zero then one else Function (Exp, x)
-    let ln x = if x = one then zero else Function (Ln, x)
+    let exp = function
+        | Zero -> one
+        | x -> Function (Exp, x)
+    let ln = function
+        | One -> zero
+        | x -> Function (Ln, x)
     let log basis x = divide (ln x) (ln basis)
 
     let sin = function
-        | Number n when n.IsZero -> zero
+        | Zero -> zero
         | Number n when n.IsNegative -> negate (Function (Sin, Number -n))
         | Product ((Number n)::ax) when n.IsNegative -> negate (Function (Sin, multiply (Number -n) (Product ax)))
         | x -> Function (Sin, x)
     let cos = function
-        | Number n when n.IsZero -> one
+        | Zero -> one
         | Number n when n.IsNegative -> Function (Cos, Number -n)
         | Product ((Number n)::ax) when n.IsNegative -> Function (Cos, multiply (Number -n) (Product ax))
         | x -> Function (Cos, x)
     let tan = function
-        | Number n when n.IsZero -> zero
+        | Zero -> zero
         | Number n when n.IsNegative -> negate (Function (Tan, Number -n))
         | Product ((Number n)::ax) when n.IsNegative -> negate (Function (Tan, multiply (Number -n) (Product ax)))
         | x -> Function (Tan, x)
@@ -437,7 +451,7 @@ type Expression with
     static member Apply (f, x) = Operators.apply f x
     static member ApplyN (f, xs) = Operators.applyN f xs
 
-    // Simpler usage
+    // Simpler usage - numbers
     static member ( + ) (x, (y:int)) = x + (Operators.number y)
     static member ( + ) ((x:int), y) = (Operators.number x) + y
     static member ( - ) (x, (y:int)) = x - (Operators.number y)

@@ -91,7 +91,7 @@ module private LaTeXFormatter =
         | Product _ as p ->
             let n = InfixFormatter.numerator p
             let d = InfixFormatter.denominator p
-            if d = one then
+            if isOne d then
                 if priority > 2 then write "\\left("
                 texFractionPart write 2 n
                 if priority > 2 then write "\\right)"

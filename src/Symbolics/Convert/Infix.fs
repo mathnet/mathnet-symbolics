@@ -267,7 +267,7 @@ module private InfixFormatter =
         | Product _ as p ->
             let n = numerator p
             let d = denominator p
-            if d = one then
+            if isOne d then
                 if priority > 2 then write "("
                 niceFractionPart write 2 n
                 if priority > 2 then write ")"

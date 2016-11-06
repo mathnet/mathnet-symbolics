@@ -110,7 +110,7 @@ module private MathMLFormatter =
         | Product xs as p ->
             let n = InfixFormatter.numerator p
             let d = InfixFormatter.denominator p
-            if d = one then apply "arith1" "times" (List.map formatContentStrict xs)
+            if isOne d then apply "arith1" "times" (List.map formatContentStrict xs)
             else apply "arith1" "divide" [ formatContentStrict n; formatContentStrict d ]
         | NegIntPower (r, minusOne) when minusOne = Expression.MinusOne ->
             apply "arith1" "divide" [ cn 1; formatContentStrict r]

@@ -44,12 +44,12 @@ module Rational =
         let ncf = Polynomial.commonFactors n
         let dcf = Polynomial.commonFactors d
         let cf = Polynomial.commonMonomialFactors [ncf; dcf]
-        if cf = one then x else (Algebraic.expand (n/cf))/(Algebraic.expand (d/cf))
+        if isOne cf then x else (Algebraic.expand (n/cf))/(Algebraic.expand (d/cf))
 
     let rec private rationalizeSum d x y =
         let a = denominator x
         let b = denominator y
-        if a = one && b = one then (x+y)/d
+        if isOne a && isOne b then (x+y)/d
         else rationalizeSum (a*b*d) ((numerator x)*b) ((numerator y)*a)
 
     [<CompiledName("Rationalize")>]

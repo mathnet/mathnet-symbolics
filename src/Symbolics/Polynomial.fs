@@ -67,7 +67,7 @@ module Polynomial =
 
     [<CompiledName("MonomialDegree")>]
     let rec degreeMonomial symbol = function
-        | x when x = zero -> negativeInfinity
+        | Zero -> negativeInfinity
         | x when x = symbol -> one
         | Number _ -> zero
         | PosIntPower (r, p) when r = symbol -> p
@@ -77,7 +77,7 @@ module Polynomial =
 
     [<CompiledName("MultivariateMonomialDegree")>]
     let rec degreeMonomialMV (symbols: HashSet<Expression>) = function
-        | x when x = zero -> negativeInfinity
+        | Zero -> negativeInfinity
         | x when symbols.Contains(x) -> one
         | Number _ -> zero
         | PosIntPower (r, p) when symbols.Contains(r) -> p
@@ -121,9 +121,9 @@ module Polynomial =
         (Expression.FromInteger n)::(normalizePowers x') |> product
 
     [<CompiledName("CommonFactors")>]
-    let commonFactors x =
-        if x = zero then x else
-        Algebraic.summands x |> commonMonomialFactors
+    let commonFactors = function
+        | Zero -> zero
+        | x -> Algebraic.summands x |> commonMonomialFactors
 
     [<CompiledName("MonomialCoefficient")>]
     let rec coefficientMonomial symbol = function
@@ -263,26 +263,27 @@ module Polynomial =
 
     [<CompiledName("PolynomialExpansion")>]
     let polynomialExpansion symbol t u v =
-        let rec pe x =
-            if x = zero then zero else
-            let q, r = divide symbol x v
-            t * (pe q) + r |> Algebraic.expand
+        let rec pe = function
+            | Zero -> zero
+            | x ->
+                let q, r = divide symbol x v
+                t * (pe q) + r |> Algebraic.expand
         pe u |> collectTerms t
 
     [<CompiledName("Gcd")>]
     let gcd symbol u v =
-        if u = zero && v = zero then zero else
+        if isZero u && isZero v then zero else
         let rec inner x y =
-            if y = zero then x
+            if isZero y then x
             else inner y (remainder symbol x y)
         let z = inner u v in z / (leadingCoefficient symbol z) |> Algebraic.expand
 
     /// Returns a tuple with the gcd and a such that a*u = gcd (mod v)
     [<CompiledName("HalfExtendedGcd")>]
     let halfExtendedGcd symbol u v =
-         if u = zero && v = zero then (zero, zero) else
+         if isZero u && isZero v then (zero, zero) else
          let rec inner x y a' a'' =
-            if y = zero then (x, a'') else
+            if isZero y then (x, a'') else
             let q, r = divide symbol x y
             inner y r (a'' - q*a') a'
          let z, a = inner u v zero one
@@ -301,9 +302,9 @@ module Polynomial =
     let halfDiophantineGcd symbol u v w =
         let (g, s) = halfExtendedGcd symbol u v
         let (q, r) = divide symbol w g
-        if r <> zero then Undefined else
+        if not (isZero r) then Undefined else
         let s' = Algebraic.expand (q*s)
-        if s' <> zero && Numbers.compare (degree symbol s') (degree symbol v) >= 0 then
+        if not (isZero s') && Numbers.compare (degree symbol s') (degree symbol v) >= 0 then
             remainder symbol s' v
         else s'
 
@@ -335,11 +336,11 @@ module Polynomial =
     [<CompiledName("FactorSquareFree")>]
     let factorSquareFree symbol x =
         let rec impl j r f p =
-            if r = one then p*(f**j) else
+            if isOne r then p*(f**j) else
             let g = gcd symbol r f
             let s = quot symbol f g
             impl (j+1) (quot symbol r g) g p*(s**j)
-        if x = zero then x else
+        if isZero x then x else
         let c = leadingCoefficient symbol x
         let u = Algebraic.expand (x/c)
         let r = gcd symbol u (Calculus.differentiate symbol u)
@@ -366,7 +367,7 @@ module SingleVariablePolynomial =
 
     [<CompiledName("MonomialDegree")>]
     let rec degreeMonomialSV symbol = function
-        | x when x = zero -> negativeInfinity
+        | Zero -> negativeInfinity
         | x when x = symbol -> one
         | Number _ -> zero
         | PosIntPower (r, p) when r = symbol -> p
@@ -391,7 +392,7 @@ module SingleVariablePolynomial =
 
     [<CompiledName("MonomialCoefficientDegree")>]
     let rec coefficientDegreeMonomialSV symbol = function
-        | x when x = zero -> x, negativeInfinity
+        | Zero -> zero, negativeInfinity
         | x when x = symbol -> one, one
         | Number _ as x -> x, zero
         | PosIntPower (r, p) when r = symbol -> one, p

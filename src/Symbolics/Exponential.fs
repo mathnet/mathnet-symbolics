@@ -132,7 +132,7 @@ module Trigonometric =
             | Product _ as a ->
                 let c, d = separateFactors a
                 match d with
-                | v when v = one -> a
+                | One -> a
                 | SinCos _ -> a
                 | Power (r, p) -> c * powerRules r p |> Algebraic.expandMain
                 | Product ax -> c * productRules ax |> Algebraic.expandMain
