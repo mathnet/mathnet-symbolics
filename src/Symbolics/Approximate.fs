@@ -31,8 +31,9 @@ module Approximate =
             | true, a -> a |> ValueOperations.approx |> Values.unpack
             | _ -> x
         | FunctionN _
-        | Infinity
         | ComplexInfinity
+        | PositiveInfinity
+        | NegativeInfinity
         | Undefined -> x
 
     [<CompiledName("Approximate")>]

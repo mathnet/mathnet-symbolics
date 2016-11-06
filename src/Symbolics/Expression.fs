@@ -1,6 +1,5 @@
 ﻿namespace MathNet.Symbolics
 
-open System
 open System.Numerics
 open MathNet.Numerics
 open MathNet.Symbolics
@@ -16,8 +15,9 @@ type Expression =
     | Power of Expression * Expression
     | Function of Function * Expression
     | FunctionN of Function * (Expression list)
-    | Infinity
     | ComplexInfinity
+    | PositiveInfinity
+    | NegativeInfinity
     | Undefined
 
 [<RequireQualifiedAccess>]
@@ -27,8 +27,8 @@ module Values =
         | Number n -> Some (Value.Number n)
         | Approximation a -> Some (Value.Approximation a)
         | ComplexInfinity -> Some Value.ComplexInfinity
-        | Infinity -> Some Value.PositiveInfinity
-        | Product [Number n; Infinity] when n.IsNegative -> Some Value.NegativeInfinity
+        | PositiveInfinity -> Some Value.PositiveInfinity
+        | NegativeInfinity -> Some Value.NegativeInfinity
 //        | Undefined -> Some Value.Undefined
         | _ -> None
 
@@ -36,8 +36,8 @@ module Values =
         | Value.Number n -> Number n
         | Value.Approximation a -> Approximation a
         | Value.ComplexInfinity -> ComplexInfinity
-        | Value.PositiveInfinity -> Infinity
-        | Value.NegativeInfinity -> Product [Number (BigRational.FromInt -1); Infinity]
+        | Value.PositiveInfinity -> PositiveInfinity
+        | Value.NegativeInfinity -> NegativeInfinity
         | Value.Undefined -> Undefined
 
     let real (x:float) = ValueOperations.real x |> unpack
@@ -72,10 +72,6 @@ module ExpressionPatterns =
         | Approximation x when ApproxOperations.isMinusOne x -> Some MinusOne
         | _ -> None
 
-    let (|NegativeInfinity|_|) = function
-        | Product [Number n; Infinity] when n.IsNegative -> Some NegativeInfinity
-        | _ -> None
-
     let (|Negative|_|) = function
         | Number n when n.IsNegative -> Some Negative
         | Approximation x when ApproxOperations.isNegative x -> Some Negative
@@ -86,7 +82,7 @@ module ExpressionPatterns =
         | Number n when n.IsPositive -> Some Positive
         | Constant E | Constant Pi -> Some Positive
         | Approximation x when ApproxOperations.isPositive x -> Some Positive
-        | Infinity -> Some Positive
+        | PositiveInfinity -> Some Positive
         | _ -> None
 
     let (|Integer|_|) = function
@@ -140,9 +136,9 @@ module Operators =
     let symbol (name:string) = Identifier (Symbol name)
 
     let undefined = Expression.Undefined
-    let infinity = Expression.Infinity
+    let infinity = Expression.PositiveInfinity
     let complexInfinity = Expression.ComplexInfinity
-    let negativeInfinity = Product [minusOne; Infinity]
+    let negativeInfinity = Expression.NegativeInfinity
 
     let real floatingPoint = Values.real floatingPoint
 
@@ -159,10 +155,10 @@ module Operators =
     let isMinusOne = function | MinusOne -> true | _ -> false
     let isPositive = function | Positive -> true | _ -> false
     let isNegative = function | Negative -> true | _ -> false
-    let isPositiveInfinity = function | Infinity -> true | _ -> false
+    let isPositiveInfinity = function | PositiveInfinity -> true | _ -> false
     let isNegativeInfinity = function | NegativeInfinity -> true | _ -> false
     let isComplexInfinity = function | ComplexInfinity -> true | _ -> false
-    let isInfinity = function | Infinity | ComplexInfinity | NegativeInfinity -> true | _ -> false
+    let isInfinity = function | PositiveInfinity | ComplexInfinity | NegativeInfinity -> true | _ -> false
 
     let internal orderRelation (x:Expression) (y:Expression) =
         let rec compare a b =
@@ -194,10 +190,12 @@ module Operators =
             | FunctionN (xf, xs), Function (yf, y) -> if xf <> yf then xf < yf else compareZip (List.rev xs) [y]
             | Identifier _, _ -> true
             | _, Identifier _ -> false
-            | Infinity, _ -> true
-            | _, Infinity -> false
             | ComplexInfinity, _ -> true
             | _, ComplexInfinity -> false
+            | PositiveInfinity, _ -> true
+            | _, PositiveInfinity -> false
+            | NegativeInfinity, _ -> true
+            | _, NegativeInfinity -> false
             | Undefined, _ -> false
             | _, Undefined -> true
         and compareZip a b =
@@ -252,7 +250,7 @@ module Operators =
         | Zero, b | b, Zero -> b
         | Values.Value a, Values.Value b -> Values.sum (a, b)
         | ComplexInfinity, _ | _, ComplexInfinity -> complexInfinity
-        | Infinity, _ | _, Infinity -> infinity
+        | PositiveInfinity, _ | _, PositiveInfinity -> infinity
         | NegativeInfinity, _ | _, NegativeInfinity -> negativeInfinity
         | Values.Value a, b | b, Values.Value a -> valueAdd a b
         | Sum ((Values.Value a)::ax), Sum ((Values.Value b)::bx) -> valueAdd (ValueOperations.sum (a, b)) (merge ax bx)
@@ -310,7 +308,7 @@ module Operators =
         | Zero, _ | _, Zero -> zero
         | Values.Value a, Values.Value b -> Values.product (a, b)
         | ComplexInfinity, _ | _, ComplexInfinity -> complexInfinity
-        | Infinity, _ | _, Infinity -> infinity
+        | PositiveInfinity, _ | _, PositiveInfinity -> infinity
         | NegativeInfinity, _ | _, NegativeInfinity -> negativeInfinity
         | Values.Value a, b | b, Values.Value a -> valueMul a b
         | Product ((Values.Value a)::ax), Product ((Values.Value b)::bx) -> valueMul (ValueOperations.product (a, b)) (merge ax bx)
@@ -422,7 +420,6 @@ type Expression with
     static member FromIntegerFraction (n:BigInteger, d:BigInteger) = Operators.fromIntegerFraction n d
     static member FromRational (x:BigRational) = Operators.fromRational x
     static member Symbol (name:string) = Operators.symbol name
-    static member NegativeInfinity = Operators.negativeInfinity
     static member Real (floatingPoint:float) = Operators.real floatingPoint
 
     static member I = Constant I

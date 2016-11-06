@@ -294,8 +294,8 @@ let ``Parse infix expressions`` () =
 
     Infix.parseOrThrow "pi" --> Expression.Pi
     Infix.parseOrThrow "π" --> Expression.Pi
-    Infix.parseOrThrow "∞" --> Expression.Infinity
-    Infix.parseOrThrow "inf" --> Expression.Infinity
+    Infix.parseOrThrow "∞" --> Expression.PositiveInfinity
+    Infix.parseOrThrow "inf" --> Expression.PositiveInfinity
     Infix.parseOrThrow "-∞" --> Expression.NegativeInfinity
     Infix.parseOrThrow "⧝" --> Expression.ComplexInfinity
 

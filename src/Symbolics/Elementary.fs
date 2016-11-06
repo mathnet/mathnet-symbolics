@@ -6,15 +6,13 @@ open MathNet.Symbolics
 [<RequireQualifiedAccess>]
 module Numbers =
 
-    open ExpressionPatterns
-
     /// Represent the constant as a real number if possible
     let (|RealConstant|_|) = function
         | Approximation (Real r) -> Some r
         | Constant E -> Some Constants.E
         | Constant Pi -> Some Constants.Pi
-        | Infinity -> Some System.Double.PositiveInfinity
         | ComplexInfinity -> Some System.Double.PositiveInfinity
+        | PositiveInfinity -> Some System.Double.PositiveInfinity
         | NegativeInfinity -> Some System.Double.NegativeInfinity
         | _ -> None
 
@@ -22,11 +20,11 @@ module Numbers =
     let compare x y =
         match x, y with
         | a, b when a = b -> 0
-        | Number _, Infinity -> -1
         | Number _, ComplexInfinity -> -1
+        | Number _, PositiveInfinity -> -1
         | Number _, NegativeInfinity -> 1
-        | Infinity, Number _ -> 1
         | ComplexInfinity, Number _ -> 1
+        | PositiveInfinity, Number _ -> 1
         | NegativeInfinity, Number _ -> -1
         | Number a, Number b -> compare a b
         | Number a, RealConstant b -> compare (float a) b
@@ -80,7 +78,7 @@ module Structure =
         | Power _ -> 2
         | Function _ -> 1
         | FunctionN (_, xs) -> List.length xs
-        | Number _ | Approximation _ | Identifier _ | Constant _ | Infinity | ComplexInfinity -> 0
+        | Number _ | Approximation _ | Identifier _ | Constant _ | ComplexInfinity | PositiveInfinity | NegativeInfinity -> 0
         | Undefined -> 0
 
     [<CompiledName("Operand")>]
@@ -98,7 +96,7 @@ module Structure =
         | Sum ax | Product ax | FunctionN (_, ax) -> List.forall (freeOf symbol) ax
         | Power (r, p) -> freeOf symbol r && freeOf symbol p
         | Function (_, x) -> freeOf symbol x
-        | Number _ | Approximation _ | Identifier _ | Constant _ | Infinity | ComplexInfinity -> true
+        | Number _ | Approximation _ | Identifier _ | Constant _ |  ComplexInfinity | PositiveInfinity | NegativeInfinity -> true
         | Undefined -> true
 
     [<CompiledName("IsFreeOfSet")>]
@@ -108,7 +106,7 @@ module Structure =
         | Sum ax | Product ax | FunctionN (_, ax) -> List.forall (freeOfSet symbols) ax
         | Power (r, p) -> freeOfSet symbols r && freeOfSet symbols p
         | Function (_, x) -> freeOfSet symbols x
-        | Number _ | Approximation _ | Identifier _ | Constant _ | Infinity | ComplexInfinity -> true
+        | Number _ | Approximation _ | Identifier _ | Constant _ |  ComplexInfinity | PositiveInfinity | NegativeInfinity -> true
         | Undefined -> true
 
     [<CompiledName("Substitute")>]
@@ -120,7 +118,7 @@ module Structure =
         | Power (radix, p) -> (substitute y r radix) ** (substitute y r p)
         | Function (fn, x) -> apply fn (substitute y r x)
         | FunctionN (fn, xs) -> applyN fn (List.map (substitute y r) xs)
-        | Number _ | Approximation _ | Identifier _ | Constant _ | Infinity | ComplexInfinity -> x
+        | Number _ | Approximation _ | Identifier _ | Constant _ |  ComplexInfinity | PositiveInfinity | NegativeInfinity -> x
         | Undefined -> x
 
     [<CompiledName("Map")>]

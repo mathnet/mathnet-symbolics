@@ -57,7 +57,7 @@ module private InfixParser =
         let options = NumberLiteralOptions.AllowFraction ||| NumberLiteralOptions.AllowFractionWOIntegerPart ||| NumberLiteralOptions.AllowInfinity
         numberLiteral options "number" .>> ws
         |>> fun num ->
-            if num.IsInfinity then Expression.Infinity
+            if num.IsInfinity then Expression.PositiveInfinity
             elif num.IsInteger then BigInteger.Parse(num.String) |> Expression.FromInteger
             else Expression.Real(float num.String)
 
@@ -69,7 +69,7 @@ module private InfixParser =
         |>> function // differentating between constants and identifiers
             | "pi" | "\u03C0" -> Expression.Constant Pi
             | "e" -> Expression.Constant E
-            | "oo" | "inf" | "\u221E" -> Expression.Infinity // 'oo' from sympy
+            | "oo" | "inf" | "\u221E" -> Expression.PositiveInfinity // 'oo' from sympy
             | "\u29DD" -> Expression.ComplexInfinity
             | "j" -> Expression.Constant I
             | id -> Expression.Symbol id
@@ -162,8 +162,12 @@ module private InfixFormatter =
             if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write ")"
         | Identifier (Symbol name) -> write name
         | Undefined -> write "Undefined"
-        | Infinity -> write "Infinity"
         | ComplexInfinity -> write "ComplexInfinity"
+        | PositiveInfinity -> write "Infinity"
+        | NegativeInfinity ->
+            if priority > 0 then write "("
+            write "-Infinity"
+            if priority > 0 then write ")"
         | Constant E -> write "e"
         | Constant Pi -> write "pi"
         | Constant I -> write "j"
@@ -249,8 +253,12 @@ module private InfixFormatter =
             if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write ")"
         | Identifier (Symbol name) -> write name
         | Undefined -> write "Undefined"
-        | Infinity -> write "\u221E" // "∞"
         | ComplexInfinity -> write "\u29DD" // "⧝"
+        | PositiveInfinity -> write "\u221E" // "∞"
+        | NegativeInfinity ->
+            if priority > 0 then write "("
+            write "-\u221E" // "-∞"
+            if priority > 0 then write ")"
         | Constant E -> write "e"
         | Constant Pi -> write "\u03C0" // "π"
         | Constant I -> write "j"

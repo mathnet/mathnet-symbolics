@@ -49,7 +49,7 @@ module private MathMLParser =
             | "nums1", "pi" -> Expression.Pi
             | "nums1", "e" -> Expression.E
             | "nums1", "i" -> Expression.I
-            | "nums1", "infinity" -> Infinity
+            | "nums1", "infinity" -> PositiveInfinity
             | "nums1", "NaN" -> Undefined
             | _ -> Undefined
         // MathML3 Strict Content: application
@@ -125,8 +125,9 @@ module private MathMLFormatter =
         | Power (r, p) -> apply "arith1" "power" [ formatContentStrict r; formatContentStrict p ]
         | Function (f, x) -> failwith "not implemented"
         | FunctionN (f, xs) -> failwith "not implemented"
-        | Infinity -> csymbol "nums1" "infinity"
         | ComplexInfinity -> csymbol "nums1" "infinity"
+        | PositiveInfinity -> csymbol "nums1" "infinity"
+        | NegativeInfinity -> apply "arith1" "unary_minus" [ csymbol "nums1" "infinity" ]
         | Undefined -> csymbol "nums1" "NaN"
 
     /// Format a semantics xml element containing both strict content representation and annotations.

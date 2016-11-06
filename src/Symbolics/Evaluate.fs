@@ -166,8 +166,9 @@ module Evaluate =
     let rec evaluate (symbols:IDictionary<string, FloatingPoint>) = function
         | Number n -> Real (float n) |> fnormalize
         | Undefined -> Undef
-        | Expression.Infinity -> PosInf
         | ComplexInfinity -> ComplexInf
+        | PositiveInfinity -> PosInf
+        | NegativeInfinity -> NegInf
         | Constant E -> Real (Constants.E)
         | Constant Pi -> Real (Constants.Pi)
         | Constant I -> Complex (Complex.ImaginaryOne)

@@ -78,8 +78,12 @@ module private LaTeXFormatter =
         | Constant Pi -> write "\\pi"
         | Constant E -> write "e"
         | Constant I -> write "\\jmath"
-        | Infinity -> write "\\infty"
         | ComplexInfinity -> write "\\infty"
+        | PositiveInfinity -> write "\\infty"
+        | NegativeInfinity ->
+            if priority > 0 then write "\\left({"
+            write "-\\infty"
+            if priority > 0 then write "}\\right)"
         | Identifier (Symbol name) -> write name
         | Undefined -> write "\\mathrm{undefined}"
         | Sum (x::xs) ->
