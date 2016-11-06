@@ -1,3 +1,8 @@
+### 0.11.0 - 2016-11-06
+* Approximation: new concept to represent real (floating point) numbers
+* Approximate: new module to partially evaluate/approximate expressions
+* Expression: explicit NegativeInfinity DU case
+
 ### 0.10.1 - 2016-11-05
 * Evaluate: fix CLI method signature of the evaluate function (cross-language support).
 
