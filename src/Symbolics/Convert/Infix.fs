@@ -173,6 +173,10 @@ module private InfixFormatter =
                 if priority > 0 then write "("
                 write (fp.ToString());
                 if priority > 0 then write ")"
+        | Approximation (Approximation.Complex fp) ->
+            write "("
+            write (fp.ToString());
+            write ")"
         | Sum (x::xs) ->
             if priority > 1 then write "("
             strict write 1 x
@@ -256,6 +260,10 @@ module private InfixFormatter =
                 if priority > 0 then write "("
                 write (fp.ToString());
                 if priority > 0 then write ")"
+        | Approximation (Approximation.Complex fp) ->
+            write "("
+            write (fp.ToString());
+            write ")"
         | Sum (x::xs) ->
             if priority > 1 then write "("
             niceSummand write true x

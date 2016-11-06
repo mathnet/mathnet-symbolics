@@ -104,6 +104,7 @@ module private MathMLFormatter =
         | Constant Pi -> csymbol "nums1" "pi"
         | Constant I -> csymbol "nums1" "i"
         | Approximation (Approximation.Real f) -> cn f
+        | Approximation (Approximation.Complex f) -> cn f
         | Sum xs -> apply "arith1" "plus" (List.map formatContentStrict xs)
         | Product (minusOne::xs) when minusOne = Expression.MinusOne ->
             apply "arith1" "unary_minus" [ formatContentStrict (product xs) ]

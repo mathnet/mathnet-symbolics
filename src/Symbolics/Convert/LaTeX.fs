@@ -71,6 +71,10 @@ module private LaTeXFormatter =
                 if priority > 0 then write "\\left({"
                 write (fp.ToString());
                 if priority > 0 then write "}\\right)"
+        | Approximation (Approximation.Complex fp) ->
+            write "\\left({"
+            write (fp.ToString());
+            write "}\\right)"
         | Constant Pi -> write "\\pi"
         | Constant E -> write "e"
         | Constant I -> write "\\jmath"

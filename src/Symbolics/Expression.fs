@@ -40,7 +40,8 @@ module Values =
         | Value.NegativeInfinity -> Product [Number (BigRational.FromInt -1); Infinity]
         | Value.Undefined -> Undefined
 
-    let double (x:float) = ValueOperations.double x |> unpack
+    let real (x:float) = ValueOperations.real x |> unpack
+    let complex (x:Complex) = ValueOperations.complex x |> unpack
     let rational (x:BigRational) = Number x
 
     let negate a = ValueOperations.negate a |> unpack
@@ -137,7 +138,7 @@ module Operators =
     let complexInfinity = Expression.ComplexInfinity
     let negativeInfinity = Product [minusOne; Infinity]
 
-    let real floatingPoint = Values.double floatingPoint
+    let real floatingPoint = Values.real floatingPoint
 
     let fromInt32 (x:int) = Number (BigRational.FromInt x)
     let fromInt64 (x:int64) = Number (BigRational.FromBigInt (BigInteger(x)))
@@ -161,7 +162,10 @@ module Operators =
         let rec compare a b =
             match a, b with
             | Number x, Number y -> x < y
-            | Approximation x, Approximation y -> x < y
+            | Approximation (Real x), Approximation (Real y) -> x < y
+            | Approximation (Complex x), Approximation (Complex y) -> x.Real < y.Real || x.Real = y.Real && x.Imaginary < y.Imaginary
+            | Approximation (Real x), Approximation (Complex y) -> not (y.IsReal()) || x < y.Real
+            | Approximation (Complex x), Approximation (Real y) -> x.IsReal() && x.Real < y
             | Identifier x, Identifier y -> x < y
             | Constant x, Constant y -> x < y
             | Sum xs, Sum ys | Product xs, Product ys -> compareZip (List.rev xs) (List.rev ys)
