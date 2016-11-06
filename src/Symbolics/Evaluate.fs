@@ -152,12 +152,12 @@ module Evaluate =
         | Sinh, Complex x -> Complex (Complex.Sinh(x))
         | Tanh, Real x -> Real (Math.Tanh(x))
         | Tanh, Complex x -> Complex (Complex.Tanh(x))
-        | ArcSin, Real x -> Real (Math.Asin(x))
-        | ArcSin, Complex x -> Complex (Complex.Asin(x))
-        | ArcCos, Real x -> Real (Math.Acos(x))
-        | ArcCos, Complex x -> Complex (Complex.Acos(x))
-        | ArcTan, Real x -> Real (Math.Atan(x))
-        | ArcTan, Complex x -> Complex (Complex.Atan(x))
+        | Asin, Real x -> Real (Math.Asin(x))
+        | Asin, Complex x -> Complex (Complex.Asin(x))
+        | Acos, Real x -> Real (Math.Acos(x))
+        | Acos, Complex x -> Complex (Complex.Acos(x))
+        | Atan, Real x -> Real (Math.Atan(x))
+        | Atan, Complex x -> Complex (Complex.Atan(x))
         | _ -> failwith "not supported"
 
     let fapplyN f xs = failwith "not supported yet"

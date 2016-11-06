@@ -7,9 +7,7 @@ type Function =
     | Ln | Exp
     | Sin | Cos | Tan
     | Cosh | Sinh | Tanh
-    | ArcSin
-    | ArcCos
-    | ArcTan
+    | Asin | Acos | Atan
 
 type Constant =
     | E

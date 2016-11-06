@@ -84,9 +84,9 @@ module ApproxOperations =
         | Cosh-> cosh a
         | Sinh -> sinh a
         | Tanh -> tanh a
-        | ArcSin -> asin a
-        | ArcCos -> acos a
-        | ArcTan -> atan a
+        | Asin -> asin a
+        | Acos -> acos a
+        | Atan -> atan a
 
     let isZero = function
         | Real x when x = 0.0 -> true

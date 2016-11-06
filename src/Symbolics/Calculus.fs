@@ -31,9 +31,9 @@ module Calculus =
         | Function (Cosh, x) -> (differentiate symbol x) * sinh (x)
         | Function (Sinh, x) -> (differentiate symbol x) * cosh (x)
         | Function (Tanh, x) -> 2*(differentiate symbol x) / (cosh(2*x)+1)
-        | Function (ArcSin, x) -> (1Q/sqrt(1Q+pow x 2Q)) * (differentiate symbol x)
-        | Function (ArcCos, x) -> (-1Q/sqrt(1Q+pow x 2Q)) * (differentiate symbol x)
-        | Function (ArcTan, x) -> (1Q/1Q+pow x 2Q) * (differentiate symbol x)
+        | Function (Asin, x) -> (1Q/sqrt(1Q+pow x 2Q)) * (differentiate symbol x)
+        | Function (Acos, x) -> (-1Q/sqrt(1Q+pow x 2Q)) * (differentiate symbol x)
+        | Function (Atan, x) -> (1Q/1Q+pow x 2Q) * (differentiate symbol x)
         | FunctionN (f, xs) -> failwith "not supported"
         | Function (Abs, _) -> failwith "not supported"
         | Product [] -> failwith "invalid expression"

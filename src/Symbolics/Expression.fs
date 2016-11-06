@@ -386,9 +386,9 @@ module Operators =
     let cosh x = Function (Cosh, x)
     let sinh x = Function (Sinh, x)
     let tanh x = Function (Tanh, x)
-    let arcsin x = Function (ArcSin, x)
-    let arccos x = Function (ArcCos, x)
-    let arctan x = Function (ArcTan, x)
+    let arcsin x = Function (Asin, x)
+    let arccos x = Function (Acos, x)
+    let arctan x = Function (Atan, x)
 
     let apply f x =
         match f with
@@ -401,9 +401,9 @@ module Operators =
         | Cosh -> cosh x
         | Sinh -> sinh x
         | Tanh -> tanh x
-        | ArcSin -> arcsin x
-        | ArcCos -> arccos x
-        | ArcTan -> arctan x
+        | Asin -> arcsin x
+        | Acos -> arccos x
+        | Atan -> arctan x
 
     let applyN (f: Function) (xs: Expression list) = failwith "not supported yet"
 

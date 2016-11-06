@@ -147,7 +147,7 @@ module private InfixFormatter =
         | Abs -> "abs"
         | Ln -> "ln"
         | Exp -> "exp"
-        | ArcCos -> "acos" | ArcSin -> "asin" | ArcTan -> "atan"
+        | Acos -> "acos" | Asin -> "asin" | Atan -> "atan"
         | Sinh -> "sinh" | Cosh -> "cosh" | Tanh -> "tanh"
         | Sin -> "sin" | Cos -> "cos" | Tan -> "tan"
 
