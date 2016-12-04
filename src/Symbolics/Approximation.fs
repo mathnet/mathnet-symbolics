@@ -21,7 +21,6 @@ type Approximation =
         match x with
         | Real x -> complex x 0.0
         | Complex x -> x
-        | _ -> failwith "Value not convertible to a complex number."
 
 
 [<RequireQualifiedAccess>]
