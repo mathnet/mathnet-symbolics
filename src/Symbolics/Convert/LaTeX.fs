@@ -84,7 +84,10 @@ module private LaTeXFormatter =
             if priority > 0 then write "\\left({"
             write "-\\infty"
             if priority > 0 then write "}\\right)"
-        | Identifier (Symbol name) -> write name
+        | Identifier (Symbol name) ->
+            if name.Length > 1 then write "{"
+            write name
+            if name.Length > 1 then write "}"
         | Undefined -> write "\\mathrm{undefined}"
         | Sum (x::xs) ->
             if priority > 1 then write "\\left("

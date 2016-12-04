@@ -313,6 +313,7 @@ let ``Print LaTeX expressions`` () =
     LaTeX.format ((a+b)**c) --> """{\left(a + b\right)}^{c}"""
     LaTeX.format (a**(b**c)) --> """{a}^{\left({b}^{c}\right)}"""
     LaTeX.format ((a**b)**c) --> """{\left({a}^{b}\right)}^{c}"""
+    LaTeX.format (a*b*(symbol "def")) --> """ab{def}"""
 
     LaTeX.format (3Q*2Q**x) --> """3*{2}^{x}"""
     LaTeX.format (5Q*x) --> """5x"""
