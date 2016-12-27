@@ -1,3 +1,6 @@
+### 0.12.0 - 2016-12-27
+* LaTeX: format symbols with a long name with braces
+
 ### 0.11.0 - 2016-11-06
 * Approximation: new concept to represent real (floating point) numbers
 * Approximate: new module to partially evaluate/approximate expressions
