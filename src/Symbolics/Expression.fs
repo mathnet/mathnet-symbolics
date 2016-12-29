@@ -164,10 +164,7 @@ module Operators =
         let rec compare a b =
             match a, b with
             | Number x, Number y -> x < y
-            | Approximation (Real x), Approximation (Real y) -> x < y
-            | Approximation (Complex x), Approximation (Complex y) -> x.Real < y.Real || x.Real = y.Real && x.Imaginary < y.Imaginary
-            | Approximation (Real x), Approximation (Complex y) -> not (y.IsReal()) || x < y.Real
-            | Approximation (Complex x), Approximation (Real y) -> x.IsReal() && x.Real < y
+            | Approximation x, Approximation y -> Approximation.orderRelation x y
             | Identifier x, Identifier y -> x < y
             | Constant x, Constant y -> x < y
             | Sum xs, Sum ys | Product xs, Product ys -> compareZip (List.rev xs) (List.rev ys)

@@ -151,6 +151,16 @@ module Structure =
     let collectNumberValues x =
         x |> collectDistinct (function | Number number -> Some number | _ -> None) |> List.sort
 
+    /// Collects all approximations of an expressions and returns their distinct expressions.
+    [<CompiledName("CollectApproximations")>]
+    let collectApproximations x =
+        x |> collectDistinct (function | Approximation _ as expression -> Some expression | _ -> None) |> sortList
+
+    /// Collects all approximations of an expressions and returns their distinct values.
+    [<CompiledName("CollectApproximationValues")>]
+    let collectApproximationValues x =
+        x |> collectDistinct (function | Approximation approx -> Some approx | _ -> None) |> Approximation.sortList
+
     /// Collects all constants of an expressions and returns their distinct expressions.
     [<CompiledName("CollectConstants")>]
     let collectConstants x =

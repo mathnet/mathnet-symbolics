@@ -123,3 +123,15 @@ module Approximation =
         | Real x when x < 0.0 -> true
         | Complex c when c.IsReal() && c.Real < 0.0 -> true
         | _ -> false
+
+    let internal orderRelation (x:Approximation) (y:Approximation) =
+        match x, y with
+        | (Real x), (Real y) -> x < y
+        | (Complex x), (Complex y) -> x.Real < y.Real || x.Real = y.Real && x.Imaginary < y.Imaginary
+        | (Real x), (Complex y) -> not (y.IsReal()) || x < y.Real
+        | (Complex x), (Real y) -> x.IsReal() && x.Real < y
+
+    /// Sort approximations in a list with standard expression ordering.
+    [<CompiledName("SortList")>]
+    let sortList list =
+        List.sortWith (fun a b -> if a = b then 0 elif orderRelation a b then -1 else 1) list
