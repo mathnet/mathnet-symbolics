@@ -92,6 +92,14 @@ module Structure =
             | None -> fold impl acc x
         impl [] x
 
+    [<CompiledName("CollectPredicate")>]
+    let collectPredicate (predicate:Expression->bool) x =
+        let rec impl acc x =
+            match predicate x with
+            | true -> x::acc
+            | false -> fold impl acc x
+        impl [] x
+
     /// Applies the given function to the expression tree and returns the result
     /// for each node where the function returns Some with some value.
     /// All subexpressions of an expression are examined, no matter whether
@@ -103,6 +111,14 @@ module Structure =
             match chooser x with
             | Some result -> fold impl (result::acc) x
             | None -> fold impl acc x
+        impl [] x
+
+    [<CompiledName("CollectAllPredicate")>]
+    let collectAllPredicate (predicate:Expression->bool) x =
+        let rec impl acc x =
+            match predicate x with
+            | true -> fold impl (x::acc) x
+            | false -> fold impl acc x
         impl [] x
 
     /// Like collect but returns each result at most once.

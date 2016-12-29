@@ -427,7 +427,9 @@ let ``Structural Operators`` () =
     Structure.collectNumbers (x*cos(2*y-4)/3) ==+> [ "-4"; "1/3"; "2" ]
 
     Structure.collect (function | Power _ as p -> Some p | _ -> None) ((x+y**z)**(a+b**c)+d) ==+> [ "(x + y^z)^(a + b^c)" ]
+    Structure.collectPredicate (function | Power _ -> true | _ -> false) ((x+y**z)**(a+b**c)+d) ==+> [ "(x + y^z)^(a + b^c)" ]
     Structure.collectAll (function | Power _ as p -> Some p | _ -> None) ((x+y**z)**(a+b**c)+d) ==+> [ "b^c"; "y^z"; "(x + y^z)^(a + b^c)" ]
+    Structure.collectAllPredicate (function | Power _ -> true | _ -> false) ((x+y**z)**(a+b**c)+d) ==+> [ "b^c"; "y^z"; "(x + y^z)^(a + b^c)" ]
     Structure.collectPowers ((x+y**z)**(a+b**c)+d) ==+> [ "b^c"; "y^z"; "(x + y^z)^(a + b^c)" ]
     Structure.collectSums ((x+y**z)**(a+b**c)+d) ==+> [ "a + b^c"; "x + y^z"; "d + (x + y^z)^(a + b^c)" ]
 
