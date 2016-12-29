@@ -1,3 +1,8 @@
+### 0.13.0 - 2016-12-29
+* Structure: collectSums, collectProducts, collectPowers
+* Structure: collectAll, like collect but continues on accepted nodes
+* Structure: collectPredicate, collectAllPredicate
+
 ### 0.12.0 - 2016-12-27
 * LaTeX: format symbols with a long name with braces
 

@@ -53,6 +53,9 @@ Linux (Mono): [![Travis Build Status](https://travis-ci.org/mathnet/mathnet-symb
 
 Maintained by [Christoph Rüegg](http://christoph.ruegg.name/) and part of the [Math.NET initiative](http://www.mathdotnet.com) (see also [Math.NET Numerics](http://numerics.mathdotnet.com)). It is covered under the terms of the [MIT/X11](http://mathnetnumerics.codeplex.com/license) open source license. See also the [license](LICENSE.md) file in the root folder. **We accept contributions!**
 
-* [@MathDotNet](http://twitter.com/MathDotNet)
-* [Ohloh](https://www.ohloh.net/p/mathnet-symbolics)
-* [Stack Overflow](http://stackoverflow.com/questions/tagged/mathdotnet)
+* [**Project Website**](http://symbolics.mathdotnet.com)
+* [Source Code](http://github.com/mathnet/mathnet-symbolics)
+* [Release Notes](http://symbolics.mathdotnet.com/ReleaseNotes.html)
+* [Documentation](http://symbolics.mathdotnet.com)
+* [Issues & Bugs](http://github.com/mathnet/mathnet-symbolics/issues)
+* [Discussions](https://discuss.mathdotnet.com/c/symbolics) | [Stack Overflow](http://stackoverflow.com/questions/tagged/mathdotnet) | [Twitter](http://twitter.com/MathDotNet)
