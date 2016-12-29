@@ -110,6 +110,11 @@ module Structure =
     let collectDistinct chooser x =
         collect chooser x |> Seq.distinct |> List.ofSeq //potential for optimization...
 
+    /// Like collectAll but returns each result at most once.
+    [<CompiledName("CollectAllDistinct")>]
+    let collectAllDistinct chooser x =
+        collectAll chooser x |> Seq.distinct |> List.ofSeq //potential for optimization...
+
     /// Collects all identifers of an expressions and returns their distinct expressions.
     [<CompiledName("CollectIdentifiers")>]
     let collectIdentifiers x =
@@ -143,9 +148,24 @@ module Structure =
     /// Collects all functions of an expressions and returns their distinct expressions.
     [<CompiledName("CollectFunctions")>]
     let collectFunctions x =
-        x |> collectDistinct (function | Function _ | FunctionN _ as expression -> Some expression | _ -> None) |> sortList
+        x |> collectAllDistinct (function | Function _ | FunctionN _ as expression -> Some expression | _ -> None) |> sortList
 
     /// Collects all functions of an expressions and returns their distinct function types.
     [<CompiledName("CollectFunctionTypes")>]
     let collectFunctionTypes x =
-        x |> collectDistinct (function | Function (f, _) | FunctionN (f, _) -> Some f | _ -> None) |> List.sort
+        x |> collectAllDistinct (function | Function (f, _) | FunctionN (f, _) -> Some f | _ -> None) |> List.sort
+
+    /// Collects all sum expressions.
+    [<CompiledName("CollectSums")>]
+    let collectSums x =
+        x |> collectAllDistinct (function | Sum _ as expression -> Some expression | _ -> None) |> sortList
+
+    /// Collects all power expressions.
+    [<CompiledName("CollectProducts")>]
+    let collectProducts x =
+        x |> collectAllDistinct (function | Product _ as expression -> Some expression | _ -> None) |> sortList
+
+    /// Collects all power expressions.
+    [<CompiledName("CollectPowers")>]
+    let collectPowers x =
+        x |> collectAllDistinct (function | Power _ as expression -> Some expression | _ -> None) |> sortList
