@@ -414,6 +414,7 @@ let ``Structural Operators`` () =
 
     Structure.substitute 3Q 4Q (x**3) ==> "x^4"
     Structure.map (fun x -> -x) (x + y**2) ==> "-x - y^2"
+    Structure.map (fun x -> -x) (x) ==> "x" // this is intended
 
     Structure.collectIdentifierSymbols (x*cos(y)) --> [ Symbol "x"; Symbol "y" ]
     Structure.collectIdentifiers (x*cos(y)) ==+> [ "x"; "y" ]
@@ -424,6 +425,9 @@ let ``Structural Operators`` () =
 
     Structure.collectNumberValues (x*cos(2*y-4)/3) --> [ -4N; 1N/3N; 2N; ]
     Structure.collectNumbers (x*cos(2*y-4)/3) ==+> [ "-4"; "1/3"; "2" ]
+
+    Structure.collect (function | Power _ as p -> Some p | _ -> None) ((x+y**z)**(a+b**c)+d) ==+> [ "(x + y^z)^(a + b^c)" ]
+    Structure.collectAll (function | Power _ as p -> Some p | _ -> None) ((x+y**z)**(a+b**c)+d) ==+> [ "b^c"; "y^z"; "(x + y^z)^(a + b^c)" ]
 
 
 [<Test>]

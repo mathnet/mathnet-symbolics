@@ -71,7 +71,8 @@ module Structure =
         | Sum ax | Product ax | FunctionN (_, ax) -> List.fold f s ax
         | Power (r, p) -> List.fold f s [r;p]
         | Function (_, x) -> f s x
-        | _ -> s
+        | Number _ | Approximation _ | Identifier _ | Constant _ |  ComplexInfinity | PositiveInfinity | NegativeInfinity -> s
+        | Undefined -> s
 
     /// Sort expressions in a list with standard expression ordering.
     [<CompiledName("SortList")>]
@@ -88,6 +89,19 @@ module Structure =
         let rec impl (acc:'T list) x =
             match chooser x with
             | Some result -> result::acc
+            | None -> fold impl acc x
+        impl [] x
+
+    /// Applies the given function to the expression tree and returns the result
+    /// for each node where the function returns Some with some value.
+    /// All subexpressions of an expression are examined, no matter whether
+    /// the function returned None ore Some on the parent expression.
+    /// The results are returned as a list in reverse depth-first order.
+    [<CompiledName("CollectAll")>]
+    let collectAll (chooser:Expression->'T option) x =
+        let rec impl (acc:'T list) x =
+            match chooser x with
+            | Some result -> fold impl (result::acc) x
             | None -> fold impl acc x
         impl [] x
 
