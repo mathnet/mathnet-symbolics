@@ -6,7 +6,7 @@ Math.NET Symbolics is a basic open source computer algebra library for .Net and 
 This project does not aim to become a full computer algebra system. If you need such a system,
 have a look at Axiom or Maxima instead, or for commercial solutions Maple, Mathematica or Wolfram Alpha.
 
-Math.NET Symbolics is part of the [Math.NET initiative](http://www.mathdotnet.com/).
+Math.NET Symbolics is part of the [Math.NET initiative](https://www.mathdotnet.com/).
 Available for free under the [MIT/X11 License](License.html).
 
 NuGet Packages
@@ -25,7 +25,7 @@ Platform Support and Dependencies
 
 Package Dependencies:
 
-- [FParsec](http://www.nuget.org/packages/FParsec) (isolated usage only for infix parsing)
+- [FParsec](https://www.nuget.org/packages/FParsec) (isolated usage only for infix parsing)
 
 
 Math.NET Symbolics with F# and F# Interactive
