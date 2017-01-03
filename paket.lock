@@ -1,39 +1,37 @@
 NUGET
-  remote: http://www.nuget.org/api/v2
-  specs:
+  remote: https://www.nuget.org/api/v2
     FParsec (1.0.1)
     FSharp.Core (3.1.2.5) - redirects: force
-    FsUnit (2.0.0)
+    FsUnit (2.0)
       FSharp.Core (>= 3.1.2.5)
       NUnit (3.0.1)
-    MathNet.Numerics (3.8.0)
-      TaskParallelLibrary (>= 1.0.2856.0) - framework: net35
-    MathNet.Numerics.FSharp (3.8.0)
+    MathNet.Numerics (3.8)
+      TaskParallelLibrary (>= 1.0.2856) - framework: net35
+    MathNet.Numerics.FSharp (3.8)
       FSharp.Core (>= 3.1.2.5)
-      MathNet.Numerics (3.8.0)
+      MathNet.Numerics (3.8)
     NUnit (3.0.1)
     TaskParallelLibrary (1.0.2856) - framework: net35
 
 GROUP Build
 NUGET
-  remote: http://www.nuget.org/api/v2
-  specs:
-    FAKE (4.20.0)
+  remote: https://www.nuget.org/api/v2
+    FAKE (4.20)
     FSharp.Compiler.Service (2.0.0.3)
-    FSharp.Formatting (2.14.0)
-      FSharp.Compiler.Service (>= 2.0.0.3 < 2.1.0)
-      FSharpVSPowerTools.Core (>= 2.3.0 < 2.4.0)
-    FSharpVSPowerTools.Core (2.3.0)
+    FSharp.Formatting (2.14)
+      FSharp.Compiler.Service (>= 2.0.0.3 < 2.1)
+      FSharpVSPowerTools.Core (>= 2.3 < 2.4)
+    FSharpVSPowerTools.Core (2.3)
       FSharp.Compiler.Service (>= 2.0.0.3)
-    NuGet.CommandLine (3.3.0)
-    NUnit.ConsoleRunner (3.2.0)
-    NUnit.Extension.NUnitProjectLoader (3.2.0)
-    NUnit.Extension.NUnitV2Driver (3.2.0)
-    NUnit.Extension.NUnitV2ResultWriter (3.2.0)
-    NUnit.Extension.VSProjectLoader (3.2.0)
-    NUnit.Runners (3.2.0)
-      NUnit.ConsoleRunner (3.2.0)
-      NUnit.Extension.NUnitProjectLoader (3.2.0)
-      NUnit.Extension.NUnitV2Driver (3.2.0)
-      NUnit.Extension.NUnitV2ResultWriter (3.2.0)
-      NUnit.Extension.VSProjectLoader (3.2.0)
+    NuGet.CommandLine (3.3)
+    NUnit.ConsoleRunner (3.2)
+    NUnit.Extension.NUnitProjectLoader (3.2)
+    NUnit.Extension.NUnitV2Driver (3.2)
+    NUnit.Extension.NUnitV2ResultWriter (3.2)
+    NUnit.Extension.VSProjectLoader (3.2)
+    NUnit.Runners (3.2)
+      NUnit.ConsoleRunner (3.2)
+      NUnit.Extension.NUnitProjectLoader (3.2)
+      NUnit.Extension.NUnitV2Driver (3.2)
+      NUnit.Extension.NUnitV2ResultWriter (3.2)
+      NUnit.Extension.VSProjectLoader (3.2)
