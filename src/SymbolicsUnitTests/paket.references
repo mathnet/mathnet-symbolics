@@ -1,5 +1,8 @@
 FParsec
 MathNet.Numerics
 MathNet.Numerics.FSharp
-FsUnit
 FSharp.Core
+
+group Test
+	FsUnit
+
