@@ -4,7 +4,24 @@ open System.IO
 open System.Text
 open MathNet.Symbolics
 
+module private LaTeXHelper = 
+    open System
+    let addBracets (str : string) = 
 
+        let sb = Text.StringBuilder()
+        let mutable count = 0 
+
+        for c in str do
+            sb.Append c |> ignore
+            if c = '_' then
+                sb.Append '{' |> ignore
+                count <- count + 1
+            
+        new String('}', count)
+        |> sb.Append |> ignore
+
+        sb.ToString()
+        
 module private LaTeXFormatter =
 
     open Operators
@@ -86,7 +103,7 @@ module private LaTeXFormatter =
             if priority > 0 then write "}\\right)"
         | Identifier (Symbol name) ->
             if name.Length > 1 then write "{"
-            write name
+            LaTeXHelper.addBracets name |> write 
             if name.Length > 1 then write "}"
         | Undefined -> write "\\mathrm{undefined}"
         | Sum (x::xs) ->
