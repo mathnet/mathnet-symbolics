@@ -47,6 +47,15 @@ let d = symbol "d"
 let e = symbol "e"
 let f = symbol "f"
 
+let culture = System.Threading.Thread.CurrentThread.CurrentCulture
+
+[<SetUp>]
+let setup () =
+    System.Threading.Thread.CurrentThread.CurrentCulture <- System.Globalization.CultureInfo.InvariantCulture
+
+[<TearDown>]
+let teardown () =
+    System.Threading.Thread.CurrentThread.CurrentCulture <- culture
 
 [<Test>]
 let ``Number Expressions`` () =
@@ -283,7 +292,7 @@ let ``Parse infix expressions`` () =
     Infix.parseOrThrow "0.001" -!= 0.001
     Infix.parseOrThrow "2.00" ==> "2"
 
-    Infix.parseOrThrow "1.5*a + o" ==> ((1.5).ToString() |> sprintf "%s*a + o")
+    Infix.parseOrThrow "1.5*a + o" ==> "1.5*a + o"
 
     Infix.parseOrThrow ".001" -!= 0.001
     Infix.parseOrThrow ".001" --> Expression.Real(0.001)
@@ -847,3 +856,12 @@ let ``Pseudo Function Test`` () =
     Infix.parseOrUndefined "pow(3*x,10*sin(x))" ==> "(3*x)^(10*sin(x))"
     Infix.parseOrUndefined "sqrt(pow(x,1/2))" ==> "(x^(1/2))^(1/2)"
 
+[<Test>]
+let ``Underscores in names`` () =
+    let expr = Infix.parseOrUndefined "(TESTING_UNDER)*(2)" 
+    expr ==> "2*TESTING_UNDER"
+    LaTeX.format expr --> """2{TESTING_{UNDER}}""" 
+
+    let expr2 = Infix.parseOrUndefined "(TESTING_UNDER_second)*(2)" 
+    expr2 ==> "2*TESTING_UNDER_second"
+    LaTeX.format expr2 --> """2{TESTING_{UNDER_{second}}}""" 
