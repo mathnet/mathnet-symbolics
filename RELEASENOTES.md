@@ -1,3 +1,8 @@
+### 0.14.0 - 2017-02-12
+* Infix/LaTeX: enforce culture invariant floating point format
+* Infix/LaTeX: support for underscores in symbol names *~FoggyFinder*
+* Structure: collectApproximations
+
 ### 0.13.0 - 2016-12-29
 * Structure: collectSums, collectProducts, collectPowers
 * Structure: collectAll, like collect but continues on accepted nodes
