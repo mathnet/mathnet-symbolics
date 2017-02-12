@@ -16,10 +16,6 @@ open Operators
 // Test: x should evaluate to expected
 let inline (-->) x expected = x |> should equal expected
 
-let inline (=!=) x expected = x.ToString() |> should equal (expected.ToString())
-
-let inline (-!=) x expected = Infix.format x |> should equal (expected.ToString())
-
 // Test: x should evaluate to the expected string when formatted *nicely*
 let inline (==>) x expected = Infix.format x |> should equal expected
 
@@ -46,16 +42,6 @@ let c = symbol "c"
 let d = symbol "d"
 let e = symbol "e"
 let f = symbol "f"
-
-let culture = System.Threading.Thread.CurrentThread.CurrentCulture
-
-[<SetUp>]
-let setup () =
-    System.Threading.Thread.CurrentThread.CurrentCulture <- System.Globalization.CultureInfo.InvariantCulture
-
-[<TearDown>]
-let teardown () =
-    System.Threading.Thread.CurrentThread.CurrentCulture <- culture
 
 [<Test>]
 let ``Number Expressions`` () =
@@ -99,11 +85,11 @@ let ``Constant Expressions`` () =
     Expression.Pi ==> "π"
     Expression.E ==> "e"
     Expression.I ==> "j"
-    Expression.Real(1.23) -!= 1.23
-    Expression.Real(-0.23) -!= -0.23
+    Expression.Real(1.23) ==> "1.23"
+    Expression.Real(-0.23) ==> "-0.23"
 
-    real 1.1 + real 2.2 -!= 3.3
-    real 1.1 * real 2.2 -!= 2.42
+    real 1.1 + real 2.2 ==> "3.3"
+    real 1.1 * real 2.2 ==> "2.42"
 
     2 * real 2.0 ==> "4"
 
@@ -284,17 +270,17 @@ let ``Parse infix expressions`` () =
     Infix.parseOrThrow "2*x^(2*y) + e^(3*y)" ==> "e^(3*y) + 2*x^(2*y)"
 
     Infix.parseOrThrow "15" ==> "15"
-    Infix.parseOrThrow "1.5" -!= 1.5
-    Infix.parseOrThrow "0.25" -!= 0.25
-    Infix.parseOrThrow "0.0250" -!= 0.025
-    Infix.parseOrThrow "2.25" -!= 2.25
-    Infix.parseOrThrow "2.250" -!= 2.25
-    Infix.parseOrThrow "0.001" -!= 0.001
+    Infix.parseOrThrow "1.5" ==> "1.5"
+    Infix.parseOrThrow "0.25" ==> "0.25"
+    Infix.parseOrThrow "0.0250" ==> "0.025"
+    Infix.parseOrThrow "2.25" ==> "2.25"
+    Infix.parseOrThrow "2.250" ==> "2.25"
+    Infix.parseOrThrow "0.001" ==> "0.001"
     Infix.parseOrThrow "2.00" ==> "2"
 
     Infix.parseOrThrow "1.5*a + o" ==> "1.5*a + o"
 
-    Infix.parseOrThrow ".001" -!= 0.001
+    Infix.parseOrThrow ".001" ==> "0.001"
     Infix.parseOrThrow ".001" --> Expression.Real(0.001)
     Infix.parseOrThrow "1." ==> "1"
     Infix.parseOrThrow "1." --> Expression.Real(1.0)
@@ -307,6 +293,17 @@ let ``Parse infix expressions`` () =
     Infix.parseOrThrow "inf" --> Expression.PositiveInfinity
     Infix.parseOrThrow "-∞" --> Expression.NegativeInfinity
     Infix.parseOrThrow "⧝" --> Expression.ComplexInfinity
+
+
+[<Test>]
+[<TestCase("en-US"); TestCase("tr-TR"); TestCase("de-DE");TestCase("de-CH");TestCase("he-IL")>]
+let ``Culture Invariant Infix Expressions`` (cultureName:string) =
+    let original = System.Threading.Thread.CurrentThread.CurrentCulture
+    try
+        System.Threading.Thread.CurrentThread.CurrentCulture <- System.Globalization.CultureInfo(cultureName)
+        Infix.parseOrThrow "0.25 + 0.1" ==> "0.35"
+    finally
+        System.Threading.Thread.CurrentThread.CurrentCulture <- original
 
 
 [<Test>]
@@ -626,11 +623,11 @@ let ``Polynomial Euclidean/GCD`` () =
 let ``Evaluate some expression to floating point numbers`` () =
 
     let symbols = Map.ofList ["a", FloatingPoint.Real 2.0; "b", FloatingPoint.Real 3.0; "c", FloatingPoint.Complex (complex 1.0 -1.0)]
-    Evaluate.evaluate symbols (a) =!= FloatingPoint.Real 2.0
-    Evaluate.evaluate symbols (1Q/2) =!= FloatingPoint.Real 0.5
-    Evaluate.evaluate symbols (sin(a) + ln(b)) =!= FloatingPoint.Real 2.007909715
-    Evaluate.evaluate symbols (a*x**2 + b*x + c |> Structure.substitute x (number 1/2)) =!= FloatingPoint.Complex (complex 3.0 -1.0)
-    Evaluate.evaluate symbols (1Q/0Q) =!= FloatingPoint.ComplexInf
+    Evaluate.evaluate symbols (a) --> FloatingPoint.Real 2.0
+    Evaluate.evaluate symbols (1Q/2) --> FloatingPoint.Real 0.5
+    Evaluate.evaluate symbols (sin(a) + ln(b)) --> FloatingPoint.Real (System.Math.Sin(2.0) + System.Math.Log(3.0))
+    Evaluate.evaluate symbols (a*x**2 + b*x + c |> Structure.substitute x (number 1/2)) --> FloatingPoint.Complex (complex 3.0 -1.0)
+    Evaluate.evaluate symbols (1Q/0Q) --> FloatingPoint.ComplexInf
     (fun () -> Evaluate.evaluate symbols (f) |> ignore) |> should (throwWithMessage "Failed to find symbol: f") typeof<System.Exception>
 
 

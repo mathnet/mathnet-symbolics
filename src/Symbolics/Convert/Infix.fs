@@ -143,6 +143,8 @@ module private InfixFormatter =
     open Operators
     open ExpressionPatterns
 
+    let culture = System.Globalization.CultureInfo.InvariantCulture
+
     let functionName = function
         | Abs -> "abs"
         | Ln -> "ln"
@@ -172,14 +174,14 @@ module private InfixFormatter =
         | Constant Pi -> write "pi"
         | Constant I -> write "j"
         | Approximation (Approximation.Real fp) ->
-            if fp >= 0.0 then write (fp.ToString())
+            if fp >= 0.0 then write (fp.ToString(culture))
             else
                 if priority > 0 then write "("
-                write (fp.ToString());
+                write (fp.ToString(culture));
                 if priority > 0 then write ")"
         | Approximation (Approximation.Complex fp) ->
             write "("
-            write (fp.ToString());
+            write (fp.ToString(culture));
             write ")"
         | Sum (x::xs) ->
             if priority > 1 then write "("
@@ -263,14 +265,14 @@ module private InfixFormatter =
         | Constant Pi -> write "\u03C0" // "π"
         | Constant I -> write "j"
         | Approximation (Approximation.Real fp) ->
-            if fp >= 0.0 then write (fp.ToString())
+            if fp >= 0.0 then write (fp.ToString(culture))
             else
                 if priority > 0 then write "("
-                write (fp.ToString());
+                write (fp.ToString(culture));
                 if priority > 0 then write ")"
         | Approximation (Approximation.Complex fp) ->
             write "("
-            write (fp.ToString());
+            write (fp.ToString(culture));
             write ")"
         | Sum (x::xs) ->
             if priority > 1 then write "("

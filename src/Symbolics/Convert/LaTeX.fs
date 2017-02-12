@@ -27,6 +27,8 @@ module private LaTeXFormatter =
     open Operators
     open ExpressionPatterns
 
+    let culture = System.Globalization.CultureInfo.InvariantCulture
+
     // priority: 1=additive 2=product 3=power
 
     let functionName = function
@@ -83,14 +85,14 @@ module private LaTeXFormatter =
                 write "}"
                 if priority > 2 then write "\\right)"
         | Approximation (Approximation.Real fp) ->
-            if fp >= 0.0 then write (fp.ToString())
+            if fp >= 0.0 then write (fp.ToString(culture))
             else
                 if priority > 0 then write "\\left({"
-                write (fp.ToString());
+                write (fp.ToString(culture));
                 if priority > 0 then write "}\\right)"
         | Approximation (Approximation.Complex fp) ->
             write "\\left({"
-            write (fp.ToString());
+            write (fp.ToString(culture));
             write "}\\right)"
         | Constant Pi -> write "\\pi"
         | Constant E -> write "e"
