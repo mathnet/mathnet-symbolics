@@ -32,6 +32,9 @@ module Calculus =
         | Function (Asin, x) -> (1Q/sqrt(1Q+pow x 2Q)) * (differentiate symbol x)
         | Function (Acos, x) -> (-1Q/sqrt(1Q+pow x 2Q)) * (differentiate symbol x)
         | Function (Atan, x) -> (1Q/1Q+pow x 2Q) * (differentiate symbol x)
+        | Function (Cot, x) -> (-1Q/(sin(x) * sin(x))) * (differentiate symbol x)
+        | Function (Csc, x) -> (-cot(x) * csc(x)) * (differentiate symbol x)
+        | Function (Sec, x) -> (tan(x) * sec(x)) * (differentiate symbol x)
         | FunctionN (f, xs) -> failwith "not supported"
         | Function (Abs, _) -> failwith "not supported"
         | Product [] -> failwith "invalid expression"

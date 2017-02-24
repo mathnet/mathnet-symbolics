@@ -377,9 +377,10 @@ module Operators =
         | Number n when n.IsNegative -> negate (Function (Tan, Number -n))
         | Product ((Number n)::ax) when n.IsNegative -> negate (Function (Tan, multiply (Number -n) (Product ax)))
         | x -> Function (Tan, x)
-    let cot x = tan x |> invert
-    let sec x = cos x |> invert
-    let csc x = sin x |> invert
+
+    let cot x = Function (Cot, x)
+    let sec x = Function (Sec, x)
+    let csc x = Function (Csc, x)
     let cosh x = Function (Cosh, x)
     let sinh x = Function (Sinh, x)
     let tanh x = Function (Tanh, x)
@@ -401,6 +402,9 @@ module Operators =
         | Asin -> arcsin x
         | Acos -> arccos x
         | Atan -> arctan x
+        | Cot -> cot x
+        | Sec -> sec x
+        | Csc -> csc x
 
     let applyN (f: Function) (xs: Expression list) = failwith "not supported yet"
 
@@ -451,6 +455,9 @@ type Expression with
     static member ArcSin (x) = Operators.arcsin x
     static member ArcCos (x) = Operators.arccos x
     static member ArcTan (x) = Operators.arctan x
+    static member Cot (x) = Operators.cot x
+    static member Csc (x) = Operators.csc x
+    static member Sec (x) = Operators.sec x
 
     static member Apply (f, x) = Operators.apply f x
     static member ApplyN (f, xs) = Operators.applyN f xs
@@ -482,7 +489,6 @@ type Expression with
     static member op_Implicit (x:BigInteger) = Operators.fromInteger(x)
     static member op_Implicit (x:BigRational) = Operators.fromRational(x)
     static member op_Implicit (x:float) = Operators.real x
-    static member op_Implicit (name:string) = Operators.symbol(name)
 
 
 [<RequireQualifiedAccess>]

@@ -88,7 +88,17 @@ module Approximation =
         | Real a -> Real (Math.Atan a)
         | Complex a -> Complex (C.Atan a)
 
-    let apply (f:Function) a =
+    let cot = function
+        | Real a -> Real (Trig.Cot a)
+        | Complex a -> Complex (Complex.cot a)
+    let sec = function
+        | Real a -> Real (Trig.Sec a)
+        | Complex a -> Complex (Complex.sec a)
+    let csc = function
+        | Real a -> Real (Trig.Csc a)
+        | Complex a -> Complex (Complex.csc a)
+
+    let apply f a =
         match f with
         | Abs -> abs a
         | Ln -> ln a
@@ -102,6 +112,9 @@ module Approximation =
         | Asin -> asin a
         | Acos -> acos a
         | Atan -> atan a
+        | Cot -> cot a
+        | Sec -> sec a
+        | Csc -> csc a
 
     let isZero = function
         | Real x when x = 0.0 -> true
