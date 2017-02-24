@@ -874,4 +874,4 @@ let ``Test for other trigonometric function``() =
     exrp3 ==> "cot(sec(32))"
 
     let expr4 = Infix.parseOrUndefined "25*x*sec(x)"
-    Calculus.differentiate x expr4  ==> "25*sec(x) + 25*x*tan(x)*sec(x)"
+    Calculus.differentiate x expr4  ==> "25*(sec(x) + x*tan(x)*sec(x))"
