@@ -156,6 +156,12 @@ module Evaluate =
         | Acos, Complex x -> Complex (Complex.Acos(x))
         | Atan, Real x -> Real (Math.Atan(x))
         | Atan, Complex x -> Complex (Complex.Atan(x))
+        | Cot, Real x -> Real (Trig.Cot x)
+        | Cot, Complex x -> Complex(Trig.Cot x)
+        | Sec, Real x -> Real (Trig.Sec x)
+        | Sec, Complex x -> Complex(Trig.Sec x)
+        | Csc, Real x -> Real (Trig.Sec x)
+        | Csc, Complex x -> Complex(Trig.Sec x)
         | _ -> failwith "not supported"
 
     let fapplyN f xs = failwith "not supported yet"

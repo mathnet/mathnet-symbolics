@@ -230,8 +230,6 @@ let ``Expressions are always in auto-simplified form`` () =
     exp 0Q ==> "1"
 
     sin x ==> "sin(x)"
-    cot x ==> "1/tan(x)"
-    sec x ==> "1/cos(x)"
 
 
 [<Test>]
@@ -313,7 +311,7 @@ let ``Print LaTeX expressions`` () =
     LaTeX.format Expression.MinusOne --> """-1"""
     LaTeX.format Expression.ComplexInfinity --> """\infty"""
     LaTeX.format Expression.Pi --> """\pi"""
-    LaTeX.format (Expression.Real -0.23) --> (-0.23).ToString()
+    LaTeX.format (Expression.Real -0.23) --> string -0.23
     LaTeX.format (a**b) --> """{a}^{b}"""
     LaTeX.format (a**(b+c)) --> """{a}^{\left(b + c\right)}"""
     LaTeX.format ((a+b)**c) --> """{\left(a + b\right)}^{c}"""
@@ -862,3 +860,18 @@ let ``Underscores in names`` () =
     let expr2 = Infix.parseOrUndefined "(TESTING_UNDER_second)*(2)" 
     expr2 ==> "2*TESTING_UNDER_second"
     LaTeX.format expr2 --> """2{TESTING_{UNDER_{second}}}""" 
+
+[<Test>]
+let ``Test for other trigonometric function``() = 
+
+    let exrp = Infix.parseOrUndefined "tan(x)*25*csc(x)"
+    exrp ==> "25*tan(x)*csc(x)"
+   
+    let expr2 = Operators.sec 32Q 
+    expr2 ==> "sec(32)"
+
+    let exrp3 = Expression.Apply(Function.Cot, expr2)
+    exrp3 ==> "cot(sec(32))"
+
+    let expr4 = Infix.parseOrUndefined "25*x*sec(x)"
+    Calculus.differentiate x expr4  ==> "25*sec(x) + 25*x*tan(x)*sec(x)"

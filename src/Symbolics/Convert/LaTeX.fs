@@ -38,6 +38,7 @@ module private LaTeXFormatter =
         | Sin -> "\\sin" | Cos -> "\\cos" | Tan -> "\\tan"
         | Sinh -> "\\sinh" | Cosh -> "\\cosh" | Tanh -> "\\tanh"
         | Asin -> "\\arcsin" | Acos -> "\\arccos" | Atan -> "\\arctan"
+        | Cot -> "\\cot" | Sec -> "\\sec" | Csc -> "\\csc"
 
     let private nextNumber = function
          | Power (Number _, _)
