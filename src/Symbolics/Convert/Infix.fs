@@ -29,32 +29,13 @@ module private InfixParser =
     let parens p = between (str_ws "(") (str_ws ")") p
     let abs p = between (str_ws "|") (str_ws "|") p |>> Expression.Abs
 
-    let str_num : string parser =
-        let options = NumberLiteralOptions.None
-        numberLiteral options "number"
-        |>> fun nl -> nl.String
-
-    let integer : BigInteger parser =
-        str_num
-        |>> BigInteger.Parse
-
-    let fraction : BigRational parser =
-        str_num
-        |>> fun num ->
-            let ival = BigInteger.Parse num
-            if ival = BigInteger.Zero then BigRational.Zero
-            else BigRational.FromBigIntFraction (ival, BigInteger.Pow (10I, num.Length))
-
-    let numberZ : Expression parser =
-        integer .>> ws
-        |>> Expression.FromInteger
-
-    let numberQ : Expression parser =
-        integer .>>. ((pstring "." >>. fraction) <|>% BigRational.Zero) .>> ws
-        |>> fun (intPart, fractionPart) -> (BigRational.FromBigInt intPart) + fractionPart |> Expression.FromRational
-
     let number : Expression parser =
-        let options = NumberLiteralOptions.AllowFraction ||| NumberLiteralOptions.AllowFractionWOIntegerPart ||| NumberLiteralOptions.AllowInfinity
+        let options = 
+            NumberLiteralOptions.AllowFraction 
+            ||| NumberLiteralOptions.AllowFractionWOIntegerPart 
+            ||| NumberLiteralOptions.AllowInfinity
+            ||| NumberLiteralOptions.AllowExponent
+            
         numberLiteral options "number" .>> ws
         |>> fun num ->
             if num.IsInfinity then Expression.PositiveInfinity
