@@ -1,3 +1,7 @@
+### 0.15.0 - 2017-04-30
+* Infix: support parsing approximations in exponential notation *~FoggyFinder*
+* Functions: trigonometric functions sec, csc, cot *~FoggyFinder*
+
 ### 0.14.0 - 2017-02-12
 * Infix/LaTeX: enforce culture invariant floating point format
 * Infix/LaTeX: support for underscores in symbol names *~FoggyFinder*
