@@ -94,7 +94,7 @@ let ``Constant Expressions`` () =
     2 * real 2.0 ==> "4"
 
     x + 2*x ==> "3*x"
-    x + 2.2*x ==> "3.2*x"
+    x + 2.2*x ==> ((3.2).ToString() |> sprintf "%s*x")
 
 
 [<Test>]
