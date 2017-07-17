@@ -30,12 +30,12 @@ module private InfixParser =
     let abs p = between (str_ws "|") (str_ws "|") p |>> Expression.Abs
 
     let number : Expression parser =
-        let options = 
-            NumberLiteralOptions.AllowFraction 
-            ||| NumberLiteralOptions.AllowFractionWOIntegerPart 
+        let options =
+            NumberLiteralOptions.AllowFraction
+            ||| NumberLiteralOptions.AllowFractionWOIntegerPart
             ||| NumberLiteralOptions.AllowInfinity
             ||| NumberLiteralOptions.AllowExponent
-            
+
         numberLiteral options "number" .>> ws
         |>> fun num ->
             if num.IsInfinity then Expression.PositiveInfinity
@@ -45,7 +45,7 @@ module private InfixParser =
     let identifier : Expression parser =
         let isMathChar = function | '\u03C0' | '\u221E' | '\u29DD' -> true | _ -> false
         let isIdentifierFirstChar c = isLetter c || isMathChar c
-        let isIdentifierChar c = isLetter c || isDigit c || isMathChar c || c = '_' 
+        let isIdentifierChar c = isLetter c || isDigit c || isMathChar c || c = '_'
         many1Satisfy2L isIdentifierFirstChar isIdentifierChar "identifier" .>> ws
         |>> function // differentating between constants and identifiers
             | "pi" | "\u03C0" -> Expression.Constant Pi
