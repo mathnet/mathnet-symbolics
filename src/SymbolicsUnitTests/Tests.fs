@@ -7,7 +7,6 @@ module Tests
 open NUnit.Framework
 open FsUnit
 open System.Collections.Generic
-open System.Xml.Linq
 open MathNet.Numerics
 open MathNet.Symbolics
 
@@ -203,6 +202,24 @@ let ``Expressions are always in auto-simplified form`` () =
 
     (-2) + (-3)*x + 5*y ==> "-2 - 3*x + 5*y"
     (-2.0) + (-3.0)*x + 5.0*y ==> "-2 - 3*x + 5*y"
+    (2*x)/(3*y) ==> "(2*x)/(3*y)"
+    (1*x)/(3*y) ==> "x/(3*y)"
+    (a*x)/(3*y) ==> "(a*x)/(3*y)"
+    (2*x)/(1*y) ==> "(2*x)/y"
+    (2*x)/(b*y) ==> "(2*x)/(b*y)"
+    (2)/(3*b*y) ==> "2/(3*b*y)"
+    (1)/(3*b*y) ==> "1/(3*b*y)"
+    (2*a*x)/(3) ==> "2/3*a*x"
+    (1*a*x)/(3) ==> "1/3*a*x"
+    (-2*x)/(3*y) ==> "-(2*x)/(3*y)"
+    (-1*x)/(3*y) ==> "-x/(3*y)"
+    (-a*x)/(3*y) ==> "-(a*x)/(3*y)"
+    (-2*x)/(1*y) ==> "-(2*x)/y"
+    (-2*x)/(b*y) ==> "-(2*x)/(b*y)"
+    (-2)/(3*b*y) ==> "-2/(3*b*y)"
+    (-1)/(3*b*y) ==> "-1/(3*b*y)"
+    (-2*a*x)/(3) ==> "-2/3*a*x"
+    (-1*a*x)/(3) ==> "-1/3*a*x"
 
     // There is no subtraction, negation or division in simplified expressions (strict):
     1 / x ===> "x^(-1)" // strict
@@ -218,7 +235,7 @@ let ``Expressions are always in auto-simplified form`` () =
 
     2*x*3 ==> "6*x"
     -x*y/3 ===> "(-1/3)*x*y"
-    -x*y/3 ==> "-(1/3)*x*y"
+    -x*y/3 ==> "-1/3*x*y"
 
     ((x*y)**(1Q/2)*z**2)**2 ==> "x*y*z^4"
     (a/b/(c*a))*(c*d/a)/d ===> "a^(-1)*b^(-1)" // strict
@@ -235,6 +252,41 @@ let ``Expressions are always in auto-simplified form`` () =
     exp 0Q ==> "1"
 
     sin x ==> "sin(x)"
+
+[<Test>]
+let ``Convert Expression to VisualExpression`` () =
+
+    let style = DefaultVisualStyle()
+    let convert = VisualExpression.fromExpression style
+
+    convert (1Q) --> VisualExpression.PositiveInteger (bigint 1)
+    convert (0Q) --> VisualExpression.PositiveInteger (bigint 0)
+    convert (-1Q) --> VisualExpression.Negative (VisualExpression.PositiveInteger (bigint 1))
+
+    convert (1Q/2) --> VisualExpression.Fraction ((VisualExpression.PositiveInteger (bigint 1)), (VisualExpression.PositiveInteger (bigint 2)))
+    convert (-1Q/2) --> VisualExpression.Negative (VisualExpression.Fraction ((VisualExpression.PositiveInteger (bigint 1)), (VisualExpression.PositiveInteger (bigint 2))))
+
+    convert (real 1.0) --> VisualExpression.PositiveFloatingPoint 1.0
+    convert (real 0.0) --> VisualExpression.PositiveFloatingPoint 0.0
+    convert (real -1.0) --> VisualExpression.Negative (VisualExpression.PositiveFloatingPoint 1.0)
+
+    convert (PositiveInfinity) --> VisualExpression.Infinity
+    convert (NegativeInfinity) --> VisualExpression.Negative VisualExpression.Infinity
+    convert (ComplexInfinity) --> VisualExpression.ComplexInfinity
+    convert (Undefined) --> VisualExpression.Undefined
+
+    convert (-x*y) --> VisualExpression.Negative (VisualExpression.Product [ VisualExpression.Symbol "x"; VisualExpression.Symbol "y"])
+    convert (x*(1-y)) --> VisualExpression.Product [VisualExpression.Symbol "x"; VisualExpression.Parenthesis (VisualExpression.Sum [ VisualExpression.PositiveInteger (bigint 1); VisualExpression.Negative (VisualExpression.Symbol "y")])]
+
+    convert (abs x) --> VisualExpression.Abs (VisualExpression.Symbol "x")
+    convert (-(abs x)) --> VisualExpression.Negative (VisualExpression.Abs (VisualExpression.Symbol "x"))
+    convert (1-(abs x)) --> VisualExpression.Sum [ VisualExpression.PositiveInteger (bigint 1); VisualExpression.Negative (VisualExpression.Abs (VisualExpression.Symbol "x"))]
+    convert (-1-(abs x)) --> VisualExpression.Sum [ VisualExpression.Negative (VisualExpression.PositiveInteger (bigint 1)); VisualExpression.Negative (VisualExpression.Abs (VisualExpression.Symbol "x"))]
+    convert (abs (2*x)) --> VisualExpression.Abs (VisualExpression.Product [ VisualExpression.PositiveInteger (bigint 2); VisualExpression.Symbol "x"])
+
+    convert (x**(2Q)) --> VisualExpression.Power (VisualExpression.Symbol "x", VisualExpression.PositiveInteger (bigint 2))
+    convert (x**(-1Q)) --> VisualExpression.Fraction (VisualExpression.PositiveInteger (bigint 1), VisualExpression.Symbol "x")
+    convert (x**(-2Q)) --> VisualExpression.Fraction (VisualExpression.PositiveInteger (bigint 1), VisualExpression.Power (VisualExpression.Symbol "x", VisualExpression.PositiveInteger (bigint 2)))
 
 
 [<Test>]
@@ -403,9 +455,9 @@ let ``Parse F# quotations`` () =
     Quotations.parse <@ fun x -> x @> ==> "x"
     Quotations.parse <@ 3/4 @> ==> "3/4"
     Quotations.parse <@ fun x -> 3/x @> ==> "3/x"
-    Quotations.parse <@ -x*y/3 @> ==> "-(1/3)*x*y"
-    Quotations.parse <@ fun x y -> -x*y/3 @> ==> "-(1/3)*x*y"
-    Quotations.parse <@ fun (x, y) -> -x*y/3 @> ==> "-(1/3)*x*y"
+    Quotations.parse <@ -x*y/3 @> ==> "-1/3*x*y"
+    Quotations.parse <@ fun x y -> -x*y/3 @> ==> "-1/3*x*y"
+    Quotations.parse <@ fun (x, y) -> -x*y/3 @> ==> "-1/3*x*y"
 
 
 [<Test>]
@@ -476,7 +528,7 @@ let ``Algebaric Operators`` () =
     Algebraic.separateFactors x (b*cos(x)*ln(d)*x) ==|> ("b*ln(d)", "x*cos(x)")
     Algebraic.separateFactors x (b*cos(x)*log10(d)*x) ==|> ("b*log(d)", "x*cos(x)")
     Algebraic.separateFactors x (b*cos(x)*(log d (d*2))*x) ==|> ("b*log(d,2*d)", "x*cos(x)")
-    Algebraic.separateFactors x (c*x*sin(x)/2) ==|> ("(1/2)*c", "x*sin(x)")
+    Algebraic.separateFactors x (c*x*sin(x)/2) ==|> ("c/2", "x*sin(x)")
 
     Algebraic.expand ((x+1)*(x+3)) ==> "3 + 4*x + x^2"
     Algebraic.expand ((a+b)**2) ==> "a^2 + 2*a*b + b^2"
@@ -522,10 +574,10 @@ let ``Algebaric Operators`` () =
     // TODO: should actually be Undefined
     Trigonometric.expand ((sin(2*x)-2*sin(x)*cos(x))/((sin(x))**2 + (cos(x))**2 - 1)) ==> "0"
 
-    Trigonometric.contract (sin(a)*sin(b)) ==> "-(1/2)*cos(a + b) + (1/2)*cos(a - b)"
-    Trigonometric.contract ((sin(x) + cos(y))*cos(y)) ==> "1/2 + (1/2)*sin(x + y) + (1/2)*sin(x - y) + (1/2)*cos(2*y)"
-    Trigonometric.contract (sin(x)**2*cos(x)**2) ==> "1/8 - (1/8)*cos(4*x)"
-    Trigonometric.contract (cos(x)**4) ==> "3/8 + (1/2)*cos(2*x) + (1/8)*cos(4*x)"
+    Trigonometric.contract (sin(a)*sin(b)) ==> "-cos(a + b)/2 + cos(a - b)/2"
+    Trigonometric.contract ((sin(x) + cos(y))*cos(y)) ==> "1/2 + sin(x + y)/2 + sin(x - y)/2 + cos(2*y)/2"
+    Trigonometric.contract (sin(x)**2*cos(x)**2) ==> "1/8 - cos(4*x)/8"
+    Trigonometric.contract (cos(x)**4) ==> "3/8 + cos(2*x)/2 + cos(4*x)/8"
 
     Trigonometric.simplify ((cos(x)+sin(x))**4 + (cos(x)-sin(x))**4 + cos(4*x) - 3) ==> "0"
 
@@ -536,7 +588,7 @@ let ``Algebaric Operators`` () =
 
     // TODO: expected: 0
     Trigonometric.simplify (sin(x) + sin(y) - 2*sin(x/2+y/2)*cos(x/2-y/2))
-        ==> "sin(y) - (1/2)*sin(x - y) - (1/2)*sin((1/2)*x - (1/2)*y - ((1/2)*x - (1/2)*y)) - (1/2)*sin(-(1/2)*x + (1/2)*y - ((1/2)*x - (1/2)*y)) - sin((1/2)*x + (1/2)*y - ((1/2)*x - (1/2)*y))"
+        ==> "sin(y) - sin(x - y)/2 - sin(x/2 - y/2 - (x/2 - y/2))/2 - sin(-x/2 + y/2 - (x/2 - y/2))/2 - sin(x/2 + y/2 - (x/2 - y/2))"
 
 
 [<Test>]
@@ -559,17 +611,17 @@ let ``Differentiation and Taylor Series`` () =
 
     Calculus.taylor 3 x 0Q (1/(1-x)) ==> "1 + x + x^2"
     Calculus.taylor 3 x 1Q (1/x) ==> "3 - 3*x + x^2"
-    Calculus.taylor 3 x 1Q (ln(x)) ==> "-3/2 + 2*x - (1/2)*x^2"
-    Calculus.taylor 4 x 1Q (ln(x)) ==> "-11/6 + 3*x - (3/2)*x^2 + (1/3)*x^3"
-    Calculus.taylor 3 x 0Q (sin(x)+cos(x)) ==> "1 + x - (1/2)*x^2"
-    Calculus.taylor 4 x 0Q (sin(x)+cos(x)) ==> "1 + x - (1/2)*x^2 - (1/6)*x^3"
-    (sin(x)+cos(x)) |> Calculus.taylor 4 x 0Q ==> "1 + x - (1/2)*x^2 - (1/6)*x^3"
+    Calculus.taylor 3 x 1Q (ln(x)) ==> "-3/2 + 2*x - x^2/2"
+    Calculus.taylor 4 x 1Q (ln(x)) ==> "-11/6 + 3*x - 3/2*x^2 + x^3/3"
+    Calculus.taylor 3 x 0Q (sin(x)+cos(x)) ==> "1 + x - x^2/2"
+    Calculus.taylor 4 x 0Q (sin(x)+cos(x)) ==> "1 + x - x^2/2 - x^3/6"
+    (sin(x)+cos(x)) |> Calculus.taylor 4 x 0Q ==> "1 + x - x^2/2 - x^3/6"
 
 
 [<Test>]
 let ``Tangent and Normal Lines`` () =
 
-    (1/z) |> Calculus.tangentLine z 3Q ==> "2/3 - (1/9)*z"
+    (1/z) |> Calculus.tangentLine z 3Q ==> "2/3 - z/9"
     (x**3 - 12*x**2 - c) |> Calculus.tangentLine x 1Q ==> "10 - c - 21*x"
 
     Calculus.normalLine z 3Q (1/z) ==> "-80/3 + 9*z"
@@ -579,13 +631,13 @@ let ``Tangent and Normal Lines`` () =
 [<Test>]
 let ``Polynomial Division`` () =
 
-    Polynomial.divide x (5*x**2 + 4*x + 1) (2*x + 3) ==|> ("-7/4 + (5/2)*x", "25/4")
+    Polynomial.divide x (5*x**2 + 4*x + 1) (2*x + 3) ==|> ("-7/4 + 5/2*x", "25/4")
     Polynomial.divide x (x**3 - 2*x**2 - 4) (x-3) ==|> ("3 + x + x^2", "5")
     Polynomial.quot x (x**3 - 2*x**2 - 4) (x-3) ==> "3 + x + x^2"
     Polynomial.remainder x (x**3 - 2*x**2 - 4) (x-3) ==> "5"
 
-    Polynomial.divide x (3*x**3 + x**2 + x + 5) (5*x**2 - 3*x + 1) ==|> ("14/25 + (3/5)*x", "111/25 + (52/25)*x")
-    Polynomial.divide x (3*x**3 + x**2 + x + 5) (2Q) ==|> ("5/2 + (1/2)*x + (1/2)*x^2 + (3/2)*x^3", "0")
+    Polynomial.divide x (3*x**3 + x**2 + x + 5) (5*x**2 - 3*x + 1) ==|> ("14/25 + 3/5*x", "111/25 + 52/25*x")
+    Polynomial.divide x (3*x**3 + x**2 + x + 5) (2Q) ==|> ("5/2 + x/2 + x^2/2 + 3/2*x^3", "0")
     Polynomial.pseudoDivide x (3*x**3 + x**2 + x + 5) (5*x**2 - 3*x + 1) ==||> ("14 + 15*x", "111 + 52*x", "25")
     Polynomial.pseudoDivide x (3*x**3 + x**2 + x + 5) (2Q) ==||> ("5 + x + x^2 + 3*x^3", "0", "2")
 
@@ -598,7 +650,7 @@ let ``Polynomial Division`` () =
         m*(symbol - a) + Structure.substitute symbol a x |> Algebraic.expand
 
     tangent x (x**3 - 12*x**2 - c) 1Q ==> "10 - c - 21*x"
-    tangent z (1/z) 3Q ==> "2/3 - (1/9)*z"
+    tangent z (1/z) 3Q ==> "2/3 - z/9"
 
 
 [<Test>]
@@ -637,25 +689,25 @@ let ``Polynomial Euclidean/GCD`` () =
     let u = x**4 - 2*x**3 - 6*x**2 + 12*x + 15
     let v = x**3 + x**2 - 4*x - 4
     Polynomial.gcd x u v ==> "1 + x"
-    Polynomial.halfExtendedGcd x u v ==|> ("1 + x", "3/5 - (1/5)*x")
+    Polynomial.halfExtendedGcd x u v ==|> ("1 + x", "3/5 - x/5")
     let g,a,b = Polynomial.extendedGcd x u v
     g ==> "1 + x"
-    a ==> "3/5 - (1/5)*x"
-    b ==> "2 - (6/5)*x + (1/5)*x^2"
+    a ==> "3/5 - x/5"
+    b ==> "2 - 6/5*x + x^2/5"
 
     // hence u*a + v*b = g ? indeed:
     u*a + v*b |> Algebraic.expand ==> "1 + x"
 
     // Let's try to find s, t such that s*u + t*v = x^2 - 1
     let s, t = Polynomial.diophantineGcd x (x**4 - 2*x**3 - 6*x**2 + 12*x + 15) (x**3 + x**2 - 4*x - 4) (x**2 - 1)
-    s ==> "-3/5 + (4/5)*x - (1/5)*x^2"
-    t ==> "-2 + (16/5)*x - (7/5)*x^2 + (1/5)*x^3"
+    s ==> "-3/5 + 4/5*x - x^2/5"
+    t ==> "-2 + 16/5*x - 7/5*x^2 + x^3/5"
     s*u + t*v |> Algebraic.expand ==> "-1 + x^2"
 
     // (x^2 + 3*x)/((x + 1)*(x^2 - 2*x + 1)) --> (-1/2)/(x+1) + (1/2 + (3/2)*x)/(x^2-2*x+1)
     let a0, ax = Polynomial.partialFraction x (x**2+3*x) [x+1; x**2-2*x+1]
     a0 ==> "0"
-    ax ==+> ["-1/2"; "1/2 + (3/2)*x"]
+    ax ==+> ["-1/2"; "1/2 + 3/2*x"]
 
 
 [<Test>]
@@ -701,7 +753,7 @@ let ``Primitive Equation Solver`` () =
         let z' = z |> Algebraic.expand |> Polynomial.collectTerms x
         if z' <> Undefined then z' else z
 
-    solveLine x y (x/2+y/3) 1Q ==> "3 - (3/2)*x" //   -->  x/2 + y/3 = 1  ->  y = -3/2*x + 3
+    solveLine x y (x/2+y/3) 1Q ==> "3 - 3/2*x" //   -->  x/2 + y/3 = 1  ->  y = -3/2*x + 3
     solveLine x y (x/a) ((x+y)/b) ==> "(-1 + b/a)*x"
     solveLine x y ((y/x-2)/(1-3/x)) 6Q ==> "-18 + 8*x"
 

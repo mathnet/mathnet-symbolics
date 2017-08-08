@@ -126,6 +126,57 @@ module private InfixFormatter =
 
     let culture = System.Globalization.CultureInfo.InvariantCulture
 
+    let rec visual write = function
+        | VisualExpression.Symbol s ->
+            match s with
+            | "pi" -> write "\u03C0" // "π"
+            | x -> write x
+        | VisualExpression.PositiveInteger n -> write (n.ToString())
+        | VisualExpression.PositiveFloatingPoint f -> write (f.ToString(culture))
+        | VisualExpression.Parenthesis x ->
+            write "("
+            visual write x
+            write ")"
+        | VisualExpression.Abs x ->
+            write "|"
+            visual write x
+            write "|"
+        | VisualExpression.Negative x ->
+            write "-"
+            visual write x
+        | VisualExpression.Sum (x::xs) ->
+            visual write x
+            xs |> List.iter (function
+                | VisualExpression.Negative x -> write " - "; visual write x
+                | x -> write " + "; visual write x)
+        | VisualExpression.Product (x::xs) ->
+            visual write x
+            xs |> List.iter (fun x -> write "*"; visual write x)
+        | VisualExpression.Fraction (n, d) ->
+            visual write n
+            write "/"
+            visual write d
+        | VisualExpression.Power (r, p) ->
+            visual write r
+            write "^"
+            visual write p
+        | VisualExpression.Function (fn, x) ->
+            write fn
+            write "("
+            visual write x
+            write ")"
+        | VisualExpression.FunctionN (fn, x::xs) ->
+            write fn
+            write "("
+            visual write x
+            xs |> List.iter (fun x -> write ","; visual write x)
+            write ")"
+        | VisualExpression.ComplexI -> write "j"
+        | VisualExpression.Infinity -> write "\u221E" // "∞"
+        | VisualExpression.ComplexInfinity -> write "\u29DD" // "⧝"
+        | VisualExpression.Undefined -> write "Undefined"
+        | VisualExpression.Sum [] | VisualExpression.Product [] | VisualExpression.FunctionN (_, []) -> failwith "invalid expression"
+
     let functionName = function
         | Abs -> "abs"
         | Ln -> "ln" | Log -> "log"
@@ -319,6 +370,8 @@ module private InfixFormatter =
 [<RequireQualifiedAccess>]
 module Infix =
 
+    let private defaultStyle = DefaultVisualStyle()
+
     /// Strict formatting, prints an exact representation of the expression tree
     [<CompiledName("FormatStrict")>]
     let formatStrict expression =
@@ -342,7 +395,8 @@ module Infix =
     [<CompiledName("Format")>]
     let format expression =
         let sb = StringBuilder()
-        InfixFormatter.nice (sb.Append >> ignore) 0 expression
+        let visual = VisualExpression.fromExpression defaultStyle expression
+        InfixFormatter.visual (sb.Append >> ignore) visual
         sb.ToString()
 
     [<CompiledName("Print")>]
