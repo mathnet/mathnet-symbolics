@@ -57,10 +57,10 @@ module Approximation =
     let ln = function
         | Real a -> Real (Math.Log a)
         | Complex a -> Complex (C.Log a)
-    let log = function
+    let log10 = function
         | Real a -> Real (Math.Log10 a)
         | Complex a -> Complex (C.Log10 a)
-    let logn b x =
+    let log b x =
         match b, x with
         | Real v, Real w -> Real (Math.Log (v, w))
         | Real v, Complex w -> Complex (Complex.Log (w, v))
@@ -116,7 +116,7 @@ module Approximation =
         match f with
         | Abs -> abs a
         | Ln -> ln a
-        | Log -> log a
+        | Log -> log10 a
         | Exp -> exp a
         | Sin ->sin a
         | Cos -> cos a
@@ -134,7 +134,7 @@ module Approximation =
     let applyN f xs =
         match f, xs with
         | Atan, [x; y] -> atan2 x y
-        | Log, [b; x] -> logn b x
+        | Log, [b; x] -> log b x
         | _ -> failwith "not supported"
 
     let isZero = function

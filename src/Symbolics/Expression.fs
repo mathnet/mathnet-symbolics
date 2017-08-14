@@ -360,10 +360,10 @@ module Operators =
     let ln = function
         | One -> zero
         | x -> Function (Ln, x)
-    let log = function
+    let log10 = function
         | One -> zero
         | x -> Function (Log, x)
-    let logn basis x = FunctionN (Log, [basis; x])
+    let log basis x = FunctionN (Log, [basis; x])
 
     let sin = function
         | Zero -> zero
@@ -397,7 +397,7 @@ module Operators =
         | Abs -> abs x
         | Exp -> exp x
         | Ln -> ln x
-        | Log -> log x
+        | Log -> log10 x
         | Sin -> sin x
         | Cos -> cos x
         | Tan -> tan x
@@ -453,8 +453,8 @@ type Expression with
 
     static member Exp (x) = Operators.exp x
     static member Ln (x) = Operators.ln x
-    static member Log(x) = Operators.log x
-    static member Log (basis, x) = Operators.logn basis x
+    static member Log(x) = Operators.log10 x
+    static member Log (basis, x) = Operators.log basis x
 
     static member Sin (x) = Operators.sin x
     static member Cos (x) = Operators.cos x
