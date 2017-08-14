@@ -414,7 +414,7 @@ module Operators =
     let applyN (f: Function) (xs: Expression list) =
         match f, xs with
         | Atan, [x;y] -> arctan2 x y
-        | Log, [b; x] -> logn b x
+        | Log, [b; x] -> log b x
         | _ -> failwith "not supported"
 
 
