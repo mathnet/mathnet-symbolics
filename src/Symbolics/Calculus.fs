@@ -23,6 +23,7 @@ module Calculus =
             de*ln(r)*p + e*dr*(r**(e-1))
         | Function (Exp, x) as f -> (differentiate symbol x) * f
         | Function (Ln, x) -> (differentiate symbol x) / x
+        | Function (Log, x) -> (differentiate symbol ((ln x) / (ln 10Q)))
         | Function (Sin, x) -> (differentiate symbol x) * cos(x)
         | Function (Cos, x) -> -(differentiate symbol x) * sin(x)
         | Function (Tan, x) -> 2*(differentiate symbol x) / (cos(2*x)+1)
@@ -35,8 +36,10 @@ module Calculus =
         | Function (Cot, x) -> (-1Q/(sin(x) * sin(x))) * (differentiate symbol x)
         | Function (Csc, x) -> (-cot(x) * csc(x)) * (differentiate symbol x)
         | Function (Sec, x) -> (tan(x) * sec(x)) * (differentiate symbol x)
-        | FunctionN (f, xs) -> failwith "not supported"
         | Function (Abs, _) -> failwith "not supported"
+        | FunctionN (Atan, [x; y]) -> differentiate symbol (tan (x / y))
+        | FunctionN (Log, [b; x]) -> differentiate symbol ((ln x) / (ln b))
+        | FunctionN (_) -> failwith "not supported"
         | Product [] -> failwith "invalid expression"
 
     /// Differentiate expression to symbol and substitute symbol with value

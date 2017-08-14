@@ -4,7 +4,7 @@ type Symbol = Symbol of string
 
 type Function =
     | Abs
-    | Ln | Exp
+    | Ln | Log | Exp
     | Sin | Cos | Tan
     | Cot | Sec | Csc 
     | Cosh | Sinh | Tanh

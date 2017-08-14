@@ -136,6 +136,8 @@ module Evaluate =
         | Abs, ComplexMatrix x -> Real (x.L2Norm())
         | Ln, Real x -> Real (Math.Log(x))
         | Ln, Complex x -> Complex (Complex.Log(x))
+        | Log, Real x -> Real (Math.Log10(x))
+        | Log, Complex x -> Complex(Complex.Log10(x))
         | Exp, Real x -> Real (Math.Exp(x))
         | Exp, Complex x -> Complex (Complex.Exp(x))
         | Sin, Real x -> Real (Math.Sin(x))
@@ -164,7 +166,15 @@ module Evaluate =
         | Csc, Complex x -> Complex(Trig.Sec x)
         | _ -> failwith "not supported"
 
-    let fapplyN f xs = failwith "not supported yet"
+    let fapplyN f xs =
+        match f, xs with
+        | Atan, [Real x; Real y] -> Real (Math.Atan2(x, y))
+        | Atan, [Complex x; Real y] -> Complex (Complex.Atan(x / Complex.Create(y, 0.0)))
+        | Atan, [Complex x; Complex y] -> Complex (Complex.Atan(x / y))
+        | Atan, [Real x; Complex y] -> Complex (Complex.Atan(Complex.Create(x, 0.0) / y))
+        | Log, [Real b; Real x] -> Real (Math.Log(x, b))
+        | Log, [Real b; Complex x] -> Complex (Complex.Log(x, b))
+        | _ -> failwith "not supported"
 
     [<CompiledName("Evaluate")>]
     let rec evaluate (symbols:IDictionary<string, FloatingPoint>) = function
