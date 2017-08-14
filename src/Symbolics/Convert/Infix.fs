@@ -128,7 +128,7 @@ module private InfixFormatter =
 
     let functionName = function
         | Abs -> "abs"
-        | Ln -> "ln"
+        | Ln -> "ln" | Log -> "log"
         | Exp -> "exp"
         | Acos -> "acos" | Asin -> "asin" | Atan -> "atan"
         | Sinh -> "sinh" | Cosh -> "cosh" | Tanh -> "tanh"
