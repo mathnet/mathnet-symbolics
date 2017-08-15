@@ -174,6 +174,8 @@ module Evaluate =
         | Atan, [Real x; Complex y] -> Complex (Complex.Atan(Complex.Create(x, 0.0) / y))
         | Log, [Real b; Real x] -> Real (Math.Log(x, b))
         | Log, [Real b; Complex x] -> Complex (Complex.Log(x, b))
+        | Log, [Complex b; Complex x] -> Complex(Complex.Log(x) / Complex.Log(b))
+        | Log, [Complex b; Real x] -> Complex(Complex.Log(Complex.Create(x, 0.0)) / Complex.Log(b))
         | _ -> failwith "not supported"
 
     [<CompiledName("Evaluate")>]
