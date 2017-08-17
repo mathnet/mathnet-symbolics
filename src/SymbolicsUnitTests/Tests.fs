@@ -259,9 +259,14 @@ let ``Parse infix expressions`` () =
     Infix.parseOrUndefined "sin x-1" ==> "Undefined"
     Infix.parseOrUndefined "sin -x" ==> "sin - x"
     Infix.parseOrUndefined "sin" ==> "sin"
+
     Infix.parseOrUndefined "atan(x,y)" ==> "atan(x,y)"
     Infix.parseOrUndefined "atan ( x , y )"  ==> "atan(x,y)"
     Infix.parseOrUndefined " atan ( - x, - y ) " ==> "atan(-x,-y)"
+
+    Infix.parseOrUndefined "log(x)" ==> "log(x)"
+    Infix.parseOrUndefined "log(x,y)" ==> "log(x,y)"
+    Infix.parseOrUndefined "log(x,10)" ==> "log(x,10)"
 
     Infix.parseOrThrow "1/(a*b)" ==> "1/(a*b)"
     Infix.parseOrThrow "exp(a)^exp(b)" ==> "exp(a)^exp(b)"
@@ -329,6 +334,13 @@ let ``Print LaTeX expressions`` () =
     LaTeX.format (Expression.Pi * 10Q) --> """10\pi"""
     LaTeX.format (Expression.E * 2Q**(4Q*x)) --> """e{2}^{\left(4x\right)}"""
     LaTeX.format (4Q * Expression.E ** x) --> """4{e}^{x}"""
+
+    LaTeX.format (log10 x) --> """\log_{10}\left(x\right)"""
+    LaTeX.format (log 8Q y) --> """\log_{8}\left(y\right)"""
+    LaTeX.format (log (sin x) (tanh y)) --> """\log_{\sin{x}}\left(\tanh{y}\right)"""
+    LaTeX.format (arctan x) --> """\arctan{x}"""
+    LaTeX.format (arctan2 x (3Q*y)) --> """\arctan{\left(x,3y\right)}"""
+    
 
 [<Test>]
 let ``Format MathML3 Strict Content`` () =
