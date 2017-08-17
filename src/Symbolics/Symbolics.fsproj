@@ -69,6 +69,7 @@
     <Compile Include="Approximate.fs" />
     <Compile Include="Evaluate.fs" />
     <Compile Include="Convert\VisualExpression.fs" />
+	<Compile Include="Compile.fs" />
     <Compile Include="Convert\Quotations.fs" />
     <Compile Include="Convert\Linq.fs" />
     <Compile Include="Convert\Infix.fs" />
