@@ -339,7 +339,7 @@ let ``Print LaTeX expressions`` () =
     LaTeX.format (log 8Q y) --> """\log_{8}\left(y\right)"""
     LaTeX.format (log (sin x) (tanh y)) --> """\log_{\sin{x}}\left(\tanh{y}\right)"""
     LaTeX.format (arctan x) --> """\arctan{x}"""
-    LaTeX.format (arctan2 x (3Q*y)) --> """\arctan{\left(x,3y\right)}"""
+    LaTeX.format (arctan2 x (3Q*y)) --> """\operatorname{atan2}\left({{x}, {3y}}\right)"""
     
 
 [<Test>]
