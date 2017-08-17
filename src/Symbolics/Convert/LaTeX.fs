@@ -191,6 +191,14 @@ module private LaTeXFormatter =
             tex write 0 x
             write "\\right)"
             if priority > 3 then write "\\right)"
+        | FunctionN (Atan, [y; x]) ->
+            if priority > 3 then write "\\left("
+            write "\\operatorname{atan2}\\left({{"
+            tex write 0 y
+            write "}, {"
+            tex write 0 x
+            write "}}\\right)"
+            if priority > 3 then write "\\right)"
         | FunctionN (fn, x::xs) ->
             if priority > 3 then write "\\left("
             write (functionName fn)
