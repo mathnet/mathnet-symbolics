@@ -201,6 +201,9 @@ let ``Expressions are always in auto-simplified form`` () =
     1*x*y*z**2 ==> "x*y*z^2"
     2*x*y*z*z**2 ==> "2*x*y*z^3"
 
+    (-2) + (-3)*x + 5*y ==> "-2 - 3*x + 5*y"
+    (-2.0) + (-3.0)*x + 5.0*y ==> "-2 - 3*x + 5*y"
+
     // There is no subtraction, negation or division in simplified expressions (strict):
     1 / x ===> "x^(-1)" // strict
     1 / x ==> "1/x" // nice
@@ -340,7 +343,7 @@ let ``Print LaTeX expressions`` () =
     LaTeX.format (log (sin x) (tanh y)) --> """\log_{\sin{x}}\left(\tanh{y}\right)"""
     LaTeX.format (arctan x) --> """\arctan{x}"""
     LaTeX.format (arctan2 x (3Q*y)) --> """\operatorname{atan2}\left({{x}, {3y}}\right)"""
-    
+
 
 [<Test>]
 let ``Format MathML3 Strict Content`` () =
@@ -899,21 +902,21 @@ let ``Pseudo Function Test`` () =
 
 [<Test>]
 let ``Underscores in names`` () =
-    let expr = Infix.parseOrUndefined "(TESTING_UNDER)*(2)" 
+    let expr = Infix.parseOrUndefined "(TESTING_UNDER)*(2)"
     expr ==> "2*TESTING_UNDER"
-    LaTeX.format expr --> """2{TESTING_{UNDER}}""" 
+    LaTeX.format expr --> """2{TESTING_{UNDER}}"""
 
-    let expr2 = Infix.parseOrUndefined "(TESTING_UNDER_second)*(2)" 
+    let expr2 = Infix.parseOrUndefined "(TESTING_UNDER_second)*(2)"
     expr2 ==> "2*TESTING_UNDER_second"
-    LaTeX.format expr2 --> """2{TESTING_{UNDER_{second}}}""" 
+    LaTeX.format expr2 --> """2{TESTING_{UNDER_{second}}}"""
 
 [<Test>]
-let ``Test for other trigonometric function``() = 
+let ``Test for other trigonometric function``() =
 
     let exrp = Infix.parseOrUndefined "tan(x)*25*csc(x)"
     exrp ==> "25*tan(x)*csc(x)"
-   
-    let expr2 = Operators.sec 32Q 
+
+    let expr2 = Operators.sec 32Q
     expr2 ==> "sec(32)"
 
     let exrp3 = Expression.Apply(Function.Cot, expr2)
@@ -921,9 +924,9 @@ let ``Test for other trigonometric function``() =
 
     let expr4 = Infix.parseOrUndefined "25*x*sec(x)"
     Calculus.differentiate x expr4  ==> "25*(sec(x) + x*tan(x)*sec(x))"
-    
+
 [<Test>]
-let ``Exponential notation parsing``() = 
+let ``Exponential notation parsing``() =
     let expr = Infix.parseOrUndefined "(-6.40869140625E-05)*x"
     expr ==> "(-6.40869140625E-05)*x"
 
@@ -932,6 +935,6 @@ let ``Exponential notation parsing``() =
 
     let expr3 = Infix.parseOrUndefined "-.5e7"
     expr3 ==> "-5000000"
-    
+
     let expr4 = Infix.parseOrUndefined "58E-3"
-    expr4 ==> "0.058"   
+    expr4 ==> "0.058"
