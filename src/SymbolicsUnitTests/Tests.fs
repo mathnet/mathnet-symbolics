@@ -501,6 +501,11 @@ let ``Algebaric Operators`` () =
 
     Trigonometric.simplify ((cos(x)+sin(x))**4 + (cos(x)-sin(x))**4 + cos(4*x) - 3) ==> "0"
 
+    Trigonometric.substitute (tan(x)) ==> "sin(x)/cos(x)"
+    Trigonometric.substitute (cot(x)) ==> "cos(x)/sin(x)"
+    Trigonometric.substitute (csc(x)) ==> "1/sin(x)"
+    Trigonometric.substitute (sec(x)) ==> "1/cos(x)"
+
     // TODO: expected: 0
     Trigonometric.simplify (sin(x) + sin(y) - 2*sin(x/2+y/2)*cos(x/2-y/2))
         ==> "sin(y) - (1/2)*sin(x - y) - (1/2)*sin((1/2)*x - (1/2)*y - ((1/2)*x - (1/2)*y)) - (1/2)*sin(-(1/2)*x + (1/2)*y - ((1/2)*x - (1/2)*y)) - sin((1/2)*x + (1/2)*y - ((1/2)*x - (1/2)*y))"
