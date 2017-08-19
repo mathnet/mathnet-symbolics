@@ -106,6 +106,9 @@ module Trigonometric =
     let rec substitute x =
         match x with
         | Function (Tan, a) -> let a' = substitute a in sin(a')/cos(a')
+        | Function (Cot, a) -> let a' = substitute a in cos(a')/sin(a')
+        | Function (Sec, a) -> let a' = substitute a in one/cos(a')
+        | Function (Csc, a) -> let a' = substitute a in one/sin(a')
         | Sum ax -> sum <| List.map substitute ax
         | Product ax -> product <| List.map substitute ax
         | Power (radix, p) -> (substitute radix) ** (substitute p)

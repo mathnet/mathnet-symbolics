@@ -3,11 +3,11 @@ NUGET
     FParsec (1.0.1)
     FSharp.Core (3.1.2.5) - redirects: force
     MathNet.Numerics (3.8)
-      TaskParallelLibrary (>= 1.0.2856) - framework: net35
+      TaskParallelLibrary (>= 1.0.2856) - restriction: == net35
     MathNet.Numerics.FSharp (3.8)
       FSharp.Core (>= 3.1.2.5)
       MathNet.Numerics (3.8)
-    TaskParallelLibrary (1.0.2856) - framework: net35
+    TaskParallelLibrary (1.0.2856) - restriction: == net35
 
 GROUP Build
 NUGET

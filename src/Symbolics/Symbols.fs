@@ -6,7 +6,7 @@ type Function =
     | Abs
     | Ln | Log | Exp
     | Sin | Cos | Tan
-    | Cot | Sec | Csc 
+    | Cot | Sec | Csc
     | Cosh | Sinh | Tanh
     | Asin | Acos | Atan
 
