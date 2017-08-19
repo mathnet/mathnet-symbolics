@@ -3,6 +3,9 @@
 open System
 open System.Numerics
 open MathNet.Numerics
+module Option =
+     let map2 f a b =
+        a |> Option.bind (fun a' -> b |> Option.map (fun b' -> f a' b'))
 
 module Compile =
     open MathNet.Symbolics.ExpressionPatterns
@@ -97,15 +100,23 @@ module Compile =
             | Some e -> e
             | None -> failwith "Invalid expression"
 
-    let compile1 (expr:Expression) (arg1:Symbol) = Option.map (fun (x : Delegate) -> x :?> Func<float, float>) (compile expr [arg1])
-    let compile2 (expr:Expression) (arg1:Symbol) (arg2:Symbol) = Option.map (fun (x : Delegate) -> x :?> Func<float, float, float>) (compile expr [arg1; arg2])
-    let compile3 (expr:Expression) (arg1:Symbol) (arg2:Symbol) (arg3:Symbol) = Option.map (fun (x : Delegate) -> x :?> Func<float, float, float, float>) (compile expr [arg1; arg2; arg3])
-    let compile4 (expr:Expression) (arg1:Symbol) (arg2:Symbol) (arg3:Symbol) (arg4:Symbol) = Option.map (fun (x : Delegate) -> x :?> Func<float, float, float, float, float>) (compile expr [arg1; arg2; arg3; arg4])
+    let compile1 expr arg1 =
+        Option.map (fun (x : Delegate) -> x :?> Func<float, float>) (compile expr [arg1])
+    let compile2 expr arg1 arg2 =
+        Option.map (fun (x : Delegate) -> x :?> Func<float, float, float>) (compile expr [arg1; arg2])
+    let compile3 expr arg1 arg2 arg3 =
+        Option.map (fun (x : Delegate) -> x :?> Func<float, float, float, float>) (compile expr [arg1; arg2; arg3])
+    let compile4 expr arg1 arg2 arg3 arg4 =
+        Option.map (fun (x : Delegate) -> x :?> Func<float, float, float, float, float>) (compile expr [arg1; arg2; arg3; arg4])
 
-    let compile1OrThrow (expr:Expression) (arg1:Symbol) = compileOrThrow expr [arg1] :?> Func<float, float>
-    let compile2OrThrow (expr:Expression) (arg1:Symbol) (arg2:Symbol) = compileOrThrow expr [arg1; arg2] :?> Func<float, float, float>
-    let compile3OrThrow (expr:Expression) (arg1:Symbol) (arg2:Symbol) (arg3:Symbol) = compileOrThrow expr [arg1; arg2; arg3] :?> Func<float, float, float, float>
-    let compile4OrThrow (expr:Expression) (arg1:Symbol) (arg2:Symbol) (arg3:Symbol) (arg4:Symbol) = compileOrThrow expr [arg1; arg2; arg3; arg4] :?> Func<float, float, float, float, float>
+    let compile1OrThrow expr arg1 =
+        compileOrThrow expr [arg1] :?> Func<float, float>
+    let compile2OrThrow expr arg1 arg2 =
+        compileOrThrow expr [arg1; arg2] :?> Func<float, float, float>
+    let compile3OrThrow expr arg1 arg2 arg3 =
+        compileOrThrow expr [arg1; arg2; arg3] :?> Func<float, float, float, float>
+    let compile4OrThrow expr arg1 arg2 arg3 arg4 =
+        compileOrThrow expr [arg1; arg2; arg3; arg4] :?> Func<float, float, float, float, float>
 
     let compileComplex (expr : Expression) (args : Symbol list) : Delegate option =
         let argName = function |Symbol(n) -> n
@@ -184,15 +195,23 @@ module Compile =
             | Some e -> e
             | None -> failwith "Invalid expression"
 
-    let compileComplex1 (expr:Expression) (arg1:Symbol) = Option.map (fun (x : Delegate) -> x :?> Func<Complex, Complex>) (compile expr [arg1])
-    let compileComplex2 (expr:Expression) (arg1:Symbol) (arg2:Symbol) = Option.map (fun (x : Delegate) -> x :?> Func<Complex, Complex, Complex>) (compile expr [arg1; arg2])
-    let compileComplex3 (expr:Expression) (arg1:Symbol) (arg2:Symbol) (arg3:Symbol) = Option.map (fun (x : Delegate) -> x :?> Func<Complex, Complex, Complex, Complex>) (compile expr [arg1; arg2; arg3])
-    let compileComplex4 (expr:Expression) (arg1:Symbol) (arg2:Symbol) (arg3:Symbol) (arg4:Symbol) = Option.map (fun (x : Delegate) -> x :?> Func<Complex, Complex, Complex, Complex, Complex>) (compile expr [arg1; arg2; arg3; arg4])
+    let compileComplex1 expr arg1 =
+        Option.map (fun (x : Delegate) -> x :?> Func<Complex, Complex>) (compile expr [arg1])
+    let compileComplex2 expr arg1 arg2 =
+        Option.map (fun (x : Delegate) -> x :?> Func<Complex, Complex, Complex>) (compile expr [arg1; arg2])
+    let compileComplex3 expr arg1 arg2 arg3 =
+        Option.map (fun (x : Delegate) -> x :?> Func<Complex, Complex, Complex, Complex>) (compile expr [arg1; arg2; arg3])
+    let compileComplex4 expr arg1 arg2 arg3 arg4 =
+        Option.map (fun (x : Delegate) -> x :?> Func<Complex, Complex, Complex, Complex, Complex>) (compile expr [arg1; arg2; arg3; arg4])
 
-    let compileComplex1OrThrow (expr:Expression) (arg1:Symbol) = compileOrThrow expr [arg1] :?> Func<Complex, Complex>
-    let compileComplex2OrThrow (expr:Expression) (arg1:Symbol) (arg2:Symbol) = compileOrThrow expr [arg1; arg2] :?> Func<Complex, Complex, Complex>
-    let compileComplex3OrThrow (expr:Expression) (arg1:Symbol) (arg2:Symbol) (arg3:Symbol) = compileOrThrow expr [arg1; arg2; arg3] :?> Func<Complex, Complex, Complex, Complex>
-    let compileComplex4OrThrow (expr:Expression) (arg1:Symbol) (arg2:Symbol) (arg3:Symbol) (arg4:Symbol) = compileOrThrow expr [arg1; arg2; arg3; arg4] :?> Func<Complex, Complex, Complex, Complex, Complex>
+    let compileComplex1OrThrow expr arg1 =
+        compileOrThrow expr [arg1] :?> Func<Complex, Complex>
+    let compileComplex2OrThrow expr arg1 arg2 =
+        compileOrThrow expr [arg1; arg2] :?> Func<Complex, Complex, Complex>
+    let compileComplex3OrThrow expr arg1 arg2 arg3 =
+        compileOrThrow expr [arg1; arg2; arg3] :?> Func<Complex, Complex, Complex, Complex>
+    let compileComplex4OrThrow expr arg1 arg2 arg3 arg4 =
+        compileOrThrow expr [arg1; arg2; arg3; arg4] :?> Func<Complex, Complex, Complex, Complex, Complex>
 
     type MathNet.Symbolics.Expression with
         member this.Compile ([<ParamArray>] args : Symbol array) = compileOrThrow this (Array.toList args)
