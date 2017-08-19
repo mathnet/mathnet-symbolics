@@ -16,13 +16,19 @@ module Exponential =
             | Sum ax -> product <| List.map expRules ax
             | Product ((Integer _ as n)::ax) -> (expRules (product ax))**n
             | x -> exp x
-        let rec lnRules = function
-            | Product ax -> sum <| List.map lnRules ax
-            | Power (r, p) -> p*lnRules r |> Algebraic.expand
-            | x -> ln x
+        let rec lnRules f = function
+            | Product ax -> sum <| List.map (lnRules f) ax
+            | Power (r, p) -> p*lnRules f r |> Algebraic.expand
+            | x -> f x
+        let rec lognRules basis = function
+            | Product ax -> sum <| List.map (lognRules basis) ax
+            | Power (r, p) -> p*lognRules basis r |> Algebraic.expand
+            | x -> log basis x
         match Structure.map expand x with
         | Function (Exp, a) -> expRules (Algebraic.expand a)
-        | Function (Ln, a) -> lnRules (Algebraic.expand a)
+        | Function (Ln, a) -> lnRules ln (Algebraic.expand a)
+        | Function (Log, a) -> lnRules log10 (Algebraic.expand a)
+        | FunctionN (Log, [basis;a]) -> lognRules basis (Algebraic.expand a)
         | a -> a
 
     [<CompiledName("Contract")>]

@@ -360,7 +360,10 @@ module Operators =
     let ln = function
         | One -> zero
         | x -> Function (Ln, x)
-    let log basis x = divide (ln x) (ln basis)
+    let log10 = function
+        | One -> zero
+        | x -> Function (Log, x)
+    let log basis x = FunctionN (Log, [basis; x])
 
     let sin = function
         | Zero -> zero
@@ -387,12 +390,14 @@ module Operators =
     let arcsin x = Function (Asin, x)
     let arccos x = Function (Acos, x)
     let arctan x = Function (Atan, x)
+    let arctan2 x y = FunctionN (Atan, [x;y])
 
     let apply f x =
         match f with
         | Abs -> abs x
         | Exp -> exp x
         | Ln -> ln x
+        | Log -> log10 x
         | Sin -> sin x
         | Cos -> cos x
         | Tan -> tan x
@@ -406,7 +411,11 @@ module Operators =
         | Sec -> sec x
         | Csc -> csc x
 
-    let applyN (f: Function) (xs: Expression list) = failwith "not supported yet"
+    let applyN (f: Function) (xs: Expression list) =
+        match f, xs with
+        | Atan, [x;y] -> arctan2 x y
+        | Log, [b; x] -> log b x
+        | _ -> failwith "not supported"
 
 
 type Expression with
@@ -444,6 +453,7 @@ type Expression with
 
     static member Exp (x) = Operators.exp x
     static member Ln (x) = Operators.ln x
+    static member Log(x) = Operators.log10 x
     static member Log (basis, x) = Operators.log basis x
 
     static member Sin (x) = Operators.sin x

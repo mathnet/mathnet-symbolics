@@ -57,6 +57,14 @@ module Approximation =
     let ln = function
         | Real a -> Real (Math.Log a)
         | Complex a -> Complex (C.Log a)
+    let log10 = function
+        | Real a -> Real (Math.Log10 a)
+        | Complex a -> Complex (C.Log10 a)
+    let log b x =
+        match b, x with
+        | Real v, Real w -> Real (Math.Log (v, w))
+        | Real v, Complex w -> Complex (Complex.Log (w, v))
+        | _ -> failwith "not supported"
     let exp = function
         | Real a -> Real (Math.Exp a)
         | Complex a -> Complex (C.Exp a)
@@ -87,6 +95,12 @@ module Approximation =
     let atan = function
         | Real a -> Real (Math.Atan a)
         | Complex a -> Complex (C.Atan a)
+    let atan2 x y =
+        match x, y with
+        | Real a, Real b -> Real (Math.Atan2 (a, b))
+        | Complex a, Complex b -> Complex (Complex.Atan (a / b))
+        | Complex a, Real b -> Complex (Complex.Atan (a / (Complex.Create (b, 0.0))))
+        | Real a, Complex b -> Complex (Complex.Atan ((Complex.Create (a, 0.0)) / b))
 
     let cot = function
         | Real a -> Real (Trig.Cot a)
@@ -102,6 +116,7 @@ module Approximation =
         match f with
         | Abs -> abs a
         | Ln -> ln a
+        | Log -> log10 a
         | Exp -> exp a
         | Sin ->sin a
         | Cos -> cos a
@@ -115,6 +130,12 @@ module Approximation =
         | Cot -> cot a
         | Sec -> sec a
         | Csc -> csc a
+
+    let applyN f xs =
+        match f, xs with
+        | Atan, [x; y] -> atan2 x y
+        | Log, [b; x] -> log b x
+        | _ -> failwith "not supported"
 
     let isZero = function
         | Real x when x = 0.0 -> true

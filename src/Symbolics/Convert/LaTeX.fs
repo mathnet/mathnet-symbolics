@@ -33,7 +33,7 @@ module private LaTeXFormatter =
 
     let functionName = function
         | Abs -> "\\mathrm{abs}"
-        | Ln -> "\\ln"
+        | Ln -> "\\ln" | Log -> "\\log"
         | Exp -> "\\exp"
         | Sin -> "\\sin" | Cos -> "\\cos" | Tan -> "\\tan"
         | Sinh -> "\\sinh" | Cosh -> "\\cosh" | Tanh -> "\\tanh"
@@ -170,12 +170,34 @@ module private LaTeXFormatter =
             write "\\mathrm{e}^"
             tex write 4 x
             if priority > 3 then write "\\right)"
+        | Function (Log, x) ->
+            if priority > 3 then write "\\left("
+            write "\\log_{10}\\left("
+            tex write 0 x
+            write "\\right)"
+            if priority > 3 then write "\\right)"
         | Function (fn, x) ->
             if priority > 3 then write "\\left("
             write (functionName fn)
             write "{"
             tex write 3 x
             write "}"
+            if priority > 3 then write "\\right)"
+        | FunctionN (Log, [basis; x]) ->
+            if priority > 3 then write "\\left("
+            write "\\log_{"
+            tex write 0 basis
+            write "}\\left("
+            tex write 0 x
+            write "\\right)"
+            if priority > 3 then write "\\right)"
+        | FunctionN (Atan, [y; x]) ->
+            if priority > 3 then write "\\left("
+            write "\\operatorname{atan2}\\left({{"
+            tex write 0 y
+            write "}, {"
+            tex write 0 x
+            write "}}\\right)"
             if priority > 3 then write "\\right)"
         | FunctionN (fn, x::xs) ->
             if priority > 3 then write "\\left("

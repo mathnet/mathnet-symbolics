@@ -224,6 +224,8 @@ let ``Expressions are always in auto-simplified form`` () =
 
     x + ln x ==> "x + ln(x)"
     x + ln (x+1) ==> "x + ln(1 + x)"
+    x + log10 (x+1) ==> "x + log(1 + x)"
+    x + (log x (x+1)) ==> "x + log(x,1 + x)"
     2*abs x ==> "2*|x|"
     x + abs (-x) ==> "x + |x|"
     abs (-3Q) ==> "3"
@@ -257,6 +259,14 @@ let ``Parse infix expressions`` () =
     Infix.parseOrUndefined "sin x-1" ==> "Undefined"
     Infix.parseOrUndefined "sin -x" ==> "sin - x"
     Infix.parseOrUndefined "sin" ==> "sin"
+
+    Infix.parseOrUndefined "atan(x,y)" ==> "atan(x,y)"
+    Infix.parseOrUndefined "atan ( x , y )"  ==> "atan(x,y)"
+    Infix.parseOrUndefined " atan ( - x, - y ) " ==> "atan(-x,-y)"
+
+    Infix.parseOrUndefined "log(x)" ==> "log(x)"
+    Infix.parseOrUndefined "log(x,y)" ==> "log(x,y)"
+    Infix.parseOrUndefined "log(x,10)" ==> "log(x,10)"
 
     Infix.parseOrThrow "1/(a*b)" ==> "1/(a*b)"
     Infix.parseOrThrow "exp(a)^exp(b)" ==> "exp(a)^exp(b)"
@@ -324,6 +334,13 @@ let ``Print LaTeX expressions`` () =
     LaTeX.format (Expression.Pi * 10Q) --> """10\pi"""
     LaTeX.format (Expression.E * 2Q**(4Q*x)) --> """e{2}^{\left(4x\right)}"""
     LaTeX.format (4Q * Expression.E ** x) --> """4{e}^{x}"""
+
+    LaTeX.format (log10 x) --> """\log_{10}\left(x\right)"""
+    LaTeX.format (log 8Q y) --> """\log_{8}\left(y\right)"""
+    LaTeX.format (log (sin x) (tanh y)) --> """\log_{\sin{x}}\left(\tanh{y}\right)"""
+    LaTeX.format (arctan x) --> """\arctan{x}"""
+    LaTeX.format (arctan2 x (3Q*y)) --> """\operatorname{atan2}\left({{x}, {3y}}\right)"""
+    
 
 [<Test>]
 let ``Format MathML3 Strict Content`` () =
@@ -443,13 +460,19 @@ let ``Algebaric Operators`` () =
     negate (x + y**2) ==> "-(x + y^2)"
 
     Algebraic.factors (b*cos(x)*ln(d)*x) ==+> ["b"; "x"; "ln(d)"; "cos(x)"]
+    Algebraic.factors (b*cos(x)*log10(d)*x) ==+> ["b"; "x"; "log(d)"; "cos(x)"]
+    Algebraic.factors (b*cos(x)*(log d (d*2))*x) ==+> ["b"; "x"; "log(d,2*d)"; "cos(x)"]
     Algebraic.factors (b+cos(x)) ==+> ["b + cos(x)"]
     Algebraic.summands (b+cos(x)+ln(d)+x) ==+> ["b"; "x"; "ln(d)"; "cos(x)"]
+    Algebraic.summands (b+cos(x)+log10(d)+x) ==+> ["b"; "x"; "log(d)"; "cos(x)"]
+    Algebraic.summands (b+cos(x)+(log d (d*2))+x) ==+> ["b"; "x"; "log(d,2*d)"; "cos(x)"]
     Algebraic.summands (b*cos(x)) ==+> ["b*cos(x)"]
 
     Algebraic.factorsInteger (2Q/3*b*cos(x)) --> (2I, [1Q/3; b; cos(x)])
 
     Algebraic.separateFactors x (b*cos(x)*ln(d)*x) ==|> ("b*ln(d)", "x*cos(x)")
+    Algebraic.separateFactors x (b*cos(x)*log10(d)*x) ==|> ("b*log(d)", "x*cos(x)")
+    Algebraic.separateFactors x (b*cos(x)*(log d (d*2))*x) ==|> ("b*log(d,2*d)", "x*cos(x)")
     Algebraic.separateFactors x (c*x*sin(x)/2) ==|> ("(1/2)*c", "x*sin(x)")
 
     Algebraic.expand ((x+1)*(x+3)) ==> "3 + 4*x + x^2"
@@ -477,6 +500,8 @@ let ``Algebaric Operators`` () =
     Exponential.expand (1/(exp(2*x) - (exp(x))**2)) ==> "⧝"
     Exponential.expand (exp((x+y)*(x-y))) ==> "exp(x^2)/exp(y^2)"
     Exponential.expand (ln((c*x)**a) + ln(y**b*z)) ==> "a*ln(c) + a*ln(x) + b*ln(y) + ln(z)"
+    Exponential.expand (log10((c*x)**a) + log10(y**b*z)) ==> "a*log(c) + a*log(x) + b*log(y) + log(z)"
+    Exponential.expand ((log 5Q ((c*x)**a)) + (log 3Q (y**b*z))) ==> "a*log(5,c) + a*log(5,x) + b*log(3,y) + log(3,z)"
 
     Exponential.contract (exp(x)*exp(y)) ==> "exp(x + y)"
     Exponential.contract (exp(x)**a) ==> "exp(a*x)"
@@ -520,6 +545,14 @@ let ``Differentiation and Taylor Series`` () =
     Calculus.differentiate x (a*x**2) ==> "2*a*x"
     Calculus.differentiate x (a*x**b) ==> "a*b*x^(-1 + b)"
     Calculus.differentiate x (a*x**2 + b*x + c) ==> "b + 2*a*x"
+    Calculus.differentiate x (1Q/x) ==> "-1/x^2"
+    Calculus.differentiate x ((ln x) / (ln 10Q)) ==> "1/(x*ln(10))"
+    Calculus.differentiate x (ln x) ==> "1/x"
+    Calculus.differentiate x (ln (x**2)) ==> "2/x"
+    Calculus.differentiate x (log10 x) ==> "1/(x*ln(10))"
+    Calculus.differentiate x (log10 (x**2)) ==> "2/(x*ln(10))"
+    Calculus.differentiate x (log 10Q x) ==> "1/(x*ln(10))"
+    Calculus.differentiate x (log x (x**2)) ==> "2/(x*ln(x)) - ln(x^2)/(x*ln(x)^2)"
 
     Calculus.taylor 3 x 0Q (1/(1-x)) ==> "1 + x + x^2"
     Calculus.taylor 3 x 1Q (1/x) ==> "3 - 3*x + x^2"
@@ -675,6 +708,8 @@ let ``General Polynomial Expressions`` () =
 
     Polynomial.isMonomial x (a * x**2) --> true
     Polynomial.isMonomial x (ln(a) * x**2) --> true
+    Polynomial.isMonomial x (log10(a) * x**2) --> true
+    Polynomial.isMonomial x ((log a (a**2)) * x**2) --> true
     Polynomial.isMonomial x (x**2 + a) --> false
     Polynomial.isPolynomial x (x**2 + x**3) --> true
     Polynomial.isPolynomial x (x**2 + 2*x) --> true
@@ -682,6 +717,8 @@ let ``General Polynomial Expressions`` () =
 
     Polynomial.isMonomialMV (Polynomial.symbols [x;y]) (a * x**2 * y**2) --> true
     Polynomial.isMonomialMV (Polynomial.symbols [x;y]) (ln(a) * x**2 * y**2) --> true
+    Polynomial.isMonomialMV (Polynomial.symbols [x;y]) (log10(a) * x**2 * y**2) --> true
+    Polynomial.isMonomialMV (Polynomial.symbols [x;y]) ((log a (a**2)) * x**2 * y**2) --> true
     Polynomial.isMonomialMV (Polynomial.symbols [x;y]) (x**2 + y**2) --> false
     Polynomial.isPolynomialMV (Polynomial.symbols [x;y]) (x**2 + y**2) --> true
     Polynomial.isPolynomialMV (Polynomial.symbols [x+1]) ((x+1)**2 + 2*(x+1)) --> true
@@ -729,10 +766,14 @@ let ``General Polynomial Expressions`` () =
     Polynomial.collectTerms x (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b) ==> "x*(4*a + 5*b + 2*a*y + 3*b*y)"
     Polynomial.collectTerms a (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b) ==> "5*b*x + 3*b*x*y + a*(4*x + 2*x*y)"
     Polynomial.collectTerms (ln(a)) (2*x*ln(a)*y + 4*x*ln(a) + 3*x*y*b + 5*x*b + c) ==> "c + 5*b*x + 3*b*x*y + (4*x + 2*x*y)*ln(a)"
+    Polynomial.collectTerms (log10(a)) (2*x*log10(a)*y + 4*x*log10(a) + 3*x*y*b + 5*x*b + c) ==> "c + 5*b*x + 3*b*x*y + (4*x + 2*x*y)*log(a)"
+    Polynomial.collectTerms (log a (a**2)) (2*x*(log a (a**2))*y + 4*x*(log a (a**2)) + 3*x*y*b + 5*x*b + c) ==> "c + 5*b*x + 3*b*x*y + (4*x + 2*x*y)*log(a,a^2)"
 
     Polynomial.collectTermsMV (Polynomial.symbols [x;y]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b) ==> "(4*a + 5*b)*x + (2*a + 3*b)*x*y"
     Polynomial.collectTermsMV (Polynomial.symbols [a;b]) (2*x*a*y + 4*a*x + 3*x*y*b + 5*x*b) ==> "a*(4*x + 2*x*y) + b*(5*x + 3*x*y)"
     Polynomial.collectTermsMV (Polynomial.symbols [x;ln(a)]) (2*x*ln(a)*y + 4*x*ln(a) + 3*x*y*b + 5*x*b + c) ==> "c + x*(5*b + 3*b*y) + x*(4 + 2*y)*ln(a)"
+    Polynomial.collectTermsMV (Polynomial.symbols [x;log10(a)]) (2*x*log10(a)*y + 4*x*log10(a) + 3*x*y*b + 5*x*b + c) ==> "c + x*(5*b + 3*b*y) + x*(4 + 2*y)*log(a)"
+    Polynomial.collectTermsMV (Polynomial.symbols [x;(log a (a**2))]) (2*x*(log a (a**2))*y + 4*x*(log a (a**2)) + 3*x*y*b + 5*x*b + c) ==> "c + x*(5*b + 3*b*y) + x*(4 + 2*y)*log(a,a^2)"
 
     Polynomial.isSquareFree x (x**3 + 1) --> true
     Polynomial.isSquareFree x (x**2 - 2) --> true
