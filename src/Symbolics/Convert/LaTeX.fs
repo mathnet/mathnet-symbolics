@@ -31,18 +31,18 @@ module private LaTeXFormatter =
 
     // TODO
     let latexFunctionName = function
-        | "abs" -> "\\mathrm{abs}"
+        | "abs" -> "\\operatorname{abs}"
         | "ln" -> "\\ln" | "log" -> "\\log_{10}"
         | "exp" -> "\\exp"
         | "sin" -> "\\sin" | "cos" -> "\\cos" | "tan" -> "\\tan"
         | "sinh" -> "\\sinh" | "cosh" -> "\\cosh" | "tanh" -> "\\tanh"
         | "asin" -> "\\arcsin" | "acos" -> "\\arccos" | "atan" -> "\\arctan"
         | "cot" -> "\\cot" | "sec" -> "\\sec" | "csc" -> "\\csc"
-        | x -> sprintf "\\mathrm{%s}" x
+        | x -> sprintf "\\operatorname{%s}" x
     let latexFunctionNName = function
         | "log" -> "\\log"
-        | "atan" -> "\\mathrm{atan2}"
-        | x -> sprintf "\\mathrm{%s}" x
+        | "atan" -> "\\operatorname{atan2}"
+        | x -> sprintf "\\operatorname{%s}" x
 
     let private dropParenthesis = function
         | VisualExpression.Parenthesis x -> x

@@ -397,7 +397,7 @@ let ``Print LaTeX expressions`` () =
     LaTeX.format (log 8Q (x+y)) --> """\log_{8}\left(x + y\right)"""
     LaTeX.format (log (sin x) (tanh y)) --> """\log_{\sin{x}}{\tanh{y}}"""
     LaTeX.format (arctan x) --> """\arctan{x}"""
-    LaTeX.format (arctan2 x (3Q*y)) --> """\mathrm{atan2}\left({x}, {3y}\right)"""
+    LaTeX.format (arctan2 x (3Q*y)) --> """\operatorname{atan2}\left({x}, {3y}\right)"""
 
     LaTeX.format (sin (x+y)) --> """\sin\left(x + y\right)"""
     LaTeX.format (sin ((x+y) ** 2)) --> """\sin{{\left(x + y\right)}^{2}}"""
