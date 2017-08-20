@@ -250,121 +250,6 @@ module private InfixFormatter =
         | Sum [] | Product [] | FunctionN (_, []) -> failwith "invalid expression"
 
 
-    // Nice Formatting:
-
-    let rec numerator = function
-        | NegPower _ -> one
-        | Product ax -> product <| List.map numerator ax
-        | z -> z
-    let rec denominator = function
-        | NegPower (r, p) -> r ** -p
-        | Product ax -> product <| List.map denominator ax
-        | _ -> one
-
-    let rec private niceFractionPart write priority = function
-        | Product (x::xs) ->
-            if priority > 2 then write "("
-            nice write 2 x
-            xs |> List.iter (fun x -> write "*"; nice write 2 x)
-            if priority > 2 then write ")"
-        | x -> nice write priority x
-    and private niceSummand write first = function
-        | Number n as x when n.IsNegative ->
-            write "-";
-            nice write 1 (-x)
-        | Approximation (Approximation.Real fp) as x when fp < 0.0 ->
-            write "-";
-            nice write 1 (-x)
-        | Product ((Number n)::xs) when n.IsNegative ->
-            if first then write "-"; nice write 2 (product ((Number -n)::xs))
-            else write " - "; nice write 2 (product ((Number -n)::xs))
-        | Product ((Approximation (Approximation.Real fp))::xs) when fp < 0.0 ->
-            if first then write "-"; nice write 2 (product ((Approximation (Approximation.Real -fp))::xs))
-            else write " - "; nice write 2 (product ((Approximation (Approximation.Real -fp))::xs))
-        | Product _ as p ->
-            if first then nice write 1 p
-            else write " + "; nice write 1 p
-        | x ->
-            if first then nice write 1 x
-            else write " + "; nice write 1 x
-    and nice write priority = function
-        | Number n ->
-            if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write "("
-            write (n.ToString());
-            if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write ")"
-        | Identifier (Symbol name) -> write name
-        | Undefined -> write "Undefined"
-        | ComplexInfinity -> write "\u29DD" // "⧝"
-        | PositiveInfinity -> write "\u221E" // "∞"
-        | NegativeInfinity ->
-            if priority > 0 then write "("
-            write "-\u221E" // "-∞"
-            if priority > 0 then write ")"
-        | Constant E -> write "e"
-        | Constant Pi -> write "\u03C0" // "π"
-        | Constant I -> write "j"
-        | Approximation (Approximation.Real fp) ->
-            if fp >= 0.0 then write (fp.ToString(culture))
-            else
-                if priority > 0 then write "("
-                write (fp.ToString(culture));
-                if priority > 0 then write ")"
-        | Approximation (Approximation.Complex fp) ->
-            write "("
-            write (fp.ToString(culture));
-            write ")"
-        | Sum (x::xs) ->
-            if priority > 1 then write "("
-            niceSummand write true x
-            xs |> List.iter (niceSummand write false)
-            if priority > 1 then write ")"
-        | Product (Number n::xs) when n.IsNegative ->
-            write "-";
-            nice write 2 (product ((Number -n)::xs))
-        | Product _ as p ->
-            let n = numerator p
-            let d = denominator p
-            if isOne d then
-                if priority > 2 then write "("
-                niceFractionPart write 2 n
-                if priority > 2 then write ")"
-            else
-                if priority > 2 then write "("
-                niceFractionPart write 3 n
-                write "/"
-                niceFractionPart write 3 d
-                if priority > 2 then write ")"
-        | NegIntPower (r, p) ->
-            if priority > 2 then write "("
-            write "1/"
-            nice write 3 r
-            if (p <> Expression.MinusOne) then
-                write "^"
-                nice write 3 -p
-            if priority > 2 then write ")"
-        | Power (r, p) ->
-            if priority > 3 then write "("
-            nice write 4 r
-            write "^"
-            nice write 4 p
-            if priority > 3 then write ")"
-        | Function (Abs, x) ->
-            write "|"
-            nice write 0 x
-            write "|"
-        | Function (fn, x) ->
-            write (functionName fn)
-            write "("
-            nice write 0 x
-            write ")"
-        | FunctionN (fn, x::xs) ->
-            write (functionName fn)
-            write "("
-            nice write 0 x
-            xs |> List.iter (fun x -> write ","; nice write 0 x)
-            write ")"
-        | Sum [] | Product [] | FunctionN (_, []) -> failwith "invalid expression"
-
 
 /// Print and parse infix expression string
 [<RequireQualifiedAccess>]
@@ -405,7 +290,9 @@ module Infix =
 
     /// Nicer human readable but slightly denormalized output
     [<CompiledName("FormatWriter")>]
-    let formatWriter (writer:TextWriter) expression = InfixFormatter.nice (writer.Write) 0 expression
+    let formatWriter (writer:TextWriter) expression =
+        let visual = VisualExpression.fromExpression defaultStyle expression
+        InfixFormatter.visual (writer.Write) visual
 
     [<CompiledName("PrintToTextWriter")>]
     [<System.Obsolete("Use FormatWriter instead")>]

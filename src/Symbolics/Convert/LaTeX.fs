@@ -4,24 +4,24 @@ open System.IO
 open System.Text
 open MathNet.Symbolics
 
-module private LaTeXHelper = 
+module private LaTeXHelper =
     open System
-    let addBracets (str : string) = 
+    let addBracets (str : string) =
 
         let sb = Text.StringBuilder()
-        let mutable count = 0 
+        let mutable count = 0
 
         for c in str do
             sb.Append c |> ignore
             if c = '_' then
                 sb.Append '{' |> ignore
                 count <- count + 1
-            
+
         new String('}', count)
         |> sb.Append |> ignore
 
         sb.ToString()
-        
+
 module private LaTeXFormatter =
 
     open Operators
@@ -30,6 +30,15 @@ module private LaTeXFormatter =
     let culture = System.Globalization.CultureInfo.InvariantCulture
 
     // priority: 1=additive 2=product 3=power
+
+    let rec numerator = function
+        | NegPower _ -> one
+        | Product ax -> product <| List.map numerator ax
+        | z -> z
+    let rec denominator = function
+        | NegPower (r, p) -> r ** -p
+        | Product ax -> product <| List.map denominator ax
+        | _ -> one
 
     let functionName = function
         | Abs -> "\\mathrm{abs}"
@@ -106,7 +115,7 @@ module private LaTeXFormatter =
             if priority > 0 then write "}\\right)"
         | Identifier (Symbol name) ->
             if name.Length > 1 then write "{"
-            LaTeXHelper.addBracets name |> write 
+            LaTeXHelper.addBracets name |> write
             if name.Length > 1 then write "}"
         | Undefined -> write "\\mathrm{undefined}"
         | Sum (x::xs) ->
@@ -120,8 +129,8 @@ module private LaTeXFormatter =
             tex write 2 (product ((Number -n)::xs))
             if priority > 1 then write "\\right)"
         | Product _ as p ->
-            let n = InfixFormatter.numerator p
-            let d = InfixFormatter.denominator p
+            let n = numerator p
+            let d = denominator p
             if isOne d then
                 if priority > 2 then write "\\left("
                 texFractionPart write 2 n

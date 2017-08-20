@@ -83,6 +83,15 @@ module private MathMLFormatter =
     open Operators
     open ExpressionPatterns
 
+    let rec numerator = function
+        | NegPower _ -> one
+        | Product ax -> product <| List.map numerator ax
+        | z -> z
+    let rec denominator = function
+        | NegPower (r, p) -> r ** -p
+        | Product ax -> product <| List.map denominator ax
+        | _ -> one
+
     let element name values = XElement(XName.Get(name), values)
     let attribute name value = XAttribute(XName.Get(name), value)
     let leaf name (body:string) = element name [|box body|]
@@ -109,8 +118,8 @@ module private MathMLFormatter =
         | Product (minusOne::xs) when minusOne = Expression.MinusOne ->
             apply "arith1" "unary_minus" [ formatContentStrict (product xs) ]
         | Product xs as p ->
-            let n = InfixFormatter.numerator p
-            let d = InfixFormatter.denominator p
+            let n = numerator p
+            let d = denominator p
             if isOne d then apply "arith1" "times" (List.map formatContentStrict xs)
             else apply "arith1" "divide" [ formatContentStrict n; formatContentStrict d ]
         | NegIntPower (r, minusOne) when minusOne = Expression.MinusOne ->
