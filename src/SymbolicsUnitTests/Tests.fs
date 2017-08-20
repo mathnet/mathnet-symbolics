@@ -324,7 +324,7 @@ let ``Parse infix expressions`` () =
     Infix.parseOrUndefined "log(x,10)" ==> "log(x,10)"
 
     Infix.parseOrThrow "1/(a*b)" ==> "1/(a*b)"
-    Infix.parseOrThrow "exp(a)^exp(b)" ==> "exp(a)^exp(b)"
+    Infix.parseOrThrow "exp(a)^exp(b)" ==> "(exp(a))^(exp(b))"
     Infix.parseOrThrow "a^b^c" ==> "a^(b^c)"
     Infix.parseOrThrow "|a-2|-1" ==> "-1 + |-2 + a|"
 
@@ -378,23 +378,32 @@ let ``Print LaTeX expressions`` () =
     LaTeX.format Expression.Pi --> """\pi"""
     LaTeX.format (Expression.Real -0.23) --> string -0.23
     LaTeX.format (a**b) --> """{a}^{b}"""
-    LaTeX.format (a**(b+c)) --> """{a}^{\left(b + c\right)}"""
+    LaTeX.format (a**(b+c)) --> """{a}^{b + c}"""
     LaTeX.format ((a+b)**c) --> """{\left(a + b\right)}^{c}"""
-    LaTeX.format (a**(b**c)) --> """{a}^{\left({b}^{c}\right)}"""
+    LaTeX.format (a**(b**c)) --> """{a}^{{b}^{c}}"""
     LaTeX.format ((a**b)**c) --> """{\left({a}^{b}\right)}^{c}"""
     LaTeX.format (a*b*(symbol "def")) --> """ab{def}"""
 
-    LaTeX.format (3Q*2Q**x) --> """3*{2}^{x}"""
+    LaTeX.format (3Q*2Q**x) --> """3\cdot{2}^{x}"""
+    LaTeX.format (3.0*(real 2.0)**x) --> """3\cdot{2}^{x}"""
     LaTeX.format (5Q*x) --> """5x"""
     LaTeX.format (Expression.Pi * 10Q) --> """10\pi"""
-    LaTeX.format (Expression.E * 2Q**(4Q*x)) --> """e{2}^{\left(4x\right)}"""
+    LaTeX.format (Expression.E * 2Q**(4Q*x)) --> """e\cdot{2}^{4x}"""
     LaTeX.format (4Q * Expression.E ** x) --> """4{e}^{x}"""
 
-    LaTeX.format (log10 x) --> """\log_{10}\left(x\right)"""
-    LaTeX.format (log 8Q y) --> """\log_{8}\left(y\right)"""
-    LaTeX.format (log (sin x) (tanh y)) --> """\log_{\sin{x}}\left(\tanh{y}\right)"""
+    LaTeX.format (log10 x) --> """\log_{10}{x}"""
+    LaTeX.format (log10 (x+y)) --> """\log_{10}\left(x + y\right)"""
+    LaTeX.format (log 8Q y) --> """\log_{8}{y}"""
+    LaTeX.format (log 8Q (x+y)) --> """\log_{8}\left(x + y\right)"""
+    LaTeX.format (log (sin x) (tanh y)) --> """\log_{\sin{x}}{\tanh{y}}"""
     LaTeX.format (arctan x) --> """\arctan{x}"""
-    LaTeX.format (arctan2 x (3Q*y)) --> """\operatorname{atan2}\left({{x}, {3y}}\right)"""
+    LaTeX.format (arctan2 x (3Q*y)) --> """\mathrm{atan2}\left({x}, {3y}\right)"""
+
+    LaTeX.format (sin (x+y)) --> """\sin\left(x + y\right)"""
+    LaTeX.format (sin ((x+y) ** 2)) --> """\sin{{\left(x + y\right)}^{2}}"""
+    LaTeX.format ((sin (x+y)) ** 2) --> """{\left(\sin\left(x + y\right)\right)}^{2}"""
+    LaTeX.format ((sin x)*(cos x)+(tan x)) --> """\sin{x}\cos{x} + \tan{x}"""
+    LaTeX.format ((sin (x+y))*(cos (x+y))+(tan (x+y))) --> """\sin\left(x + y\right)\cos\left(x + y\right) + \tan\left(x + y\right)"""
 
 
 [<Test>]
@@ -549,9 +558,9 @@ let ``Algebaric Operators`` () =
     Polynomial.totalDegree p ==> "6"
     Polynomial.variables p ==*> ["a"; "b"; "c"; "d"; "e"; "f"; "x"]
 
-    Exponential.expand (exp(2*x+y)) ==> "exp(x)^2*exp(y)"
-    Exponential.expand (exp(2*a*x + 3*y*z)) ==> "exp(a*x)^2*exp(y*z)^3"
-    Exponential.expand (exp(2*(x+y))) ==> "exp(x)^2*exp(y)^2"
+    Exponential.expand (exp(2*x+y)) ==> "(exp(x))^2*exp(y)"
+    Exponential.expand (exp(2*a*x + 3*y*z)) ==> "(exp(a*x))^2*(exp(y*z))^3"
+    Exponential.expand (exp(2*(x+y))) ==> "(exp(x))^2*(exp(y))^2"
     Exponential.expand (1/(exp(2*x) - (exp(x))**2)) ==> "⧝"
     Exponential.expand (exp((x+y)*(x-y))) ==> "exp(x^2)/exp(y^2)"
     Exponential.expand (ln((c*x)**a) + ln(y**b*z)) ==> "a*ln(c) + a*ln(x) + b*ln(y) + ln(z)"
@@ -567,10 +576,10 @@ let ``Algebaric Operators`` () =
 
     Trigonometric.expand (sin(2*x)) ==> "2*sin(x)*cos(x)"
     Trigonometric.expand (sin(a+x)) ==> "sin(x)*cos(a) + sin(a)*cos(x)"
-    Trigonometric.expand (sin(2*x + 3*y)) ==> "(-sin(x)^2 + cos(x)^2)*(-sin(y)^3 + 3*sin(y)*cos(y)^2) + 2*sin(x)*cos(x)*(-3*sin(y)^2*cos(y) + cos(y)^3)"
-    Trigonometric.expand (sin(2*(x+y))) ==> "2*sin(y)*(-sin(x)^2 + cos(x)^2)*cos(y) + 2*sin(x)*cos(x)*(-sin(y)^2 + cos(y)^2)"
-    Trigonometric.expand (sin(2*(x+y))) |> Algebraic.expand ==> "-2*sin(x)*sin(y)^2*cos(x) - 2*sin(x)^2*sin(y)*cos(y) + 2*sin(y)*cos(x)^2*cos(y) + 2*sin(x)*cos(x)*cos(y)^2"
-    Trigonometric.expand (cos(5*x)) ==> "5*sin(x)^4*cos(x) - 10*sin(x)^2*cos(x)^3 + cos(x)^5"
+    Trigonometric.expand (sin(2*x + 3*y)) ==> "(-(sin(x))^2 + (cos(x))^2)*(-(sin(y))^3 + 3*sin(y)*(cos(y))^2) + 2*sin(x)*cos(x)*(-3*(sin(y))^2*cos(y) + (cos(y))^3)"
+    Trigonometric.expand (sin(2*(x+y))) ==> "2*sin(y)*(-(sin(x))^2 + (cos(x))^2)*cos(y) + 2*sin(x)*cos(x)*(-(sin(y))^2 + (cos(y))^2)"
+    Trigonometric.expand (sin(2*(x+y))) |> Algebraic.expand ==> "-2*sin(x)*(sin(y))^2*cos(x) - 2*(sin(x))^2*sin(y)*cos(y) + 2*sin(y)*(cos(x))^2*cos(y) + 2*sin(x)*cos(x)*(cos(y))^2"
+    Trigonometric.expand (cos(5*x)) ==> "5*(sin(x))^4*cos(x) - 10*(sin(x))^2*(cos(x))^3 + (cos(x))^5"
     // TODO: should actually be Undefined
     Trigonometric.expand ((sin(2*x)-2*sin(x)*cos(x))/((sin(x))**2 + (cos(x))**2 - 1)) ==> "0"
 
@@ -607,7 +616,7 @@ let ``Differentiation and Taylor Series`` () =
     Calculus.differentiate x (log10 x) ==> "1/(x*ln(10))"
     Calculus.differentiate x (log10 (x**2)) ==> "2/(x*ln(10))"
     Calculus.differentiate x (log 10Q x) ==> "1/(x*ln(10))"
-    Calculus.differentiate x (log x (x**2)) ==> "2/(x*ln(x)) - ln(x^2)/(x*ln(x)^2)"
+    Calculus.differentiate x (log x (x**2)) ==> "2/(x*ln(x)) - ln(x^2)/(x*(ln(x))^2)"
 
     Calculus.taylor 3 x 0Q (1/(1-x)) ==> "1 + x + x^2"
     Calculus.taylor 3 x 1Q (1/x) ==> "3 - 3*x + x^2"

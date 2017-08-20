@@ -131,8 +131,12 @@ module private InfixFormatter =
             match s with
             | "pi" -> write "\u03C0" // "π"
             | x -> write x
+        | VisualExpression.Infinity -> write "\u221E" // "∞"
+        | VisualExpression.ComplexInfinity -> write "\u29DD" // "⧝"
+        | VisualExpression.Undefined -> write "Undefined"
+        | VisualExpression.ComplexI -> write "j"
         | VisualExpression.PositiveInteger n -> write (n.ToString())
-        | VisualExpression.PositiveFloatingPoint f -> write (f.ToString(culture))
+        | VisualExpression.PositiveFloatingPoint fp -> write (fp.ToString(culture))
         | VisualExpression.Parenthesis x ->
             write "("
             visual write x
@@ -171,10 +175,6 @@ module private InfixFormatter =
             visual write x
             xs |> List.iter (fun x -> write ","; visual write x)
             write ")"
-        | VisualExpression.ComplexI -> write "j"
-        | VisualExpression.Infinity -> write "\u221E" // "∞"
-        | VisualExpression.ComplexInfinity -> write "\u29DD" // "⧝"
-        | VisualExpression.Undefined -> write "Undefined"
         | VisualExpression.Sum [] | VisualExpression.Product [] | VisualExpression.FunctionN (_, []) -> failwith "invalid expression"
 
     let functionName = function

@@ -29,6 +29,7 @@ type IVisualStyle =
     abstract member VisualFunction: f:string * e:VisualExpression -> Expression
     abstract member VisualFunctionN: f:string * e:VisualExpression array -> Expression
 
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module VisualExpression =
     open Rational
     open Operators
@@ -109,18 +110,27 @@ module VisualExpression =
                 VisualExpression.Negative (convert style 2 (product ((Approximation (Approximation.Real -fp))::xs)))
             | x -> convert style 1 x
         and convert (style:IVisualStyle) priority = function
-            | Number number -> convertNumber priority number
-            | Approximation approximation -> convertApproximation priority approximation
-            | Identifier (Symbol s) -> VisualExpression.Symbol s
-            | Constant Pi -> VisualExpression.Symbol "pi"
-            | Constant E -> VisualExpression.Symbol "e"
-            | Constant I -> VisualExpression.ComplexI
-            | ComplexInfinity -> VisualExpression.ComplexInfinity
-            | PositiveInfinity -> VisualExpression.Infinity
+            | Number number ->
+                convertNumber priority number
+            | Approximation approximation ->
+                convertApproximation priority approximation
+            | Identifier (Symbol s) ->
+                VisualExpression.Symbol s
+            | Constant Pi ->
+                VisualExpression.Symbol "pi"
+            | Constant E ->
+                VisualExpression.Symbol "e"
+            | Constant I ->
+                VisualExpression.ComplexI
+            | ComplexInfinity ->
+                VisualExpression.ComplexInfinity
+            | PositiveInfinity ->
+                VisualExpression.Infinity
             | NegativeInfinity ->
                 VisualExpression.Negative VisualExpression.Infinity
                 |> parenthesis priority 0
-            | Undefined -> VisualExpression.Undefined
+            | Undefined ->
+                VisualExpression.Undefined
             | Sum xs ->
                 VisualExpression.Sum (xs |> List.map (convertSummand style))
                 |> parenthesis priority 1
@@ -159,9 +169,14 @@ module VisualExpression =
             | Power (r, p) ->
                 VisualExpression.Power (convert style 4 r, convert style 4 p)
                 |> parenthesis priority 3
-            | Function (Abs, x) -> VisualExpression.Abs (convert style 0 x)
-            | Function (f, x) -> style.SemanticFunction (f, x)
-            | FunctionN (f, xs) -> style.SemanticFunctionN (f, List.toArray xs)
+            | Function (Abs, x) ->
+                VisualExpression.Abs (convert style 0 x)
+            | Function (f, x) ->
+                style.SemanticFunction (f, x)
+                |> parenthesis priority 3
+            | FunctionN (f, xs) ->
+                style.SemanticFunctionN (f, List.toArray xs)
+                |> parenthesis priority 3
 
         convert style 0 expression
 
