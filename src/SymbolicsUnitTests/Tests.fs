@@ -938,3 +938,26 @@ let ``Exponential notation parsing``() =
 
     let expr4 = Infix.parseOrUndefined "58E-3"
     expr4 ==> "0.058"
+
+[<Test>]
+let ``Expression to delegate compilation``() =
+    let expr1 = x
+    (Compile.compile1OrThrow expr1 (Symbol "x")).Invoke(3.0) --> 3.0
+
+    let expr2 = x*x
+    (Compile.compile1OrThrow expr2 (Symbol "x")).Invoke(3.0) --> 9.0
+
+    let expr3 = x + y
+    (Compile.compile2OrThrow expr3 (Symbol "x") (Symbol "y")).Invoke(3.0, 3.0) --> 6.0
+
+    let expr4 = ln x
+    (Compile.compile1OrThrow expr4 (Symbol "x")).Invoke(3.0) --> System.Math.Log(3.0)
+
+    let expr5 = (Constant E) ** x
+    (Compile.compile1OrThrow expr5 (Symbol "x")).Invoke(3.0) --> System.Math.Exp(3.0)
+
+    let expr6 = sqrt x
+    (Compile.compile1OrThrow expr6 (Symbol "x")).Invoke(12.5) --> System.Math.Sqrt(12.5)
+
+    let expr7 = x ** y
+    (Compile.compile2OrThrow expr7 (Symbol "x") (Symbol "y")).Invoke(12.5, 5.7) --> System.Math.Pow(12.5, 5.7)
