@@ -3,12 +3,12 @@
 open System
 open System.Numerics
 open MathNet.Numerics
+open ExpressionPatterns
 module Option =
      let map2 f a b =
         a |> Option.bind (fun a' -> b |> Option.map (fun b' -> f a' b'))
 
 module Compile =
-    open MathNet.Symbolics.ExpressionPatterns
     open MathNet.Symbolics.Operators
     open System.Linq.Expressions
     type private Expression = MathNet.Symbolics.Expression
@@ -45,7 +45,7 @@ module Compile =
             | Constant(Constant.Pi) -> Some (constant System.Math.PI)
             | Constant(Constant.I) -> None
             | Function(func, par) ->
-                let toMathMethod name (arg : LExpression) = (LExpression.Call(mathType.GetMethod(name), arg) :> LExpression)
+                let toMathMethod name (arg : LExpression) = (LExpression.Call(mathType.GetMethod(name, [| typeof<float> |]), arg) :> LExpression)
                 let convertFunc : Function -> (LExpression -> LExpression) option = function
                     | Sin  -> Some (toMathMethod "Sin")
                     | Cos  -> Some (toMathMethod "Cos")
@@ -59,7 +59,7 @@ module Compile =
                     | Cosh -> Some (toMathMethod "Cosh")
                     | Tanh -> Some (toMathMethod "Tanh")
                     | Exp  -> Some (toMathMethod "Exp")
-                    | Abs  -> Some (fun x -> (LExpression.Call(mathType.GetMethod("Abs"), x) :> LExpression))
+                    | Abs  -> Some (fun x -> (LExpression.Call(mathType.GetMethod("Abs", [| typeof<float> |]), x) :> LExpression))
                     | _    -> None
                 let f = convertFunc func
                 let e = convertExpr par
@@ -67,13 +67,38 @@ module Compile =
              | FunctionN(Atan, [x;y]) ->
                 let exprX = convertExpr x
                 let exprY = convertExpr y
-                Option.map2 (fun a b -> (LExpression.Call(mathType.GetMethod("Atan2"), a, b) :> LExpression)) exprX exprY
+                Option.map2 (fun a b -> (LExpression.Call(mathType.GetMethod("Atan2", [| typeof<float>; typeof<float> |]), a, b) :> LExpression)) exprX exprY
              | FunctionN(_) -> None
              | Number(n) -> Some (constant <| float n)
+             | PosIntPower(x, Number(y)) ->
+                let basis = convertExpr x
+                let rec exponentiate (power : BigRational) exp  =
+                    if  power.Numerator.IsEven then
+                        let newBasis = (LExpression.Multiply(exp, exp) :> LExpression)
+                        exponentiate (power / 2N) newBasis
+                    elif power = 1N then
+                        exp
+                    else
+                        let newBasis = exponentiate (power - 1N) exp
+                        (LExpression.Multiply(exp, newBasis) :> LExpression)
+                Option.map (exponentiate y) basis
+             | Power (x, Power(n, minusOne)) when minusOne = Expression.MinusOne ->
+                let a = convertExpr x
+                let b = convertExpr (Power(n, minusOne))
+                let toMathMethod name (arg : LExpression) = (LExpression.Call(mathType.GetMethod(name, [| typeof<float>; typeof<float> |]), arg) :> LExpression)
+                if n = two then
+                    Option.map (toMathMethod "Sqrt") a
+                else
+                    let a = convertExpr x
+                    let b = convertExpr (Power(n, minusOne))
+                    Option.map2 (fun a' b' -> (LExpression.Call(mathType.GetMethod("Pow", [| typeof<float>; typeof<float> |]), a', b') :> LExpression)) a b
+             | Power(Constant E, y) ->
+                let exponent = convertExpr y
+                Option.map (fun (x : LExpression) -> LExpression.Call(mathType.GetMethod("Exp", [| typeof<float> |]), x) :> LExpression) exponent
              | Power(x, y) ->
                 let baseE = convertExpr x
                 let exponE = convertExpr y
-                Option.map2 (fun a b -> LExpression.Call(mathType.GetMethod("Pow"), a, b) :> LExpression) baseE exponE
+                Option.map2 (fun a b -> LExpression.Call(mathType.GetMethod("Pow", [| typeof<float>; typeof<float> |]), a, b) :> LExpression) baseE exponE
             | Sum(xs) ->
                 let summands = List.map convertExpr xs
                 List.fold (Option.map2 (fun l r -> LExpression.Add(l, r) :> LExpression)) (Some (constant 0.0)) summands
