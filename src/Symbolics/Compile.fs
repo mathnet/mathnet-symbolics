@@ -184,7 +184,7 @@ module Compile =
                     | Cosh -> Some (toMathMethod "Cosh")
                     | Tanh -> Some (toMathMethod "Tanh")
                     | Exp  -> Some (toMathMethod "Exp")
-                    | Abs  -> Some (fun x -> (LExpression.Call(mathType.GetMethod("Abs", [| typeof<complex> |]), x) :> LExpression))
+                    | Abs  -> Some (fun x -> (LExpression.Convert(LExpression.Call(mathType.GetMethod("Abs", [| typeof<complex> |]), x), typeof<complex>) :> LExpression))
                     | _    -> None
                 let f = convertFunc func
                 let e = convertExpr par
@@ -198,7 +198,7 @@ module Compile =
                 let exprY = convertExpr y
                 Option.map2 (fun a b -> (LExpression.Call(mathType.GetMethod("Log", [| typeof<complex>; |]), LExpression.Call(mathType.GetMethod("Divide", [| typeof<complex>; typeof<complex> |]), b, a) :> LExpression) :> LExpression)) exprX exprY
              | FunctionN(_) -> None
-             | Number(n) -> Some (constant <| float n)
+             | Number(n) -> Some (constant <| System.Numerics.Complex.Create(float n, 0.0))
              | PosIntPower(x, Number(y)) ->
                 let basis = convertExpr x
                 let rec exponentiate (power : BigRational) exp  =
@@ -218,8 +218,6 @@ module Compile =
                 if n = two then
                     Option.map (toMathMethod "Sqrt") a
                 else
-                    let a = convertExpr x
-                    let b = convertExpr (Power(n, minusOne))
                     Option.map2 (fun a' b' -> (LExpression.Call(mathType.GetMethod("Pow", [| typeof<complex>; typeof<complex> |]), a', b') :> LExpression)) a b
              | Power(Constant E, y) ->
                 let exponent = convertExpr y
