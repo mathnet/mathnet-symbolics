@@ -268,6 +268,12 @@ module Infix =
     [<CompiledName("FormatStrictWriter")>]
     let formatStrictWriter (writer:TextWriter) expression = InfixFormatter.strict (writer.Write) 0 expression
 
+    [<CompiledName("FormatVisual")>]
+    let formatVisual visualExpression =
+        let sb = StringBuilder()
+        InfixFormatter.format (sb.Append >> ignore) visualExpression
+        sb.ToString()
+
     /// Nicer human readable but slightly denormalized output
     [<CompiledName("Format")>]
     let format expression =

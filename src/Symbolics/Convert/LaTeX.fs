@@ -135,6 +135,12 @@ module LaTeX =
 
     let private defaultStyle = DefaultVisualStyle()
 
+    [<CompiledName("FormatVisual")>]
+    let formatVisual visualExpression =
+        let sb = StringBuilder()
+        LaTeXFormatter.format (sb.Append >> ignore) visualExpression
+        sb.ToString()
+
     /// LaTeX output
     [<CompiledName("Format")>]
     let format expression =
