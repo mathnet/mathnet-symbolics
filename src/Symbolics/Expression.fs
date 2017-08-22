@@ -346,7 +346,7 @@ module Operators =
     let product (xs:Expression list) = if List.isEmpty xs then one else List.reduce multiply xs
     let productSeq (xs:Expression seq) = Seq.fold multiply one xs
 
-    let root n x = Power (x, Power(n, minusOne))
+    let root n x = pow x (pow n minusOne)
     let sqrt x = root two x
 
     let abs = function
