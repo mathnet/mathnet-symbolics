@@ -405,6 +405,9 @@ let ``Print LaTeX expressions`` () =
     LaTeX.format ((sin x)*(cos x)+(tan x)) --> """\sin{x}\cos{x} + \tan{x}"""
     LaTeX.format ((sin (x+y))*(cos (x+y))+(tan (x+y))) --> """\sin\left(x + y\right)\cos\left(x + y\right) + \tan\left(x + y\right)"""
 
+    LaTeX.format (x**(1Q/2)) --> "\sqrt{x}"
+    LaTeX.format (x**(1Q/3)) --> "\sqrt[3]{x}"
+
 
 [<Test>]
 let ``Format MathML3 Strict Content`` () =
@@ -444,7 +447,7 @@ let ``Parse MathML3 Strict Content`` () =
     MathML.parse """<apply><csymbol cd="arith1">divide</csymbol><cn>1</cn><ci>x</ci></apply>""" ==> "1/x"
     MathML.parse """<apply><csymbol cd="arith1">divide</csymbol><cn>1</cn><apply><csymbol cd="arith1">times</csymbol><ci>a</ci><ci>b</ci></apply></apply>""" ==> "1/(a*b)"
     MathML.parse """<apply><csymbol cd="arith1">power</csymbol><ci>x</ci><cn>2</cn></apply>""" ==> "x^2"
-    MathML.parse """<apply><csymbol cd="arith1">root</csymbol><ci>x</ci><cn>2</cn></apply>""" ==> "x^(1/2)"
+    MathML.parse """<apply><csymbol cd="arith1">root</csymbol><ci>x</ci><cn>2</cn></apply>""" ==> "sqrt(x)"
 
 
 [<Test>]
@@ -453,7 +456,8 @@ let ``Parse MathML Non-Strict Content`` () =
     MathML.parse """<apply><divide/><cn>1</cn><ci>x</ci></apply>""" ==> "1/x"
     MathML.parse """<apply><divide/><cn>1</cn><apply><times/><ci>a</ci><ci>b</ci></apply></apply>""" ==> "1/(a*b)"
     MathML.parse """<apply><power/><ci>x</ci><cn>2</cn></apply>""" ==> "x^2"
-    MathML.parse """<apply><root/><degree><cn>2</cn></degree><ci>x</ci></apply>""" ==> "x^(1/2)"
+    MathML.parse """<apply><root/><degree><cn>2</cn></degree><ci>x</ci></apply>""" ==> "sqrt(x)"
+    MathML.parse """<apply><root/><degree><cn>3</cn></degree><ci>x</ci></apply>""" ==> "x^(1/3)"
 
 
 [<Test>]
@@ -876,14 +880,14 @@ let ``General Rational Expressions`` () =
     Rational.rationalize (a+1) ==> "1 + a"
     Rational.rationalize (a/b + c/d) ==> "(b*c + a*d)/(b*d)"
     Rational.rationalize (1+1/(1+1/x)) ==> "(1 + 2*x)/(1 + x)"
-    Rational.rationalize (1/(1+1/x)**(1Q/2) + (1+1/x)**(3Q/2)) ==> "(x^2 + (1 + x)^2)/(x^2*((1 + x)/x)^(1/2))"
+    Rational.rationalize (1/(1+1/x)**(1Q/2) + (1+1/x)**(3Q/2)) ==> "(x^2 + (1 + x)^2)/(x^2*sqrt((1 + x)/x))"
     Rational.rationalize ((1+1/x)**2) ==> "(1 + x)^2/x^2"
 
     Rational.rationalize (a/b + c/d + e/f) ==> "(b*d*e + (b*c + a*d)*f)/(b*d*f)"
     Rational.expand (a/b + c/d + e/f) ==> "(b*d*e + b*c*f + a*d*f)/(b*d*f)"
 
     Rational.rationalize (((1/((x+y)**2+1))**(1Q/2)+1)*((1/((x+y)**2+1))**(1Q/2)-1)/(x+1))
-        ==> "((-1 + (1/(1 + (x + y)^2))^(1/2))*(1 + (1/(1 + (x + y)^2))^(1/2)))/(1 + x)"
+        ==> "((-1 + sqrt(1/(1 + (x + y)^2)))*(1 + sqrt(1/(1 + (x + y)^2))))/(1 + x)"
     Rational.expand (((1/((x+y)**2+1))**(1Q/2)+1)*((1/((x+y)**2+1))**(1Q/2)-1)/(x+1))
         ==> "(-x^2 - 2*x*y - y^2)/(1 + x + x^2 + x^3 + 2*x*y + 2*x^2*y + y^2 + x*y^2)"
 
@@ -956,10 +960,12 @@ let ``Single Variable Polynomials`` () =
 [<Test>]
 let ``Pseudo Function Test`` () =
 
-    Infix.parseOrUndefined "sqrt(x)" ==> "x^(1/2)"
+    Infix.parseOrUndefined "sqrt(x)" ===> "x^(2^(-1))"
+    Infix.parseOrUndefined "sqrt(x)" ==> "sqrt(x)"
     Infix.parseOrUndefined "pow(x,3)" ==> "x^3"
     Infix.parseOrUndefined "pow(3*x,10*sin(x))" ==> "(3*x)^(10*sin(x))"
-    Infix.parseOrUndefined "sqrt(pow(x,1/2))" ==> "(x^(1/2))^(1/2)"
+    Infix.parseOrUndefined "sqrt(pow(x,1/2))" ===> "(x^(1/2))^(2^(-1))"
+    Infix.parseOrUndefined "sqrt(pow(x,1/2))" ==> "sqrt(sqrt(x))"
 
 [<Test>]
 let ``Underscores in names`` () =

@@ -126,6 +126,10 @@ module private InfixFormatter =
 
     let culture = System.Globalization.CultureInfo.InvariantCulture
 
+    let private dropParenthesis = function
+        | VisualExpression.Parenthesis x -> x
+        | x -> x
+
     let rec format write = function
         | VisualExpression.Symbol s ->
             match s with
@@ -164,6 +168,15 @@ module private InfixFormatter =
             format write r
             write "^"
             format write p
+        | VisualExpression.Root (r, p) when p = bigint 2 ->
+            write "sqrt("
+            format write (dropParenthesis r)
+            write ")"
+        | VisualExpression.Root (r, p) ->
+            format write r
+            write "^(1/"
+            write (p.ToString())
+            write ")"
         | VisualExpression.Function (fn, x) ->
             write fn
             write "("

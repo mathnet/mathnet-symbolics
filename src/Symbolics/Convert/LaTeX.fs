@@ -98,6 +98,16 @@ module private LaTeXFormatter =
             write "{"
             format write (dropParenthesis p)
             write "}"
+        | VisualExpression.Root (r, p) when p = bigint 2 ->
+            write "\\sqrt{"
+            format write (dropParenthesis r)
+            write "}"
+        | VisualExpression.Root (r, p) ->
+            write "\\sqrt["
+            write (p.ToString())
+            write "]{"
+            format write (dropParenthesis r)
+            write "}"
         | VisualExpression.Function (fn, x) ->
             write (latexFunctionName fn)
             match x with

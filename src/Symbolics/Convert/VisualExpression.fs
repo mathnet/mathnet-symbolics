@@ -14,8 +14,9 @@ type VisualExpression =
     | Negative of VisualExpression
     | Sum of VisualExpression list
     | Product of VisualExpression list
-    | Fraction of VisualExpression * VisualExpression
-    | Power of VisualExpression * VisualExpression
+    | Fraction of VisualExpression * VisualExpression // a/b
+    | Power of VisualExpression * VisualExpression // a^b
+    | Root of VisualExpression * BigInteger // a^(1/b)
     | Function of string * VisualExpression
     | FunctionN of string * (VisualExpression list)
     | ComplexI
@@ -166,6 +167,12 @@ module VisualExpression =
                     else VisualExpression.Power (convert style 3 r, convert style 3 (-p))
                 VisualExpression.Fraction (VisualExpression.PositiveInteger BigInteger.One, d)
                 |> parenthesis priority 2
+            | Power (r, Number n) when n.IsPositive && n.Numerator = BigInteger.One ->
+                VisualExpression.Root (convert style 4 r, n.Denominator)
+                |> parenthesis priority 3
+            | Power (r, Power(Integer n, minusOne)) when minusOne = Expression.MinusOne ->
+                VisualExpression.Root (convert style 4 r, n.Numerator)
+                |> parenthesis priority 3
             | Power (r, p) ->
                 VisualExpression.Power (convert style 4 r, convert style 4 p)
                 |> parenthesis priority 3
