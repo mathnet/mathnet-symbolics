@@ -264,17 +264,9 @@ module Infix =
         InfixFormatter.strict (sb.Append >> ignore) 0 expression
         sb.ToString()
 
-    [<CompiledName("PrintStrict")>]
-    [<System.Obsolete("Use FormatStrict instead")>]
-    let printStrict q = formatStrict q
-
     /// Strict formatting, prints an exact representation of the expression tree
     [<CompiledName("FormatStrictWriter")>]
     let formatStrictWriter (writer:TextWriter) expression = InfixFormatter.strict (writer.Write) 0 expression
-
-    [<CompiledName("PrintStrictToTextWriter")>]
-    [<System.Obsolete("Use FormatStrictWriter instead")>]
-    let printStrictTextWriter (writer:TextWriter) q = formatStrictWriter writer q
 
     /// Nicer human readable but slightly denormalized output
     [<CompiledName("Format")>]
@@ -284,19 +276,11 @@ module Infix =
         InfixFormatter.format (sb.Append >> ignore) visual
         sb.ToString()
 
-    [<CompiledName("Print")>]
-    [<System.Obsolete("Use Format instead")>]
-    let print q = format q
-
     /// Nicer human readable but slightly denormalized output
     [<CompiledName("FormatWriter")>]
     let formatWriter (writer:TextWriter) expression =
         let visual = VisualExpression.fromExpression defaultStyle expression
         InfixFormatter.format (writer.Write) visual
-
-    [<CompiledName("PrintToTextWriter")>]
-    [<System.Obsolete("Use FormatWriter instead")>]
-    let printTextWriter (writer:TextWriter) q = formatWriter writer q
 
     [<CompiledName("Parse")>]
     let parse (infix: string) = InfixParser.parse infix

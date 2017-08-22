@@ -143,16 +143,7 @@ module LaTeX =
         LaTeXFormatter.format (sb.Append >> ignore) visual
         sb.ToString()
 
-    /// LaTeX output
-    [<CompiledName("Print")>]
-    [<System.Obsolete("Use Format instead")>]
-    let print q = format q
-
     [<CompiledName("FormatWriter")>]
     let formatWriter (writer:TextWriter) expression =
         let visual = VisualExpression.fromExpression defaultStyle expression
         LaTeXFormatter.format (writer.Write) visual
-
-    [<CompiledName("PrintToTextWriter")>]
-    [<System.Obsolete("Use FormatWriter instead")>]
-    let printTextWriter (writer:TextWriter) q = formatWriter writer q
