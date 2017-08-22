@@ -126,7 +126,7 @@ module private InfixFormatter =
 
     let culture = System.Globalization.CultureInfo.InvariantCulture
 
-    let rec visual write = function
+    let rec format write = function
         | VisualExpression.Symbol s ->
             match s with
             | "pi" -> write "\u03C0" // "π"
@@ -139,41 +139,41 @@ module private InfixFormatter =
         | VisualExpression.PositiveFloatingPoint fp -> write (fp.ToString(culture))
         | VisualExpression.Parenthesis x ->
             write "("
-            visual write x
+            format write x
             write ")"
         | VisualExpression.Abs x ->
             write "|"
-            visual write x
+            format write x
             write "|"
         | VisualExpression.Negative x ->
             write "-"
-            visual write x
+            format write x
         | VisualExpression.Sum (x::xs) ->
-            visual write x
+            format write x
             xs |> List.iter (function
-                | VisualExpression.Negative x -> write " - "; visual write x
-                | x -> write " + "; visual write x)
+                | VisualExpression.Negative x -> write " - "; format write x
+                | x -> write " + "; format write x)
         | VisualExpression.Product (x::xs) ->
-            visual write x
-            xs |> List.iter (fun x -> write "*"; visual write x)
+            format write x
+            xs |> List.iter (fun x -> write "*"; format write x)
         | VisualExpression.Fraction (n, d) ->
-            visual write n
+            format write n
             write "/"
-            visual write d
+            format write d
         | VisualExpression.Power (r, p) ->
-            visual write r
+            format write r
             write "^"
-            visual write p
+            format write p
         | VisualExpression.Function (fn, x) ->
             write fn
             write "("
-            visual write x
+            format write x
             write ")"
         | VisualExpression.FunctionN (fn, x::xs) ->
             write fn
             write "("
-            visual write x
-            xs |> List.iter (fun x -> write ","; visual write x)
+            format write x
+            xs |> List.iter (fun x -> write ","; format write x)
             write ")"
         | VisualExpression.Sum [] | VisualExpression.Product [] | VisualExpression.FunctionN (_, []) -> failwith "invalid expression"
 
@@ -281,7 +281,7 @@ module Infix =
     let format expression =
         let sb = StringBuilder()
         let visual = VisualExpression.fromExpression defaultStyle expression
-        InfixFormatter.visual (sb.Append >> ignore) visual
+        InfixFormatter.format (sb.Append >> ignore) visual
         sb.ToString()
 
     [<CompiledName("Print")>]
@@ -292,7 +292,7 @@ module Infix =
     [<CompiledName("FormatWriter")>]
     let formatWriter (writer:TextWriter) expression =
         let visual = VisualExpression.fromExpression defaultStyle expression
-        InfixFormatter.visual (writer.Write) visual
+        InfixFormatter.format (writer.Write) visual
 
     [<CompiledName("PrintToTextWriter")>]
     [<System.Obsolete("Use FormatWriter instead")>]
