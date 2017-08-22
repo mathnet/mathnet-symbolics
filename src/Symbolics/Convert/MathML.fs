@@ -133,10 +133,6 @@ module private MathMLFormatter =
             apply "nums1" "rational" [ cn n; cn d ]
         | VisualExpression.Fraction (n, d) ->
             apply "arith1" "divide" [ formatContentStrict n; formatContentStrict d ]
-        //| VisualExpression.Power (r, VisualExpression.Fraction (VisualExpression.PositiveInteger n, VisualExpression.PositiveInteger d)) when n = BigInteger.One ->
-        //    apply "arith1" "root" [ formatContentStrict r; cn d ]
-        //| VisualExpression.Power (r, VisualExpression.Parenthesis (VisualExpression.Fraction (VisualExpression.PositiveInteger n, VisualExpression.PositiveInteger d))) when n = BigInteger.One ->
-        //    apply "arith1" "root" [ formatContentStrict r; cn d ]
         | VisualExpression.Power (r, p) ->
             apply "arith1" "power" [ formatContentStrict r; formatContentStrict p ]
         | VisualExpression.Root (r, p) ->
