@@ -1002,56 +1002,62 @@ let ``Exponential notation parsing``() =
 
 [<Test>]
 let ``Expression to delegate compilation``() =
+    
+    let symX = Symbol "x"
+    let symY = Symbol "y"
+
+    let toComplex f = System.Numerics.Complex.Create(f, 0.0)
+    
     let expr1 = x
-    (Compile.compile1OrThrow expr1 (Symbol "x")).Invoke(3.0) --> 3.0
+    (Compile.compileExpression1OrThrow expr1 symX).Invoke(3.0) --> 3.0
 
     let expr2 = x*x
-    (Compile.compile1OrThrow expr2 (Symbol "x")).Invoke(3.0) --> 9.0
+    (Compile.compileExpression1OrThrow expr2 symX).Invoke(3.0) --> 9.0
 
     let expr3 = x + y
-    (Compile.compile2OrThrow expr3 (Symbol "x") (Symbol "y")).Invoke(3.0, 3.0) --> 6.0
+    (Compile.compileExpression2OrThrow expr3 symX symY).Invoke(3.0, 3.0) --> 6.0
 
     let expr4 = ln x
-    (Compile.compile1OrThrow expr4 (Symbol "x")).Invoke(3.0) --> System.Math.Log(3.0)
+    (Compile.compileExpression1OrThrow expr4 symX).Invoke(3.0) --> System.Math.Log(3.0)
 
     let expr5 = (Constant E) ** x
-    (Compile.compile1OrThrow expr5 (Symbol "x")).Invoke(3.0) --> System.Math.Exp(3.0)
+    (Compile.compileExpression1OrThrow expr5 symX).Invoke(3.0) --> System.Math.Exp(3.0)
 
     let expr6 = sqrt x
-    (Compile.compile1OrThrow expr6 (Symbol "x")).Invoke(12.5) --> System.Math.Sqrt(12.5)
+    (Compile.compileExpression1OrThrow expr6 symX).Invoke(12.5) --> System.Math.Sqrt(12.5)
 
     let expr7 = x ** y
-    (Compile.compile2OrThrow expr7 (Symbol "x") (Symbol "y")).Invoke(12.5, 5.7) --> System.Math.Pow(12.5, 5.7)
+    (Compile.compileExpression2OrThrow expr7 symX symY).Invoke(12.5, 5.7) --> System.Math.Pow(12.5, 5.7)
 
     let expr8 = abs x
-    (Compile.compile1OrThrow expr8 (Symbol "x")).Invoke(-14.0) --> 14.0
+    (Compile.compileExpression1OrThrow expr8 symX).Invoke(-14.0) --> 14.0
 
     let expr9 = x + 1
-    (Compile.compile1OrThrow expr9 (Symbol "x")).Invoke(1.0) --> 2.0
+    (Compile.compileExpression1OrThrow expr9 symX).Invoke(1.0) --> 2.0
 
     let expr1' = x
-    (Compile.compileComplex1OrThrow expr1' (Symbol "x")).Invoke(System.Numerics.Complex.Create(3.0, 0.0)) --> System.Numerics.Complex.Create(3.0, 0.0)
+    (Compile.compileComplexExpression1OrThrow expr1' symX).Invoke(toComplex 3.0) --> toComplex 3.0
 
     let expr2' = x*x
-    (Compile.compileComplex1OrThrow expr2' (Symbol "x")).Invoke(System.Numerics.Complex.Create(3.0, 0.0)) --> System.Numerics.Complex.Create(9.0, 0.0)
+    (Compile.compileComplexExpression1OrThrow expr2' symX).Invoke(toComplex 3.0) --> toComplex 9.0
 
     let expr3' = x + y
-    (Compile.compileComplex2OrThrow expr3' (Symbol "x") (Symbol "y")).Invoke(System.Numerics.Complex.Create(3.0, 0.0), System.Numerics.Complex.Create(3.0, 0.0)) --> System.Numerics.Complex.Create(6.0, 0.0)
+    (Compile.compileComplexExpression2OrThrow expr3' symX symY).Invoke(toComplex 3.0, toComplex 3.0) --> toComplex 6.0
 
     let expr4' = ln x
-    (Compile.compileComplex1OrThrow expr4' (Symbol "x")).Invoke(System.Numerics.Complex.Create(3.0, 0.0)) --> System.Numerics.Complex.Log(System.Numerics.Complex.Create(3.0, 0.0))
+    (Compile.compileComplexExpression1OrThrow expr4' symX).Invoke(toComplex 3.0) --> System.Numerics.Complex.Log(toComplex 3.0)
 
     let expr5' = (Constant E) ** x
-    (Compile.compileComplex1OrThrow expr5' (Symbol "x")).Invoke(System.Numerics.Complex.Create(3.0, 0.0)) --> System.Numerics.Complex.Exp(System.Numerics.Complex.Create(3.0, 0.0))
+    (Compile.compileComplexExpression1OrThrow expr5' symX).Invoke(toComplex 3.0) --> System.Numerics.Complex.Exp(toComplex 3.0)
 
     let expr6' = sqrt x
-    (Compile.compileComplex1OrThrow expr6' (Symbol "x")).Invoke(System.Numerics.Complex.Create(12.5, 0.0)) --> System.Numerics.Complex.Sqrt(System.Numerics.Complex.Create(12.5, 0.0))
+    (Compile.compileComplexExpression1OrThrow expr6' symX).Invoke(toComplex 12.5) --> System.Numerics.Complex.Sqrt(toComplex 12.5)
 
     let expr7' = x ** y
-    (Compile.compileComplex2OrThrow expr7' (Symbol "x") (Symbol "y")).Invoke(System.Numerics.Complex.Create(12.5, 0.0), System.Numerics.Complex.Create(5.7, 0.0)) --> System.Numerics.Complex.Pow(System.Numerics.Complex.Create(12.5, 0.0), System.Numerics.Complex.Create(5.7, 0.0))
+    (Compile.compileComplexExpression2OrThrow expr7' symX symY).Invoke(toComplex 12.5, toComplex 5.7) --> System.Numerics.Complex.Pow(toComplex 12.5, toComplex 5.7)
 
     let expr8' = abs x
-    (Compile.compileComplex1OrThrow expr8' (Symbol "x")).Invoke(System.Numerics.Complex.Create(-14.0, 0.0)) --> System.Numerics.Complex.Create(14.0, 0.0)
+    (Compile.compileComplexExpression1OrThrow expr8' symX).Invoke(System.Numerics.Complex.Create(-14.0, 0.0)) --> toComplex 14.0
 
     let expr9' = x + 1
-    (Compile.compileComplex1OrThrow expr9' (Symbol "x")).Invoke(System.Numerics.Complex.One) --> System.Numerics.Complex.Create(2.0, 0.0)
+    (Compile.compileComplexExpression1OrThrow expr9' symX).Invoke(System.Numerics.Complex.One) --> toComplex 2.0
