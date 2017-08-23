@@ -1002,7 +1002,7 @@ let ``Exponential notation parsing``() =
 
 [<Test>]
 let ``Expression to delegate compilation``() =
-    
+
     let symX = Symbol "x"
     let symY = Symbol "y"
 
