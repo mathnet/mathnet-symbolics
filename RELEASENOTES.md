@@ -1,3 +1,13 @@
+### 0.16.0 - 2017-08-24
+* Multi-Arg functions: atan2, log *~Francesco Bertolaccini, FoggyFinder*
+* Trigonometric.substitute: handle cot, sec, csc correctly *~Francesco Bertolaccini*
+* Expression.root: apply automatic simplification
+* VisualExpressions: introduce alternative visual (instead of semantic) expression structure
+* Infix, LaTeX, MathML: formatting using visual expressions
+* LaTeX: proper rendering of roots, improved parenthesis handling
+* Infix: avoid parenthesis around floating-point approximations
+* Drop obsolete print functions (use format instead)
+
 ### 0.15.0 - 2017-04-30
 * Infix: support parsing approximations in exponential notation *~FoggyFinder*
 * Functions: trigonometric functions sec, csc, cot *~FoggyFinder*
