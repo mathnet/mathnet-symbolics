@@ -4,6 +4,7 @@ open System.Numerics
 open MathNet.Numerics
 open MathNet.Symbolics
 
+[<StructuredFormatDisplay("{Expression}")>]
 type SymbolicExpression(expression:Expression) =
 
     member this.Expression = expression
