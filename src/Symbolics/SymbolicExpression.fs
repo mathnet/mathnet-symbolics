@@ -135,3 +135,49 @@ type SymbolicExpression(expression:Expression) =
     member this.ArcSin() = SymbolicExpression(Expression.ArcSin(expression))
     member this.ArcCos() = SymbolicExpression(Expression.ArcCos(expression))
     member this.ArcTan() = SymbolicExpression(Expression.ArcTan(expression))
+
+
+    // STRUCTURE
+    member this.Substitute(x:SymbolicExpression, replacement:SymbolicExpression) = SymbolicExpression(expression |> Structure.substitute x.Expression replacement.Expression)
+
+
+    // ALGEBRAIC
+    member this.Expand() = SymbolicExpression(Algebraic.expand expression)
+    member this.ExpandMain() = SymbolicExpression(Algebraic.expandMain expression)
+
+
+    // CALCULUS
+    member this.Differentiate(variable:SymbolicExpression) = SymbolicExpression(expression |> Calculus.differentiate variable.Expression)
+    member this.DifferentiateAt(variable:SymbolicExpression, value:SymbolicExpression) = SymbolicExpression(expression |> Calculus.differentiateAt variable.Expression value.Expression)
+    member this.Taylor(k:int, variable:SymbolicExpression, value:SymbolicExpression) = SymbolicExpression(expression |> Calculus.taylor k variable.Expression value.Expression)
+    member this.TangentLine(variable:SymbolicExpression, value:SymbolicExpression) = SymbolicExpression(expression |> Calculus.tangentLine variable.Expression value.Expression)
+    member this.NormalLine(variable:SymbolicExpression, value:SymbolicExpression) = SymbolicExpression(expression |> Calculus.normalLine variable.Expression value.Expression)
+
+
+    // POLYNOMIAL
+
+
+    // RATIONAL
+    member this.Numerator() = SymbolicExpression(Rational.numerator expression)
+    member this.Denominator() = SymbolicExpression(Rational.denominator expression)
+    member this.Rationalize() = SymbolicExpression(Rational.rationalize expression)
+    member this.RationalReduce() = SymbolicExpression(Rational.reduce expression)
+    member this.RationalExpand() = SymbolicExpression(Rational.expand expression)
+    member this.RationalSimplify(variable:SymbolicExpression) = SymbolicExpression(expression |> Rational.simplify variable.Expression)
+
+
+    // EXPONENTIAL
+    member this.ExponentialExpand() = SymbolicExpression(Exponential.expand expression)
+    member this.ExponentialContract() = SymbolicExpression(Exponential.contract expression)
+    member this.ExponentialSimplify() = SymbolicExpression(Exponential.simplify expression)
+
+
+    // TRIGONOMETRIC
+    member this.TrigonometricExpand() = SymbolicExpression(Trigonometric.expand expression)
+    member this.TrigonometricContract() = SymbolicExpression(Trigonometric.contract expression)
+    member this.TrigonometricSubstitute() = SymbolicExpression(Trigonometric.substitute expression)
+    member this.TrigonometricSimplify() = SymbolicExpression(Trigonometric.simplify expression)
+
+
+    // APPROXIMATE
+    member this.Approximate() = SymbolicExpression(Approximate.approximate expression)
