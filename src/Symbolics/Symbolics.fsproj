@@ -75,6 +75,7 @@
     <Compile Include="Typed\Linq.fs" />
     <Compile Include="Compile.fs" />
     <Compile Include="Evaluate.fs" />
+    <Compile Include="SymbolicExpression.fs" />
     <None Include="MathNet.Symbolics.fsx" />
     <None Include="Script.fsx" />
     <None Include="app.config" />
