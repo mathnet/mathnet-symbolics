@@ -4,10 +4,67 @@ open System.Numerics
 open MathNet.Numerics
 open MathNet.Symbolics
 
+
+[<RequireQualifiedAccess>]
+type SymbolicExpressionType =
+    | RationalNumber = 1
+    | RealNumber = 2
+    | ComplexNumber = 3
+    | Variable = 4
+    | Sum = 5
+    | Product = 6
+    | Power = 7
+    | Function = 9
+    | ComplexInfinity = 10
+    | PositiveInfinity = 11
+    | NegativeInfinity = 12
+    | Undefined = 13
+
+
 [<StructuredFormatDisplay("{Expression}")>]
 type SymbolicExpression(expression:Expression) =
 
     member this.Expression = expression
+
+    member this.Type =
+        match expression with
+        | Number _ -> SymbolicExpressionType.RationalNumber
+        | Approximation (Approximation.Real _) -> SymbolicExpressionType.RealNumber
+        | Approximation (Approximation.Complex _) -> SymbolicExpressionType.ComplexNumber
+        | Identifier _ -> SymbolicExpressionType.Variable
+        | Constant I -> SymbolicExpressionType.ComplexNumber
+        | Constant _ -> SymbolicExpressionType.RealNumber
+        | Sum _ -> SymbolicExpressionType.Sum
+        | Product _ -> SymbolicExpressionType.Product
+        | Power _ -> SymbolicExpressionType.Power
+        | Function _ | FunctionN _ -> SymbolicExpressionType.Function
+        | ComplexInfinity -> SymbolicExpressionType.ComplexInfinity
+        | PositiveInfinity -> SymbolicExpressionType.PositiveInfinity
+        | NegativeInfinity -> SymbolicExpressionType.NegativeInfinity
+        | Undefined -> SymbolicExpressionType.Undefined
+
+    member this.RationalNumberValue =
+        match expression with
+        | Number n -> n
+        | _ -> failwith "Not a rational number"
+
+    member this.RealNumberValue =
+        match expression with
+        | Approximation (Approximation.Real fp) -> fp
+        | Constant Pi -> Constants.Pi
+        | Constant E -> Constants.E
+        | _ -> failwith "Not a rational number"
+
+    member this.ComplexNumberValue =
+        match expression with
+        | Approximation (Approximation.Complex fp) -> fp
+        | Constant I -> Complex.ImaginaryOne
+        | _ -> failwith "Not a rational number"
+
+    member this.VariableName =
+        match expression with
+        | Identifier (Symbol s) -> s
+        | _ -> failwith "Not a variable"
 
 
     // LEAFS - Integer
