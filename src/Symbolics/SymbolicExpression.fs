@@ -24,6 +24,9 @@ type SymbolicExpressionType =
 [<StructuredFormatDisplay("{Expression}")>]
 type SymbolicExpression(expression:Expression) =
 
+    let unpack (s:SymbolicExpression) = s.Expression
+    let pack (s:Expression) = SymbolicExpression(s)
+
     member this.Expression = expression
 
     member this.Type =
@@ -65,6 +68,7 @@ type SymbolicExpression(expression:Expression) =
         match expression with
         | Identifier (Symbol s) -> s
         | _ -> failwith "Not a variable"
+
 
 
     // LEAFS - Integer
@@ -195,7 +199,21 @@ type SymbolicExpression(expression:Expression) =
 
 
     // STRUCTURE
+    member this.NumberOfOperands = expression |> Structure.numberOfOperands
+    member this.Operand(index:int) = SymbolicExpression(expression |> Structure.operand index)
+    member this.Item
+      with get(index) = this.Operand(index)
+    member this.FreeOf(symbol:SymbolicExpression) = expression |> Structure.freeOf symbol.Expression
+    member this.FreeOf(symbols:SymbolicExpression seq) = let s = System.Collections.Generic.HashSet<Expression>(symbols |> Seq.map unpack) in expression |> Structure.freeOfSet s
     member this.Substitute(x:SymbolicExpression, replacement:SymbolicExpression) = SymbolicExpression(expression |> Structure.substitute x.Expression replacement.Expression)
+    member this.CollectVariables() = expression |> Structure.collectIdentifiers |> List.toSeq |> Seq.map pack
+    member this.CollectRationalNumbers() = expression |> Structure.collectNumbers |> List.toSeq |> Seq.map pack
+    member this.CollectRealNumbers() = expression |> Structure.collectDistinct (function | Approximation (Approximation.Real _) | Constant Pi | Constant E as e -> Some e |  _ -> None) |> Structure.sortList |> List.toSeq |> Seq.map pack
+    member this.CollectComplexNumbers() = expression |> Structure.collectDistinct (function | Approximation (Approximation.Complex _) | Constant I as e -> Some e |  _ -> None) |> Structure.sortList |> List.toSeq |> Seq.map pack
+    member this.CollectFunctions() = expression |> Structure.collectFunctions |> List.toSeq |> Seq.map pack
+    member this.CollectSums() = expression |> Structure.collectSums |> List.toSeq |> Seq.map pack
+    member this.CollectProducts() = expression |> Structure.collectProducts |> List.toSeq |> Seq.map pack
+    member this.CollectPowers() = expression |> Structure.collectPowers |> List.toSeq |> Seq.map pack
 
 
     // ALGEBRAIC
