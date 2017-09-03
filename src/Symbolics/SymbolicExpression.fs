@@ -27,6 +27,8 @@ type SymbolicExpression(expression:Expression) =
     let unpack (s:SymbolicExpression) = s.Expression
     let pack (s:Expression) = SymbolicExpression(s)
 
+    let unpackArrayToSet (items:SymbolicExpression array) = System.Collections.Generic.HashSet(items |> Seq.map unpack, HashIdentity.Structural)
+
     member this.Expression = expression
 
     member this.Type =
@@ -217,6 +219,8 @@ type SymbolicExpression(expression:Expression) =
 
 
     // ALGEBRAIC
+    member this.Summands() = expression |> Algebraic.summands |> List.toSeq |> Seq.map pack
+    member this.Factors() = expression |> Algebraic.factors |> List.toSeq |> Seq.map pack
     member this.Expand() = SymbolicExpression(Algebraic.expand expression)
     member this.ExpandMain() = SymbolicExpression(Algebraic.expandMain expression)
 
@@ -229,7 +233,36 @@ type SymbolicExpression(expression:Expression) =
     member this.NormalLine(variable:SymbolicExpression, value:SymbolicExpression) = SymbolicExpression(expression |> Calculus.normalLine variable.Expression value.Expression)
 
 
-    // POLYNOMIAL
+    // GENERAL POLYNOMIAL
+    member this.PolynomialVariables() = expression |> Polynomial.variables |> Seq.map pack
+    member this.IsMonomial(variable:SymbolicExpression) = expression |> Polynomial.isMonomial variable.Expression
+    member this.IsPolynomial(variable:SymbolicExpression) = expression |> Polynomial.isPolynomial variable.Expression
+    member this.MonomialDegree(variable:SymbolicExpression) = SymbolicExpression(expression |> Polynomial.degreeMonomial variable.Expression)
+    member this.PolynomialDegree(variable:SymbolicExpression) = SymbolicExpression(expression |> Polynomial.degree variable.Expression)
+    member this.PolynomialTotalDegree() = SymbolicExpression(expression |> Polynomial.totalDegree)
+    member this.PolynomialCommonFactors() = SymbolicExpression(expression |> Polynomial.commonFactors)
+    member this.MonomialCoefficient(variable:SymbolicExpression) = SymbolicExpression(expression |> Polynomial.coefficientMonomial variable.Expression)
+    member this.MonomialCoefficientDegree(variable:SymbolicExpression) = let coeff, degree = expression |> Polynomial.coefficientDegreeMonomial variable.Expression in SymbolicExpression(coeff), SymbolicExpression(degree)
+    member this.Coefficient(variable:SymbolicExpression, k:int) = SymbolicExpression(expression |> Polynomial.coefficient variable.Expression k)
+    member this.LeadingCoefficient(variable:SymbolicExpression) = SymbolicExpression(expression |> Polynomial.leadingCoefficient variable.Expression)
+    member this.LeadingCoefficientDegree(variable:SymbolicExpression) = let coeff, degree = expression |> Polynomial.leadingCoefficientDegree variable.Expression in SymbolicExpression(coeff), SymbolicExpression(degree)
+    member this.Coefficients(variable:SymbolicExpression) = expression |> Polynomial.coefficients variable.Expression |> Array.map pack
+    member this.CollectPolynomialTerms(variable:SymbolicExpression) = SymbolicExpression(expression |> Polynomial.collectTerms variable.Expression)
+    member this.PolynomialDivide(variable:SymbolicExpression, divisor:SymbolicExpression) = let quot, remainder = Polynomial.divide variable.Expression expression divisor.Expression in SymbolicExpression(quot), SymbolicExpression(remainder)
+    member this.PolynomialQuotient(variable:SymbolicExpression, divisor:SymbolicExpression) = SymbolicExpression(Polynomial.quot variable.Expression expression divisor.Expression)
+    member this.PolynomialRemainder(variable:SymbolicExpression, divisor:SymbolicExpression) = SymbolicExpression(Polynomial.remainder variable.Expression expression divisor.Expression)
+    member this.PolynomialPseudoDivide(variable:SymbolicExpression, divisor:SymbolicExpression) = let pquot, premainder, b = Polynomial.pseudoDivide variable.Expression expression divisor.Expression in SymbolicExpression(pquot), SymbolicExpression(premainder), SymbolicExpression(b)
+    member this.PolynomialPseudoQuotient(variable:SymbolicExpression, divisor:SymbolicExpression) = SymbolicExpression(Polynomial.pseudoQuot variable.Expression expression divisor.Expression)
+    member this.PolynomialPseudoRemainder(variable:SymbolicExpression, divisor:SymbolicExpression) = SymbolicExpression(Polynomial.pseudoRemainder variable.Expression expression divisor.Expression)
+
+
+    // MULTIVARIATE POLYNOMIAL
+    member this.IsMultivariateMonomial([<System.ParamArray>] variables: SymbolicExpression array) = expression |> Polynomial.isMonomialMV (unpackArrayToSet variables)
+    member this.IsMultivariatePolynomial([<System.ParamArray>] variables: SymbolicExpression array) = expression |> Polynomial.isPolynomialMV (unpackArrayToSet variables)
+    member this.MultivariateMonomialDegree([<System.ParamArray>] variables: SymbolicExpression array) = SymbolicExpression(expression |> Polynomial.degreeMonomialMV (unpackArrayToSet variables))
+    member this.MultivariatePolynomialDegree([<System.ParamArray>] variables: SymbolicExpression array) = SymbolicExpression(expression |> Polynomial.degreeMV (unpackArrayToSet variables))
+    member this.MultivariateMonomialCoefficient([<System.ParamArray>] variables: SymbolicExpression array) = SymbolicExpression(expression |> Polynomial.coefficientMonomialMV (unpackArrayToSet variables))
+    member this.CollectMultivariatePolynomialTerms([<System.ParamArray>] variables: SymbolicExpression array) = SymbolicExpression(expression |> Polynomial.collectTermsMV (unpackArrayToSet variables))
 
 
     // RATIONAL
