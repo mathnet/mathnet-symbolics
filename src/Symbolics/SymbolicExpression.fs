@@ -254,6 +254,9 @@ type SymbolicExpression(expression:Expression) =
     member this.PolynomialPseudoDivide(variable:SymbolicExpression, divisor:SymbolicExpression) = let pquot, premainder, b = Polynomial.pseudoDivide variable.Expression expression divisor.Expression in SymbolicExpression(pquot), SymbolicExpression(premainder), SymbolicExpression(b)
     member this.PolynomialPseudoQuotient(variable:SymbolicExpression, divisor:SymbolicExpression) = SymbolicExpression(Polynomial.pseudoQuot variable.Expression expression divisor.Expression)
     member this.PolynomialPseudoRemainder(variable:SymbolicExpression, divisor:SymbolicExpression) = SymbolicExpression(Polynomial.pseudoRemainder variable.Expression expression divisor.Expression)
+    member this.PolynomialGcd(variable:SymbolicExpression, other:SymbolicExpression) = SymbolicExpression(Polynomial.gcd variable.Expression expression other.Expression)
+    member this.IsSquareFree(variable:SymbolicExpression) = Polynomial.isSquareFree variable.Expression expression
+    member this.FactorSquareFree(variable:SymbolicExpression) = SymbolicExpression(Polynomial.factorSquareFree variable.Expression expression)
 
 
     // MULTIVARIATE POLYNOMIAL
