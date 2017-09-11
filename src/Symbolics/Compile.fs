@@ -32,16 +32,3 @@ module Compile =
     let compileComplexExpression2OrThrow expr arg1 arg2 = compileComplexExpressionOrThrow expr [ arg1; arg2 ] :?> Func<complex, complex, complex>
     let compileComplexExpression3OrThrow expr arg1 arg2 arg3 = compileComplexExpressionOrThrow expr [ arg1; arg2; arg3 ] :?> Func<complex, complex, complex, complex>
     let compileComplexExpression4OrThrow expr arg1 arg2 arg3 arg4 = compileComplexExpressionOrThrow expr [ arg1; arg2; arg3; arg4 ] :?> Func<complex, complex, complex, complex, complex>
-
-    type MathNet.Symbolics.Expression with
-        member this.Compile ([<ParamArray>] args : Symbol array) = compileExpressionOrThrow this (Array.toList args)
-        member this.Compile (arg : Symbol) = compileExpression1OrThrow this arg
-        member this.Compile (arg1 : Symbol, arg2 : Symbol) = compileExpression2OrThrow this arg1 arg2
-        member this.Compile (arg1 : Symbol, arg2 : Symbol, arg3 : Symbol) = compileExpression3OrThrow this arg1 arg2 arg3
-        member this.Compile (arg1 : Symbol, arg2 : Symbol, arg3 : Symbol, arg4 : Symbol) = compileExpression4OrThrow this arg1 arg2 arg3 arg4
-
-        member this.CompileComplex ([<ParamArray>] args : Symbol array) = compileComplexExpressionOrThrow this (Array.toList args)
-        member this.CompileComplex (arg : Symbol) = compileComplexExpression1OrThrow this arg
-        member this.CompileComplex (arg1 : Symbol, arg2 : Symbol) = compileComplexExpression2OrThrow this arg1 arg2
-        member this.CompileComplex (arg1 : Symbol, arg2 : Symbol, arg3 : Symbol) = compileComplexExpression3OrThrow this arg1 arg2 arg3
-        member this.CompileComplex (arg1 : Symbol, arg2 : Symbol, arg3 : Symbol, arg4 : Symbol) = compileComplexExpression4OrThrow this arg1 arg2 arg3 arg4

@@ -135,7 +135,23 @@ type SymbolicExpression(expression:Expression) =
         MathML.formatSemanticsAnnotated expression
 
 
-    // EVALUATION & COMPILATION
+    // EVALUATION
+
+    member this.Evaluate(symbols:System.Collections.Generic.IDictionary<string, FloatingPoint>) = Evaluate.evaluate symbols expression
+
+
+    // COMPILATION
+    member this.Compile ([<System.ParamArray>] args: string array) = Compile.compileExpressionOrThrow expression (args |> Array.map Symbol |> Array.toList)
+    member this.Compile (arg:string) = Compile.compileExpression1OrThrow expression (Symbol arg)
+    member this.Compile (arg1:string, arg2:string) = Compile.compileExpression2OrThrow expression (Symbol arg1) (Symbol arg2)
+    member this.Compile (arg1:string, arg2:string, arg3:string) = Compile.compileExpression3OrThrow expression (Symbol arg1) (Symbol arg2) (Symbol arg3)
+    member this.Compile (arg1:string, arg2:string, arg3:string, arg4:string) = Compile.compileExpression4OrThrow expression (Symbol arg1) (Symbol arg2) (Symbol arg3) (Symbol arg4)
+
+    member this.CompileComplex ([<System.ParamArray>] args: string array) = Compile.compileComplexExpressionOrThrow expression (args |> Array.map Symbol |> Array.toList)
+    member this.CompileComplex (arg:string) = Compile.compileComplexExpression1OrThrow expression (Symbol arg)
+    member this.CompileComplex (arg1:string, arg2:string) = Compile.compileComplexExpression2OrThrow expression (Symbol arg1) (Symbol arg2)
+    member this.CompileComplex (arg1:string, arg2:string, arg3:string) = Compile.compileComplexExpression3OrThrow expression (Symbol arg1) (Symbol arg2) (Symbol arg3)
+    member this.CompileComplex (arg1:string, arg2:string, arg3:string, arg4:string) = Compile.compileComplexExpression4OrThrow expression (Symbol arg1) (Symbol arg2) (Symbol arg3) (Symbol arg4)
 
 
     // CASTING
