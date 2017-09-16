@@ -1,3 +1,7 @@
+### 0.17.0 - 2017-09-16
+* Compile expressions to delegates *~Francesco Bertolaccini*
+* SymbolicExpression: OOP-friendly expression wrapper
+
 ### 0.16.0 - 2017-08-24
 * Multi-Arg functions: atan2, log *~Francesco Bertolaccini, FoggyFinder*
 * Trigonometric.substitute: handle cot, sec, csc correctly *~Francesco Bertolaccini*
