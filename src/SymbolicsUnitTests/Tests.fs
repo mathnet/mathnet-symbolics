@@ -734,6 +734,10 @@ let ``Evaluate some expression to floating point numbers`` () =
     Evaluate.evaluate symbols (1Q/0Q) --> FloatingPoint.ComplexInf
     (fun () -> Evaluate.evaluate symbols (f) |> ignore) |> should (throwWithMessage "Failed to find symbol: f") typeof<System.Exception>
 
+    let (FloatingPoint.Complex c) = Evaluate.evaluate symbols (sqrt(-1Q))
+    c.Real |> should (equalWithin 1e-15) 0.0
+    c.Imaginary |> should (equalWithin 1e-15) 1.0
+
 
 [<Test>]
 let ``Primitive Equation Solver`` () =
