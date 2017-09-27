@@ -622,6 +622,10 @@ let ``Differentiation and Taylor Series`` () =
     Calculus.differentiate x (log 10Q x) ==> "1/(x*ln(10))"
     Calculus.differentiate x (log x (x**2)) ==> "2/(x*ln(x)) - ln(x^2)/(x*(ln(x))^2)"
 
+    Calculus.differentiate x (arcsin(x)) ==> "(1 - x^2)^(-1/2)"
+    Calculus.differentiate x (arccos(x)) ==> "-(1 - x^2)^(-1/2)"
+    Calculus.differentiate x (arctan(x)) ==> "1/(1 + x^2)"
+
     Calculus.taylor 3 x 0Q (1/(1-x)) ==> "1 + x + x^2"
     Calculus.taylor 3 x 1Q (1/x) ==> "3 - 3*x + x^2"
     Calculus.taylor 3 x 1Q (ln(x)) ==> "-3/2 + 2*x - x^2/2"
