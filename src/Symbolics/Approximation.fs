@@ -77,41 +77,76 @@ module Approximation =
     let tan = function
         | Real a -> Real (Math.Tan a)
         | Complex a -> Complex (C.Tan a)
+    let csc = function
+        | Real a -> Real (Trig.Csc a)
+        | Complex a -> Complex (Complex.csc a)
+    let sec = function
+        | Real a -> Real (Trig.Sec a)
+        | Complex a -> Complex (Complex.sec a)
+    let cot = function
+        | Real a -> Real (Trig.Cot a)
+        | Complex a -> Complex (Complex.cot a)
     let sinh = function
-        | Real a -> Real (Math.Sinh a)
-        | Complex a -> Complex (C.Sinh a)
+        | Real a -> Real (Trig.Sinh a)
+        | Complex a -> Complex (Trig.Sinh a)
     let cosh = function
-        | Real a -> Real (Math.Cosh a)
-        | Complex a -> Complex (C.Cosh a)
+        | Real a -> Real (Trig.Cosh a)
+        | Complex a -> Complex (Trig.Cosh a)
     let tanh = function
-        | Real a -> Real (Math.Tanh a)
-        | Complex a -> Complex (C.Tanh a)
+        | Real a -> Real (Trig.Tanh a)
+        | Complex a -> Complex (Trig.Tanh a)
+    let csch = function
+        | Real a -> Real (Trig.Csch a)
+        | Complex a -> Complex (Complex.csch a)
+    let sech = function
+        | Real a -> Real (Trig.Sech a)
+        | Complex a -> Complex (Complex.sech a)    
+    let coth = function
+        | Real a -> Real (Trig.Coth a)
+        | Complex a -> Complex (Complex.coth a)
     let asin = function
-        | Real a -> Real (Math.Asin a)
-        | Complex a -> Complex (C.Asin a)
+        | Real a -> Real (Trig.Asin a)
+        | Complex a -> Complex (Trig.Asin a)
     let acos = function
-        | Real a -> Real (Math.Acos a)
-        | Complex a -> Complex (C.Acos a)
+        | Real a -> Real (Trig.Acos a)
+        | Complex a -> Complex (Trig.Acos a)
     let atan = function
-        | Real a -> Real (Math.Atan a)
-        | Complex a -> Complex (C.Atan a)
+        | Real a -> Real (Trig.Atan a)
+        | Complex a -> Complex (Trig.Atan a)
     let atan2 x y =
         match x, y with
         | Real a, Real b -> Real (Math.Atan2 (a, b))
         | Complex a, Complex b -> Complex (Complex.Atan (a / b))
         | Complex a, Real b -> Complex (Complex.Atan (a / (Complex.Create (b, 0.0))))
         | Real a, Complex b -> Complex (Complex.Atan ((Complex.Create (a, 0.0)) / b))
-
-    let cot = function
-        | Real a -> Real (Trig.Cot a)
-        | Complex a -> Complex (Complex.cot a)
-    let sec = function
-        | Real a -> Real (Trig.Sec a)
-        | Complex a -> Complex (Complex.sec a)
-    let csc = function
-        | Real a -> Real (Trig.Csc a)
-        | Complex a -> Complex (Complex.csc a)
-
+    let acsc = function
+        | Real a -> Real (Trig.Acsc a)
+        | Complex a -> Complex (Trig.Acsc a)
+    let asec = function
+        | Real a -> Real (Trig.Asec a)
+        | Complex a -> Complex (Trig.Asec a)
+    let acot = function
+        | Real a -> Real (Trig.Acot a)
+        | Complex a -> Complex (Trig.Acot a)
+    let asinh = function
+        | Real a -> Real (Trig.Asinh a)
+        | Complex a -> Complex (Trig.Asinh a)
+    let acosh = function
+        | Real a -> Real (Trig.Acosh a)
+        | Complex a -> Complex (Trig.Acosh a)
+    let atanh = function
+        | Real a -> Real (Trig.Atanh a)
+        | Complex a -> Complex (Trig.Atanh a)
+    let acsch = function
+        | Real a -> Real (Trig.Csch a)
+        | Complex a -> Complex (Trig.Csch a)
+    let asech = function
+        | Real a -> Real (Trig.Sech a)
+        | Complex a -> Complex (Trig.Sech a)    
+    let acoth = function
+        | Real a -> Real (Trig.Coth a)
+        | Complex a -> Complex (Trig.Coth a)
+        
     let apply f a =
         match f with
         | Abs -> abs a
@@ -121,15 +156,27 @@ module Approximation =
         | Sin ->sin a
         | Cos -> cos a
         | Tan -> tan a
-        | Cosh-> cosh a
+        | Csc -> csc a
+        | Sec -> sec a        
+        | Cot -> cot a
         | Sinh -> sinh a
+        | Cosh-> cosh a
         | Tanh -> tanh a
+        | Csch -> csch a                
+        | Sech -> sech a
+        | Coth -> coth a
         | Asin -> asin a
         | Acos -> acos a
         | Atan -> atan a
-        | Cot -> cot a
-        | Sec -> sec a
-        | Csc -> csc a
+        | Acsc -> acsc a
+        | Asec -> asec a
+        | Acot -> acot a
+        | Asinh -> asinh a
+        | Acosh -> acosh a
+        | Atanh -> atanh a
+        | Acsch -> acsch a
+        | Asech -> asech a
+        | Acoth -> acoth a
 
     let applyN f xs =
         match f, xs with

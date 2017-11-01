@@ -205,15 +205,30 @@ type SymbolicExpression(expression:Expression) =
     member this.Sin() = SymbolicExpression(Expression.Sin(expression))
     member this.Cos() = SymbolicExpression(Expression.Cos(expression))
     member this.Tan() = SymbolicExpression(Expression.Tan(expression))
-    member this.Sec() = SymbolicExpression(Expression.Sec(expression))
     member this.Csc() = SymbolicExpression(Expression.Csc(expression))
+    member this.Sec() = SymbolicExpression(Expression.Sec(expression))    
     member this.Cot() = SymbolicExpression(Expression.Cot(expression))
+
     member this.Sinh() = SymbolicExpression(Expression.Sinh(expression))
     member this.Cosh() = SymbolicExpression(Expression.Cosh(expression))
     member this.Tanh() = SymbolicExpression(Expression.Tanh(expression))
+    member this.Csch() = SymbolicExpression(Expression.Csch(expression))
+    member this.Sech() = SymbolicExpression(Expression.Sech(expression))
+    member this.Coth() = SymbolicExpression(Expression.Coth(expression))
+
     member this.ArcSin() = SymbolicExpression(Expression.ArcSin(expression))
     member this.ArcCos() = SymbolicExpression(Expression.ArcCos(expression))
     member this.ArcTan() = SymbolicExpression(Expression.ArcTan(expression))
+    member this.ArcCsc() = SymbolicExpression(Expression.ArcCsc(expression))
+    member this.ArcSec() = SymbolicExpression(Expression.ArcSec(expression))
+    member this.ArcCot() = SymbolicExpression(Expression.ArcCot(expression))
+
+    member this.ArcSinh() = SymbolicExpression(Expression.ArcSinh(expression))
+    member this.ArcCosh() = SymbolicExpression(Expression.ArcCosh(expression))
+    member this.ArcTanh() = SymbolicExpression(Expression.ArcTanh(expression))
+    member this.ArcCsch() = SymbolicExpression(Expression.ArcCsch(expression))
+    member this.ArcSech() = SymbolicExpression(Expression.ArcSech(expression))
+    member this.ArcCoth() = SymbolicExpression(Expression.ArcCoth(expression))
 
 
     // STRUCTURE

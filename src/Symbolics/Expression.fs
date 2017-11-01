@@ -423,17 +423,31 @@ module Operators =
         | Number n when n.IsNegative -> negate (Function (Tan, Number -n))
         | Product ((Number n)::ax) when n.IsNegative -> negate (Function (Tan, multiply (Number -n) (Product ax)))
         | x -> Function (Tan, x)
-
-    let cot x = Function (Cot, x)
-    let sec x = Function (Sec, x)
     let csc x = Function (Csc, x)
-    let cosh x = Function (Cosh, x)
+    let sec x = Function (Sec, x)
+    let cot x = Function (Cot, x)
+
     let sinh x = Function (Sinh, x)
+    let cosh x = Function (Cosh, x)    
     let tanh x = Function (Tanh, x)
+    let csch x = Function (Csch, x)
+    let sech x = Function (Sech, x)
+    let coth x = Function (Coth, x)
+
     let arcsin x = Function (Asin, x)
     let arccos x = Function (Acos, x)
     let arctan x = Function (Atan, x)
     let arctan2 x y = FunctionN (Atan, [x;y])
+    let arccsc x = Function (Acsc, x)
+    let arcsec x = Function (Asec, x)
+    let arccot x = Function (Acot, x)
+
+    let arcsinh x = Function (Asinh, x)
+    let arccosh x = Function (Acosh, x)
+    let arctanh x = Function (Atanh, x)
+    let arccsch x = Function (Acsch, x)
+    let arcsech x = Function (Asech, x)
+    let arccoth x = Function (Acoth, x)
 
     let apply f x =
         match f with
@@ -444,15 +458,28 @@ module Operators =
         | Sin -> sin x
         | Cos -> cos x
         | Tan -> tan x
-        | Cosh -> cosh x
+        | Csc -> csc x
+        | Cot -> cot x
+        | Sec -> sec x
         | Sinh -> sinh x
+        | Cosh -> cosh x
         | Tanh -> tanh x
+        | Csch -> csch x
+        | Sech -> sech x
+        | Coth -> coth x   
         | Asin -> arcsin x
         | Acos -> arccos x
         | Atan -> arctan x
-        | Cot -> cot x
-        | Sec -> sec x
-        | Csc -> csc x
+        | Acsc -> arccsc x
+        | Asec -> arcsec x
+        | Acot -> arccot x
+        | Asinh -> arcsinh x
+        | Acosh -> arccosh x
+        | Atanh -> arctanh x
+        | Acsch -> arccsch x
+        | Asech -> arcsech x
+        | Acoth -> arccoth x
+        
 
     let applyN (f: Function) (xs: Expression list) =
         match f, xs with
@@ -502,15 +529,30 @@ type Expression with
     static member Sin (x) = Operators.sin x
     static member Cos (x) = Operators.cos x
     static member Tan (x) = Operators.tan x
-    static member Cosh (x) = Operators.cosh x
+    static member Csc (x) = Operators.csc x
+    static member Sec (x) = Operators.sec x
+    static member Cot (x) = Operators.cot x
+
     static member Sinh (x) = Operators.sinh x
+    static member Cosh (x) = Operators.cosh x    
     static member Tanh (x) = Operators.tanh x
+    static member Coth (x) = Operators.coth x
+    static member Csch (x) = Operators.csch x
+    static member Sech (x) = Operators.sech x
+
     static member ArcSin (x) = Operators.arcsin x
     static member ArcCos (x) = Operators.arccos x
     static member ArcTan (x) = Operators.arctan x
-    static member Cot (x) = Operators.cot x
-    static member Csc (x) = Operators.csc x
-    static member Sec (x) = Operators.sec x
+    static member ArcCsc (x) = Operators.arccsc x
+    static member ArcSec (x) = Operators.arcsec x
+    static member ArcCot (x) = Operators.arccot x
+
+    static member ArcSinh (x) = Operators.arcsinh x
+    static member ArcCosh (x) = Operators.arccosh x
+    static member ArcTanh (x) = Operators.arctanh x
+    static member ArcCsch (x) = Operators.arccsch x
+    static member ArcSech (x) = Operators.arcsech x
+    static member ArcCoth (x) = Operators.arccoth x
 
     static member Apply (f, x) = Operators.apply f x
     static member ApplyN (f, xs) = Operators.applyN f xs
