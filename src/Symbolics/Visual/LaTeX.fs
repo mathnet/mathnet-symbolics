@@ -16,9 +16,13 @@ module private LaTeXFormatter =
         | "ln" -> "\\ln" | "log" -> "\\log_{10}"
         | "exp" -> "\\exp"
         | "sin" -> "\\sin" | "cos" -> "\\cos" | "tan" -> "\\tan"
+        | "csc" -> "\\csc" | "sec" -> "\\sec" | "cot" -> "\\cot"
         | "sinh" -> "\\sinh" | "cosh" -> "\\cosh" | "tanh" -> "\\tanh"
+        | "csch" -> "\\operatorname{csch}" | "sech" -> "\\operatorname{sech}" | "coth" -> "\\coth"
         | "asin" -> "\\arcsin" | "acos" -> "\\arccos" | "atan" -> "\\arctan"
-        | "cot" -> "\\cot" | "sec" -> "\\sec" | "csc" -> "\\csc"
+        | "acsc" -> "\\arccsc" | "asec" -> "\\arcsec" | "acot" -> "\\arccot"
+        | "asinh" -> "\\operatorname{arsinh}" | "acosh" -> "\\operatorname{arcosh}" | "atanh" -> "\\operatorname{artanh}"
+        | "acsch" -> "\\operatorname{arcsch}" | "asech" -> "\\operatorname{arsech}" | "acoth" -> "\\operatorname{arcoth}"
         | x -> sprintf "\\operatorname{%s}" x
     let latexFunctionNName = function
         | "log" -> "\\log"

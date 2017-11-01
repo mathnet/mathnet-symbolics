@@ -194,10 +194,14 @@ type DefaultVisualStyle() =
         | Abs -> "abs"
         | Ln -> "ln" | Log -> "log"
         | Exp -> "exp"
-        | Acos -> "acos" | Asin -> "asin" | Atan -> "atan"
-        | Sinh -> "sinh" | Cosh -> "cosh" | Tanh -> "tanh"
         | Sin -> "sin" | Cos -> "cos" | Tan -> "tan"
-        | Cot -> "cot" | Sec -> "sec" | Csc -> "csc"
+        | Csc -> "csc" | Sec -> "sec" | Cot -> "cot"
+        | Sinh -> "sinh" | Cosh -> "cosh" | Tanh -> "tanh"
+        | Csch -> "csch" | Sech -> "sech" | Coth -> "coth" 
+        | Asin -> "asin" | Acos -> "acos" | Atan -> "atan"
+        | Acsc -> "ascs" | Asec -> "asec" | Acot -> "acot"
+        | Acosh -> "acosh" | Asinh -> "asinh" | Atanh -> "atanh"
+        | Acsch -> "ascsh" | Asech -> "asech" | Acoth -> "acoth"
 
     member private this.FromExpression e = VisualExpression.fromExpression this e
 
