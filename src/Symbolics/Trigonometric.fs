@@ -78,7 +78,7 @@ module Trigonometric =
                 | Function (Sin, a), Function (Sin, b) -> cos(a-b)/2 - cos(a+b)/2
                 | Function (Cos, a), Function (Cos, b) -> cos(a+b)/2 + cos(a-b)/2
                 | Function (Sin, a), Function (Cos, b) -> sin(a+b)/2 + sin(a-b)/2
-                | Function (Cos, a), Function (Sin, b) -> sin(a+b)/2 - sin(b-a)/2
+                | Function (Cos, a), Function (Sin, b) -> sin(a+b)/2 - sin(a-b)/2
                 | _ -> failwith "unexpected expression"
             | x::xs -> rules (x * productRules xs)
             | _ -> failwith "algorithm error 2"
