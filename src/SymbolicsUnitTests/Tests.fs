@@ -579,19 +579,25 @@ let ``Algebaric Operators`` () =
     Exponential.simplify (1/(exp(x)*(exp(y)+exp(-x))) - (exp(x+y)-1)/((exp(x+y))**2-1)) ==> "0"
 
     Trigonometric.expand (sin(2*x)) ==> "2*sin(x)*cos(x)"
+    Trigonometric.expand (sin(3*x)) ==> "-(sin(x))^3 + 3*sin(x)*(cos(x))^2"
     Trigonometric.expand (sin(a+x)) ==> "sin(x)*cos(a) + sin(a)*cos(x)"
     Trigonometric.expand (sin(2*x + 3*y)) ==> "(-(sin(x))^2 + (cos(x))^2)*(-(sin(y))^3 + 3*sin(y)*(cos(y))^2) + 2*sin(x)*cos(x)*(-3*(sin(y))^2*cos(y) + (cos(y))^3)"
     Trigonometric.expand (sin(2*(x+y))) ==> "2*sin(y)*(-(sin(x))^2 + (cos(x))^2)*cos(y) + 2*sin(x)*cos(x)*(-(sin(y))^2 + (cos(y))^2)"
     Trigonometric.expand (sin(2*(x+y))) |> Algebraic.expand ==> "-2*sin(x)*(sin(y))^2*cos(x) - 2*(sin(x))^2*sin(y)*cos(y) + 2*sin(y)*(cos(x))^2*cos(y) + 2*sin(x)*cos(x)*(cos(y))^2"
-    Trigonometric.expand (cos(5*x)) ==> "5*(sin(x))^4*cos(x) - 10*(sin(x))^2*(cos(x))^3 + (cos(x))^5"
+    Trigonometric.expand (cos(5*x)) ==> "5*(sin(x))^4*cos(x) - 10*(sin(x))^2*(cos(x))^3 + (cos(x))^5"    
     // TODO: should actually be Undefined
     Trigonometric.expand ((sin(2*x)-2*sin(x)*cos(x))/((sin(x))**2 + (cos(x))**2 - 1)) ==> "0"
 
     Trigonometric.contract (sin(a)*sin(b)) ==> "-cos(a + b)/2 + cos(a - b)/2"
+    Trigonometric.contract (sin(a)*cos(b)) ==> "sin(a + b)/2 + sin(a - b)/2"
+    Trigonometric.contract (cos(a)*sin(b)) ==> "sin(a + b)/2 + sin(-a + b)/2"
+    Trigonometric.contract (cos(a)*cos(b)) ==> "cos(a + b)/2 + cos(a - b)/2"
+    Trigonometric.contract (sin(x)**2 + cos(x)**2) ==> "1" // Pythagorean identity
     Trigonometric.contract ((sin(x) + cos(y))*cos(y)) ==> "1/2 + sin(x + y)/2 + sin(x - y)/2 + cos(2*y)/2"
     Trigonometric.contract (sin(x)**2*cos(x)**2) ==> "1/8 - cos(4*x)/8"
     Trigonometric.contract (cos(x)**4) ==> "3/8 + cos(2*x)/2 + cos(4*x)/8"
-
+    Trigonometric.contract (sin(x/2)**2) ==> "1/2 - cos(x)/2"
+    Trigonometric.contract (cos(x/2)**2) ==> "1/2 + cos(x)/2"
     Trigonometric.simplify ((cos(x)+sin(x))**4 + (cos(x)-sin(x))**4 + cos(4*x) - 3) ==> "0"
 
     Trigonometric.substitute (tan(x)) ==> "sin(x)/cos(x)"
@@ -602,7 +608,6 @@ let ``Algebaric Operators`` () =
     // TODO: expected: 0
     Trigonometric.simplify (sin(x) + sin(y) - 2*sin(x/2+y/2)*cos(x/2-y/2))
         ==> "sin(y) - sin(x - y)/2 - sin(x/2 - y/2 - (x/2 - y/2))/2 - sin(-x/2 + y/2 - (x/2 - y/2))/2 - sin(x/2 + y/2 - (x/2 - y/2))"
-
 
 [<Test>]
 let ``Differentiation and Taylor Series`` () =
