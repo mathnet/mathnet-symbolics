@@ -245,10 +245,14 @@ module Operators =
         match x, y with
         | Undefined, _ | _, Undefined -> undefined
         | Zero, b | b, Zero -> b
-        | Values.Value a, Values.Value b -> Values.sum (a, b)
+        | ComplexInfinity, oo | oo, ComplexInfinity when isInfinity oo -> undefined
         | ComplexInfinity, _ | _, ComplexInfinity -> complexInfinity
+        | PositiveInfinity, PositiveInfinity -> infinity
+        | PositiveInfinity, oo | oo, PositiveInfinity when isInfinity oo -> undefined
         | PositiveInfinity, _ | _, PositiveInfinity -> infinity
+        | NegativeInfinity, NegativeInfinity -> negativeInfinity
         | NegativeInfinity, _ | _, NegativeInfinity -> negativeInfinity
+        | Values.Value a, Values.Value b -> Values.sum (a, b)
         | Values.Value a, b | b, Values.Value a -> valueAdd a b
         | Sum ((Values.Value a)::ax), Sum ((Values.Value b)::bx) -> valueAdd (Value.sum (a, b)) (merge ax bx)
         | Sum ((Values.Value a)::ax), Sum bx | Sum bx, Sum ((Values.Value a)::ax) -> valueAdd a (merge ax bx)
@@ -302,11 +306,16 @@ module Operators =
         match x, y with
         | Undefined, _ | _, Undefined -> undefined
         | One, b | b, One -> b
+        | Zero, oo | oo, Zero when isInfinity oo -> undefined
         | Zero, _ | _, Zero -> zero
-        | Values.Value a, Values.Value b -> Values.product (a, b)
         | ComplexInfinity, _ | _, ComplexInfinity -> complexInfinity
+        | PositiveInfinity, Positive | Positive, PositiveInfinity -> infinity
+        | PositiveInfinity, Negative | Negative, PositiveInfinity -> negativeInfinity
         | PositiveInfinity, _ | _, PositiveInfinity -> infinity
+        | NegativeInfinity, Positive | Positive, NegativeInfinity -> negativeInfinity
+        | NegativeInfinity, Negative | Negative, NegativeInfinity -> infinity
         | NegativeInfinity, _ | _, NegativeInfinity -> negativeInfinity
+        | Values.Value a, Values.Value b -> Values.product (a, b)
         | Values.Value a, b | b, Values.Value a -> valueMul a b
         | Product ((Values.Value a)::ax), Product ((Values.Value b)::bx) -> valueMul (Value.product (a, b)) (merge ax bx)
         | Product ((Values.Value a)::ax), Product bx | Product bx, Product ((Values.Value a)::ax) -> valueMul a (merge ax bx)
@@ -319,10 +328,26 @@ module Operators =
     and pow x y =
         // if power is a number, radix must not be an integer, fraction, product or power
         match x, y with
+        | Undefined, _ | _, Undefined -> undefined
         | Zero, Zero -> undefined
-        | _, Zero -> one
+        | Zero, (ComplexInfinity | PositiveInfinity) -> zero
+        | Zero, NegativeInfinity -> complexInfinity
+        | Zero, Positive -> zero
+        | Zero, Negative -> complexInfinity
+        | oo, Zero when isInfinity oo -> undefined
+        | oo, PositiveInfinity when isInfinity oo -> complexInfinity
+        | oo, Number b when isInfinity oo && b.IsNegative -> zero
+        | ComplexInfinity, Positive -> complexInfinity                
+        | PositiveInfinity, Positive -> infinity
+        | NegativeInfinity, Number b when b.IsPositive && b.IsInteger ->
+            if (b.Numerator % 2I).IsZero then infinity else negativeInfinity
+        | One, oo | MinusOne, oo when isInfinity oo -> undefined
+        | _, Zero | One, _ -> one
         | a, One -> a
-        | One, _ -> one
+        | Positive, PositiveInfinity -> infinity
+        | Negative, PositiveInfinity -> complexInfinity 
+        | _, NegativeInfinity -> zero
+        | _, ComplexInfinity -> undefined
         | Number a, Number b when not (b.IsInteger) -> Power (x,y)
         | Values.Value a, Values.Value b -> Values.power (a, b)
         | Product ax, Number b when b.IsInteger -> Product (ax |> List.map (fun z -> pow z y))
@@ -334,6 +359,9 @@ module Operators =
     let subtract x y = add x (negate y)
 
     let rec invert = function
+        | Undefined -> undefined
+        | Zero -> complexInfinity
+        | oo when isInfinity oo -> zero 
         | Values.Value v -> Values.invert v
         | Product ax -> Product (ax |> List.map invert)
         | Power (r, p) -> pow r (negate p)
@@ -350,18 +378,33 @@ module Operators =
     let sqrt x = root two x
 
     let abs = function
+        | Undefined -> undefined
+        | oo when isInfinity oo -> infinity
+        | Constant I -> one
         | Values.Value v -> Values.abs v
         | Product ((Values.Value v)::ax) when Value.isNegative v -> Function (Abs, multiply (Values.abs v) (Product ax))
         | x -> Function (Abs, x)
 
     let exp = function
+        | Undefined | ComplexInfinity -> undefined
         | Zero -> one
+        | One -> Constant E
+        | PositiveInfinity -> infinity
+        | NegativeInfinity -> zero
         | x -> Function (Exp, x)
     let ln = function
+        | Undefined -> undefined
+        | Zero -> negativeInfinity
         | One -> zero
+        | Constant E -> one
+        | oo when isInfinity oo -> infinity
         | x -> Function (Ln, x)
     let log10 = function
+        | Undefined -> undefined
+        | Zero -> negativeInfinity
         | One -> zero
+        | Number n when n.Equals(10N) -> one
+        | oo when isInfinity oo -> infinity
         | x -> Function (Log, x)
     let log basis x = FunctionN (Log, [basis; x])
 
