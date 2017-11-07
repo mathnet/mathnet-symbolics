@@ -93,13 +93,17 @@ module Value =
         | Value.ComplexInfinity, (Value.ComplexInfinity | Value.PositiveInfinity | Value.NegativeInfinity) -> Value.Undefined
         | (Value.ComplexInfinity | Value.PositiveInfinity | Value.NegativeInfinity),  Value.ComplexInfinity -> Value.Undefined
         | Value.ComplexInfinity, _ | _, Value.ComplexInfinity -> Value.ComplexInfinity
+        | Value.PositiveInfinity, Value.PositiveInfinity -> Value.PositiveInfinity
         | Value.PositiveInfinity, Value.NegativeInfinity | Value.NegativeInfinity, Value.PositiveInfinity -> Value.Undefined
         | Value.PositiveInfinity, _ | _, Value.PositiveInfinity -> Value.PositiveInfinity
-        | Value.NegativeInfinity, _ | _, Value.NegativeInfinity -> Value.NegativeInfinity
+        | Value.NegativeInfinity, Value.NegativeInfinity -> Value.NegativeInfinity
+        | Value.NegativeInfinity, _ | _, Value.NegativeInfinity -> Value.NegativeInfinity        
 
     let product = function
         | Value.Undefined, _ | _, Value.Undefined -> Value.Undefined
         | One, b | b, One -> b
+        | Zero, (Value.ComplexInfinity | Value.PositiveInfinity | Value.NegativeInfinity) -> Value.Undefined
+        | (Value.ComplexInfinity | Value.PositiveInfinity | Value.NegativeInfinity), Zero -> Value.Undefined
         | Zero, _ | _, Zero -> zero
         | Value.Number a, Value.Number b -> Value.Number (a * b)
         | Value.Approximation a, Value.Approximation b -> Approximation.product (a, b) |> approx
@@ -122,9 +126,26 @@ module Value =
     let power = function
         | Value.Undefined, _ | _, Value.Undefined -> Value.Undefined
         | Zero, Zero -> Value.Undefined
+        | Zero, (Value.ComplexInfinity | Value.PositiveInfinity) -> zero
+        | Zero, Value.NegativeInfinity -> Value.ComplexInfinity
+        | Zero, Positive -> zero
+        | Zero, Negative -> Value.ComplexInfinity
+        | (Value.ComplexInfinity | Value.PositiveInfinity | Value.NegativeInfinity), Zero -> Value.Undefined
+        | (Value.ComplexInfinity | Value.PositiveInfinity | Value.NegativeInfinity), Value.PositiveInfinity -> Value.ComplexInfinity
+        | (Value.ComplexInfinity | Value.PositiveInfinity | Value.NegativeInfinity), Value.Number b when b.IsNegative -> zero
+        | Value.ComplexInfinity, Positive -> Value.ComplexInfinity
+        | Value.PositiveInfinity, Positive -> Value.PositiveInfinity
+        | Value.NegativeInfinity, Value.Number b when b.IsPositive && b.IsInteger ->
+            if (b.Numerator % 2I).IsZero then Value.PositiveInfinity else Value.NegativeInfinity
+        | One, (Value.ComplexInfinity | Value.PositiveInfinity | Value.NegativeInfinity) | MinusOne, (Value.ComplexInfinity | Value.PositiveInfinity | Value.NegativeInfinity) -> Value.Undefined
+        | One, _ | _, Zero -> one
         | _, Zero -> one
         | a, One -> a
         | One, _ -> one
+        | Positive, Value.PositiveInfinity -> Value.PositiveInfinity
+        | Negative, Value.PositiveInfinity -> Value.ComplexInfinity
+        | _, Value.NegativeInfinity -> zero
+        | _, Value.ComplexInfinity -> Value.Undefined
         | Value.Number a, Value.Number b when b.IsInteger ->
             if b.IsNegative then
                 if a.IsZero then Value.ComplexInfinity
