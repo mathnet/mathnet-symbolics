@@ -114,12 +114,16 @@ module ExpressionPatterns =
     /// Recognizes a sin or cos expression
     let (|SinCos|_|) = function
         | Function (Sin, _) | Function (Cos, _) as t -> Some t
+        | Function (Sinh, _) | Function (Cosh, _) as t -> Some t
         | _ -> None
 
     let (|SinCosPosIntPower|_|) = function
         | Function (Sin, _) | Function (Cos, _) as r -> Some (r, Number BigRational.One)
+        | Function (Sinh, _) | Function (Cosh, _) as r -> Some (r, Number BigRational.One)
         | Power (Function (Sin, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
-        | Power (Function (Cos, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
+        | Power (Function (Cos, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)        
+        | Power (Function (Sinh, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
+        | Power (Function (Cosh, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
         | _ -> None
 
 
