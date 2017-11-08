@@ -126,6 +126,16 @@ Target "Test" (fun _ -> test !! "out/test/**/*UnitTests*.dll")
 
 
 // --------------------------------------------------------------------------------------
+// CODE SIGN
+// --------------------------------------------------------------------------------------
+
+Target "Sign" (fun _ ->
+    let fingerprint = "5dbea70701b40cab1b2ca62c75401342b4f0f03a"
+    let timeserver = "https://time.certum.pl/"
+    sign fingerprint timeserver (!! "out/lib/**/MathNet.Symbolics.dll" ))
+
+
+// --------------------------------------------------------------------------------------
 // PACKAGES
 // --------------------------------------------------------------------------------------
 
@@ -136,7 +146,7 @@ Target "Pack" DoNothing
 Target "Zip" (fun _ ->
     CleanDir "out/packages/Zip"
     coreBundle |> zip "out/packages/Zip" "out/lib" (fun f -> f.Contains("MathNet.Symbolics.") || f.Contains("MathNet.Numerics.") || f.Contains("FParsec") || f.Contains("FSharp.Core")))
-"Build" ==> "Zip" ==> "Pack"
+"Build" =?> ("Sign", hasBuildParam "sign") ==> "Zip" ==> "Pack"
 
 // NUGET
 
@@ -144,7 +154,7 @@ Target "NuGet" (fun _ ->
     CleanDir "out/packages/NuGet"
     if hasBuildParam "all" || hasBuildParam "release" then
         nugetPack coreBundle "out/packages/NuGet")
-"Build" ==> "NuGet" ==> "Pack"
+"Build" =?> ("Sign", hasBuildParam "sign") ==> "NuGet" ==> "Pack"
 
 
 // --------------------------------------------------------------------------------------
