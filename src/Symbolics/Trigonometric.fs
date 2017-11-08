@@ -31,9 +31,28 @@ module Trigonometric =
                     |> List.map (fun (k,c) -> c*cost**number(e-k)*sint**k) |> sum
                 (esin, ecos)
             | x -> sin x, cos x
+        let rec rules' = function
+            | Sum ax ->
+                List.map rules' ax
+                |> List.reduce (fun (s1,c1) (s2,c2) -> (s1*c2 + c1*s2, c1*c2 + s1*s2))
+            | Product ((Integer n)::ax) when n.IsPositive ->
+                let e = int n
+                let t = product ax
+                let sinht = sinh t
+                let cosht = cosh t
+                let esinh =
+                    [for k in 1 .. 2 .. e -> (k, binomial e k)] // 0 for even k, binomial(e,k) for odd k
+                    |> List.map (fun (k,c) -> c*cosht**number(e-k)*sinht**k) |> sum
+                let ecosh =
+                    [for k in 0 .. 2 .. e -> (k, binomial e k)] // binomial(e,k) for even k, 0 for odd k
+                    |> List.map (fun (k,c) -> c*cosht**number(e-k)*sinht**k) |> sum
+                (esinh, ecosh)
+            | x -> sinh x, cosh x    
         match Structure.map expand x with
         | Function (Sin, a) -> rules (Algebraic.expand a) |> fst
         | Function (Cos, a) -> rules (Algebraic.expand a) |> snd
+        | Function (Sinh, a) -> rules' (Algebraic.expand a) |> fst
+        | Function (Cosh, a) -> rules' (Algebraic.expand a) |> snd
         | a -> a
 
     /// Splits a product into a tuple (rest, sin or cos or a positive integer power of them)
@@ -70,6 +89,24 @@ module Trigonometric =
                 else
                     let w = (2Q**(1-e))
                     sum [for j in 0 .. (e/2) -> w * (binomial e j) * cos((e-2*j)*x)]
+            | Function (Sinh, x), (Number n as p) when n.IsInteger && n.IsPositive ->
+                let e = int n
+                if Euclid.IsEven(e) then
+                    let w =  oneIfEven(e/2) * (2Q**(1-e))
+                    let z = sum [for j in 0 .. (e/2-1) -> oneIfEven j * w * (binomial e j) * cosh((e-2*j)*x)]
+                    oneIfEven(e/2) * (oneIfEven e) * (binomial e (e/2))/(2Q**e) + oneIfEven(e/2) * z
+                else
+                    let w = oneIfEven((e-1)/2) * (2Q**(1-e))
+                    sum [for j in 0 .. (e/2) -> oneIfEven((e-1)/2) * oneIfEven j * w * (binomial e j) * sinh((e-2*j)*x)]
+            | Function (Cosh, x), (Number n as p) when n.IsInteger && n.IsPositive ->
+                let e = int n
+                if Euclid.IsEven(e) then
+                    let w = (2Q**(1-e))
+                    let z = sum [for j in 0 .. (e/2-1) -> w * (binomial e j) * cosh((e-2*j)*x)]
+                    (binomial e (e/2))/(2Q**e) + z
+                else
+                    let w = (2Q**(1-e))
+                    sum [for j in 0 .. (e/2) -> w * (binomial e j) * cosh((e-2*j)*x)]
             | _ -> r**p
         let rec productRules = function
             | [u; v] ->

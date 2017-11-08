@@ -789,7 +789,7 @@ let ``Structural Operators`` () =
 
 [<Test>]
 let ``Algebaric Operators`` () =
-
+    
     negate (x + y**2) ==> "-(x + y^2)"
 
     Algebraic.factors (b*cos(x)*ln(d)*x) ==+> ["b"; "x"; "ln(d)"; "cos(x)"]
@@ -852,12 +852,14 @@ let ``Algebaric Operators`` () =
     Trigonometric.expand (cos(5*x)) ==> "5*(sin(x))^4*cos(x) - 10*(sin(x))^2*(cos(x))^3 + (cos(x))^5"    
     // TODO: should actually be Undefined
     Trigonometric.expand ((sin(2*x)-2*sin(x)*cos(x))/((sin(x))**2 + (cos(x))**2 - 1)) ==> "0"
-
+    
     Trigonometric.contract (sin(a)*sin(b)) ==> "-cos(a + b)/2 + cos(a - b)/2"
     Trigonometric.contract (sin(a)*cos(b)) ==> "sin(a + b)/2 + sin(a - b)/2"
     Trigonometric.contract (cos(a)*sin(b)) ==> "sin(a + b)/2 + sin(-a + b)/2"
     Trigonometric.contract (cos(a)*cos(b)) ==> "cos(a + b)/2 + cos(a - b)/2"
     Trigonometric.contract (sin(x)**2 + cos(x)**2) ==> "1" // Pythagorean identity
+    Trigonometric.simplify (sec(x)**2 - tan(x)**2 - 1) ==> "0"
+    Trigonometric.simplify (csc(x)**2 - cot(x)**2 - 1) ==> "0"
     Trigonometric.contract ((sin(x) + cos(y))*cos(y)) ==> "1/2 + sin(x + y)/2 + sin(x - y)/2 + cos(2*y)/2"
     Trigonometric.contract (sin(x)**2*cos(x)**2) ==> "1/8 - cos(4*x)/8"
     Trigonometric.contract (cos(x)**4) ==> "3/8 + cos(2*x)/2 + cos(4*x)/8"
@@ -869,6 +871,39 @@ let ``Algebaric Operators`` () =
     Trigonometric.substitute (cot(x)) ==> "cos(x)/sin(x)"
     Trigonometric.substitute (csc(x)) ==> "1/sin(x)"
     Trigonometric.substitute (sec(x)) ==> "1/cos(x)"
+
+    Trigonometric.expand (sinh(2*x)) ==> "2*sinh(x)*cosh(x)"
+    Trigonometric.expand (sinh(3*x)) ==> "(sinh(x))^3 + 3*sinh(x)*(cosh(x))^2"
+    Trigonometric.expand (sinh(4*x)) ==> "4*(sinh(x))^3*cosh(x) + 4*sinh(x)*(cosh(x))^3"
+    Trigonometric.expand (sinh(5*x)) ==> "(sinh(x))^5 + 10*(sinh(x))^3*(cosh(x))^2 + 5*sinh(x)*(cosh(x))^4"
+    Trigonometric.expand (cosh(2*x)) ==> "(sinh(x))^2 + (cosh(x))^2"
+    Trigonometric.expand (cosh(3*x)) ==> "3*(sinh(x))^2*cosh(x) + (cosh(x))^3"
+    Trigonometric.expand (cosh(4*x)) ==> "(sinh(x))^4 + 6*(sinh(x))^2*(cosh(x))^2 + (cosh(x))^4"
+    Trigonometric.expand (cosh(5*x)) ==> "5*(sinh(x))^4*cosh(x) + 10*(sinh(x))^2*(cosh(x))^3 + (cosh(x))^5"
+
+    Trigonometric.contract (sinh(a)*sinh(b)) ==> "cosh(a + b)/2 - cosh(a - b)/2"
+    Trigonometric.contract (sinh(a)*cosh(b)) ==> "sinh(a + b)/2 + sinh(a - b)/2"
+    Trigonometric.contract (cosh(a)*sinh(b)) ==> "sinh(a + b)/2 + sinh(-a + b)/2"
+    Trigonometric.contract (cosh(a)*cosh(b)) ==> "cosh(a + b)/2 + cosh(a - b)/2"
+    Trigonometric.contract (sinh(x)**2) ==> "-1/2 + cosh(2*x)/2"
+    Trigonometric.contract (sinh(x)**3) ==> "-3/4*sinh(x) + sinh(3*x)/4"
+    Trigonometric.contract (sinh(x)**4) ==> "3/8 - cosh(2*x)/2 + cosh(4*x)/8"
+    Trigonometric.contract (sinh(x)**5) ==> "5/8*sinh(x) - 5/16*sinh(3*x) + sinh(5*x)/16"
+    Trigonometric.contract (cosh(x)**2) ==> "1/2 + cosh(2*x)/2"
+    Trigonometric.contract (cosh(x)**3) ==> "3/4*cosh(x) + cosh(3*x)/4"
+    Trigonometric.contract (cosh(x)**4) ==> "3/8 + cosh(2*x)/2 + cosh(4*x)/8"
+    Trigonometric.contract (cosh(x)**5) ==> "5/8*cosh(x) + 5/16*cosh(3*x) + cosh(5*x)/16"
+    Trigonometric.contract (sinh(x/2)**2) ==> "-1/2 + cosh(x)/2"
+    Trigonometric.contract (cosh(x/2)**2) ==> "1/2 + cosh(x)/2"
+    Trigonometric.contract (cosh(x)**2 - sinh(x)**2) ==> "1"
+    Trigonometric.simplify (sech(x)**2 + tanh(x)**2 - 1) ==> "0"
+    Trigonometric.simplify (csch(x)**2 - coth(x)**2 + 1) ==> "0"
+    Trigonometric.simplify ((cosh(x)+sinh(x))**4 + (cosh(x)-sinh(x))**4 - 2*cosh(4*x)) ==> "0"
+    
+    Trigonometric.substitute (tanh(x)) ==> "sinh(x)/cosh(x)"
+    Trigonometric.substitute (coth(x)) ==> "cosh(x)/sinh(x)"
+    Trigonometric.substitute (csch(x)) ==> "1/sinh(x)"
+    Trigonometric.substitute (sech(x)) ==> "1/cosh(x)"
 
     // TODO: expected: 0
     Trigonometric.simplify (sin(x) + sin(y) - 2*sin(x/2+y/2)*cos(x/2-y/2))
