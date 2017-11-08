@@ -131,7 +131,7 @@ Target "Test" (fun _ -> test !! "out/test/**/*UnitTests*.dll")
 
 Target "Sign" (fun _ ->
     let fingerprint = "5dbea70701b40cab1b2ca62c75401342b4f0f03a"
-    let timeserver = "https://time.certum.pl/"
+    let timeserver = "http://time.certum.pl/"
     sign fingerprint timeserver (!! "out/lib/**/MathNet.Symbolics.dll" ))
 
 

@@ -1,3 +1,11 @@
+### 0.18.0 - 2017-11-08
+* Calculus: fix derivatives of Asin, Acos, Atan *~diluculo*
+* Trigonometric: fix contraction of cos(a)*sin(b) *~diluculo*
+* Trigonometric: expansion and contraction of sinh/cosh *~diluculo*
+* Fix and improve arithmetic of infinity, closer to Mathematica *~diluculo*
+* Evaluate: powers with negative radix and non-integer exponent are lifted to complex numbers
+* Binaries are now signed with a certificate
+
 ### 0.17.0 - 2017-09-16
 * Compile expressions to delegates *~Francesco Bertolaccini*
 * SymbolicExpression: OOP-friendly expression wrapper
