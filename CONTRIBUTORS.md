@@ -16,6 +16,8 @@ Feel free to add a link to your personal site/blog and/or twitter handle.*
 
 - [Christoph Rüegg](http://christoph.ruegg.name/) (@cdrnet)
 - FoggyFinder
+- Francesco Bertolaccini
+- diluculo
 - Zais-Ajaj
 - Ceri Lweis
 - Friedrich von Never
