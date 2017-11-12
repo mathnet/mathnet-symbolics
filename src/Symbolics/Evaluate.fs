@@ -150,19 +150,19 @@ module Evaluate =
         | Csc, Real x -> Real (Trig.Sec x)
         | Csc, Complex x -> Complex(Trig.Sec x)
         | Sec, Real x -> Real (Trig.Sec x)
-        | Sec, Complex x -> Complex(Trig.Sec x)        
+        | Sec, Complex x -> Complex(Trig.Sec x)
         | Cot, Real x -> Real (Trig.Cot x)
         | Cot, Complex x -> Complex(Trig.Cot x)
         | Sinh, Real x -> Real (Trig.Sinh(x))
         | Sinh, Complex x -> Complex (Trig.Sinh(x))
         | Cosh, Real x -> Real(Trig.Cosh(x))
-        | Cosh, Complex x -> Complex (Trig.Cosh(x))        
+        | Cosh, Complex x -> Complex (Trig.Cosh(x))
         | Tanh, Real x -> Real (Trig.Tanh(x))
         | Tanh, Complex x -> Complex (Trig.Tanh(x))
         | Csch, Real x -> Real (Trig.Csch(x))
         | Csch, Complex x -> Complex (Trig.Csch(x))
         | Sech, Real x -> Real(Trig.Sech(x))
-        | Sech, Complex x -> Complex (Trig.Sech(x))        
+        | Sech, Complex x -> Complex (Trig.Sech(x))
         | Coth, Real x -> Real (Trig.Coth(x))
         | Coth, Complex x -> Complex (Trig.Coth(x))
         | Asin, Real x -> Real (Trig.Asin(x))
@@ -189,7 +189,7 @@ module Evaluate =
         | Asech, Complex x -> Complex (Trig.Asech(x))
         | Acoth, Real x -> Real (Trig.Acoth(x))
         | Acoth, Complex x -> Complex (Trig.Acoth(x))
-        
+
         | _ -> failwith "not supported"
 
     let fapplyN f xs =

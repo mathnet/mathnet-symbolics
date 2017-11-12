@@ -97,7 +97,7 @@ module Value =
         | Value.PositiveInfinity, Value.NegativeInfinity | Value.NegativeInfinity, Value.PositiveInfinity -> Value.Undefined
         | Value.PositiveInfinity, _ | _, Value.PositiveInfinity -> Value.PositiveInfinity
         | Value.NegativeInfinity, Value.NegativeInfinity -> Value.NegativeInfinity
-        | Value.NegativeInfinity, _ | _, Value.NegativeInfinity -> Value.NegativeInfinity        
+        | Value.NegativeInfinity, _ | _, Value.NegativeInfinity -> Value.NegativeInfinity
 
     let product = function
         | Value.Undefined, _ | _, Value.Undefined -> Value.Undefined

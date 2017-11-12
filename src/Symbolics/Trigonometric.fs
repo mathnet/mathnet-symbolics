@@ -47,7 +47,7 @@ module Trigonometric =
                     [for k in 0 .. 2 .. e -> (k, binomial e k)] // binomial(e,k) for even k, 0 for odd k
                     |> List.map (fun (k,c) -> c*cosht**number(e-k)*sinht**k) |> sum
                 (esinh, ecosh)
-            | x -> sinh x, cosh x    
+            | x -> sinh x, cosh x
         match Structure.map expand x with
         | Function (Sin, a) -> rules (Algebraic.expand a) |> fst
         | Function (Cos, a) -> rules (Algebraic.expand a) |> snd

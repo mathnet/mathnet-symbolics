@@ -206,7 +206,7 @@ type SymbolicExpression(expression:Expression) =
     member this.Cos() = SymbolicExpression(Expression.Cos(expression))
     member this.Tan() = SymbolicExpression(Expression.Tan(expression))
     member this.Csc() = SymbolicExpression(Expression.Csc(expression))
-    member this.Sec() = SymbolicExpression(Expression.Sec(expression))    
+    member this.Sec() = SymbolicExpression(Expression.Sec(expression))
     member this.Cot() = SymbolicExpression(Expression.Cot(expression))
 
     member this.Sinh() = SymbolicExpression(Expression.Sinh(expression))

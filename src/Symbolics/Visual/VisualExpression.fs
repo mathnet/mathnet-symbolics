@@ -197,7 +197,7 @@ type DefaultVisualStyle() =
         | Sin -> "sin" | Cos -> "cos" | Tan -> "tan"
         | Csc -> "csc" | Sec -> "sec" | Cot -> "cot"
         | Sinh -> "sinh" | Cosh -> "cosh" | Tanh -> "tanh"
-        | Csch -> "csch" | Sech -> "sech" | Coth -> "coth" 
+        | Csch -> "csch" | Sech -> "sech" | Coth -> "coth"
         | Asin -> "asin" | Acos -> "acos" | Atan -> "atan"
         | Acsc -> "acsc" | Asec -> "asec" | Acot -> "acot"
         | Acosh -> "acosh" | Asinh -> "asinh" | Atanh -> "atanh"

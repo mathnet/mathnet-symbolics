@@ -100,7 +100,7 @@ module Approximation =
         | Complex a -> Complex (Complex.csch a)
     let sech = function
         | Real a -> Real (Trig.Sech a)
-        | Complex a -> Complex (Complex.sech a)    
+        | Complex a -> Complex (Complex.sech a)
     let coth = function
         | Real a -> Real (Trig.Coth a)
         | Complex a -> Complex (Complex.coth a)
@@ -142,11 +142,11 @@ module Approximation =
         | Complex a -> Complex (Trig.Acsch a)
     let asech = function
         | Real a -> Real (Trig.Asech a)
-        | Complex a -> Complex (Trig.Asech a)    
+        | Complex a -> Complex (Trig.Asech a)
     let acoth = function
         | Real a -> Real (Trig.Acoth a)
         | Complex a -> Complex (Trig.Acoth a)
-        
+
     let apply f a =
         match f with
         | Abs -> abs a
@@ -157,12 +157,12 @@ module Approximation =
         | Cos -> cos a
         | Tan -> tan a
         | Csc -> csc a
-        | Sec -> sec a        
+        | Sec -> sec a
         | Cot -> cot a
         | Sinh -> sinh a
         | Cosh-> cosh a
         | Tanh -> tanh a
-        | Csch -> csch a                
+        | Csch -> csch a
         | Sech -> sech a
         | Coth -> coth a
         | Asin -> asin a

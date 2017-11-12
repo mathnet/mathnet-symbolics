@@ -63,7 +63,7 @@ module Linq =
                     | Tan  -> Some (mathCall1 "Tan")
                     | Csc  -> Some (mathCall1 "Csc")
                     | Sec  -> Some (mathCall1 "Sec")
-                    | Cot  -> Some (mathCall1 "Cot")                                
+                    | Cot  -> Some (mathCall1 "Cot")
                     | Sinh -> Some (mathCall1 "Sinh")
                     | Cosh -> Some (mathCall1 "Cosh")
                     | Tanh -> Some (mathCall1 "Tanh")
@@ -75,7 +75,7 @@ module Linq =
                     | Atan -> Some (mathCall1 "Atan")
                     | Acsc -> Some (mathCall1 "Acsc")
                     | Asec -> Some (mathCall1 "Asec")
-                    | Acot -> Some (mathCall1 "Acot")         
+                    | Acot -> Some (mathCall1 "Acot")
                     | Asinh -> Some (mathCall1 "Asinh")
                     | Acosh -> Some (mathCall1 "Acosh")
                     | Atanh -> Some (mathCall1 "Atanh")
@@ -83,9 +83,9 @@ module Linq =
                     | Asech -> Some (mathCall1 "Asech")
                     | Acoth -> Some (mathCall1 "Acoth")
                     | Ln   -> Some (mathCall1 "Log")
-                    | Log  -> Some (mathCall1 "Log10") 
+                    | Log  -> Some (mathCall1 "Log10")
                     | Exp  -> Some (mathCall1 "Exp")
-                    | Abs  -> Some abs                    
+                    | Abs  -> Some abs
                     | _    -> None
                 let f = convertFunc func
                 let e = convertExpr par

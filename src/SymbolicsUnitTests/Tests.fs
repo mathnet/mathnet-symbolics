@@ -153,7 +153,7 @@ let ``Zero, One, Infinity, and ComplexInfinity`` () =
     negativeInfinity + infinity ==> "Undefined"
     negativeInfinity - infinity ==> "-∞"
     negativeInfinity + complexInfinity ==> "Undefined"
-    negativeInfinity-complexInfinity ==> "Undefined"    
+    negativeInfinity-complexInfinity ==> "Undefined"
 
     complexInfinity + undefined ==> "Undefined"
     complexInfinity + 1Q ==> "⧝"
@@ -177,7 +177,7 @@ let ``Zero, One, Infinity, and ComplexInfinity`` () =
     invert 0Q ==> "⧝"
     invert infinity ==> "0"
     invert negativeInfinity ==> "0"
-    invert complexInfinity ==> "0"    
+    invert complexInfinity ==> "0"
 
     // Operators.multiply
 
@@ -227,7 +227,7 @@ let ``Zero, One, Infinity, and ComplexInfinity`` () =
     0Q/1Q ==> "0"
     0Q/infinity ==> "0"
     0Q/negativeInfinity ==> "0"
-    0Q/complexInfinity ==> "0"    
+    0Q/complexInfinity ==> "0"
 
     1Q/undefined ==> "Undefined"
     1Q/0Q ==> "⧝"
@@ -259,7 +259,7 @@ let ``Zero, One, Infinity, and ComplexInfinity`` () =
     negativeInfinity/(-1Q) ==> "∞"
     negativeInfinity/infinity ==> "Undefined"
     negativeInfinity/negativeInfinity ==> "Undefined"
-    negativeInfinity/complexInfinity ==> "Undefined"    
+    negativeInfinity/complexInfinity ==> "Undefined"
 
     complexInfinity/undefined ==> "Undefined"
     complexInfinity/0Q ==> "⧝"
@@ -332,10 +332,10 @@ let ``Zero, One, Infinity, and ComplexInfinity`` () =
 
     negativeInfinity**undefined ==> "Undefined"
     negativeInfinity**0Q ==> "Undefined"
-    negativeInfinity**1Q ==> "-∞" 
+    negativeInfinity**1Q ==> "-∞"
     negativeInfinity**2Q ==> "∞"
-    negativeInfinity**(-1Q) ==> "0" 
-    negativeInfinity**(-2Q) ==> "0" 
+    negativeInfinity**(-1Q) ==> "0"
+    negativeInfinity**(-2Q) ==> "0"
     negativeInfinity**infinity ==> "⧝"
     negativeInfinity**negativeInfinity ==> "0"
     negativeInfinity**complexInfinity ==> "Undefined"
@@ -789,7 +789,7 @@ let ``Structural Operators`` () =
 
 [<Test>]
 let ``Algebaric Operators`` () =
-    
+
     negate (x + y**2) ==> "-(x + y^2)"
 
     Algebraic.factors (b*cos(x)*ln(d)*x) ==+> ["b"; "x"; "ln(d)"; "cos(x)"]
@@ -849,10 +849,10 @@ let ``Algebaric Operators`` () =
     Trigonometric.expand (sin(2*x + 3*y)) ==> "(-(sin(x))^2 + (cos(x))^2)*(-(sin(y))^3 + 3*sin(y)*(cos(y))^2) + 2*sin(x)*cos(x)*(-3*(sin(y))^2*cos(y) + (cos(y))^3)"
     Trigonometric.expand (sin(2*(x+y))) ==> "2*sin(y)*(-(sin(x))^2 + (cos(x))^2)*cos(y) + 2*sin(x)*cos(x)*(-(sin(y))^2 + (cos(y))^2)"
     Trigonometric.expand (sin(2*(x+y))) |> Algebraic.expand ==> "-2*sin(x)*(sin(y))^2*cos(x) - 2*(sin(x))^2*sin(y)*cos(y) + 2*sin(y)*(cos(x))^2*cos(y) + 2*sin(x)*cos(x)*(cos(y))^2"
-    Trigonometric.expand (cos(5*x)) ==> "5*(sin(x))^4*cos(x) - 10*(sin(x))^2*(cos(x))^3 + (cos(x))^5"    
+    Trigonometric.expand (cos(5*x)) ==> "5*(sin(x))^4*cos(x) - 10*(sin(x))^2*(cos(x))^3 + (cos(x))^5"
     // TODO: should actually be Undefined
     Trigonometric.expand ((sin(2*x)-2*sin(x)*cos(x))/((sin(x))**2 + (cos(x))**2 - 1)) ==> "0"
-    
+
     Trigonometric.contract (sin(a)*sin(b)) ==> "-cos(a + b)/2 + cos(a - b)/2"
     Trigonometric.contract (sin(a)*cos(b)) ==> "sin(a + b)/2 + sin(a - b)/2"
     Trigonometric.contract (cos(a)*sin(b)) ==> "sin(a + b)/2 + sin(-a + b)/2"
@@ -899,7 +899,7 @@ let ``Algebaric Operators`` () =
     Trigonometric.simplify (sech(x)**2 + tanh(x)**2 - 1) ==> "0"
     Trigonometric.simplify (csch(x)**2 - coth(x)**2 + 1) ==> "0"
     Trigonometric.simplify ((cosh(x)+sinh(x))**4 + (cosh(x)-sinh(x))**4 - 2*cosh(4*x)) ==> "0"
-    
+
     Trigonometric.substitute (tanh(x)) ==> "sinh(x)/cosh(x)"
     Trigonometric.substitute (coth(x)) ==> "cosh(x)/sinh(x)"
     Trigonometric.substitute (csch(x)) ==> "1/sinh(x)"
@@ -1324,12 +1324,12 @@ let ``Exponential notation parsing``() =
 
 [<Test>]
 let ``Expression to delegate compilation``() =
-    
+
     let symX = Symbol "x"
     let symY = Symbol "y"
 
     let toComplex f = System.Numerics.Complex.Create(f, 0.0)
-    
+
     let expr1 = x
     (Compile.compileExpression1OrThrow expr1 symX).Invoke(3.0) --> 3.0
 

@@ -121,7 +121,7 @@ module ExpressionPatterns =
         | Function (Sin, _) | Function (Cos, _) as r -> Some (r, Number BigRational.One)
         | Function (Sinh, _) | Function (Cosh, _) as r -> Some (r, Number BigRational.One)
         | Power (Function (Sin, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
-        | Power (Function (Cos, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)        
+        | Power (Function (Cos, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
         | Power (Function (Sinh, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
         | Power (Function (Cosh, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
         | _ -> None
@@ -341,7 +341,7 @@ module Operators =
         | oo, Zero when isInfinity oo -> undefined
         | oo, PositiveInfinity when isInfinity oo -> complexInfinity
         | oo, Number b when isInfinity oo && b.IsNegative -> zero
-        | ComplexInfinity, Positive -> complexInfinity                
+        | ComplexInfinity, Positive -> complexInfinity
         | PositiveInfinity, Positive -> infinity
         | NegativeInfinity, Number b when b.IsPositive && b.IsInteger ->
             if (b.Numerator % 2I).IsZero then infinity else negativeInfinity
@@ -349,7 +349,7 @@ module Operators =
         | _, Zero | One, _ -> one
         | a, One -> a
         | Positive, PositiveInfinity -> infinity
-        | Negative, PositiveInfinity -> complexInfinity 
+        | Negative, PositiveInfinity -> complexInfinity
         | _, NegativeInfinity -> zero
         | _, ComplexInfinity -> undefined
         | Number a, Number b when not (b.IsInteger) -> Power (x,y)
@@ -365,7 +365,7 @@ module Operators =
     let rec invert = function
         | Undefined -> undefined
         | Zero -> complexInfinity
-        | oo when isInfinity oo -> zero 
+        | oo when isInfinity oo -> zero
         | Values.Value v -> Values.invert v
         | Product ax -> Product (ax |> List.map invert)
         | Power (r, p) -> pow r (negate p)
@@ -432,7 +432,7 @@ module Operators =
     let cot x = Function (Cot, x)
 
     let sinh x = Function (Sinh, x)
-    let cosh x = Function (Cosh, x)    
+    let cosh x = Function (Cosh, x)
     let tanh x = Function (Tanh, x)
     let csch x = Function (Csch, x)
     let sech x = Function (Sech, x)
@@ -470,7 +470,7 @@ module Operators =
         | Tanh -> tanh x
         | Csch -> csch x
         | Sech -> sech x
-        | Coth -> coth x   
+        | Coth -> coth x
         | Asin -> arcsin x
         | Acos -> arccos x
         | Atan -> arctan x
@@ -483,7 +483,7 @@ module Operators =
         | Acsch -> arccsch x
         | Asech -> arcsech x
         | Acoth -> arccoth x
-        
+
 
     let applyN (f: Function) (xs: Expression list) =
         match f, xs with
@@ -538,7 +538,7 @@ type Expression with
     static member Cot (x) = Operators.cot x
 
     static member Sinh (x) = Operators.sinh x
-    static member Cosh (x) = Operators.cosh x    
+    static member Cosh (x) = Operators.cosh x
     static member Tanh (x) = Operators.tanh x
     static member Coth (x) = Operators.coth x
     static member Csch (x) = Operators.csch x
