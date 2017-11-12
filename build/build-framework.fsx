@@ -13,8 +13,8 @@
 
 module BuildFramework
 
-#I "../packages/build/FAKE/tools"
-#r "../packages/build/FAKE/tools/FakeLib.dll"
+#I "../packages/FAKE/tools"
+#r "../packages/FAKE/tools/FakeLib.dll"
 
 open FSharp.Core
 open Fake
@@ -214,7 +214,7 @@ let zip zipDir filesDir filesFilter (bundle:Bundle) =
 // NUGET
 
 let updateNuspec (pack:Package) outPath symbols updateFiles spec =
-    { spec with ToolPath = "packages/build/NuGet.CommandLine/tools/NuGet.exe"
+    { spec with ToolPath = "packages/NuGet.CommandLine/tools/NuGet.exe"
                 OutputPath = outPath
                 WorkingDir = "obj/NuGet"
                 Version = pack.Release.PackageVersion
@@ -271,7 +271,7 @@ let provideDocExtraFiles extraDocs (releases:Release list) =
 
 let buildDocumentationTarget fsiargs target =
     trace (sprintf "Building documentation (%s), this could take some time, please wait..." target)
-    let fakePath = "packages" </> "build" </> "FAKE" </> "tools" </> "FAKE.exe"
+    let fakePath = "packages" </> "FAKE" </> "tools" </> "FAKE.exe"
     let fakeStartInfo script workingDirectory args fsiargs environmentVars =
         (fun (info: System.Diagnostics.ProcessStartInfo) ->
             info.FileName <- System.IO.Path.GetFullPath fakePath
@@ -330,7 +330,7 @@ let publishNuGet packageFiles =
             let args = sprintf "push \"%s\" -Source https://www.nuget.org/api/v2/package" (FullName file)
             let result =
                 ExecProcess (fun info ->
-                    info.FileName <- "packages/build/NuGet.CommandLine/tools/NuGet.exe"
+                    info.FileName <- "packages/NuGet.CommandLine/tools/NuGet.exe"
                     info.WorkingDirectory <- FullName "obj/NuGet"
                     info.Arguments <- args) (TimeSpan.FromMinutes 10.)
             if result <> 0 then failwith "Error during NuGet push."

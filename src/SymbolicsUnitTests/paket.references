@@ -2,7 +2,4 @@ FParsec
 MathNet.Numerics
 MathNet.Numerics.FSharp
 FSharp.Core
-
-group Test
-	FsUnit
-
+FsUnit
