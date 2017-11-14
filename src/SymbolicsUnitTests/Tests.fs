@@ -1305,6 +1305,9 @@ let ``Test for other trigonometric function``() =
     let expr4 = Infix.parseOrUndefined "25*x*sec(x)"
     Calculus.differentiate x expr4  ==> "25*(sec(x) + x*tan(x)*sec(x))"
 
+    let expr5 = Infix.parseOrUndefined "sinh(asinh(j)) + cosh(acosh(j)) + tanh(atanh(j)) + csch(acsch(j)) + sech(asech(j)) + coth(acoth(j))"
+    expr5 ==> "sinh(asinh(j)) + cosh(acosh(j)) + tanh(atanh(j)) + csch(acsch(j)) + sech(asech(j)) + coth(acoth(j))" // "6*j"
+
 [<Test>]
 let ``Exponential notation parsing``() =
     let expr = Infix.parseOrUndefined "(-6.40869140625E-05)*x"

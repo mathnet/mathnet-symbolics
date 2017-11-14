@@ -199,9 +199,9 @@ type DefaultVisualStyle() =
         | Sinh -> "sinh" | Cosh -> "cosh" | Tanh -> "tanh"
         | Csch -> "csch" | Sech -> "sech" | Coth -> "coth" 
         | Asin -> "asin" | Acos -> "acos" | Atan -> "atan"
-        | Acsc -> "ascs" | Asec -> "asec" | Acot -> "acot"
+        | Acsc -> "acsc" | Asec -> "asec" | Acot -> "acot"
         | Acosh -> "acosh" | Asinh -> "asinh" | Atanh -> "atanh"
-        | Acsch -> "ascsh" | Asech -> "asech" | Acoth -> "acoth"
+        | Acsch -> "acsch" | Asech -> "asech" | Acoth -> "acoth"
 
     member private this.FromExpression e = VisualExpression.fromExpression this e
 

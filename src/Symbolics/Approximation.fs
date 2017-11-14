@@ -138,14 +138,14 @@ module Approximation =
         | Real a -> Real (Trig.Atanh a)
         | Complex a -> Complex (Trig.Atanh a)
     let acsch = function
-        | Real a -> Real (Trig.Csch a)
-        | Complex a -> Complex (Trig.Csch a)
+        | Real a -> Real (Trig.Acsch a)
+        | Complex a -> Complex (Trig.Acsch a)
     let asech = function
-        | Real a -> Real (Trig.Sech a)
-        | Complex a -> Complex (Trig.Sech a)    
+        | Real a -> Real (Trig.Asech a)
+        | Complex a -> Complex (Trig.Asech a)    
     let acoth = function
-        | Real a -> Real (Trig.Coth a)
-        | Complex a -> Complex (Trig.Coth a)
+        | Real a -> Real (Trig.Acoth a)
+        | Complex a -> Complex (Trig.Acoth a)
         
     let apply f a =
         match f with
