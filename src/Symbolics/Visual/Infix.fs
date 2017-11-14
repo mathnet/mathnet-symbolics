@@ -199,9 +199,9 @@ module private InfixFormatter =
         | Sinh -> "sinh" | Cosh -> "cosh" | Tanh -> "tanh"
         | Csch -> "csch" | Sech -> "sech" | Coth -> "coth" 
         | Acos -> "acos" | Asin -> "asin" | Atan -> "atan"
-        | Acsc -> "ascs" | Asec -> "asec" | Acot -> "acot"
+        | Acsc -> "acsc" | Asec -> "asec" | Acot -> "acot"
         | Acosh -> "acosh" | Asinh -> "asinh" | Atanh -> "atanh"
-        | Asech -> "asech" | Acsch -> "ascsh" | Acoth -> "acoth"
+        | Asech -> "asech" | Acsch -> "acsch" | Acoth -> "acoth"
 
     // priority: 1=additive 2=product 3=power
 
