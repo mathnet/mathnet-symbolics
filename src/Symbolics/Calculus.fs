@@ -45,7 +45,7 @@ module Calculus =
         | Function (Asinh, x) -> (differentiate symbol x) / (sqrt(pow x 2Q + 1Q))
         | Function (Acosh, x) -> (differentiate symbol x) / (sqrt(x - 1Q) * sqrt(x + 1Q))
         | Function (Atanh, x) -> (differentiate symbol x) / (1Q - pow x 2Q)
-        | Function (Acsch, x) -> (differentiate symbol x) / (sqrt(1Q + 1Q / pow x 2Q) * pow x 2Q)
+        | Function (Acsch, x) -> -(differentiate symbol x) / (sqrt(1Q + 1Q / pow x 2Q) * pow x 2Q)
         | Function (Asech, x) -> (differentiate symbol x) * (sqrt((1Q - x) / (x + 1Q))) / ((x - 1Q) * x)
         | Function (Acoth, x) -> (differentiate symbol x) / (1Q - pow x 2Q)
         | Function (Abs, _) -> failwith "not supported"
