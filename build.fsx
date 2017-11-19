@@ -121,7 +121,7 @@ Target "Build" DoNothing
 // TEST
 // --------------------------------------------------------------------------------------
 
-Target "Test" (fun _ -> test !! "out/test/**/*UnitTests*.dll")
+Target "Test" (fun _ -> test !! "out/test/**/*UnitTests*.exe")
 "Build" ==> "Test"
 
 

@@ -121,21 +121,15 @@ let buildConfig64 config subject = MSBuild "" (if hasBuildParam "incremental" th
 // --------------------------------------------------------------------------------------
 
 let test target =
-    let quick p = if hasBuildParam "quick" then { p with Where="cat!=LongRunning" } else p
-    NUnit3 (fun p ->
-        { p with
-            ShadowCopy = false
-            Labels = LabelsLevel.Off
-            TimeOut = TimeSpan.FromMinutes 60. } |> quick) target
-
-let test32 target =
-    let quick p = if hasBuildParam "quick" then { p with Where="cat!=LongRunning" } else p
-    NUnit3 (fun p ->
-        { p with
-            Force32bit = true
-            ShadowCopy = false
-            Labels = LabelsLevel.Off
-            TimeOut = TimeSpan.FromMinutes 60. } |> quick) target
+    target
+    |> Seq.iter (fun t ->
+        let result = ExecProcess (fun info -> info.FileName <- t; info.Arguments <- "--summary") (TimeSpan.FromMinutes 5.0)
+        if result <> 0 then failwithf "Tests failed: %s" t)
+    //Fake.Testing.Expecto.Expecto (fun p ->
+    //    { p with
+    //        Parallel = true
+    //        Summary = true
+    //        ListTests = true }) target
 
 
 // --------------------------------------------------------------------------------------
