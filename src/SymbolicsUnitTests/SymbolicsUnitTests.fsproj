@@ -52,7 +52,14 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <None Include="Interactive.fsx" />
+    <Compile Include="Global.fs" />
+    <Compile Include="Elementary\Functions.fs" />
+    <Compile Include="Polynomial\Polynomial.fs" />
+    <Compile Include="Visual\Infix.fs" />
+    <Compile Include="Visual\LaTeX.fs" />
+    <Compile Include="Visual\MathML.fs" />
+    <Compile Include="Visual\Visual.fs" />
+    <Compile Include="Compilation\Compilation.fs" />
     <Compile Include="Tests.fs" />
     <Compile Include="Runner.fs" />
     <None Include="app.config" />
@@ -70,7 +77,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
