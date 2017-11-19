@@ -1,4 +1,4 @@
-﻿module Compile
+﻿module Compilation
 
 open Expecto
 open MathNet.Numerics

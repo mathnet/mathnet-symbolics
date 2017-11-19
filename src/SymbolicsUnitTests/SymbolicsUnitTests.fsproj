@@ -22,6 +22,7 @@
     <Tailcalls>true</Tailcalls>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
+    <StartArguments>--summary</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\..\out\test-debug\Net45\</OutputPath>
@@ -53,7 +54,10 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Global.fs" />
-    <Compile Include="Elementary\Functions.fs" />
+    <Compile Include="Operators\Arithmetic.fs" />
+    <Compile Include="Operators\Exponential.fs" />
+    <Compile Include="Operators\Trigonometry.fs" />
+    <Compile Include="Operators\Operators.fs" />
     <Compile Include="Polynomial\Polynomial.fs" />
     <Compile Include="Visual\Infix.fs" />
     <Compile Include="Visual\LaTeX.fs" />
