@@ -7,7 +7,8 @@ NUGET
       FSharp.Core (>= 4.1.12)
       Mono.Cecil (>= 0.10.0-beta5)
     FAKE (4.63.2)
-    FParsec (1.0.1)
+    FParsec (1.0.3)
+      FSharp.Core (>= 4.0.0.1)
     FSharp.Compiler.Service (2.0.0.6)
     FSharp.Core (4.1.18) - redirects: force
     FSharp.Formatting (2.14.4)
