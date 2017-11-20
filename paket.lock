@@ -6,6 +6,8 @@ NUGET
       Argu (>= 3.7)
       FSharp.Core (>= 4.1.12)
       Mono.Cecil (>= 0.10.0-beta5)
+    Expecto.VisualStudio.TestAdapter (5.0.0.2) - version_in_path: true
+      Expecto (>= 5.0 < 6.0)
     FAKE (4.63.2)
     FParsec (1.0.3)
       FSharp.Core (>= 4.0.0.1)

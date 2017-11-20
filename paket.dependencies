@@ -11,3 +11,5 @@ nuget Expecto
 nuget FAKE ~> 4.1
 nuget FSharp.Formatting !~> 2.4
 nuget NuGet.CommandLine
+
+nuget Expecto.VisualStudio.TestAdapter version_in_path: true
