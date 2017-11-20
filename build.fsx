@@ -68,8 +68,6 @@ let symbolicsPack =
                   "MathNet.Numerics.FSharp", GetPackageVersion "packages" "MathNet.Numerics.FSharp" ] } ]
       Files =
         [ @"..\..\out\lib\Net40\MathNet.Symbolics.*", Some libnet40, None;
-          @"..\..\out\lib\Profile47\MathNet.Symbolics.*", Some libpcl47, None;
-          @"..\..\out\lib\Profile344\MathNet.Symbolics.*", Some libpcl344, None;
           @"MathNet.Symbolics.fsx", None, None;
           @"..\..\src\Symbolics\**\*.fs", Some "src/Common", None ] }
 
@@ -89,8 +87,8 @@ Target "Start" DoNothing
 Target "Clean" (fun _ ->
     CleanDirs [ "obj" ]
     CleanDirs [ "out/api"; "out/docs"; "out/packages" ]
-    CleanDirs [ "out/lib/Net40"; "out/lib/Profile47"; "out/lib/Profile344" ]
-    CleanDirs [ "out/test/Net40"; "out/test/Profile47"; "out/test/Profile344" ])
+    CleanDirs [ "out/lib/Net40" ]
+    CleanDirs [ "out/test/Net461" ])
 
 Target "ApplyVersion" (fun _ ->
     patchVersionInAssemblyInfo "src/Symbolics" symbolicsRelease

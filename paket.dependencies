@@ -1,6 +1,9 @@
 source https://www.nuget.org/api/v2
+framework: net40, net461
+
 nuget FParsec ~> 1.0.1
-nuget FSharp.Core ~> 4.1.12 redirects:force
+nuget FSharp.Core ~> 4.1.0 redirects:force
+nuget MathNet.Numerics ~> 3.8
 nuget MathNet.Numerics.FSharp ~> 3.8
 
 nuget Expecto
