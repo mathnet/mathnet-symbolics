@@ -58,13 +58,18 @@ type SymbolicExpression(expression:Expression) =
         | Approximation (Approximation.Real fp) -> fp
         | Constant Pi -> Constants.Pi
         | Constant E -> Constants.E
-        | _ -> failwith "Not a rational number"
+        | Number n -> float n
+        | _ -> failwith "Not a real number"
 
     member this.ComplexNumberValue =
         match expression with
         | Approximation (Approximation.Complex fp) -> fp
+        | Approximation (Approximation.Real fp) -> complex fp 0.0
         | Constant I -> Complex.ImaginaryOne
-        | _ -> failwith "Not a rational number"
+        | Constant Pi -> complex Constants.Pi 0.0
+        | Constant E -> complex Constants.E 0.0
+        | Number n -> complex (float n) 0.0
+        | _ -> failwith "Not a complex number"
 
     member this.VariableName =
         match expression with
