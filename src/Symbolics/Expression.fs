@@ -134,7 +134,7 @@ module Operators =
     let zero = Number BigRational.Zero
     let one = Number BigRational.One
     let two = Number (BigRational.FromInt 2)
-    let four = Number (BigRational.FromInt 4)
+    let private four = Number (BigRational.FromInt 4)
     let minusOne = Number (BigRational.FromInt -1)
     let pi = Constant Pi
 
@@ -409,6 +409,7 @@ module Operators =
         | oo when isInfinity oo -> infinity
         | Zero -> negativeInfinity
         | One -> zero
+        | MinusOne -> multiply pi (Constant I) // ln(-1) = pi*j
         | Constant E -> one
         | Constant I -> divide (multiply pi (Constant I)) two // ln(j) = 1/2*pi*j
         | Number n when n.Numerator.Equals(1I) && n.IsPositive
