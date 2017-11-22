@@ -456,9 +456,11 @@ let tests =
             Expect.throws (fun () -> Evaluate.evaluate symbols (f) |> ignore) ""
             //(fun () -> Evaluate.evaluate symbols (f) |> ignore) |> should (throwWithMessage "Failed to find symbol: f") typeof<System.Exception>
 
-            let (FloatingPoint.Complex c) = Evaluate.evaluate symbols (sqrt(-1Q))
-            Expect.floatClose Accuracy.veryHigh c.Real 0.0 "Real"
-            Expect.floatClose Accuracy.veryHigh c.Imaginary 1.0 "Imag"
+            match Evaluate.evaluate symbols (sqrt(-1Q)) with
+            | FloatingPoint.Complex c ->
+                Expect.floatClose Accuracy.veryHigh c.Real 0.0 "Real"
+                Expect.floatClose Accuracy.veryHigh c.Imaginary 1.0 "Imag"
+            | _ -> failwith "We expect a complex number here"
         }
 
         test "Primitive Equation Solver" {

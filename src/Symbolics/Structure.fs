@@ -19,7 +19,7 @@ module Structure =
 
     [<CompiledName("Operand")>]
     let operand i = function
-        | Sum ax | Product ax | FunctionN (_, ax) -> List.nth ax i
+        | Sum ax | Product ax | FunctionN (_, ax) -> List.item i ax
         | Power (r, _) when i = 0 -> r
         | Power (_, p) when i = 1 -> p
         | Function (_, x) when i = 0 -> x
