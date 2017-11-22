@@ -511,6 +511,6 @@ let tests =
             Calculus.differentiate x expr4  ==> "25*(sec(x) + x*tan(x)*sec(x))"
 
             let expr5 = Infix.parseOrUndefined "sinh(asinh(j)) + cosh(acosh(j)) + tanh(atanh(j)) + csch(acsch(j)) + sech(asech(j)) + coth(acoth(j))"
-            expr5 ==> "sinh(asinh(j)) + cosh(acosh(j)) + tanh(atanh(j)) + csch(acsch(j)) + sech(asech(j)) + coth(acoth(j))" // "6*j"
+            expr5 ==> "2*j + sinh(1/2*π*j) + tanh(1/4*π*j) - csch(1/2*π*j) - coth(1/4*π*j)" // "6*j"
         }
     ]

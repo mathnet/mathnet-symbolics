@@ -20,18 +20,18 @@ let tests =
             test "Special Values" {
                 exp(x + y - (x + y)) ==> "exp(x + y - (x + y))" // "1"
 
-                exp(-1Q) ==> "exp(-1)" // "1/e"
-                exp(1Q/2Q*pi*Constant I) ==> "exp(1/2*π*j)" // "j"
-                exp(2Q/2Q*pi*Constant I) ==> "exp(π*j)" // "-1"
-                exp(3Q/2Q*pi*Constant I) ==> "exp(3/2*π*j)" // "-j"
-                exp(4Q/2Q*pi*Constant I) ==> "exp(2*π*j)" // "1"
-                exp(-3Q/2Q*pi*Constant I) ==> "exp(-3/2*π*j)" // "j"
+                exp(-1Q) ==> "1/e"
+                exp(1Q/2Q*pi*Constant I) ==> "j"
+                exp(2Q/2Q*pi*Constant I) ==> "-1"
+                exp(3Q/2Q*pi*Constant I) ==> "-j"
+                exp(4Q/2Q*pi*Constant I) ==> "1"
+                exp(-3Q/2Q*pi*Constant I) ==> "j"
 
-                exp(ln(x)) ==> "exp(ln(x))" // "x"
-                exp(ln(1Q/Constant E)) ==> "exp(ln(1/e))" // "1/e"
-                exp(ln(1Q/x)) ==> "exp(ln(1/x))" // "1/x"
-                exp(ln(2Q/3Q)) ==> "exp(ln(2/3))" // "2/3"
-                exp(ln(Constant I)) ==> "exp(ln(j))" // "j"
+                exp(ln(x)) ==> "x"
+                exp(ln(1Q/Constant E)) ==> "1/e"
+                exp(ln(1Q/x)) ==> "1/x"
+                exp(ln(2Q/3Q)) ==> "2/3"
+                exp(ln(Constant I)) ==> "j"
             }
         ]
 
@@ -43,15 +43,16 @@ let tests =
                 ln complexInfinity ==> "∞"
                 ln 0Q ==> "-∞"
                 ln 1Q ==> "0"
+                ln -1Q ==> "π*j"
                 ln Expression.E ==> "1"
             }
 
             test "Special Values" {
                 ln(1Q/x) ==> "ln(1/x)"
-                ln(1Q/2Q) ==> "ln(1/2)" // "-ln(2)"
-                ln(1Q/Constant E) ==> "ln(1/e)" // "-1"
+                ln(1Q/2Q) ==> "-ln(2)"
+                ln(1Q/Constant E) ==> "-1"
 
-                ln(Constant I) ==> "ln(j)" // "1/2*π*j"
+                ln(Constant I) ==> "1/2*π*j"
                 ln(2Q*Constant I) ==> "ln(2*j)" // "1/2*π*j + ln(2)"
                 ln(-2Q*Constant I) ==> "ln(-2*j)" // "-1/2*π*j + ln(2)"
                 ln(-1Q/3Q*Constant I) ==> "ln(-j/3)" // "-1/2*π*j - ln(3)"
