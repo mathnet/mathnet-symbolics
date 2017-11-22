@@ -121,7 +121,7 @@ module ExpressionPatterns =
         | Function (Sin, _) | Function (Cos, _) as r -> Some (r, Number BigRational.One)
         | Function (Sinh, _) | Function (Cosh, _) as r -> Some (r, Number BigRational.One)
         | Power (Function (Sin, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
-        | Power (Function (Cos, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)        
+        | Power (Function (Cos, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
         | Power (Function (Sinh, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
         | Power (Function (Cosh, _) as r, (Number n as p)) when n.IsInteger && n.IsPositive -> Some (r, p)
         | _ -> None
@@ -342,7 +342,7 @@ module Operators =
         | oo, Zero when isInfinity oo -> undefined
         | oo, PositiveInfinity when isInfinity oo -> complexInfinity
         | oo, Number b when isInfinity oo && b.IsNegative -> zero
-        | ComplexInfinity, Positive -> complexInfinity                
+        | ComplexInfinity, Positive -> complexInfinity
         | PositiveInfinity, Positive -> infinity
         | NegativeInfinity, Number b when b.IsPositive && b.IsInteger ->
             if (b.Numerator % 2I).IsZero then infinity else negativeInfinity
@@ -350,7 +350,7 @@ module Operators =
         | _, Zero | One, _ -> one
         | a, One -> a
         | Positive, PositiveInfinity -> infinity
-        | Negative, PositiveInfinity -> complexInfinity 
+        | Negative, PositiveInfinity -> complexInfinity
         | _, NegativeInfinity -> zero
         | _, ComplexInfinity -> undefined
         | Number a, Number b when not (b.IsInteger) -> Power (x,y)
@@ -366,7 +366,7 @@ module Operators =
     let rec invert = function
         | Undefined -> undefined
         | Zero -> complexInfinity
-        | oo when isInfinity oo -> zero 
+        | oo when isInfinity oo -> zero
         | Values.Value v -> Values.invert v
         | Product ax -> Product (ax |> List.map invert)
         | Power (r, p) -> pow r (negate p)
@@ -396,7 +396,7 @@ module Operators =
         | NegativeInfinity -> zero
         | Zero -> one
         | One -> Constant E
-        | MinusOne -> invert (Constant E)        
+        | MinusOne -> invert (Constant E)
         | Product [Constant Pi; Constant I;] -> minusOne // exp(n*pi*j) for ...-1, -1/2, 0, 1/2, 1,...
         | Product [Number n; Constant Pi; Constant I;] when n.IsInteger
             -> if n.Numerator.IsEven then one else minusOne
@@ -468,7 +468,7 @@ module Operators =
         | Function (Acos, x') -> divide (sqrt (subtract one (pow x' two))) x' // tan(acos(x)) = sqrt(1 - x^2)/x
         | Function (Atan, x') -> x' // tan(atan(x)) = x
         | Function (Acsc, x') -> invert (multiply x' (sqrt (subtract one (invert (pow x' two))))) // tan(acsc(x)) = 1/(sqrt(1 - 1/x^2)*x)
-        | Function (Asec, x') -> multiply x' (sqrt (subtract one (invert (pow x' two)))) // tan(asec(x)) = x*sqrt(1 - 1/x^2) 
+        | Function (Asec, x') -> multiply x' (sqrt (subtract one (invert (pow x' two)))) // tan(asec(x)) = x*sqrt(1 - 1/x^2)
         | Function (Acot, x') -> invert x' // tan(acot(x)) = 1/x
         | x -> Function (Tan, x)
     let csc = function
@@ -478,7 +478,7 @@ module Operators =
         | Constant Pi -> complexInfinity // csc(pi) = coo
         | Constant I -> Function (Csch, one) |> multiply (Constant I) |> negate // csc(j) = -j*csch(1), csc(j*x) = -j*csch(x)
         | Number n when n.IsNegative -> Function (Csc, Number -n) |> negate // csc(-x) = -csc(x)
-        | Product ((Number n)::ax) when n.IsNegative -> Function (Csc, multiply (Number -n) (Product ax)) |> negate        
+        | Product ((Number n)::ax) when n.IsNegative -> Function (Csc, multiply (Number -n) (Product ax)) |> negate
         | Function (Asin, x') -> invert x' // csc(asin(x)) = 1/x
         | Function (Acos, x') -> invert (sqrt (subtract one (pow x' two))) // csc(acos(x)) = 1/sqrt(1 - x^2)
         | Function (Atan, x') -> divide (sqrt (add one (pow x' two))) x' // csc(atan(x)) = sqrt(1 + x^2)/x
@@ -493,7 +493,7 @@ module Operators =
         | Constant Pi -> minusOne // sec(pi) = -1
         | Constant I -> Function (Sech, one) // sec(j) = sech(1), sec(j*x) = sech(x)
         | Number n when n.IsNegative -> Function (Sec, Number -n) // sec(-x) = sec(x)
-        | Product ((Number n)::ax) when n.IsNegative -> Function (Sec, multiply (Number -n) (Product ax))        
+        | Product ((Number n)::ax) when n.IsNegative -> Function (Sec, multiply (Number -n) (Product ax))
         | Function (Asin, x') -> invert (sqrt (subtract one (pow x' two))) // sec(asin(x)) = 1/sqrt(1 - x^2)
         | Function (Acos, x') -> invert x' // sec(acos(x)) = 1/x
         | Function (Atan, x') -> sqrt (add one (pow x' two)) // sec(atan(x)) = sqrt(1 + x^2)
@@ -505,14 +505,14 @@ module Operators =
         | Undefined -> undefined
         | oo when isInfinity oo -> undefined
         | Zero -> complexInfinity // cot(0) = coo
-        | Constant Pi -> complexInfinity // cot(pi) = coo        
+        | Constant Pi -> complexInfinity // cot(pi) = coo
         | Constant I -> Function (Coth, one) |> multiply (Constant I) |> negate // cot(j) = -j*coth(1), cot(j*x) = -j*coth(x)
         | Number n when n.IsNegative -> Function (Cot, Number -n) |> negate // cot(-x) = -cot(x)
-        | Product ((Number n)::ax) when n.IsNegative -> Function (Cot, multiply (Number -n) (Product ax)) |> negate        
+        | Product ((Number n)::ax) when n.IsNegative -> Function (Cot, multiply (Number -n) (Product ax)) |> negate
         | Function (Asin, x') -> divide (sqrt (subtract one (pow x' two))) x' // cot(asin(x)) = sqrt(1 - x^2)/x
         | Function (Acos, x') -> divide x' (sqrt (subtract one (pow x' two))) // cot(acos(x)) = x/sqrt(1 - x^2)
         | Function (Atan, x') -> invert x' // cot(atan(x)) = 1/x
-        | Function (Acsc, x') -> multiply x' (sqrt (subtract one (invert (pow x' two)))) // cot(acsc(x)) = x*sqrt(1 - 1/x^2) 
+        | Function (Acsc, x') -> multiply x' (sqrt (subtract one (invert (pow x' two)))) // cot(acsc(x)) = x*sqrt(1 - 1/x^2)
         | Function (Asec, x') -> invert (multiply x' (sqrt (subtract one (invert (pow x' two))))) // cot(asec(x)) = 1/(x*sqrt(1 - 1/x^2))
         | Function (Acot, x') -> x' // cot(acot(x)) = x
         | x -> Function (Cot, x)
@@ -524,7 +524,7 @@ module Operators =
         | Zero -> zero // sinh(0) = 0
         | Constant I -> Function (Sin, one) |> multiply (Constant I) // sinh(j) = j*sin(1), sinh(j*x) = j*sin(x)
         | Number n when n.IsNegative -> Function (Sinh, Number -n) |> negate // sinh(-x) = -sinh(x)
-        | Product ((Number n)::ax) when n.IsNegative -> Function (Sinh, multiply (Number -n) (Product ax)) |> negate        
+        | Product ((Number n)::ax) when n.IsNegative -> Function (Sinh, multiply (Number -n) (Product ax)) |> negate
         | Function (Asinh, x') -> x' // sinh(asinh(x)) = x
         | Function (Acosh, x') -> multiply (add one x') (sqrt (divide (subtract x' one) (add x' one))) // sinh(acosh(x)) = (x + 1)*sqrt((x - 1)/(x + 1))
         | Function (Atanh, x') -> divide x' (sqrt (subtract one (pow x' two))) // sinh(atanh(x)) = x/sqrt(1 - x^2)
@@ -535,17 +535,17 @@ module Operators =
     let cosh = function
         | Undefined | ComplexInfinity -> undefined
         | PositiveInfinity | NegativeInfinity -> infinity // cosh(oo) = cosh(-oo) = oo
-        | Zero -> one // cosh(0) = 1       
+        | Zero -> one // cosh(0) = 1
         | Constant I -> Function (Cos, one) // cosh(j) = cos(1), cosh(j*x) = cos(x)
         | Number n when n.IsNegative -> Function (Cosh, Number -n) // cosh(-x) = cosh(x)
-        | Product ((Number n)::ax) when n.IsNegative -> Function (Cosh, multiply (Number -n) (Product ax))        
+        | Product ((Number n)::ax) when n.IsNegative -> Function (Cosh, multiply (Number -n) (Product ax))
         | Function (Asinh, x') -> sqrt (add (pow x' two) one) // cosh(asinh(x)) = sqrt(x^2 + 1)
         | Function (Acosh, x') -> x' // cosh(acosh(x)) = x
         | Function (Atanh, x') -> invert (sqrt (subtract one (pow x' two))) // cosh(atanh(x)) = 1/sqrt(1 - x^2)
         | Function (Acsch, x') -> sqrt (add (invert (pow x' two)) one) // cosh(acsch(x)) = sqrt(1/x^2 + 1)
         | Function (Asech, x') -> invert x' // cosh(asech(x)) = 1/x
         | Function (Acoth, x') -> invert (sqrt (subtract one (invert (pow x' two)))) // cosh(acoth(x)) = 1/sqrt(1 - 1/x^2)
-        | x -> Function (Cosh, x)    
+        | x -> Function (Cosh, x)
     let tanh = function
         | Undefined | ComplexInfinity -> undefined
         | PositiveInfinity -> one // tanh(oo) = 1, tanh(-oo) = -1
@@ -553,12 +553,12 @@ module Operators =
         | Zero -> zero // tanh(0) = 0
         | Constant I -> Function (Tan, one) |> multiply (Constant I) // tanh(j) = j*tan(1), tanh(j*x) = j*tan(x)
         | Number n when n.IsNegative -> Function (Tanh, Number -n) |> negate // tanh(-x) = -tanh(x)
-        | Product ((Number n)::ax) when n.IsNegative -> Function (Tanh, multiply (Number -n) (Product ax)) |> negate        
+        | Product ((Number n)::ax) when n.IsNegative -> Function (Tanh, multiply (Number -n) (Product ax)) |> negate
         | Function (Asinh, x') -> divide x' (sqrt (add (pow x' two) one)) // tanh(asinh(x)) = x/sqrt(x^2 + 1)
         | Function (Acosh, x') -> divide (multiply (add x' one) (sqrt (divide (subtract x' one) (add x' one)))) x' // tanh(acosh(x)) = ((x + 1)*sqrt((x - 1)/(x + 1)))/x
         | Function (Atanh, x') -> x' // tanh(atanh(x)) = x
         | Function (Acsch, x') -> invert (multiply x' (sqrt (add (invert (pow x' two)) one))) // tanh(acsch(x)) = 1/(x*sqrt(1/x^2 + 1))
-        | Function (Asech, x') -> multiply (add x' one) (sqrt(divide (subtract one x') (add x' one))) // tanh(asech(x)) = (x + 1)*sqrt((1 - x)/(x + 1)) 
+        | Function (Asech, x') -> multiply (add x' one) (sqrt(divide (subtract one x') (add x' one))) // tanh(asech(x)) = (x + 1)*sqrt((1 - x)/(x + 1))
         | Function (Acoth, x') -> invert x' // tanh(acoth(x)) = 1/x
         | x -> Function (Tanh, x)
     let csch = function
@@ -567,7 +567,7 @@ module Operators =
         | Zero -> complexInfinity // csch(0) = coo
         | Constant I -> Function (Csc, one) |> multiply (Constant I) |> negate // csch(j) = -j*csc(1), csch(j*x) = -j*csc(x)
         | Number n when n.IsNegative -> Function (Csch, Number -n) |> negate // csch(-x) = -csch(x)
-        | Product ((Number n)::ax) when n.IsNegative -> Function (Csch, multiply (Number -n) (Product ax)) |> negate        
+        | Product ((Number n)::ax) when n.IsNegative -> Function (Csch, multiply (Number -n) (Product ax)) |> negate
         | Function (Asinh, x') -> invert x' // csch(asinh(x)) = 1/x
         | Function (Acosh, x') -> invert (multiply (add one x') (sqrt (divide (subtract x' one) (add x' one)))) // csch(acosh(x)) = 1/((x + 1)*sqrt((x - 1)/(x + 1)))
         | Function (Atanh, x') -> divide (sqrt (subtract one (pow x' two))) x' // csch(atanh(x)) = sqrt(1 - x^2)/x
@@ -581,7 +581,7 @@ module Operators =
         | Zero -> one // sech(0) = 1
         | Constant I -> Function (Sec, one) // sech(j*x) = sec(x)
         | Number n when n.IsNegative -> Function (Sech, Number -n) // sech(-x) = sech(x)
-        | Product ((Number n)::ax) when n.IsNegative -> Function (Sech, multiply (Number -n) (Product ax))        
+        | Product ((Number n)::ax) when n.IsNegative -> Function (Sech, multiply (Number -n) (Product ax))
         | Function (Asinh, x') -> invert (sqrt (add (pow x' two) one)) // sech(asinh(x)) = 1/sqrt(x^2 + 1)
         | Function (Acosh, x') -> invert x' // sech(acosh(x)) = 1/x
         | Function (Atanh, x') -> sqrt (subtract one (pow x' two)) // sech(atanh(x)) = sqrt(1 - x^2)
@@ -595,7 +595,7 @@ module Operators =
         | Zero -> complexInfinity
         | Constant I -> Function (Cot, one) |> multiply (Constant I) |> negate // coth(j*x) = -j*cot(x)
         | Number n when n.IsNegative -> Function (Coth, Number -n) |> negate // coth(-x) = -coth(x)
-        | Product ((Number n)::ax) when n.IsNegative -> Function (Coth, multiply (Number -n) (Product ax)) |> negate        
+        | Product ((Number n)::ax) when n.IsNegative -> Function (Coth, multiply (Number -n) (Product ax)) |> negate
         | Function (Asinh, x') -> divide (sqrt (add (pow x' two) one)) x' // coth(asinh(x)) = sqrt(x^2 + 1)/x
         | Function (Acosh, x') -> divide x' (multiply (add x' one) (sqrt (divide (subtract x' one) (add x' one)))) // coth(acosh(x)) = x/((x + 1)*sqrt((x - 1)/(x + 1)))
         | Function (Atanh, x') -> invert x' // coth(atanh(x)) = 1/x
@@ -652,7 +652,7 @@ module Operators =
         | oo when isInfinity oo -> zero // acot(coo) = acot(oo) = acot(-oo) = 0
         | Zero -> divide pi two // acot(0) = pi/2
         | One -> divide pi four // acot(1) = pi/4, acot(-1) = -pi/4
-        | MinusOne -> divide pi four |> negate 
+        | MinusOne -> divide pi four |> negate
         | Constant I -> multiply (Constant I) negativeInfinity // atan(j) = -oo*j
         | Number n when n.IsNegative -> Function (Acot, Number -n) |> negate // acot(-x) = -acot(x)
         | Product ((Number n)::ax) when n.IsNegative -> Function (Acot, multiply (Number -n) (Product ax)) |> negate
@@ -662,10 +662,10 @@ module Operators =
         | Undefined | ComplexInfinity -> undefined
         | PositiveInfinity -> infinity // asinh(oo) = oo, asinh(-oo) = -oo
         | NegativeInfinity -> negativeInfinity
-        | Zero -> zero // asinh(0) = 0        
+        | Zero -> zero // asinh(0) = 0
         | Constant I -> divide (multiply pi (Constant I)) two // asinh(j) = pi*j/2, asinh(n*j) = j*asin(n)
         | Number n when n.IsNegative -> Function (Asinh, Number -n) |> negate // asinh(-x) = -asinh(x)
-        | Product ((Number n)::ax) when n.IsNegative -> Function (Asinh, multiply (Number -n) (Product ax)) |> negate        
+        | Product ((Number n)::ax) when n.IsNegative -> Function (Asinh, multiply (Number -n) (Product ax)) |> negate
         | x -> Function (Asinh, x)
     let arccosh = function
         | Undefined | ComplexInfinity -> undefined
@@ -683,15 +683,15 @@ module Operators =
         | MinusOne -> negativeInfinity
         | Constant I -> divide (multiply pi (Constant I)) four // atanh(j) = pi*j/4
         | Number n when n.IsNegative -> Function (Atanh, Number -n) |> negate // atanh(-x) = -atanh(x)
-        | Product ((Number n)::ax) when n.IsNegative -> Function (Atanh, multiply (Number -n) (Product ax)) |> negate        
+        | Product ((Number n)::ax) when n.IsNegative -> Function (Atanh, multiply (Number -n) (Product ax)) |> negate
         | x -> Function (Atanh, x)
     let arccsch = function
         | Undefined | ComplexInfinity -> undefined
         | PositiveInfinity | NegativeInfinity -> zero // acsch(oo) = acsch(-oo) = 0
-        | Zero | One | MinusOne -> complexInfinity // acsch(0) = coo        
+        | Zero | One | MinusOne -> complexInfinity // acsch(0) = coo
         | Constant I -> divide (multiply pi (Constant I)) two |> negate // acsch(j) = -pi*j/2
         | Number n when n.IsNegative -> Function (Acsch, Number -n) |> negate // acsch(-x) = -acsch(x)
-        | Product ((Number n)::ax) when n.IsNegative -> Function (Acsch, multiply (Number -n) (Product ax)) |> negate        
+        | Product ((Number n)::ax) when n.IsNegative -> Function (Acsch, multiply (Number -n) (Product ax)) |> negate
         | x -> Function (Acsch, x)
     let arcsech = function
         | Undefined | ComplexInfinity -> undefined
@@ -708,7 +708,7 @@ module Operators =
         | MinusOne -> negativeInfinity
         | Constant I -> divide (multiply pi (Constant I)) four |> negate // atanh(j) = -pi*j/4
         | Number n when n.IsNegative -> Function (Acoth, Number -n) |> negate // acoth(-x) = -acoth(x)
-        | Product ((Number n)::ax) when n.IsNegative -> Function (Acoth, multiply (Number -n) (Product ax)) |> negate 
+        | Product ((Number n)::ax) when n.IsNegative -> Function (Acoth, multiply (Number -n) (Product ax)) |> negate
         | x -> Function (Acoth, x)
 
     let apply f x =
@@ -728,7 +728,7 @@ module Operators =
         | Tanh -> tanh x
         | Csch -> csch x
         | Sech -> sech x
-        | Coth -> coth x   
+        | Coth -> coth x
         | Asin -> arcsin x
         | Acos -> arccos x
         | Atan -> arctan x
@@ -741,7 +741,7 @@ module Operators =
         | Acsch -> arccsch x
         | Asech -> arcsech x
         | Acoth -> arccoth x
-        
+
 
     let applyN (f: Function) (xs: Expression list) =
         match f, xs with
@@ -796,7 +796,7 @@ type Expression with
     static member Cot (x) = Operators.cot x
 
     static member Sinh (x) = Operators.sinh x
-    static member Cosh (x) = Operators.cosh x    
+    static member Cosh (x) = Operators.cosh x
     static member Tanh (x) = Operators.tanh x
     static member Coth (x) = Operators.coth x
     static member Csch (x) = Operators.csch x
