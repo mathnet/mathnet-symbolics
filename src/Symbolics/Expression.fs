@@ -298,6 +298,7 @@ module Operators =
             | x -> Product (List.rev x)
 
         /// Multiply a number with an expression (potentially a denormalized product)
+        /// Intentionally distribte -1, e.g. -(a + b) = -a - b
         let rec valueMul (v:Value) x =
             if Value.isZero v then zero else
             match x with
@@ -306,6 +307,9 @@ module Operators =
             | Product [a] -> if Value.isOne v then a else Product [Values.unpack v; a]
             | Product ((Values.Value a)::ax) -> valueMul (Value.product (a,v)) (Product ax)
             | Product ax -> if Value.isOne v then x else Product (Values.unpack v::ax)
+            | Sum ax as x'-> if Value.isOne v then x'
+                             else if Value.isMinusOne v then ax |> List.map (function xi -> valueMul v xi) |> Sum
+                             else Product [Values.unpack v; x']
             | x -> if Value.isOne v then x else Product [Values.unpack v; x]
 
         match x, y with

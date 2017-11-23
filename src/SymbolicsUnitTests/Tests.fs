@@ -237,12 +237,13 @@ let tests =
 
         test "Algebraic Expansion" {
 
-            // Auto-simplification does not expand expressions:
-            (a+b)-(a+b) ==> "a + b - (a + b)"
+            // Auto-simplification does not expand expressions, but -1 distributes inside parentheses:
+            (a+b)-(a+b) ==> "0"
             (a+b)-(a+b) |> Algebraic.expand ==> "0"
-            2*(a+b)-(a+b) ==> "a + b"
+            2*(a+b)-(a+b) ==> "-a - b + 2*(a + b)"
             (a+b)-2*(a+b) |> Algebraic.expand ===> "(-1)*a + (-1)*b"
             (a+b)-2*(a+b) |> Algebraic.expand ==> "-a - b"
+            -(a + b) + 2*(a + b) ==> "-a - b + 2*(a + b)"
 
             (a*b)/(b*a) ==> "1"
             (a*b)**2/(b*a) ==> "a*b"
@@ -285,7 +286,7 @@ let tests =
 
         test "Algebaric Operators" {
 
-            negate (x + y**2) ==> "-(x + y^2)"
+            negate (x + y**2) ==> "-x - y^2"
 
             Algebraic.factors (b*cos(x)*ln(d)*x) ==+> ["b"; "x"; "ln(d)"; "cos(x)"]
             Algebraic.factors (b*cos(x)*log10(d)*x) ==+> ["b"; "x"; "log(d)"; "cos(x)"]
@@ -402,7 +403,7 @@ let tests =
 
             // TODO: expected: 0
             Trigonometric.simplify (sin(x) + sin(y) - 2*sin(x/2+y/2)*cos(x/2-y/2))
-                ==> "sin(y) - sin(x - y)/2 - sin(x/2 - y/2 - (x/2 - y/2))/2 - sin(-x/2 + y/2 - (x/2 - y/2))/2 - sin(x/2 + y/2 - (x/2 - y/2))"
+                ==> "-sin(-x + y)/2 - sin(x - y)/2" // "0"
         }
 
         test "Differentiation and Taylor Series" {
@@ -482,7 +483,7 @@ let tests =
             solve x (2+3*x) ==> "-2/3"
 
             // sin(a)+x*cos(b)+c = 0 --> x =
-            solve x (sin(a)+x*cos(b)+c) ==> "-(c + sin(a))/cos(b)"
+            solve x (sin(a)+x*cos(b)+c) ==> "(-c - sin(a))/cos(b)"
 
             // (x^2-1)/(x+1) = 0 --> x =
             solve x ((x**2-1)/(x+1)) ==> "1"
