@@ -1,3 +1,6 @@
+### 0.18.1 - 2017-12-23
+* Code Signing: SHA2 (256) instead of SHA1
+
 ### 0.18.0 - 2017-11-08
 * Calculus: fix derivatives of Asin, Acos, Atan *~diluculo*
 * Trigonometric: fix contraction of cos(a)*sin(b) *~diluculo*
