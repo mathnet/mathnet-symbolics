@@ -26,10 +26,10 @@ module Calculus =
         | Function (Log, x) -> (differentiate symbol ((ln x) / (ln 10Q)))
         | Function (Sin, x) -> (differentiate symbol x) * cos(x)
         | Function (Cos, x) -> -(differentiate symbol x) * sin(x)
-        | Function (Tan, x) -> 2*(differentiate symbol x) / (cos(2*x)+1)
-        | Function (Cosh, x) -> (differentiate symbol x) * sinh (x)
-        | Function (Sinh, x) -> (differentiate symbol x) * cosh (x)
-        | Function (Tanh, x) -> 2*(differentiate symbol x) / (cosh(2*x)+1)
+        | Function (Tan, x) -> 2*(differentiate symbol x) / (cos(2Q * x) + 1Q)
+        | Function (Cosh, x) -> (differentiate symbol x) * sinh(x)
+        | Function (Sinh, x) -> (differentiate symbol x) * cosh(x)
+        | Function (Tanh, x) -> 2*(differentiate symbol x) / (cosh(2Q * x) + 1)
         | Function (Asin, x) -> (1Q / sqrt(1Q - pow x 2Q)) * (differentiate symbol x)
         | Function (Acos, x) -> (-1Q / sqrt(1Q - pow x 2Q)) * (differentiate symbol x)
         | Function (Atan, x) -> (1Q / (1Q + pow x 2Q)) * (differentiate symbol x)
@@ -41,7 +41,7 @@ module Calculus =
         | Function (Acot, x) -> -(differentiate symbol x) / (1Q + pow x 2Q)
         | Function (Csch, x) -> (differentiate symbol x) * (-coth(x) * csch(x))
         | Function (Sech, x) -> (differentiate symbol x) * (-tanh(x) * sech(x))
-        | Function (Coth, x) -> -2 * (differentiate symbol x) / (cosh(2 * x) - 1)
+        | Function (Coth, x) -> -2 * (differentiate symbol x) / (cosh(2Q * x) - 1Q)
         | Function (Asinh, x) -> (differentiate symbol x) / (sqrt(pow x 2Q + 1Q))
         | Function (Acosh, x) -> (differentiate symbol x) / (sqrt(x - 1Q) * sqrt(x + 1Q))
         | Function (Atanh, x) -> (differentiate symbol x) / (1Q - pow x 2Q)
@@ -51,6 +51,12 @@ module Calculus =
         | Function (Abs, _) -> failwith "not supported"
         | FunctionN (Atan, [x; y]) -> differentiate symbol (tan (x / y))
         | FunctionN (Log, [b; x]) -> differentiate symbol ((ln x) / (ln b))
+        | FunctionN (BesselJ, [nu; x]) -> (differentiate symbol x) * ((besselj (nu - 1Q) x) - (besselj (nu + 1Q) x)) / 2Q
+        | FunctionN (BesselY, [nu; x]) -> (differentiate symbol x) * ((bessely (nu - 1Q) x) - (bessely (nu + 1Q) x)) / 2Q
+        | FunctionN (BesselI, [nu; x]) -> (differentiate symbol x) * ((besseli (nu - 1Q) x) + (besseli (nu + 1Q) x)) / 2Q
+        | FunctionN (BesselK, [nu; x]) -> (differentiate symbol x) * (-(besselk (nu - 1Q) x) - (besselk (nu + 1Q) x)) / 2Q
+        | FunctionN (HankelH1, [nu; x]) -> (differentiate symbol x) * ((hankelh1 (nu - 1Q) x) - (hankelh1 (nu + 1Q) x)) / 2Q
+        | FunctionN (HankelH2, [nu; x]) -> (differentiate symbol x) * ((hankelh2 (nu - 1Q) x) - (hankelh2 (nu + 1Q) x)) / 2Q
         | FunctionN (_) -> failwith "not supported"
         | Product [] -> failwith "invalid expression"
 

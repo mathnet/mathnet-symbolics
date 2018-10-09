@@ -10,5 +10,5 @@ let tests =
         Arithmetic.tests
         Exponential.tests
         Trigonometry.tests
-
+        Bessel.tests
     ]

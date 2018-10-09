@@ -147,6 +147,43 @@ module Approximation =
         | Real a -> Real (Trig.Acoth a)
         | Complex a -> Complex (Trig.Acoth a)
 
+    let besselj nu z =
+        match nu, z with
+        | Real a, Real b -> failwith "not supported"        // Real (Bessel.BesselJ (a, b))
+        | Real a, Complex b -> failwith "not supported"     // Complex (Bessel.BesselJ (a, b))
+        | Complex a, Real b -> failwith "not supported"     // Complex (Bessel.BesselJ (a, b))
+        | Complex a, Complex b -> failwith "not supported"  // Complex (Bessel.BesselJ (a, b))        
+    let bessely nu z =
+        match nu, z with
+        | Real a, Real b -> failwith "not supported"        // Real (Bessel.BesselY (a, b))
+        | Real a, Complex b -> failwith "not supported"     // Complex (Bessel.BesselY (a, b))
+        | Complex a, Real b -> failwith "not supported"     // Complex (Bessel.BesselY (a, b))
+        | Complex a, Complex b -> failwith "not supported"  // Complex (Bessel.BesselY (a, b))
+    let besseli nu z =
+        match nu, z with
+        | Real a, Real b -> failwith "not supported"        // Real (Bessel.BesselI (a, b))
+        | Real a, Complex b -> failwith "not supported"     // Complex (Bessel.BesselI (a, b))
+        | Complex a, Real b -> failwith "not supported"     // Complex (Bessel.BesselI (a, b))
+        | Complex a, Complex b -> failwith "not supported"  // Complex (Bessel.BesselI (a, b))
+    let besselk nu z =
+        match nu, z with
+        | Real a, Real b -> failwith "not supported"        // Real (Bessel.BesselK (a, b))
+        | Real a, Complex b -> failwith "not supported"     // Complex (Bessel.BesselK (a, b))
+        | Complex a, Real b -> failwith "not supported"     // Complex (Bessel.BesselK (a, b))
+        | Complex a, Complex b -> failwith "not supported"  // Complex (Bessel.BesselK (a, b))
+    let hankelh1 nu z =
+        match nu, z with
+        | Real a, Real b -> failwith "not supported"        // Real (Bessel.HankelH1 (a, b))
+        | Real a, Complex b -> failwith "not supported"     // Complex (Bessel.HankelH1 (a, b))
+        | Complex a, Real b -> failwith "not supported"     // Complex (Bessel.HankelH1 (a, b))
+        | Complex a, Complex b -> failwith "not supported"  // Complex (Bessel.HankelH1 (a, b))
+    let hankelh2 nu z =
+        match nu, z with
+        | Real a, Real b -> failwith "not supported"        // Real (Bessel.HankelH2 (a, b))
+        | Real a, Complex b -> failwith "not supported"     // Complex (Bessel.HankelH2 (a, b))
+        | Complex a, Real b -> failwith "not supported"     // Complex (Bessel.HankelH2 (a, b))
+        | Complex a, Complex b -> failwith "not supported"  // Complex (Bessel.HankelH2 (a, b))
+
     let apply f a =
         match f with
         | Abs -> abs a
@@ -182,6 +219,12 @@ module Approximation =
         match f, xs with
         | Atan, [x; y] -> atan2 x y
         | Log, [b; x] -> log b x
+        | BesselJ, [nu; x] -> besselj nu x
+        | BesselY, [nu; x] -> bessely nu x
+        | BesselI, [nu; x] -> besseli nu x
+        | BesselK, [nu; x] -> besselk nu x        
+        | HankelH1, [nu; x] -> hankelh1 nu x
+        | HankelH2, [nu; x] -> hankelh2 nu x
         | _ -> failwith "not supported"
 
     let isZero = function

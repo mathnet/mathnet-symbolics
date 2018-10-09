@@ -27,6 +27,12 @@ module private LaTeXFormatter =
     let latexFunctionNName = function
         | "log" -> "\\log"
         | "atan" -> "\\operatorname{atan2}"
+        | "besselj" -> "\\besselj"
+        | "bessely" -> "\\bessely"
+        | "besseli" -> "\\besseli"
+        | "besselk" -> "\\besselk"
+        | "hankelh1" -> "\\hankelh1"
+        | "hankelh2" -> "\\hankelh2"
         | x -> sprintf "\\operatorname{%s}" x
 
     let private dropParenthesis = function
@@ -126,6 +132,78 @@ module private LaTeXFormatter =
         | VisualExpression.FunctionN ("log", [basis; x]) ->
             write "\\log_{"
             format write basis
+            match x with
+            | VisualExpression.Sum _ ->
+                write "}\\left("
+                format write x
+                write "\\right)"
+            | _ ->
+                write "}{"
+                format write x
+                write "}"
+        | VisualExpression.FunctionN ("besselj", [nu; x]) ->
+            write "\\J_{"
+            format write nu
+            match x with
+            | VisualExpression.Sum _ ->
+                write "}\\left("
+                format write x
+                write "\\right)"
+            | _ ->
+                write "}{"
+                format write x
+                write "}"
+        | VisualExpression.FunctionN ("bessely", [nu; x]) ->
+            write "\\Y_{"
+            format write nu
+            match x with
+            | VisualExpression.Sum _ ->
+                write "}\\left("
+                format write x
+                write "\\right)"
+            | _ ->
+                write "}{"
+                format write x
+                write "}"
+        | VisualExpression.FunctionN ("besseli", [nu; x]) ->
+            write "\\I_{"
+            format write nu
+            match x with
+            | VisualExpression.Sum _ ->
+                write "}\\left("
+                format write x
+                write "\\right)"
+            | _ ->
+                write "}{"
+                format write x
+                write "}"        
+        | VisualExpression.FunctionN ("besselk", [nu; x]) ->
+            write "\\K_{"
+            format write nu
+            match x with
+            | VisualExpression.Sum _ ->
+                write "}\\left("
+                format write x
+                write "\\right)"
+            | _ ->
+                write "}{"
+                format write x
+                write "}"
+        | VisualExpression.FunctionN ("hankelh1", [nu; x]) ->
+            write "\\H^{(1)}_{"
+            format write nu
+            match x with
+            | VisualExpression.Sum _ ->
+                write "}\\left("
+                format write x
+                write "\\right)"
+            | _ ->
+                write "}{"
+                format write x
+                write "}"
+        | VisualExpression.FunctionN ("hankelh2", [nu; x]) ->
+            write "\\H^{(2)}_{"
+            format write nu
             match x with
             | VisualExpression.Sum _ ->
                 write "}\\left("

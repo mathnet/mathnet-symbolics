@@ -58,6 +58,7 @@
     <Compile Include="Operators\Arithmetic.fs" />
     <Compile Include="Operators\Exponential.fs" />
     <Compile Include="Operators\Trigonometry.fs" />
+    <Compile Include="Operators\Bessel.fs" />
     <Compile Include="Operators\Operators.fs" />
     <Compile Include="Polynomial\Polynomial.fs" />
     <Compile Include="Visual\Infix.fs" />

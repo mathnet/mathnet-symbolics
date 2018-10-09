@@ -711,6 +711,63 @@ module Operators =
         | Product ((Number n)::ax) when n.IsNegative -> Function (Acoth, multiply (Number -n) (Product ax)) |> negate
         | x -> Function (Acoth, x)
 
+    let rec besselj nu x = 
+        match nu, x with
+        | Undefined, _ -> undefined
+        | _, Undefined -> undefined
+        | Zero, Zero -> one // J(0, 0) = 1
+        | Positive, Zero -> zero // J(n, 0) = 0 for n > 0
+        | Number n, _  when n.IsNegative -> (pow minusOne (Number -n)) |> multiply (besselj (Number -n) x) // J(-n, x) = pow(-1, n) * J(n, x)
+        | Product ((Number n)::ax), _ when n.IsNegative -> (pow minusOne (multiply (Number -n) (Product ax))) |> multiply (besselj (multiply (Number -n) (Product ax)) x)
+        | _, PositiveInfinity -> zero // J(nu, oo) = 0
+        | _, NegativeInfinity -> zero // J(nu, -oo) = 0
+        | _, _ -> FunctionN (BesselJ, [nu; x])
+    let rec bessely nu x = 
+        match nu, x with
+        | Undefined, _ -> undefined
+        | _, Undefined -> undefined
+        | Zero, Zero -> negativeInfinity // Y(0, 0) = -oo
+        | Positive, Zero -> complexInfinity // Y(n, 0) = ⧝ for n > 0
+        | Number n, _  when n.IsNegative -> (pow minusOne (Number -n)) |> multiply (bessely (Number -n) x) // Y(-n, x) = pow(-1, n) * Y(n, x)
+        | Product ((Number n)::ax), _ when n.IsNegative -> (pow minusOne (multiply (Number -n) (Product ax))) |> multiply (bessely (multiply (Number -n) (Product ax)) x)
+        | _, PositiveInfinity -> zero // Y(nu, oo) = 0
+        | _, NegativeInfinity -> zero // Y(nu, -oo) = 0
+        | _, _ -> FunctionN (BesselY, [nu; x])
+    let rec besseli nu x = 
+        match nu, x with
+        | Undefined, _ -> undefined
+        | _, Undefined -> undefined
+        | Zero, Zero -> one // I(0, 0) = 1
+        | Positive, Zero -> zero // I(n, 0) = 0 for n > 0
+        | Number n, _  when n.IsNegative -> besseli (Number -n) x // I(-n, x) = I(n, x)
+        | Product ((Number n)::ax), _ when n.IsNegative -> besseli (multiply (Number -n) (Product ax)) x
+        | _, _ -> FunctionN (BesselI, [nu; x])    
+    let rec besselk nu x = 
+        match nu, x with
+        | Undefined, _ -> undefined
+        | _, Undefined -> undefined
+        | Zero, Zero -> infinity // K(0, 0) = oo
+        | Positive, Zero -> complexInfinity // K(n, 0) = ⧝ for n > 0
+        | Number n, _  when n.IsNegative -> besselk (Number -n) x // K(-n, x) = K(n, x)
+        | Product ((Number n)::ax), _ when n.IsNegative -> besselk (multiply (Number -n) (Product ax)) x
+        | _, _ -> FunctionN (BesselK, [nu; x])
+    let rec hankelh1 nu x = 
+        match nu, x with
+        | Undefined, _ -> undefined
+        | _, Undefined -> undefined
+        | _, Zero -> complexInfinity // H1(n, 0) = ⧝
+        | Number n, _  when n.IsNegative -> (pow minusOne (Number -n)) |> multiply (hankelh1 (Number -n) x) // H1(-n, x) = pow(-1, n) * H1(n, x)
+        | Product ((Number n)::ax), _ when n.IsNegative -> (pow minusOne (multiply (Number -n) (Product ax))) |> multiply (hankelh1 (multiply (Number -n) (Product ax)) x)
+        | _, _ -> FunctionN (HankelH1, [nu; x])
+    let rec hankelh2 nu x = 
+        match nu, x with
+        | Undefined, _ -> undefined
+        | _, Undefined -> undefined
+        | _, Zero -> complexInfinity // H2(n, 0) = ⧝
+        | Number n, _  when n.IsNegative -> (pow minusOne (Number -n)) |> multiply (hankelh2 (Number -n) x) // H2(-n, x) = pow(-1, n) * H2(n, x)
+        | Product ((Number n)::ax), _ when n.IsNegative -> (pow minusOne (multiply (Number -n) (Product ax))) |> multiply (hankelh2 (multiply (Number -n) (Product ax)) x)
+        | _, _ -> FunctionN (HankelH2, [nu; x])
+
     let apply f x =
         match f with
         | Abs -> abs x
@@ -747,6 +804,12 @@ module Operators =
         match f, xs with
         | Atan, [x;y] -> arctan2 x y
         | Log, [b; x] -> log b x
+        | BesselJ, [nu; x] -> besselj nu x
+        | BesselY, [nu; x] -> bessely nu x
+        | BesselI, [nu; x] -> besseli nu x
+        | BesselK, [nu; x] -> besselk nu x
+        | HankelH1, [nu; x] -> hankelh1 nu x
+        | HankelH2, [nu; x] -> hankelh2 nu x
         | _ -> failwith "not supported"
 
 
@@ -815,6 +878,13 @@ type Expression with
     static member ArcCsch (x) = Operators.arccsch x
     static member ArcSech (x) = Operators.arcsech x
     static member ArcCoth (x) = Operators.arccoth x
+
+    static member BesselJ (n, x) = Operators.besselj n x // Bessel Function of the First Kind
+    static member BesselY (n, x) = Operators.bessely n x // Bessel Function of the Second Kind
+    static member BesselI (n, x) = Operators.besseli n x // Modified Bessel Function of the First Kind    
+    static member BesselK (n, x) = Operators.besselk n x // Modified Bessel Function of the Second Kind
+    static member HankelH1 (n, x) = Operators.hankelh1 n x // Hankel Function of the First Kind
+    static member HankelH2 (n, x) = Operators.hankelh2 n x // Hankel Function of the Second Kind
 
     static member Apply (f, x) = Operators.apply f x
     static member ApplyN (f, xs) = Operators.applyN f xs

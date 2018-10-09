@@ -202,6 +202,18 @@ module Evaluate =
         | Log, [Real b; Complex x] -> Complex (Complex.Log(x, b))
         | Log, [Complex b; Complex x] -> Complex(Complex.Log(x) / Complex.Log(b))
         | Log, [Complex b; Real x] -> Complex(Complex.Log(Complex.Create(x, 0.0)) / Complex.Log(b))
+        | BesselJ, [Real nu; Real x] -> failwith "not supported"        // Real (Bessel.BesselJ(nu, x))
+        | BesselJ, [Real nu; Complex x] -> failwith "not supported"     // Complex (Bessel.BesselJ(nu, x))
+        | BesselY, [Real nu; Real x] -> failwith "not supported"        // Real (Bessel.BesselY(nu, x))
+        | BesselY, [Real nu; Complex x] -> failwith "not supported"     // Complex (Bessel.BesselY(nu, x))
+        | BesselI, [Real nu; Real x] -> failwith "not supported"        // Real (Bessel.BesselI(nu, x))
+        | BesselI, [Real nu; Complex x] -> failwith "not supported"     // Complex (Bessel.BesselI(nu, x))
+        | BesselK, [Real nu; Real x] -> failwith "not supported"        // Real (Bessel.BesselK(nu, x))
+        | BesselK, [Real nu; Complex x] -> failwith "not supported"     // Complex (Bessel.BesselK(nu, x))
+        | HankelH1, [Real nu; Real x] -> failwith "not supported"       // Real (Bessel.HankelH1(nu, x))
+        | HankelH1, [Real nu; Complex x] -> failwith "not supported"    // Complex (Bessel.HankelH1(nu, x))
+        | HankelH2, [Real nu; Real x] -> failwith "not supported"       // Real (Bessel.HankelH2(nu, x))
+        | HankelH2, [Real nu; Complex x] -> failwith "not supported"    // Complex (Bessel.HankelH2(nu, x))
         | _ -> failwith "not supported"
 
     [<CompiledName("Evaluate")>]
