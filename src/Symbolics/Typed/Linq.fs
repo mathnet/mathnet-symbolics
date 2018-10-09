@@ -39,7 +39,7 @@ module Linq =
         | Product ax -> product <| List.map denominator ax
         | _ -> one
 
-    let private toLambda (expr : MathNet.Symbolics.Expression) (args : Symbol list) (valueType : Type) (mathType : Type) constant value add mul div pow atan2 log abs : LambdaExpression option =
+    let private toLambda (expr : MathNet.Symbolics.Expression) (args : Symbol list) (valueType : Type) (mathType : Type) constant value add mul div pow atan2 log abs besselj besseli bessely besselk hankelh1 hankelh2 : LambdaExpression option =
         let valueTypeArr1 = [| valueType |]
         let valueTypeArr2 = [| valueType; valueType |]
         let argName = function |Symbol(n) -> n
@@ -90,16 +90,40 @@ module Linq =
                 let f = convertFunc func
                 let e = convertExpr par
                 Option.map2 id f e
-             | FunctionN(Atan, [x;y]) ->
+            | FunctionN(Atan, [x;y]) ->
                 let exprX = convertExpr x
                 let exprY = convertExpr y
                 Option.map2 atan2 exprX exprY
-             | FunctionN(Log, [x;y]) ->
+            | FunctionN(Log, [x;y]) ->
                 let exprX = convertExpr x
                 let exprY = convertExpr y
                 Option.map2 log exprX exprY
-             | FunctionN(_) -> None
-             | PosIntPower(x, Number(y)) ->
+            | FunctionN(BesselJ, [nu;x]) ->
+                let exprX = convertExpr nu
+                let exprY = convertExpr x
+                Option.map2 besselj exprX exprY
+            | FunctionN(BesselY, [nu;x]) ->
+                let exprX = convertExpr nu
+                let exprY = convertExpr x
+                Option.map2 bessely exprX exprY
+            | FunctionN(BesselI, [nu;x]) ->
+                let exprX = convertExpr nu
+                let exprY = convertExpr x
+                Option.map2 besseli exprX exprY              
+            | FunctionN(BesselK, [nu;x]) ->
+                let exprX = convertExpr nu
+                let exprY = convertExpr x
+                Option.map2 besselk exprX exprY
+            | FunctionN(HankelH1, [nu;x]) ->
+                let exprX = convertExpr nu
+                let exprY = convertExpr x
+                Option.map2 hankelh1 exprX exprY
+            | FunctionN(HankelH2, [nu;x]) ->
+                let exprX = convertExpr nu
+                let exprY = convertExpr x
+                Option.map2 hankelh2 exprX exprY
+            | FunctionN(_) -> None
+            | PosIntPower(x, Number(y)) ->
                 let basis = convertExpr x
                 let rec exponentiate (power : BigRational) exp  =
                     if  power.Numerator.IsEven then
@@ -111,10 +135,10 @@ module Linq =
                         let newBasis = exponentiate (power - 1N) exp
                         mul exp newBasis
                 Option.map (exponentiate y) basis
-             | Power(x, minusOne) when minusOne = Expression.MinusOne ->
+            | Power(x, minusOne) when minusOne = Expression.MinusOne ->
                 let a = convertExpr x
                 Option.map2 div (value Value.one) a
-             | Power (x, Power(n, minusOne)) when minusOne = Expression.MinusOne ->
+            | Power (x, Power(n, minusOne)) when minusOne = Expression.MinusOne ->
                 let a = convertExpr x
                 let b = convertExpr (Power(n, minusOne))
                 if n = two then
@@ -123,10 +147,10 @@ module Linq =
                     let a = convertExpr x
                     let b = convertExpr (Power(n, minusOne))
                     Option.map2 pow a b
-             | Power(Constant E, y) ->
+            | Power(Constant E, y) ->
                 let exponent = convertExpr y
                 Option.map (mathCall1 "Exp") exponent
-             | Power(x, y) ->
+            | Power(x, y) ->
                 let baseE = convertExpr x
                 let exponE = convertExpr y
                 Option.map2 pow baseE exponE
@@ -144,10 +168,10 @@ module Linq =
                     Option.map2 div nExp dExp
             | Undefined -> None
         and compileFraction = function
-                | Product(xs) ->
-                    let prods = List.map convertExpr xs
-                    List.fold (Option.map2 mul) (value Value.one) prods
-                | x -> convertExpr x
+            | Product(xs) ->
+                let prods = List.map convertExpr xs
+                List.fold (Option.map2 mul) (value Value.one) prods
+            | x -> convertExpr x
         let simplifiedBody = Trigonometric.simplify expr
         Option.map (fun body -> Expression.Lambda(body, paramList)) (convertExpr simplifiedBody)
 
@@ -174,7 +198,13 @@ module Linq =
         let atan2 = mathCall2 "Atan2"
         let log a b = mathCall2 "Log" b a
         let abs = mathCall1 "Abs"
-        toLambda expr args valueType mathType constant value add mul div pow atan2 log abs
+        let besselj = mathCall2 "BesselJ"
+        let besseli = mathCall2 "BesselI"
+        let bessely = mathCall2 "BesselY"
+        let besselk = mathCall2 "BesselK"
+        let hankelh1 = mathCall2 "HankelH1"
+        let hankelh2 = mathCall2 "HankelH2"
+        toLambda expr args valueType mathType constant value add mul div pow atan2 log abs besselj besseli bessely besselk hankelh1 hankelh2
 
     [<CompiledName("FormatComplexLambda")>]
     let formatComplexLambda (expr : MathNet.Symbolics.Expression) (args : Symbol list) : LambdaExpression option =
@@ -201,4 +231,10 @@ module Linq =
             let ln = mathCall1 "Log"
             div (ln b) (ln a)
         let abs a = Expression.Convert(mathCall1 "Abs" a, valueType) :> Expression
-        toLambda expr args valueType mathType constant value add mul div pow atan2 log abs
+        let besselj = mathCall2 "BesselJ"
+        let besseli = mathCall2 "BesselI"
+        let bessely = mathCall2 "BesselY"
+        let besselk = mathCall2 "BesselK"
+        let hankelh1 = mathCall2 "HankelH1"
+        let hankelh2 = mathCall2 "HankelH2"
+        toLambda expr args valueType mathType constant value add mul div pow atan2 log abs besselj besseli bessely besselk hankelh1 hankelh2

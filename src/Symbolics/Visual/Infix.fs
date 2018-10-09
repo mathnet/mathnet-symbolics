@@ -202,6 +202,12 @@ module private InfixFormatter =
         | Acsc -> "acsc" | Asec -> "asec" | Acot -> "acot"
         | Acosh -> "acosh" | Asinh -> "asinh" | Atanh -> "atanh"
         | Asech -> "asech" | Acsch -> "acsch" | Acoth -> "acoth"
+        | BesselJ -> "besselj"
+        | BesselI -> "besseli"
+        | BesselY -> "bessely"
+        | BesselK -> "besselk"
+        | HankelH1 -> "hankelh1"
+        | HankelH2 -> "hankelh2"
 
     // priority: 1=additive 2=product 3=power
 

@@ -235,6 +235,13 @@ type SymbolicExpression(expression:Expression) =
     member this.ArcSech() = SymbolicExpression(Expression.ArcSech(expression))
     member this.ArcCoth() = SymbolicExpression(Expression.ArcCoth(expression))
 
+    member this.BesselJ(n:SymbolicExpression) = SymbolicExpression(Expression.BesselJ(n.Expression, expression))
+    member this.BesselY(n:SymbolicExpression) = SymbolicExpression(Expression.BesselY(n.Expression, expression))
+    member this.BesselI(n:SymbolicExpression) = SymbolicExpression(Expression.BesselI(n.Expression, expression))
+    member this.BesselK(n:SymbolicExpression) = SymbolicExpression(Expression.BesselK(n.Expression, expression))
+    member this.HankelH1(n:SymbolicExpression) = SymbolicExpression(Expression.HankelH1(n.Expression, expression))
+    member this.HankelH2(n:SymbolicExpression) = SymbolicExpression(Expression.HankelH2(n.Expression, expression))
+
 
     // STRUCTURE
     member this.NumberOfOperands = expression |> Structure.numberOfOperands
