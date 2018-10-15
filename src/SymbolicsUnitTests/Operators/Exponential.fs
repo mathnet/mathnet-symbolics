@@ -18,7 +18,7 @@ let tests =
             }
 
             test "Special Values" {
-                exp(x + y - (x + y)) ==> "exp(x + y - (x + y))" // "1"
+                exp(x + y - (x + y)) ==> "1"
 
                 exp(-1Q) ==> "1/e"
                 exp(1Q/2Q*pi*Constant I) ==> "j"
