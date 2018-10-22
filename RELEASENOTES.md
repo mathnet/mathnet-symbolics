@@ -1,3 +1,7 @@
+### 0.19.0 - 2018-10-22
+* Uses Math.NET Numerics v4.6
+* Supports .Net Standard 2.0
+
 ### 0.18.1 - 2017-12-23
 * Code Signing: SHA2 (256) instead of SHA1
 
