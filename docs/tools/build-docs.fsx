@@ -13,7 +13,7 @@ let githubLink = "https://github.com/mathnet/mathnet-symbolics"
 let info =
   [ "project-name", "Math.NET Symbolics"
     "project-author", "Christoph Ruegg"
-    "project-summary", "Math.NET Symbolics. .Net 4, .Net 3.5, SL5, Win8, WP8, PCL 47 and 136, Mono, Xamarin Android/iOS."
+    "project-summary", "Math.NET Symbolics is a basic open source computer algebra library for .Net and Mono. Written in F# but works well in C# as well. Supports .Net Framework 4.5 or higher and .Net Standard 2.0 or higher, on Windows, Linux and Mac."
     "project-github", githubLink
     "project-nuget", "https://nuget.org/packages/MathNet.Symbolics" ]
 
@@ -21,9 +21,9 @@ let info =
 // For typical project, no changes are needed below
 // --------------------------------------------------------------------------------------
 
-#load "../../packages/FSharp.Formatting/FSharp.Formatting.fsx"
-#r "../../packages/FAKE/tools/NuGet.Core.dll"
-#r "../../packages/FAKE/tools/FakeLib.dll"
+#load "../../packages/build/FSharp.Formatting/FSharp.Formatting.fsx"
+#r "../../packages/build/FAKE/tools/NuGet.Core.dll"
+#r "../../packages/build/FAKE/tools/FakeLib.dll"
 
 open Fake
 open System
@@ -47,7 +47,7 @@ let content    = __SOURCE_DIRECTORY__ @@ "../content"
 let output     = __SOURCE_DIRECTORY__ @@ "../../out/docs"
 let files      = __SOURCE_DIRECTORY__ @@ "../files"
 let templates  = __SOURCE_DIRECTORY__ @@ "templates"
-let formatting = __SOURCE_DIRECTORY__ @@ "../../packages/FSharp.Formatting/"
+let formatting = __SOURCE_DIRECTORY__ @@ "../../packages/build/FSharp.Formatting/"
 let docTemplate = formatting @@ "templates/docpage.cshtml"
 
 // Where to look for *.csproj templates (in this order)
@@ -64,7 +64,7 @@ let copyFiles() =
     |> Log "Copying styles and scripts: "
 
 // Build API reference from XML comments
-let buildReference() =
+let buildReference () =
   CleanDir (output @@ "reference")
   let binaries =
     referenceBinaries
@@ -77,7 +77,7 @@ let buildReference() =
       publicOnly = true, libDirs = [bin] )
 
 // Build documentation from `fsx` and `md` files in `docs/content`
-let buildDocumentation() =
+let buildDocumentation () =
   let subdirs = Directory.EnumerateDirectories(content, "*", SearchOption.AllDirectories)
   for dir in Seq.append [content] subdirs do
     let sub = if dir.Length > content.Length then dir.Substring(content.Length + 1) else "."

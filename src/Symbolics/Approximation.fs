@@ -152,7 +152,7 @@ module Approximation =
         | Real a, Real b -> failwith "not supported"        // Real (Bessel.BesselJ (a, b))
         | Real a, Complex b -> failwith "not supported"     // Complex (Bessel.BesselJ (a, b))
         | Complex a, Real b -> failwith "not supported"     // Complex (Bessel.BesselJ (a, b))
-        | Complex a, Complex b -> failwith "not supported"  // Complex (Bessel.BesselJ (a, b))        
+        | Complex a, Complex b -> failwith "not supported"  // Complex (Bessel.BesselJ (a, b))
     let bessely nu z =
         match nu, z with
         | Real a, Real b -> failwith "not supported"        // Real (Bessel.BesselY (a, b))
@@ -222,7 +222,7 @@ module Approximation =
         | BesselJ, [nu; x] -> besselj nu x
         | BesselY, [nu; x] -> bessely nu x
         | BesselI, [nu; x] -> besseli nu x
-        | BesselK, [nu; x] -> besselk nu x        
+        | BesselK, [nu; x] -> besselk nu x
         | HankelH1, [nu; x] -> hankelh1 nu x
         | HankelH2, [nu; x] -> hankelh2 nu x
         | _ -> failwith "not supported"

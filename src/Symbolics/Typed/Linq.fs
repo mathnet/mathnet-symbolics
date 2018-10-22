@@ -109,7 +109,7 @@ module Linq =
             | FunctionN(BesselI, [nu;x]) ->
                 let exprX = convertExpr nu
                 let exprY = convertExpr x
-                Option.map2 besseli exprX exprY              
+                Option.map2 besseli exprX exprY
             | FunctionN(BesselK, [nu;x]) ->
                 let exprX = convertExpr nu
                 let exprY = convertExpr x

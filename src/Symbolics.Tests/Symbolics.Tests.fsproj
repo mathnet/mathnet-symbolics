@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <GenerateProgramFile>false</GenerateProgramFile>
+        <TargetFrameworks>net461;netcoreapp2.0</TargetFrameworks>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <AssemblyName>MathNet.Symbolics.Tests</AssemblyName>
+        <RootNamespace>MathNet.Smbolics.Tests</RootNamespace>
+        <IsPackable>false</IsPackable>
+        <NoWarn>44;2003</NoWarn>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Symbolics\Symbolics.fsproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="AssemblyInfo.fs" />
+        <Compile Include="Global.fs" />
+        <Compile Include="Operators\Arithmetic.fs" />
+        <Compile Include="Operators\Exponential.fs" />
+        <Compile Include="Operators\Trigonometry.fs" />
+        <Compile Include="Operators\Bessel.fs" />
+        <Compile Include="Operators\Operators.fs" />
+        <Compile Include="Polynomial\Polynomial.fs" />
+        <Compile Include="Visual\Infix.fs" />
+        <Compile Include="Visual\LaTeX.fs" />
+        <Compile Include="Visual\MathML.fs" />
+        <Compile Include="Visual\Visual.fs" />
+        <Compile Include="Compilation\Compilation.fs" />
+        <Compile Include="Tests.fs" />
+        <Compile Include="Runner.fs" />
+        <None Include="app.config" />
+        <Content Include="paket.references" />
+    </ItemGroup>
+    <Import Project="..\..\.paket\Paket.Restore.targets" />
+</Project>

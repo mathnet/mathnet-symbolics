@@ -10,6 +10,7 @@ out/
 *.userprefs
 .vagrant
 .vs
+.vscode
 .idea
 
 # Test & Analysis Results
@@ -19,6 +20,7 @@ out/
 TestResult.xml
 TestResults.xml
 coverage.*
+BenchmarkDotNet.Artifacts
 *.dotCover
 *.psess
 *.vsp
@@ -37,8 +39,9 @@ _TeamCity*
 *.sdf
 *.aps
 *.opensdf
+*.opendb
 *.cachefile
-*.TMP
+*.swp
 
 # Upgrades
 _UpgradeReport_Files/
@@ -50,15 +53,21 @@ UpgradeLog*.htm
 
 # OS
 $RECYCLE.BIN/
-.DS_Store/
+.DS_Store
 Thumbs.db
 ehthumbs.db
 Desktop.ini
 
+# NuGet Packages
+# NOTE: we do NOT use package restore in the core projects, but do use it with FAKE builds.
+packages/*
+!packages/.gitattributes
+!packages/TaskParallelLibrary
+!packages/FSharp.Core
+
 # FAKE & Paket
 packages
 paket-files
-.paket/paket.exe
 .fake
 
 # Generated Doc Files
@@ -67,4 +76,3 @@ docs/content/Contributing.md
 docs/content/Contributors.md
 docs/content/ReleaseNotes.md
 docs/content/ReleaseNotes-*.md
-
