@@ -1,4 +1,5 @@
 ### 0.19.0 - 2018-10-22
+* Bessel and Hankel functions *~diluculo*
 * Uses Math.NET Numerics v4.6
 * Supports .Net Standard 2.0
 
