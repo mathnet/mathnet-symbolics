@@ -6,7 +6,7 @@
         <TargetFrameworks>net461;netcoreapp2.0</TargetFrameworks>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <AssemblyName>MathNet.Symbolics.Tests</AssemblyName>
-        <RootNamespace>MathNet.Smbolics.Tests</RootNamespace>
+        <RootNamespace>MathNet.Symbolics.Tests</RootNamespace>
         <IsPackable>false</IsPackable>
         <NoWarn>44;2003</NoWarn>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
