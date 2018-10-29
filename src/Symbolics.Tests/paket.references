@@ -4,3 +4,4 @@ MathNet.Numerics.FSharp
 FSharp.Core
 Expecto
 Expecto.VisualStudio.TestAdapter
+Microsoft.NET.Test.Sdk

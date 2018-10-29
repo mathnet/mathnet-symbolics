@@ -9,6 +9,7 @@ nuget MathNet.Numerics.FSharp ~> 4.6
 
 nuget Expecto
 nuget Expecto.VisualStudio.TestAdapter version_in_path: true
+nuget Microsoft.NET.Test.Sdk
 
 // Legacy .Net Core
 nuget System.Runtime framework:netstandard1.3,netstandard1.6,netcoreapp1.1
