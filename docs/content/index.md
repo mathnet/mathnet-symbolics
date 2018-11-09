@@ -33,7 +33,7 @@ Math.NET Symbolics with F# and F# Interactive
 
     [hide]
     #I "../../out/lib/net40"
-    #load @"..\..\packages\MathNet.Numerics.FSharp.3.2.1\MathNet.Numerics.fsx"
+    #load @"..\..\packages\MathNet.Numerics.FSharp.4.6.0\MathNet.Numerics.fsx"
     #load @"..\..\src\Symbolics\MathNet.Symbolics.fsx"
 
 With NuGet you can start quickly by installing the `MathNet.Symbolics` package,
@@ -41,8 +41,8 @@ which automatically loads its dependencies `MathNet.Numerics` and `MathNet.Numer
 In F# interactive you can reference them by loading two scripts, along the lines of
 
     [lang=text]
-    #load @"..\..\packages\MathNet.Numerics.FSharp.3.8.0\MathNet.Numerics.fsx"
-    #load @"..\..\packages\MathNet.Symbolics.0.9.0\MathNet.Symbolics.fsx"
+    #load @"..\..\packages\MathNet.Numerics.FSharp.4.6.0\MathNet.Numerics.fsx"
+    #load @"..\..\packages\MathNet.Symbolics.0.19.0\MathNet.Symbolics.fsx"
 
 To get started, open the namespaces and the Operators module and declare the variables
 and constants you intend to use as symbols:
@@ -162,30 +162,27 @@ almost exactly the same way. The equivalent C# code to the F# code above could l
 
     [lang=csharp]
     using MathNet.Symbolics;
-    using Expr = MathNet.Symbolics.Expression;
+    using Expr = MathNet.Symbolics.SymbolicExpression;
 
-    var x = Expr.Symbol("x");
-    var y = Expr.Symbol("y");
-    var z = Expr.Symbol("z");
-    var a = Expr.Symbol("a");
-    var b = Expr.Symbol("b");
-    var c = Expr.Symbol("c");
-    var d = Expr.Symbol("d");
-    var e = Expr.Symbol("e");
-    var f = Expr.Symbol("f");
+    var x = Expr.Variable("x");
+    var y = Expr.Variable("y");
+    var a = Expr.Variable("a");
+    var b = Expr.Variable("b");
+    var c = Expr.Variable("c");
+    var d = Expr.Variable("d");
 
-    Infix.Format(a + a);                    // returns 2*a
-    Infix.Format(a * a);                    // returns a^2
-    Infix.Format(2 + 1 / x - 1);            // returns 1 + 1/x
-    Infix.Format((a / b / (c * a)) * (c * d / a) / d);  // returns 1/(a*b)
+    (a + a).ToString();           // returns string "2*a"
+    (a * a).ToString();           // returns string "a^2"
+    (2 + 1 / x - 1).ToString();   // returns string "1 + 1/x"
+    ((a / b / (c * a)) * (c * d / a) / d).ToString();   // returns string "1/(a*b)"
 
-    Infix.Format(1 / (a * b));        // returns string "1/(a*b)"
-    Infix.FormatStrict(1 / (a * b));  // returns string "a^(-1)*b^(-1)"
-    LaTeX.Format(1 / (a * b));        // returns string "\frac{1}{ab}"
+    (1 / (a * b)).ToString();      // returns string "1/(a*b)"
+    (1 / (a * b)).ToInternalString();  // returns string "a^(-1)*b^(-1)"
+    (1 / (a * b)).ToLaTeX();       // returns string "\frac{1}{ab}"
 
-    Infix.Format(Infix.ParseOrUndefined("1/(a*b)")); // Returns 1/(a*b)
-    Infix.Format(Infix.ParseOrUndefined("1/(a*b"));  // Returns Undefined
-    Infix.Format(Infix.ParseOrThrow("1/(a*b)"));     // Returns 1/(a*b)
+    Infix.Format(Infix.ParseOrUndefined("1/(a*b)")); // Returns string "1/(a*b)"
+    Infix.Format(Infix.ParseOrUndefined("1/(a*b"));  // Returns string "Undefined"
+    Infix.Format(Infix.ParseOrThrow("1/(a*b)"));     // Returns string "1/(a*b)"
 
     var symbols = new Dictionary<string,FloatingPoint>
        {{ "a", 2.0 },
@@ -194,24 +191,24 @@ almost exactly the same way. The equivalent C# code to the F# code above could l
     // Returns 0.166666666666667
     Evaluate.Evaluate(symbols, 1/(a*b)).RealValue;
 
-    // Returns 3/8 + (1/2)*cos(2*x) + (1/8)*cos(4*x)
+    // Returns string "3/8 + cos(2*x)/2 + cos(4*x)/8"
     Infix.Format(Trigonometric.Contract(Expr.Pow(Expr.Cos(x), 4)));
 
     // Taylor Expansion
-    Expr Taylor(int k, Expr symbol, Expr a, Expr x)
+    Expr Taylor(int k, Expr symbol, Expr al, Expr xl)
     {
         int factorial = 1;
         Expr accumulator = Expr.Zero;
-        Expr derivative = x;
-        for(int i=0; i<k; i++)
+        Expr derivative = xl;
+        for (int i = 0; i < k; i++)
         {
-            var subs = Structure.Substitute(symbol, a, derivative);
-            derivative = Calculus.Differentiate(symbol, derivative);
-            accumulator = accumulator + subs/factorial*Expr.Pow(symbol-a,i);
-            factorial *= (i+1);
+            var subs = derivative.Substitute(symbol, al);
+            derivative = derivative.Differentiate(symbol);
+            accumulator = accumulator + subs / factorial * ((symbol - al).Pow(i));
+            factorial *= (i + 1);
         }
-        return Algebraic.Expand(accumulator);
+        return accumulator.Expand();
     }
 
-    // Returns 1 + x - (1/2)*x^2 - (1/6)*x^3
-    Infix.Format(Taylor(4, x, 0, Expr.Sin(x)+Expr.Cos(x)));
+    // Returns string "1 + x - x^2/2 - x^3/6"
+    Taylor(4, x, 0, x.Sin() + x.Cos()).ToString();
