@@ -21,7 +21,7 @@ Core Package:
 Platform Support and Dependencies
 ---------------------------------
 
-- .Net 4.0 and Mono: Windows, Linux and Mac.
+- .NETFramework 4.5, .NETFramework 4.6.1 and .NETStandard 2.0
 
 Package Dependencies:
 
@@ -55,16 +55,12 @@ and constants you intend to use as symbols:
 
     let x = symbol "x"
     let y = symbol "y"
-    let z = symbol "z"
     let a = symbol "a"
     let b = symbol "b"
     let c = symbol "c"
     let d = symbol "d"
-    let e = symbol "e"
-    let f = symbol "f"
 
 Then we're all set to start writing expressions:
-
 
     a + a                  // returns 2*a
     a * a                  // returns a^2
@@ -82,7 +78,6 @@ internal representation:
     LaTeX.format (1/(a*b))        // returns string "\frac{1}{ab}"
 
 Strings in infix notation can be parsed back into expressions:
-
 
     Infix.parse "1/(a*b)"     // Returns ParsedExpression 1/(a*b)
     Infix.parse "1/(a*b"      // Returns ParseFailure, 7: Expecting infix operator or ')'
@@ -130,7 +125,7 @@ There are various modules to help you combine and manipulate expressions:
 For example, let's try to contract the trigonometric expression $(\cos{x})^4$
 into $\frac{3}{8} + \frac{1}{2}\cos{2x} + \frac{1}{8}\cos{4x}$:
 
-    Trigonometric.contract (cos(x)**4)  // Returns 3/8 + (1/2)*cos(2*x) + (1/8)*cos(4*x)
+    Trigonometric.contract (cos(x)**4)  // Returns 3/8 + cos(2*x)/2 + cos(4*x)/8
 
 ### Algebraic Algorithms
 
@@ -152,7 +147,7 @@ and the differentiate routine to evaluate the partial derivative $\frac{\partial
 
 Let's use this routine to approximate $\sin{x}+\cos{x}$ at $x = 0$ using the first 4 derivatives:
 
-    taylor 4 x 0Q (sin(x)+cos(x))  // Returns 1 + x - (1/2)*x^2 - (1/6)*x^3
+    taylor 4 x 0Q (sin(x)+cos(x))  // Returns 1 + x - x^2/2 - x^3/6
 
 Math.NET Symbolics with C#
 --------------------------
@@ -189,10 +184,10 @@ almost exactly the same way. The equivalent C# code to the F# code above could l
         { "b", 3.0 }};
 
     // Returns 0.166666666666667
-    Evaluate.Evaluate(symbols, 1/(a*b)).RealValue;
+    (1 / (a * b)).Evaluate(symbols).RealValue;
 
     // Returns string "3/8 + cos(2*x)/2 + cos(4*x)/8"
-    Infix.Format(Trigonometric.Contract(Expr.Pow(Expr.Cos(x), 4)));
+    x.Cos().Pow(4).TrigonometricContract().ToString();
 
     // Taylor Expansion
     Expr Taylor(int k, Expr symbol, Expr al, Expr xl)
@@ -212,3 +207,82 @@ almost exactly the same way. The equivalent C# code to the F# code above could l
 
     // Returns string "1 + x - x^2/2 - x^3/6"
     Taylor(4, x, 0, x.Sin() + x.Cos()).ToString();
+
+Code for C++/CLI project is almost exactly the same but there are some things that worth to mention separately:
+
+1.NuGet package manager doesn't have support for C++/CLI projects yet. So if you try to install the package with NuGet you may see the next message:
+
+> Could not install package 'MathNet.Symbolics 0.19.0'. You are trying to install this package into a project that targets 'native,Version=v0.0', but the package does not contain any assembly references or content files that are compatible with that framework.
+
+There are other ways to add the library to the project:
+
+* Use other dependency manager like [Paket](https://fsprojects.github.io/Paket/).
+* Add references manually:
+   1. Download packages. Although NuGet cannot include packages to the project it is downloading them to common package directory anyway.
+   2. Right click on the project in the Solution Explorer
+   3. Add -> References...
+   4. Click Browse button
+   5. Navigate to packages directory.
+   5. Add reference to the next dlls:
+	   - FParsec.dll
+	   - FParsecCS.dll
+	   - FSharp.Core.dll
+	   - MathNet.Numerics.FSharp.dll
+	   - MathNet.Symbolics.dll
+
+Also to avoid version conflict of FSharp.Core you have to set `AutoGenerateBindingRedirects` to `true`. Put the instruction in your .vcxproj file under "Globals" property section:
+
+	<PropertyGroup Label="Globals">
+		...
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+
+2. Instead of using `+` and `-` operators it's better to choose `Add` and `Subtract` methods to get away from warning about matching more than one operator.
+
+	[lang=cpp]
+	auto x = SymbolicExpression::Variable("x");
+	auto y = SymbolicExpression::Variable("y");
+	auto a = SymbolicExpression::Variable("a");
+	auto b = SymbolicExpression::Variable("b");
+	auto c = SymbolicExpression::Variable("c");
+	auto d = SymbolicExpression::Variable("d");
+
+	a->Add(a)->ToString();                // returns string "2*a"
+	(a * a)->ToString();                  // returns string "a^2"
+	(2 + 1 / x)->Subtract(1)->ToString(); // returns string "1 + 1/x"
+	((a / b / (c * a)) * (c * d / a) / d)->ToString();   // returns 1/(a*b)
+
+	(1 / (a * b))->ToString();          // returns string "1/(a*b)"
+	(1 / (a * b))->ToInternalString();  // returns string "a^(-1)*b^(-1)"
+	(1 / (a * b))->ToLaTeX();           // returns string "\frac{1}{ab}"
+
+	Infix::Format(Infix::ParseOrUndefined("1/(a*b)")); // Returns string "1/(a*b)"
+	Infix::Format(Infix::ParseOrUndefined("1/(a*b"));  // Returns string "Undefined"
+	Infix::Format(Infix::ParseOrThrow("1/(a*b)"));     // Returns string "1/(a*b)"
+
+	auto symbols = gcnew Dictionary<String^, FloatingPoint^>;
+	symbols->Add("a", 2.0);
+	symbols->Add("b", 3.0);
+
+	// Returns 0.166666666666667
+	(1 / (a * b))->Evaluate(symbols)->RealValue;
+
+	// Returns string "3/8 + cos(2*x)/2 + cos(4*x)/8"
+	x->Cos()->Pow(4)->TrigonometricContract()->ToString();
+
+	SymbolicExpression^ Taylor(int k, SymbolicExpression^ symbol, SymbolicExpression^ a, SymbolicExpression^ x)
+	{
+		int factorial = 1;
+		auto accumulator = SymbolicExpression::Zero;
+		auto derivative = x;
+		for (int i = 0; i < k; i++)
+		{
+			auto subs = derivative->Substitute(symbol, a);
+			derivative = derivative->Differentiate(symbol);
+			accumulator = accumulator->Add(subs / factorial * (symbol->Subtract(a))->Pow(i));
+			factorial *= (i + 1);
+		}
+		return accumulator->Expand();
+	}
+
+	// Returns string "1 + x - x^2/2 - x^3/6"
+	Taylor(4, x, 0, x->Sin()->Add(x->Cos()))->ToString();
