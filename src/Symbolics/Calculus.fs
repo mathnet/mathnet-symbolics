@@ -55,6 +55,8 @@ module Calculus =
         | FunctionN (BesselY, [nu; x]) -> (differentiate symbol x) * ((bessely (nu - 1Q) x) - (bessely (nu + 1Q) x)) / 2Q
         | FunctionN (BesselI, [nu; x]) -> (differentiate symbol x) * ((besseli (nu - 1Q) x) + (besseli (nu + 1Q) x)) / 2Q
         | FunctionN (BesselK, [nu; x]) -> (differentiate symbol x) * (-(besselk (nu - 1Q) x) - (besselk (nu + 1Q) x)) / 2Q
+        | FunctionN (BesselIRatio, [nu; x]) -> (differentiate symbol x) * ((pow (besseli nu x) 2Q) + (besseli (nu + 2Q) x) * (besseli nu x) - (besseli (nu + 1Q) x) * (besseli (nu - 1Q) x) - (pow (besseli (nu + 1Q) x) 2Q)) / (2Q * (pow (besseli nu x) 2Q))
+        | FunctionN (BesselKRatio, [nu; x]) -> -(differentiate symbol x) * ((pow (besselk nu x) 2Q) + (besselk (nu + 2Q) x) * (besselk nu x) - (besselk (nu + 1Q) x) * (besselk (nu - 1Q) x) - (pow (besselk (nu + 1Q) x) 2Q)) / (2Q * (pow (besselk nu x) 2Q))
         | FunctionN (HankelH1, [nu; x]) -> (differentiate symbol x) * ((hankelh1 (nu - 1Q) x) - (hankelh1 (nu + 1Q) x)) / 2Q
         | FunctionN (HankelH2, [nu; x]) -> (differentiate symbol x) * ((hankelh2 (nu - 1Q) x) - (hankelh2 (nu + 1Q) x)) / 2Q
         | FunctionN (_) -> failwith "not supported"

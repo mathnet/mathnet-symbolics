@@ -206,6 +206,8 @@ type DefaultVisualStyle() =
         | BesselY -> "bessely"
         | BesselI -> "besseli"
         | BesselK -> "besselk"
+        | BesselIRatio -> "besseliratio"
+        | BesselKRatio -> "besselkratio"
         | HankelH1 -> "hankelh1"
         | HankelH2 -> "hankelh2"
 

@@ -31,6 +31,8 @@ module private LaTeXFormatter =
         | "bessely" -> "\\bessely"
         | "besseli" -> "\\besseli"
         | "besselk" -> "\\besselk"
+        | "besseliratio" -> "\\besseliratio"
+        | "besselkratio" -> "\\besselkratio"
         | "hankelh1" -> "\\hankelh1"
         | "hankelh2" -> "\\hankelh2"
         | x -> sprintf "\\operatorname{%s}" x
@@ -189,6 +191,60 @@ module private LaTeXFormatter =
                 write "}{"
                 format write x
                 write "}"
+        | VisualExpression.FunctionN ("besseliratio", [nu; x]) ->
+            write "\\frac{"
+            write "\\I_{"
+            format write nu
+            write " + 1"
+            match x with
+            | VisualExpression.Sum _ ->
+                write "}\\left("
+                format write x
+                write "\\right)"
+            | _ ->
+                write "}{"
+                format write x
+                write "}"
+            write "}{"
+            write "\\I_{"
+            format write nu
+            match x with
+            | VisualExpression.Sum _ ->
+                write "}\\left("
+                format write x
+                write "\\right)"
+            | _ ->
+                write "}{"
+                format write x
+                write "}"
+            write "}"
+        | VisualExpression.FunctionN ("besselkratio", [nu; x]) -> 
+            write "\\frac{"
+            write "\\K_{"
+            format write nu
+            write " + 1"
+            match x with
+            | VisualExpression.Sum _ ->
+                write "}\\left("
+                format write x
+                write "\\right)"
+            | _ ->
+                write "}{"
+                format write x
+                write "}"
+            write "}{"
+            write "\\K_{"
+            format write nu
+            match x with
+            | VisualExpression.Sum _ ->
+                write "}\\left("
+                format write x
+                write "\\right)"
+            | _ ->
+                write "}{"
+                format write x
+                write "}"
+            write "}"
         | VisualExpression.FunctionN ("hankelh1", [nu; x]) ->
             write "\\H^{(1)}_{"
             format write nu
