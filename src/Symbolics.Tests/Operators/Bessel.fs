@@ -6,6 +6,46 @@ open Operators
 
 let tests =
     testList "Bessel" [
+        testList "AiryAi" [
+            test "Calculus" {
+                Calculus.differentiate x (airyai (sqrt x)) ==> "airyaiprime(sqrt(x))/(2*sqrt(x))"
+            }
+
+            test "Latex Format" {
+                LaTeX.format (airyai x) --> "\\Ai{x}"
+            }
+        ]
+
+        testList "AiryAiPrime" [
+            test "Calculus" {
+                Calculus.differentiate x (airyaiprime (sqrt x)) ==> "airyai(sqrt(x))/2"
+            }
+
+            test "Latex Format" {
+                LaTeX.format (airyaiprime x) --> "\\Ai^\prime{x}"
+            }
+        ]
+
+        testList "AiryBi" [
+            test "Calculus" {
+                Calculus.differentiate x (airybi (sqrt x)) ==> "airybiprime(sqrt(x))/(2*sqrt(x))"
+            }
+
+            test "Latex Format" {
+                LaTeX.format (airybi x) --> "\\Bi{x}"
+            }
+        ]
+
+        testList "AiryBiPrime" [
+            test "Calculus" {
+                Calculus.differentiate x (airybiprime (sqrt x)) ==> "airybi(sqrt(x))/2"
+            }
+
+            test "Latex Format" {
+                LaTeX.format (airybiprime x) --> "\\Bi^\prime{x}"
+            }
+        ]
+
         testList "BesselJ" [
             test "Special Values" {
                 besselj 0Q 0Q ==> "1"

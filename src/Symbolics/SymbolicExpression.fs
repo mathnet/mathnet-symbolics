@@ -235,6 +235,11 @@ type SymbolicExpression(expression:Expression) =
     member this.ArcSech() = SymbolicExpression(Expression.ArcSech(expression))
     member this.ArcCoth() = SymbolicExpression(Expression.ArcCoth(expression))
 
+    member this.AiryAi() = SymbolicExpression(Expression.AiryAi(expression))
+    member this.AiryAiPrime() = SymbolicExpression(Expression.AiryAiPrime(expression))
+    member this.AiryBi() = SymbolicExpression(Expression.AiryBi(expression))
+    member this.AiryBiPrime() = SymbolicExpression(Expression.AiryBiPrime(expression))
+
     member this.BesselJ(n:SymbolicExpression) = SymbolicExpression(Expression.BesselJ(n.Expression, expression))
     member this.BesselY(n:SymbolicExpression) = SymbolicExpression(Expression.BesselY(n.Expression, expression))
     member this.BesselI(n:SymbolicExpression) = SymbolicExpression(Expression.BesselI(n.Expression, expression))

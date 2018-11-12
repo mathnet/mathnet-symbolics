@@ -147,6 +147,19 @@ module Approximation =
         | Real a -> Real (Trig.Acoth a)
         | Complex a -> Complex (Trig.Acoth a)
 
+    let airyai = function
+        | Real a -> Real (SpecialFunctions.AiryAi a)
+        | Complex a -> Complex (SpecialFunctions.AiryAi a)
+    let airyaiprime = function
+        | Real a -> Real (SpecialFunctions.AiryAiPrime a)
+        | Complex a -> Complex (SpecialFunctions.AiryAiPrime a)
+    let airybi = function
+        | Real a -> Real (SpecialFunctions.AiryBi a)
+        | Complex a -> Complex (SpecialFunctions.AiryBi a)
+    let airybiprime = function
+        | Real a -> Real (SpecialFunctions.AiryBiPrime a)
+        | Complex a -> Complex (SpecialFunctions.AiryBiPrime a)
+
     let besselj nu z =
         match nu, z with
         | Real a, Real b -> Real (SpecialFunctions.BesselJ (a, b));
@@ -226,6 +239,10 @@ module Approximation =
         | Acsch -> acsch a
         | Asech -> asech a
         | Acoth -> acoth a
+        | AiryAi -> airyai a
+        | AiryAiPrime -> airyaiprime a
+        | AiryBi -> airybi a
+        | AiryBiPrime -> airybiprime a
         | _ -> failwith "not supported"
 
     let applyN f xs =
