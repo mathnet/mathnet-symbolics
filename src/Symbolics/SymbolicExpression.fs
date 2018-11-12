@@ -239,6 +239,8 @@ type SymbolicExpression(expression:Expression) =
     member this.BesselY(n:SymbolicExpression) = SymbolicExpression(Expression.BesselY(n.Expression, expression))
     member this.BesselI(n:SymbolicExpression) = SymbolicExpression(Expression.BesselI(n.Expression, expression))
     member this.BesselK(n:SymbolicExpression) = SymbolicExpression(Expression.BesselK(n.Expression, expression))
+    member this.BesselIRatio(n:SymbolicExpression) = SymbolicExpression(Expression.BesselIRatio(n.Expression, expression))
+    member this.BesselKRatio(n:SymbolicExpression) = SymbolicExpression(Expression.BesselKRatio(n.Expression, expression))
     member this.HankelH1(n:SymbolicExpression) = SymbolicExpression(Expression.HankelH1(n.Expression, expression))
     member this.HankelH2(n:SymbolicExpression) = SymbolicExpression(Expression.HankelH2(n.Expression, expression))
 

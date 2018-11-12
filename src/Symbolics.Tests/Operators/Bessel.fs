@@ -90,6 +90,26 @@ let tests =
             }
         ]
 
+        testList "BesselIRatio" [
+            test "Calculus" {
+                Calculus.differentiate x (besseliratio n (sqrt x)) ==> "((besseli(n,sqrt(x)))^2 - besseli(-1 + n,sqrt(x))*besseli(1 + n,sqrt(x)) - (besseli(1 + n,sqrt(x)))^2 + besseli(n,sqrt(x))*besseli(2 + n,sqrt(x)))/(4*sqrt(x)*(besseli(n,sqrt(x)))^2)"
+            }
+
+            test "Latex Format" {
+                LaTeX.format (besseliratio n x) --> "\\frac{\I_{n + 1}{x}}{\I_{n}{x}}"
+            }
+        ]
+
+        testList "BesselKRatio" [
+            test "Calculus" {
+                Calculus.differentiate x (besselkratio n (sqrt x)) ==> "-((besselk(n,sqrt(x)))^2 - besselk(-1 + n,sqrt(x))*besselk(1 + n,sqrt(x)) - (besselk(1 + n,sqrt(x)))^2 + besselk(n,sqrt(x))*besselk(2 + n,sqrt(x)))/(4*sqrt(x)*(besselk(n,sqrt(x)))^2)"
+            }
+
+            test "Latex Format" {
+                LaTeX.format (besselkratio n x) --> "\\frac{\K_{n + 1}{x}}{\K_{n}{x}}"
+            }
+        ]
+
         testList "HankelH1" [
             test "Special Values" {
                 hankelh1 0Q 0Q ==> "⧝"

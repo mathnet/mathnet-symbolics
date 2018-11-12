@@ -741,7 +741,7 @@ module Operators =
         | Positive, Zero -> zero // I(n, 0) = 0 for n > 0
         | Number n, _  when n.IsNegative -> besseli (Number -n) x // I(-n, x) = I(n, x)
         | Product ((Number n)::ax), _ when n.IsNegative -> besseli (multiply (Number -n) (Product ax)) x
-        | _, _ -> FunctionN (BesselI, [nu; x])    
+        | _, _ -> FunctionN (BesselI, [nu; x])  
     let rec besselk nu x = 
         match nu, x with
         | Undefined, _ -> undefined
@@ -751,6 +751,18 @@ module Operators =
         | Number n, _  when n.IsNegative -> besselk (Number -n) x // K(-n, x) = K(n, x)
         | Product ((Number n)::ax), _ when n.IsNegative -> besselk (multiply (Number -n) (Product ax)) x
         | _, _ -> FunctionN (BesselK, [nu; x])
+    let rec besseliratio nu x = 
+        match nu, x with
+        | Undefined, _ -> undefined
+        | _, Undefined -> undefined
+        | Zero, Zero -> zero // I(1, 0) / I(0, 0) = 0 
+        | _, _ -> FunctionN (BesselIRatio, [nu; x])
+    let rec besselkratio nu x = 
+        match nu, x with
+        | Undefined, _ -> undefined
+        | _, Undefined -> undefined
+        | _, Zero -> undefined
+        | _, _ -> FunctionN (BesselKRatio, [nu; x])
     let rec hankelh1 nu x = 
         match nu, x with
         | Undefined, _ -> undefined
@@ -798,7 +810,7 @@ module Operators =
         | Acsch -> arccsch x
         | Asech -> arcsech x
         | Acoth -> arccoth x
-
+        | _ -> failwith "not supported"
 
     let applyN (f: Function) (xs: Expression list) =
         match f, xs with
@@ -806,8 +818,10 @@ module Operators =
         | Log, [b; x] -> log b x
         | BesselJ, [nu; x] -> besselj nu x
         | BesselY, [nu; x] -> bessely nu x
-        | BesselI, [nu; x] -> besseli nu x
+        | BesselI, [nu; x] -> besseli nu x        
         | BesselK, [nu; x] -> besselk nu x
+        | BesselIRatio, [nu; x] -> besseliratio nu x
+        | BesselKRatio, [nu; x] -> besselkratio nu x
         | HankelH1, [nu; x] -> hankelh1 nu x
         | HankelH2, [nu; x] -> hankelh2 nu x
         | _ -> failwith "not supported"
@@ -879,10 +893,13 @@ type Expression with
     static member ArcSech (x) = Operators.arcsech x
     static member ArcCoth (x) = Operators.arccoth x
 
-    static member BesselJ (n, x) = Operators.besselj n x // Bessel Function of the First Kind
-    static member BesselY (n, x) = Operators.bessely n x // Bessel Function of the Second Kind
-    static member BesselI (n, x) = Operators.besseli n x // Modified Bessel Function of the First Kind    
-    static member BesselK (n, x) = Operators.besselk n x // Modified Bessel Function of the Second Kind
+    static member BesselJ (n, x) = Operators.besselj n x // Bessel function of the first kind
+    static member BesselY (n, x) = Operators.bessely n x // Bessel function of the second kind
+    static member BesselI (n, x) = Operators.besseli n x // Modified Bessel function of the first kind    
+    static member BesselK (n, x) = Operators.besselk n x // Modified Bessel function of the second kind    
+    static member BesselIRatio (n, x) = Operators.besseliratio n x // Ratio of modified Bessel function of the first kind    
+    static member BesselKRatio (n, x) = Operators.besselkratio n x // Ratio of modified Bessel function of the second kind
+
     static member HankelH1 (n, x) = Operators.hankelh1 n x // Hankel Function of the First Kind
     static member HankelH2 (n, x) = Operators.hankelh2 n x // Hankel Function of the Second Kind
 

@@ -163,13 +163,25 @@ module Approximation =
         match nu, z with
         | Real a, Real b -> Real (SpecialFunctions.BesselI (a, b));
         | Real a, Complex b -> Complex (SpecialFunctions.BesselI (a, b));
-        | Complex a, Real b -> failwith "not supported"  
-        | Complex a, Complex b -> failwith "not supported"
+        | Complex a, Real b -> failwith "not supported"
+        | Complex a, Complex b -> failwith "not supported"    
     let besselk nu z =
         match nu, z with
         | Real a, Real b -> Real (SpecialFunctions.BesselK (a, b));
         | Real a, Complex b -> Complex (SpecialFunctions.BesselK (a, b));
         | Complex a, Real b -> failwith "not supported"  
+        | Complex a, Complex b -> failwith "not supported"
+    let besseliratio nu z =
+        match nu, z with
+        | Real a, Real b -> Real (SpecialFunctions.BesselIScaled (a + 1.0, b) / SpecialFunctions.BesselIScaled (a, b));
+        | Real a, Complex b -> Complex (SpecialFunctions.BesselIScaled (a + 1.0, b) / SpecialFunctions.BesselIScaled (a, b));
+        | Complex a, Real b -> failwith "not supported"
+        | Complex a, Complex b -> failwith "not supported"
+    let besselkratio nu z =
+        match nu, z with
+        | Real a, Real b -> Real (SpecialFunctions.BesselKScaled (a + 1.0, b) / SpecialFunctions.BesselKScaled (a, b));
+        | Real a, Complex b -> Complex (SpecialFunctions.BesselKScaled (a + 1.0, b) / SpecialFunctions.BesselKScaled (a, b));
+        | Complex a, Real b -> failwith "not supported"
         | Complex a, Complex b -> failwith "not supported"
     let hankelh1 nu z =
         match nu, z with
@@ -224,6 +236,8 @@ module Approximation =
         | BesselY, [nu; x] -> bessely nu x
         | BesselI, [nu; x] -> besseli nu x
         | BesselK, [nu; x] -> besselk nu x
+        | BesselIRatio, [nu; x] -> besseliratio nu x
+        | BesselKRatio, [nu; x] -> besselkratio nu x
         | HankelH1, [nu; x] -> hankelh1 nu x
         | HankelH2, [nu; x] -> hankelh2 nu x
         | _ -> failwith "not supported"

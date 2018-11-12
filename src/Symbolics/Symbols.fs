@@ -17,8 +17,12 @@ type Function =
     | Acsch | Asech | Acoth
     | BesselJ   // Bessel function of the first kind
     | BesselY   // Bessel function of the second kind
-    | BesselI   // Modified Bessel function of the first kind
+    | BesselI   // Modified Bessel function of the first kind and exponentially scaled
     | BesselK   // Modified Bessel function of the second kind
+    | BesselIRatio     // Ratio of modified Bessel function of the first kind,
+                       // BesselIRatio(n, x) is defined as BesselIRatio(n + 1, x) / BesselIRatio(n, x).
+    | BesselKRatio     // Ratio of modified Bessel function of the second kind scaled by exponential
+                       // BesselKRatio(n, x) is defined as BesselKRatio(n + 1, x) / BesselKRatio(n, x).
     | HankelH1  // Hankel function of the first kind
     | HankelH2  // Hankel function of the second kind
 

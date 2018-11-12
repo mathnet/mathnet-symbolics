@@ -203,9 +203,11 @@ module private InfixFormatter =
         | Acosh -> "acosh" | Asinh -> "asinh" | Atanh -> "atanh"
         | Asech -> "asech" | Acsch -> "acsch" | Acoth -> "acoth"
         | BesselJ -> "besselj"
-        | BesselI -> "besseli"
         | BesselY -> "bessely"
+        | BesselI -> "besseli"
         | BesselK -> "besselk"
+        | BesselIRatio -> "besseliratio"
+        | BesselKRatio -> "besselkratio"
         | HankelH1 -> "hankelh1"
         | HankelH2 -> "hankelh2"
 
