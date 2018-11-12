@@ -202,6 +202,8 @@ module private InfixFormatter =
         | Acsc -> "acsc" | Asec -> "asec" | Acot -> "acot"
         | Acosh -> "acosh" | Asinh -> "asinh" | Atanh -> "atanh"
         | Asech -> "asech" | Acsch -> "acsch" | Acoth -> "acoth"
+        | AiryAi -> "airyai" | AiryAiPrime -> "airyaiprime"
+        | AiryBi -> "airybi" | AiryBiPrime -> "airybiprime"
         | BesselJ -> "besselj"
         | BesselY -> "bessely"
         | BesselI -> "besseli"

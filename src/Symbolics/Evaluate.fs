@@ -189,6 +189,14 @@ module Evaluate =
         | Asech, Complex x -> Complex (Trig.Asech(x))
         | Acoth, Real x -> Real (Trig.Acoth(x))
         | Acoth, Complex x -> Complex (Trig.Acoth(x))
+        | AiryAi, Real x -> Real (SpecialFunctions.AiryAi(x))
+        | AiryAi, Complex x -> Complex (SpecialFunctions.AiryAi(x))
+        | AiryAiPrime, Real x -> Real (SpecialFunctions.AiryAiPrime(x))
+        | AiryAiPrime, Complex x -> Complex (SpecialFunctions.AiryAiPrime(x))
+        | AiryBi, Real x -> Real (SpecialFunctions.AiryBi(x))
+        | AiryBi, Complex x -> Complex (SpecialFunctions.AiryBi(x))
+        | AiryBiPrime, Real x -> Real (SpecialFunctions.AiryBiPrime(x))
+        | AiryBiPrime, Complex x -> Complex (SpecialFunctions.AiryBiPrime(x))
         | _ -> failwith "not supported"
 
     let fapplyN f xs =

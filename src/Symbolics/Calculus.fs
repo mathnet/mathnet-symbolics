@@ -49,6 +49,10 @@ module Calculus =
         | Function (Asech, x) -> (differentiate symbol x) * (sqrt((1Q - x) / (x + 1Q))) / ((x - 1Q) * x)
         | Function (Acoth, x) -> (differentiate symbol x) / (1Q - pow x 2Q)
         | Function (Abs, _) -> failwith "not supported"
+        | Function (AiryAi, x) -> (differentiate symbol x) * airyaiprime(x)
+        | Function (AiryAiPrime, x) -> (differentiate symbol x) * x * airyai(x)
+        | Function (AiryBi, x) -> (differentiate symbol x) * airybiprime(x)
+        | Function (AiryBiPrime, x) -> (differentiate symbol x) * x * airybi(x)
         | FunctionN (Atan, [x; y]) -> differentiate symbol (tan (x / y))
         | FunctionN (Log, [b; x]) -> differentiate symbol ((ln x) / (ln b))
         | FunctionN (BesselJ, [nu; x]) -> (differentiate symbol x) * ((besselj (nu - 1Q) x) - (besselj (nu + 1Q) x)) / 2Q

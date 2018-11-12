@@ -711,6 +711,19 @@ module Operators =
         | Product ((Number n)::ax) when n.IsNegative -> Function (Acoth, multiply (Number -n) (Product ax)) |> negate
         | x -> Function (Acoth, x)
 
+    let airyai = function
+        | Undefined | ComplexInfinity -> undefined
+        | x -> Function (AiryAi, x)
+    let airyaiprime = function
+        | Undefined | ComplexInfinity -> undefined
+        | x -> Function (AiryAiPrime, x)
+    let airybi = function
+        | Undefined | ComplexInfinity -> undefined
+        | x -> Function (AiryBi, x)
+    let airybiprime = function
+        | Undefined | ComplexInfinity -> undefined
+        | x -> Function (AiryBiPrime, x)
+
     let rec besselj nu x = 
         match nu, x with
         | Undefined, _ -> undefined
@@ -810,6 +823,10 @@ module Operators =
         | Acsch -> arccsch x
         | Asech -> arcsech x
         | Acoth -> arccoth x
+        | AiryAi -> airyai x
+        | AiryAiPrime -> airyaiprime x
+        | AiryBi -> airybi x
+        | AiryBiPrime -> airybiprime x
         | _ -> failwith "not supported"
 
     let applyN (f: Function) (xs: Expression list) =
@@ -892,6 +909,11 @@ type Expression with
     static member ArcCsch (x) = Operators.arccsch x
     static member ArcSech (x) = Operators.arcsech x
     static member ArcCoth (x) = Operators.arccoth x
+
+    static member AiryAi (x) = Operators.airyai x
+    static member AiryAiPrime (x) = Operators.airyaiprime x
+    static member AiryBi (x) = Operators.airybi x
+    static member AiryBiPrime (x) = Operators.airybiprime x
 
     static member BesselJ (n, x) = Operators.besselj n x // Bessel function of the first kind
     static member BesselY (n, x) = Operators.bessely n x // Bessel function of the second kind

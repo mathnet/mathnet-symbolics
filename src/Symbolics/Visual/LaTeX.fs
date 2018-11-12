@@ -23,18 +23,12 @@ module private LaTeXFormatter =
         | "acsc" -> "\\arccsc" | "asec" -> "\\arcsec" | "acot" -> "\\arccot"
         | "asinh" -> "\\operatorname{arsinh}" | "acosh" -> "\\operatorname{arcosh}" | "atanh" -> "\\operatorname{artanh}"
         | "acsch" -> "\\operatorname{arcsch}" | "asech" -> "\\operatorname{arsech}" | "acoth" -> "\\operatorname{arcoth}"
+        | "airyai" -> "\\Ai" | "airyaiprime" -> "\\Ai^\prime"
+        | "airybi" -> "\\Bi" | "airybiprime" -> "\\Bi^\prime"
         | x -> sprintf "\\operatorname{%s}" x
     let latexFunctionNName = function
         | "log" -> "\\log"
         | "atan" -> "\\operatorname{atan2}"
-        | "besselj" -> "\\besselj"
-        | "bessely" -> "\\bessely"
-        | "besseli" -> "\\besseli"
-        | "besselk" -> "\\besselk"
-        | "besseliratio" -> "\\besseliratio"
-        | "besselkratio" -> "\\besselkratio"
-        | "hankelh1" -> "\\hankelh1"
-        | "hankelh2" -> "\\hankelh2"
         | x -> sprintf "\\operatorname{%s}" x
 
     let private dropParenthesis = function

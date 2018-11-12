@@ -15,6 +15,10 @@ type Function =
     | Acsc | Asec | Acot
     | Asinh | Acosh | Atanh
     | Acsch | Asech | Acoth
+    | AiryAi // Airy function Ai
+    | AiryAiPrime // Derivative of Airy function Ai
+    | AiryBi // Airy function Bi
+    | AiryBiPrime // Derivative of Airy function Bi
     | BesselJ   // Bessel function of the first kind
     | BesselY   // Bessel function of the second kind
     | BesselI   // Modified Bessel function of the first kind and exponentially scaled
