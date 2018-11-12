@@ -149,40 +149,40 @@ module Approximation =
 
     let besselj nu z =
         match nu, z with
-        | Real a, Real b -> failwith "not supported"        // Real (Bessel.BesselJ (a, b))
-        | Real a, Complex b -> failwith "not supported"     // Complex (Bessel.BesselJ (a, b))
-        | Complex a, Real b -> failwith "not supported"     // Complex (Bessel.BesselJ (a, b))
-        | Complex a, Complex b -> failwith "not supported"  // Complex (Bessel.BesselJ (a, b))
+        | Real a, Real b -> Real (SpecialFunctions.BesselJ (a, b));
+        | Real a, Complex b -> Complex (SpecialFunctions.BesselJ (a, b));
+        | Complex a, Real b -> failwith "not supported"     
+        | Complex a, Complex b -> failwith "not supported"  
     let bessely nu z =
         match nu, z with
-        | Real a, Real b -> failwith "not supported"        // Real (Bessel.BesselY (a, b))
-        | Real a, Complex b -> failwith "not supported"     // Complex (Bessel.BesselY (a, b))
-        | Complex a, Real b -> failwith "not supported"     // Complex (Bessel.BesselY (a, b))
-        | Complex a, Complex b -> failwith "not supported"  // Complex (Bessel.BesselY (a, b))
+        | Real a, Real b -> Real (SpecialFunctions.BesselY (a, b));
+        | Real a, Complex b -> Complex (SpecialFunctions.BesselY (a, b));
+        | Complex a, Real b -> failwith "not supported" 
+        | Complex a, Complex b -> failwith "not supported"
     let besseli nu z =
         match nu, z with
-        | Real a, Real b -> failwith "not supported"        // Real (Bessel.BesselI (a, b))
-        | Real a, Complex b -> failwith "not supported"     // Complex (Bessel.BesselI (a, b))
-        | Complex a, Real b -> failwith "not supported"     // Complex (Bessel.BesselI (a, b))
-        | Complex a, Complex b -> failwith "not supported"  // Complex (Bessel.BesselI (a, b))
+        | Real a, Real b -> Real (SpecialFunctions.BesselI (a, b));
+        | Real a, Complex b -> Complex (SpecialFunctions.BesselI (a, b));
+        | Complex a, Real b -> failwith "not supported"  
+        | Complex a, Complex b -> failwith "not supported"
     let besselk nu z =
         match nu, z with
-        | Real a, Real b -> failwith "not supported"        // Real (Bessel.BesselK (a, b))
-        | Real a, Complex b -> failwith "not supported"     // Complex (Bessel.BesselK (a, b))
-        | Complex a, Real b -> failwith "not supported"     // Complex (Bessel.BesselK (a, b))
-        | Complex a, Complex b -> failwith "not supported"  // Complex (Bessel.BesselK (a, b))
+        | Real a, Real b -> Real (SpecialFunctions.BesselK (a, b));
+        | Real a, Complex b -> Complex (SpecialFunctions.BesselK (a, b));
+        | Complex a, Real b -> failwith "not supported"  
+        | Complex a, Complex b -> failwith "not supported"
     let hankelh1 nu z =
         match nu, z with
-        | Real a, Real b -> failwith "not supported"        // Real (Bessel.HankelH1 (a, b))
-        | Real a, Complex b -> failwith "not supported"     // Complex (Bessel.HankelH1 (a, b))
-        | Complex a, Real b -> failwith "not supported"     // Complex (Bessel.HankelH1 (a, b))
-        | Complex a, Complex b -> failwith "not supported"  // Complex (Bessel.HankelH1 (a, b))
+        | Real a, Real b -> Complex (SpecialFunctions.HankelH1 (a, complex b 0.0));
+        | Real a, Complex b -> Complex (SpecialFunctions.HankelH1 (a, b));
+        | Complex a, Real b -> failwith "not supported"
+        | Complex a, Complex b -> failwith "not supported"
     let hankelh2 nu z =
         match nu, z with
-        | Real a, Real b -> failwith "not supported"        // Real (Bessel.HankelH2 (a, b))
-        | Real a, Complex b -> failwith "not supported"     // Complex (Bessel.HankelH2 (a, b))
-        | Complex a, Real b -> failwith "not supported"     // Complex (Bessel.HankelH2 (a, b))
-        | Complex a, Complex b -> failwith "not supported"  // Complex (Bessel.HankelH2 (a, b))
+        | Real a, Real b -> Complex (SpecialFunctions.HankelH2 (a, complex b 0.0));
+        | Real a, Complex b -> Complex (SpecialFunctions.HankelH2 (a, b));
+        | Complex a, Real b -> failwith "not supported"
+        | Complex a, Complex b -> failwith "not supported"
 
     let apply f a =
         match f with
@@ -214,6 +214,7 @@ module Approximation =
         | Acsch -> acsch a
         | Asech -> asech a
         | Acoth -> acoth a
+        | _ -> failwith "not supported"
 
     let applyN f xs =
         match f, xs with
