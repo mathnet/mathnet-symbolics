@@ -149,7 +149,7 @@ Let's use this routine to approximate $\sin{x}+\cos{x}$ at $x = 0$ using the fir
 
     taylor 4 x 0Q (sin(x)+cos(x))  // Returns 1 + x - x^2/2 - x^3/6
 
-Math.NET Symbolics with C#
+##### Math.NET Symbolics with C#, VB.NET and C++/CLI
 --------------------------
 
 Even though Math.NET Symbolics is written entirely in F#, it can be used in C#
@@ -238,7 +238,9 @@ Also to avoid version conflict of FSharp.Core you have to set `AutoGenerateBindi
 
 2. Instead of using `+` and `-` operators it's better to choose `Add` and `Subtract` methods to get away from warning about matching more than one operator.
 
-	[lang=cpp]
+Here is F# sample translated into C++/CLI:
+
+	[lang=c]
 	auto x = SymbolicExpression::Variable("x");
 	auto y = SymbolicExpression::Variable("y");
 	auto a = SymbolicExpression::Variable("a");
@@ -286,3 +288,21 @@ Also to avoid version conflict of FSharp.Core you have to set `AutoGenerateBindi
 
 	// Returns string "1 + x - x^2/2 - x^3/6"
 	Taylor(4, x, 0, x->Sin()->Add(x->Cos()))->ToString();
+
+For VB.NET we won't do the same thing here but instead we just show basic usage for now
+
+    [lang=vb]
+    Imports Expr = MathNet.Symbolics.SymbolicExpression
+    ...
+    Dim x = Expr.Variable("x")
+    Dim a = Expr.Variable("a")
+    Dim b = Expr.Variable("b")
+
+    Dim p = 4 * x.Pow(3) + 3 * x * x
+    Dim d = p.Differentiate("x").Divide(Expr.Parse("6*x")).RationalSimplify("x")
+    d.ToString() ' 1 + 2*x
+    d.ToLaTeX() ' 1 + 2*x
+    Dim symbols = New Dictionary(Of String, FloatingPoint) From {{"a", 2.0}, {"b", 3.0}}
+
+    ' Returns 0.166666666666667
+    (1 / (a * b)).Evaluate(symbols).RealValue
