@@ -137,7 +137,7 @@ module Operators =
     let private four = Number (BigRational.FromInt 4)
     let minusOne = Number (BigRational.FromInt -1)
     let pi = Constant Pi
-
+    
     let symbol (name:string) = Identifier (Symbol name)
 
     let undefined = Expression.Undefined
@@ -713,15 +713,25 @@ module Operators =
 
     let airyai = function
         | Undefined | ComplexInfinity -> undefined
+        | PositiveInfinity | NegativeInfinity -> zero // Ai(oo) = Ai(-oo) = 0
+        //| Zero -> divide (pow three (invert three)) (multiply three (gamma (divide two three)))) // Ai(0) = 3^(1/3)/(3*Gamma(2/3))
         | x -> Function (AiryAi, x)
     let airyaiprime = function
         | Undefined | ComplexInfinity -> undefined
+        | PositiveInfinity -> zero // Ai'(oo) = 0
+        //| Zero -> pow three (invert three)) |> multiply (gamma (invert three)) |> invert |> negate // Ai'(0) = -1/(3^(1/3)*Gamma(1/3))
         | x -> Function (AiryAiPrime, x)
     let airybi = function
         | Undefined | ComplexInfinity -> undefined
+        | PositiveInfinity -> infinity // Bi(oo) = oo
+        | NegativeInfinity -> zero // Bi(-oo) = 0
+        //| Zero -> pow three (invert six)) |> multiply (gamma (divide two three)) |> invert // Bi(0) = 1/(3^(1/6)*Gamma(2/3))
         | x -> Function (AiryBi, x)
     let airybiprime = function
         | Undefined | ComplexInfinity -> undefined
+        | PositiveInfinity -> infinity // Bi'(oo) = oo
+        | NegativeInfinity -> zero // Bi'(-oo) = 0
+        //| Zero -> divide (pow three (invert six)) (gamma (invert three)) // Bi'(0) = 3^(1/6)/Gamma(1/3)
         | x -> Function (AiryBiPrime, x)
 
     let rec besselj nu x = 
@@ -768,13 +778,18 @@ module Operators =
         match nu, x with
         | Undefined, _ -> undefined
         | _, Undefined -> undefined
-        | Zero, Zero -> zero // I(1, 0) / I(0, 0) = 0 
+        | Zero, Zero -> zero // I(1, 0) / I(0, 0) = 0
+        | Number n, _ when n.Numerator = -1I && n.Denominator = 2I -> tanh x // I(1/2, x) / I(-1/2, x) = tanh(x)
+        | Number n, _ when n.Numerator = 1I && n.Denominator = 2I -> subtract (coth x) (invert x) // I(3/2, x) / I(1/2, x) = coth(x) - 1/x
         | _, _ -> FunctionN (BesselIRatio, [nu; x])
     let rec besselkratio nu x = 
         match nu, x with
         | Undefined, _ -> undefined
         | _, Undefined -> undefined
-        | _, Zero -> undefined
+        | Zero, Zero -> undefined // K(1, 0) / K(0, 0) = NaN
+        | Number n, _ when n.Numerator = -1I && n.Denominator = 2I -> one // K(1/2, x) / K(-1/2, x) = 1
+        | Number n, _ when n.Numerator = 1I && n.Denominator = 2I -> add (invert x) one  // K(3/2, x) / K(1/2, x) = 1/x + 1
+        | _, Zero -> undefined        
         | _, _ -> FunctionN (BesselKRatio, [nu; x])
     let rec hankelh1 nu x = 
         match nu, x with
