@@ -23,8 +23,8 @@ module private LaTeXFormatter =
         | "acsc" -> "\\arccsc" | "asec" -> "\\arcsec" | "acot" -> "\\arccot"
         | "asinh" -> "\\operatorname{arsinh}" | "acosh" -> "\\operatorname{arcosh}" | "atanh" -> "\\operatorname{artanh}"
         | "acsch" -> "\\operatorname{arcsch}" | "asech" -> "\\operatorname{arsech}" | "acoth" -> "\\operatorname{arcoth}"
-        | "airyai" -> "\\Ai" | "airyaiprime" -> "\\Ai^\prime"
-        | "airybi" -> "\\Bi" | "airybiprime" -> "\\Bi^\prime"
+        | "airyai" -> "Ai" | "airyaiprime" -> "Ai^\\prime"
+        | "airybi" -> "Bi" | "airybiprime" -> "Bi^\\prime"
         | x -> sprintf "\\operatorname{%s}" x
     let latexFunctionNName = function
         | "log" -> "\\log"
@@ -138,7 +138,7 @@ module private LaTeXFormatter =
                 format write x
                 write "}"
         | VisualExpression.FunctionN ("besselj", [nu; x]) ->
-            write "\\J_{"
+            write "J_{"
             format write nu
             match x with
             | VisualExpression.Sum _ ->
@@ -150,7 +150,7 @@ module private LaTeXFormatter =
                 format write x
                 write "}"
         | VisualExpression.FunctionN ("bessely", [nu; x]) ->
-            write "\\Y_{"
+            write "Y_{"
             format write nu
             match x with
             | VisualExpression.Sum _ ->
@@ -162,7 +162,7 @@ module private LaTeXFormatter =
                 format write x
                 write "}"
         | VisualExpression.FunctionN ("besseli", [nu; x]) ->
-            write "\\I_{"
+            write "I_{"
             format write nu
             match x with
             | VisualExpression.Sum _ ->
@@ -174,7 +174,7 @@ module private LaTeXFormatter =
                 format write x
                 write "}"        
         | VisualExpression.FunctionN ("besselk", [nu; x]) ->
-            write "\\K_{"
+            write "K_{"
             format write nu
             match x with
             | VisualExpression.Sum _ ->
@@ -187,7 +187,7 @@ module private LaTeXFormatter =
                 write "}"
         | VisualExpression.FunctionN ("besseliratio", [nu; x]) ->
             write "\\frac{"
-            write "\\I_{"
+            write "I_{"
             format write nu
             write " + 1"
             match x with
@@ -200,7 +200,7 @@ module private LaTeXFormatter =
                 format write x
                 write "}"
             write "}{"
-            write "\\I_{"
+            write "I_{"
             format write nu
             match x with
             | VisualExpression.Sum _ ->
@@ -214,7 +214,7 @@ module private LaTeXFormatter =
             write "}"
         | VisualExpression.FunctionN ("besselkratio", [nu; x]) -> 
             write "\\frac{"
-            write "\\K_{"
+            write "K_{"
             format write nu
             write " + 1"
             match x with
@@ -227,7 +227,7 @@ module private LaTeXFormatter =
                 format write x
                 write "}"
             write "}{"
-            write "\\K_{"
+            write "K_{"
             format write nu
             match x with
             | VisualExpression.Sum _ ->
@@ -240,7 +240,7 @@ module private LaTeXFormatter =
                 write "}"
             write "}"
         | VisualExpression.FunctionN ("hankelh1", [nu; x]) ->
-            write "\\H^{(1)}_{"
+            write "H^{(1)}_{"
             format write nu
             match x with
             | VisualExpression.Sum _ ->
@@ -252,7 +252,7 @@ module private LaTeXFormatter =
                 format write x
                 write "}"
         | VisualExpression.FunctionN ("hankelh2", [nu; x]) ->
-            write "\\H^{(2)}_{"
+            write "H^{(2)}_{"
             format write nu
             match x with
             | VisualExpression.Sum _ ->

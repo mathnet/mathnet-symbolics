@@ -12,7 +12,7 @@ let tests =
             }
 
             test "Latex Format" {
-                LaTeX.format (airyai x) --> "\\Ai{x}"
+                LaTeX.format (airyai x) --> "Ai{x}"
             }
         ]
 
@@ -22,7 +22,7 @@ let tests =
             }
 
             test "Latex Format" {
-                LaTeX.format (airyaiprime x) --> "\\Ai^\prime{x}"
+                LaTeX.format (airyaiprime x) --> "Ai^\\prime{x}"
             }
         ]
 
@@ -32,7 +32,7 @@ let tests =
             }
 
             test "Latex Format" {
-                LaTeX.format (airybi x) --> "\\Bi{x}"
+                LaTeX.format (airybi x) --> "Bi{x}"
             }
         ]
 
@@ -42,7 +42,7 @@ let tests =
             }
 
             test "Latex Format" {
-                LaTeX.format (airybiprime x) --> "\\Bi^\prime{x}"
+                LaTeX.format (airybiprime x) --> "Bi^\\prime{x}"
             }
         ]
 
@@ -64,7 +64,7 @@ let tests =
             }
 
             test "Latex Format" {
-                LaTeX.format (besselj n x) --> "\J_{n}{x}"
+                LaTeX.format (besselj n x) --> "J_{n}{x}"
             }
         ]
 
@@ -86,7 +86,7 @@ let tests =
             }
 
             test "Latex Format" {
-                LaTeX.format (bessely n x) --> "\Y_{n}{x}"
+                LaTeX.format (bessely n x) --> "Y_{n}{x}"
             }
         ]
 
@@ -106,7 +106,7 @@ let tests =
             }
 
             test "Latex Format" {
-                LaTeX.format (besseli n x) --> "\I_{n}{x}"
+                LaTeX.format (besseli n x) --> "I_{n}{x}"
             }
         ]
 
@@ -126,7 +126,7 @@ let tests =
             }
 
             test "Latex Format" {
-                LaTeX.format (besselk n x) --> "\K_{n}{x}"
+                LaTeX.format (besselk n x) --> "K_{n}{x}"
             }
         ]
 
@@ -142,7 +142,7 @@ let tests =
             }
 
             test "Latex Format" {
-                LaTeX.format (besseliratio n x) --> "\\frac{\I_{n + 1}{x}}{\I_{n}{x}}"
+                LaTeX.format (besseliratio n x) --> "\\frac{I_{n + 1}{x}}{I_{n}{x}}"
             }
         ]
 
@@ -157,7 +157,7 @@ let tests =
             }
 
             test "Latex Format" {
-                LaTeX.format (besselkratio n x) --> "\\frac{\K_{n + 1}{x}}{\K_{n}{x}}"
+                LaTeX.format (besselkratio n x) --> "\\frac{K_{n + 1}{x}}{K_{n}{x}}"
             }
         ]
 
@@ -177,7 +177,7 @@ let tests =
             }
 
             test "Latex Format" {
-                LaTeX.format (hankelh1 n x) --> "\H^{(1)}_{n}{x}"
+                LaTeX.format (hankelh1 n x) --> "H^{(1)}_{n}{x}"
             }
         ]
 
@@ -197,7 +197,7 @@ let tests =
             }
 
             test "Latex Format" {
-                LaTeX.format (hankelh2 n x) --> "\H^{(2)}_{n}{x}"
+                LaTeX.format (hankelh2 n x) --> "H^{(2)}_{n}{x}"
             }
         ]
     ]
