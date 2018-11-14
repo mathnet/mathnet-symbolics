@@ -8,6 +8,7 @@ nuget MathNet.Numerics ~> 4.7
 nuget MathNet.Numerics.FSharp ~> 4.7
 
 nuget Expecto
+nuget Expecto.TestResults
 nuget Expecto.VisualStudio.TestAdapter version_in_path: true
 nuget Microsoft.NET.Test.Sdk
 

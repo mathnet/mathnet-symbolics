@@ -3,5 +3,6 @@ MathNet.Numerics
 MathNet.Numerics.FSharp
 FSharp.Core
 Expecto
+Expecto.TestResults
 Expecto.VisualStudio.TestAdapter
 Microsoft.NET.Test.Sdk
