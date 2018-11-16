@@ -210,7 +210,7 @@ almost exactly the same way. The equivalent C# code to the F# code above could l
 
 Code for C++/CLI project is almost exactly the same but there are some things that worth to mention separately:
 
-1.NuGet package manager doesn't have support for C++/CLI projects yet. So if you try to install the package with NuGet you may see the next message:
+1.NuGet package manager doesn't have support for C++/CLI projects yet. So if you try to install the package with NuGet you may see this error:
 
 > Could not install package 'MathNet.Symbolics 0.19.0'. You are trying to install this package into a project that targets 'native,Version=v0.0', but the package does not contain any assembly references or content files that are compatible with that framework.
 
