@@ -7,14 +7,16 @@
     <RootNamespace>MathNet.Symbolics</RootNamespace>
     <IsPackable>true</IsPackable>
     <PackageId>MathNet.Symbolics$(PackageIdSuffix)</PackageId>
-    <VersionPrefix>0.19.0</VersionPrefix>
+    <VersionPrefix>0.20.0</VersionPrefix>
     <VersionSuffix>
     </VersionSuffix>
     <Title>Math.NET Symbolics$(TitleSuffix)</Title>
     <Description>Math.NET Symbolics is a basic open source computer algebra library for .Net and Mono. Written in F# but works well in C# as well. Supports .Net Framework 4.5 or higher and .Net Standard 2.0 or higher, on Windows, Linux and Mac.$(DescriptionSuffix)</Description>
-    <PackageReleaseNotes>Bessel and Hankel functions ~diluculo
-Uses Math.NET Numerics v4.6
-Supports .Net Standard 2.0</PackageReleaseNotes>
+    <PackageReleaseNotes>Bind bessel, hankel functions to Math.NET Numerics special functions ~Jong Hyun Kim
+Bessel ratio functions ~Jong Hyun Kim
+Airy functions ~Jong Hyun Kim
+Docs/Website Improvements, Examples for more languages ~FoggyFinder
+Uses Math.NET Numerics v4.7</PackageReleaseNotes>
     <PackageTags>fsharp F# math symbolics algebra simplify solve cas parse</PackageTags>
     <IsTool>false</IsTool>
     <NeutralLanguage>en</NeutralLanguage>

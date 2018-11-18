@@ -1,5 +1,12 @@
+### 0.20.0 - 2018-11-18
+* Bind bessel, hankel functions to Math.NET Numerics special functions *~Jong Hyun Kim*
+* Bessel ratio functions *~Jong Hyun Kim*
+* Airy functions *~Jong Hyun Kim*
+* Docs/Website Improvements, Examples for more languages *~FoggyFinder*
+* Uses Math.NET Numerics v4.7
+
 ### 0.19.0 - 2018-10-22
-* Bessel and Hankel functions *~diluculo*
+* Bessel and Hankel functions *~Jong Hyun Kim*
 * Uses Math.NET Numerics v4.6
 * Supports .Net Standard 2.0
 
@@ -7,10 +14,10 @@
 * Code Signing: SHA2 (256) instead of SHA1
 
 ### 0.18.0 - 2017-11-08
-* Calculus: fix derivatives of Asin, Acos, Atan *~diluculo*
-* Trigonometric: fix contraction of cos(a)*sin(b) *~diluculo*
-* Trigonometric: expansion and contraction of sinh/cosh *~diluculo*
-* Fix and improve arithmetic of infinity, closer to Mathematica *~diluculo*
+* Calculus: fix derivatives of Asin, Acos, Atan *~Jong Hyun Kim*
+* Trigonometric: fix contraction of cos(a)*sin(b) *~Jong Hyun Kim*
+* Trigonometric: expansion and contraction of sinh/cosh *~Jong Hyun Kim*
+* Fix and improve arithmetic of infinity, closer to Mathematica *~Jong Hyun Kim*
 * Evaluate: powers with negative radix and non-integer exponent are lifted to complex numbers
 * Binaries are now signed with a certificate
 

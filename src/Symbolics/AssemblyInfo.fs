@@ -44,8 +44,8 @@ open System.Runtime.InteropServices
 [<assembly: AssemblyCulture("")>]
 [<assembly: NeutralResourcesLanguage("en")>]
 
-[<assembly: AssemblyVersion("0.19.0.0")>]
-[<assembly: AssemblyFileVersion("0.19.0.0")>]
-[<assembly: AssemblyInformationalVersion("0.19.0")>]
+[<assembly: AssemblyVersion("0.20.0.0")>]
+[<assembly: AssemblyFileVersion("0.20.0.0")>]
+[<assembly: AssemblyInformationalVersion("0.20.0")>]
 
 ()
