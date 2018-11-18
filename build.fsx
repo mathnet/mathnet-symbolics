@@ -197,7 +197,7 @@ Target "PublishDocs" (fun _ -> publishDocs symbolicsRelease)
 Target "PublishApi" (fun _ -> publishApi symbolicsRelease)
 
 Target "PublishArchive" (fun _ -> publishArchive symbolicsSolution)
-Target "PublishNuGet" (fun _ -> publishNuGet !! (symbolicsSolution.OutputNuGetDir </> "/*.nupkg"))
+Target "PublishNuGet" (fun _ -> publishNuGet !! (symbolicsSolution.OutputNuGetDir </> "*.nupkg"))
 
 Target "Publish" DoNothing
 Dependencies "Publish" [ "PublishTag"; "PublishDocs"; "PublishApi"; "PublishArchive"; "PublishNuGet" ]
