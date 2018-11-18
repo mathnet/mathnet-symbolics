@@ -103,7 +103,7 @@ Target "Build" (fun _ ->
         collectNuGetPackages symbolicsSolution
 
     // NuGet Sign (all or nothing)
-    if isWindows && hasBuildParam "sign" then signNuGet fingerprint timeserver symbolicsSolution
+    if isWindows && hasBuildParam "sign" then signNuGet fingerprint timeserver [symbolicsSolution]
 
     )
 "Prepare" ==> "Build"
@@ -194,8 +194,8 @@ Target "PublishMirrors" (fun _ -> publishMirrors ())
 Target "PublishDocs" (fun _ -> publishDocs symbolicsRelease)
 Target "PublishApi" (fun _ -> publishApi symbolicsRelease)
 
-Target "PublishArchive" (fun _ -> publishArchive symbolicsSolution)
-Target "PublishNuGet" (fun _ -> publishNuGet !! (symbolicsSolution.OutputNuGetDir </> "*.nupkg"))
+Target "PublishArchive" (fun _ -> publishArchives [symbolicsSolution])
+Target "PublishNuGet" (fun _ -> publishNuGet [symbolicsSolution])
 
 Target "Publish" DoNothing
 Dependencies "Publish" [ "PublishTag"; "PublishDocs"; "PublishApi"; "PublishArchive"; "PublishNuGet" ]
