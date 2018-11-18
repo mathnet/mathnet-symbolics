@@ -169,10 +169,9 @@ almost exactly the same way. The equivalent C# code to the F# code above could l
     (1 / (a * b)).ToString();      // returns string "1/(a*b)"
     (1 / (a * b)).ToInternalString();  // returns string "a^(-1)*b^(-1)"
     (1 / (a * b)).ToLaTeX();       // returns string "\frac{1}{ab}"
-
-    Infix.Format(Infix.ParseOrUndefined("1/(a*b)")); // Returns string "1/(a*b)"
-    Infix.Format(Infix.ParseOrUndefined("1/(a*b"));  // Returns string "Undefined"
-    Infix.Format(Infix.ParseOrThrow("1/(a*b)"));     // Returns string "1/(a*b)"
+    
+    Expr.Parse("1/(a*b");  // throws an exception
+    Expr.Parse("1/(a*b)").ToString(); // Returns string "1/(a*b)"
 
     var symbols = new Dictionary<string,FloatingPoint>
        {{ "a", 2.0 },
@@ -180,6 +179,10 @@ almost exactly the same way. The equivalent C# code to the F# code above could l
 
     // Returns 0.166666666666667
     (1 / (a * b)).Evaluate(symbols).RealValue;
+
+    // Compilation to a function
+    Func<double,double,double> f = (1 / (a * b)).Compile("a", "b");
+    f(2.0, 3.0) // returns 0.166666666666667
 
     // Returns string "3/8 + cos(2*x)/2 + cos(4*x)/8"
     x.Cos().Pow(4).TrigonometricContract().ToString();
