@@ -1,13 +1,12 @@
 ﻿namespace MathNet.Symbolics
 
 open System
-open System.Numerics
 open MathNet.Numerics
 
 // this could be extended to arbitrary/custom precision approximations in the future
 type Approximation =
     | Real of float
-    | Complex of Complex
+    | Complex of complex
 
     // Simpler usage in C#
     static member op_Implicit (x:float) = Real x
@@ -27,8 +26,6 @@ type Approximation =
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Approximation =
 
-    type C = System.Numerics.Complex
-
     let fromRational (x:BigRational) = Real (float x)
 
     let negate = function
@@ -44,48 +41,48 @@ module Approximation =
         | Complex a, Real b | Real b, Complex a -> Complex (a * complex b 0.0)
     let pow = function
         | Real a, Real b -> Real (a**b)
-        | Complex a, Complex b -> Complex (C.Pow(a,b))
-        | Real a, Complex b -> Complex (C.Pow(complex a 0.0, b))
-        | Complex a, Real b -> Complex (C.Pow(a, complex b 0.0))
+        | Complex a, Complex b -> Complex (Complex.pow b a)
+        | Real a, Complex b -> Complex (Complex.pow b (complex a 0.0))
+        | Complex a, Real b -> Complex (Complex.pow (complex b 0.0) a)
     let invert = function
         | Real a -> Real (1.0/a)
-        | Complex a -> Complex (C.Reciprocal a)
+        | Complex a -> Complex (Complex.one / a)
 
     let abs = function
         | Real a -> Real (Math.Abs a)
-        | Complex a -> Real (C.Abs a)
+        | Complex a -> Real (Complex.magnitude a)
     let ln = function
         | Real a -> Real (Math.Log a)
-        | Complex a -> Complex (C.Log a)
+        | Complex a -> Complex (Complex.ln a)
     let log10 = function
         | Real a -> Real (Math.Log10 a)
-        | Complex a -> Complex (C.Log10 a)
+        | Complex a -> Complex (Complex.log10 a)
     let log b x =
         match b, x with
         | Real v, Real w -> Real (Math.Log (v, w))
-        | Real v, Complex w -> Complex (Complex.Log (w, v))
+        | Real v, Complex w -> Complex (Complex.log v w)
         | _ -> failwith "not supported"
     let exp = function
         | Real a -> Real (Math.Exp a)
-        | Complex a -> Complex (C.Exp a)
+        | Complex a -> Complex (Complex.exp a)
     let sin = function
         | Real a -> Real (Math.Sin a)
-        | Complex a -> Complex (C.Sin a)
+        | Complex a -> Complex (Complex.sin a)
     let cos = function
         | Real a -> Real (Math.Cos a)
-        | Complex a -> Complex (C.Cos a)
+        | Complex a -> Complex (Complex.cos a)
     let tan = function
         | Real a -> Real (Math.Tan a)
-        | Complex a -> Complex (C.Tan a)
+        | Complex a -> Complex (Complex.tan a)
     let csc = function
         | Real a -> Real (Trig.Csc a)
-        | Complex a -> Complex (Complex.csc a)
+        | Complex a -> Complex (Trig.Csc a)
     let sec = function
         | Real a -> Real (Trig.Sec a)
-        | Complex a -> Complex (Complex.sec a)
+        | Complex a -> Complex (Trig.Sec a)
     let cot = function
         | Real a -> Real (Trig.Cot a)
-        | Complex a -> Complex (Complex.cot a)
+        | Complex a -> Complex (Trig.Cot a)
     let sinh = function
         | Real a -> Real (Trig.Sinh a)
         | Complex a -> Complex (Trig.Sinh a)
@@ -97,13 +94,13 @@ module Approximation =
         | Complex a -> Complex (Trig.Tanh a)
     let csch = function
         | Real a -> Real (Trig.Csch a)
-        | Complex a -> Complex (Complex.csch a)
+        | Complex a -> Complex (Trig.Csch a)
     let sech = function
         | Real a -> Real (Trig.Sech a)
-        | Complex a -> Complex (Complex.sech a)
+        | Complex a -> Complex (Trig.Sech a)
     let coth = function
         | Real a -> Real (Trig.Coth a)
-        | Complex a -> Complex (Complex.coth a)
+        | Complex a -> Complex (Trig.Coth a)
     let asin = function
         | Real a -> Real (Trig.Asin a)
         | Complex a -> Complex (Trig.Asin a)
@@ -116,9 +113,9 @@ module Approximation =
     let atan2 x y =
         match x, y with
         | Real a, Real b -> Real (Math.Atan2 (a, b))
-        | Complex a, Complex b -> Complex (Complex.Atan (a / b))
-        | Complex a, Real b -> Complex (Complex.Atan (a / (Complex.Create (b, 0.0))))
-        | Real a, Complex b -> Complex (Complex.Atan ((Complex.Create (a, 0.0)) / b))
+        | Complex a, Complex b -> Complex (Complex.atan (a / b))
+        | Complex a, Real b -> Complex (Complex.atan (a / (complex b 0.0)))
+        | Real a, Complex b -> Complex (Complex.atan (complex a 0.0) / b)
     let acsc = function
         | Real a -> Real (Trig.Acsc a)
         | Complex a -> Complex (Trig.Acsc a)
@@ -265,7 +262,7 @@ module Approximation =
         | _ -> false
     let isOne = function
         | Real x when x = 1.0 -> true
-        | Complex c when c = C.One -> true
+        | Complex c when c = Complex.one -> true
         | _ -> false
     let isMinusOne = function
         | Real x when x = -1.0 -> true

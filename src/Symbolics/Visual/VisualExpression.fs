@@ -1,6 +1,5 @@
 ﻿namespace MathNet.Symbolics
 
-open System.Numerics
 open MathNet.Numerics
 open MathNet.Symbolics
 

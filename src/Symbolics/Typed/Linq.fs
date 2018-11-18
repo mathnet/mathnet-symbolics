@@ -190,14 +190,14 @@ module Linq =
     [<CompiledName("FormatLambda")>]
     let formatLambda (expr : MathNet.Symbolics.Expression) (args : Symbol list) : LambdaExpression option =
         let value = function
-            | Value.Approximation a -> Some (Expression.Constant(a.RealValue) :> Expression)
-            | Value.NegativeInfinity -> Some (Expression.Constant(System.Double.NegativeInfinity) :> Expression)
-            | Value.PositiveInfinity -> Some (Expression.Constant(System.Double.PositiveInfinity) :> Expression)
-            | Value.Number n -> Some (Expression.Constant(float n) :> Expression)
+            | Value.Approximation a -> Some (Expression.Constant a.RealValue :> Expression)
+            | Value.NegativeInfinity -> Some (Expression.Constant System.Double.NegativeInfinity :> Expression)
+            | Value.PositiveInfinity -> Some (Expression.Constant System.Double.PositiveInfinity :> Expression)
+            | Value.Number n -> Some (Expression.Constant (float n) :> Expression)
             | _ -> None
         let constant = function
-            | E -> Some (Expression.Constant(System.Math.E) :> Expression)
-            | Pi -> Some (Expression.Constant(System.Math.PI) :> Expression)
+            | E -> Some (Expression.Constant Constants.E :> Expression)
+            | Pi -> Some (Expression.Constant Constants.Pi :> Expression)
             | _ -> None
         let valueType = typeof<float>
         let mathType = typeof<System.Math>
@@ -223,14 +223,14 @@ module Linq =
     [<CompiledName("FormatComplexLambda")>]
     let formatComplexLambda (expr : MathNet.Symbolics.Expression) (args : Symbol list) : LambdaExpression option =
         let value = function
-            | Value.Approximation a -> Some (Expression.Constant(a.ComplexValue) :> Expression)
-            | Value.NegativeInfinity -> Some (Expression.Constant(System.Numerics.Complex.Create(System.Double.NegativeInfinity, 0.0)) :> Expression)
-            | Value.PositiveInfinity -> Some (Expression.Constant(System.Numerics.Complex.Create(System.Double.PositiveInfinity, 0.0)) :> Expression)
-            | Value.Number n -> Some (Expression.Constant(System.Numerics.Complex.Create(float n, 0.0)) :> Expression)
+            | Value.Approximation a -> Some (Expression.Constant a.ComplexValue :> Expression)
+            | Value.NegativeInfinity -> Some (Expression.Constant (complex System.Double.NegativeInfinity 0.0) :> Expression)
+            | Value.PositiveInfinity -> Some (Expression.Constant (complex System.Double.PositiveInfinity 0.0) :> Expression)
+            | Value.Number n -> Some (Expression.Constant (complex (float n) 0.0) :> Expression)
             | _ -> None
         let constant = function
-            | E -> Some (Expression.Constant(System.Numerics.Complex.Create(System.Math.E, 0.0)) :> Expression)
-            | Pi -> Some (Expression.Constant(System.Numerics.Complex.Create(System.Math.PI, 0.0)) :> Expression)
+            | E -> Some (Expression.Constant (complex Constants.E 0.0) :> Expression)
+            | Pi -> Some (Expression.Constant (complex Constants.Pi 0.0) :> Expression)
             | _ -> None
         let valueType = typeof<complex>
         let mathType = typeof<complex>

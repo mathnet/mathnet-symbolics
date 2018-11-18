@@ -1,7 +1,7 @@
 ﻿namespace MathNet.Symbolics
 
-open System.Numerics
 open System.Collections.Generic
+open MathNet.Numerics
 
 open Operators
 
@@ -12,7 +12,7 @@ module Approximate =
     let real x = Approximation.Real(x)
 
     [<CompiledName("Complex")>]
-    let complex r i = Approximation.Complex (System.Numerics.Complex(r, i))
+    let complex r i = Approximation.Complex (complex r i)
 
     [<CompiledName("ApproximateSubstitute")>]
     let rec approximateSubstitute (symbols:IDictionary<string, Approximation>) x =
@@ -21,9 +21,9 @@ module Approximate =
         | Approximation _ -> x
         | Constant c ->
             match c with
-            | Constant.E -> Values.real (MathNet.Numerics.Constants.E)
-            | Constant.Pi -> Values.real (MathNet.Numerics.Constants.Pi)
-            | Constant.I -> Values.complex (Complex.ImaginaryOne)
+            | Constant.E -> Values.real Constants.E
+            | Constant.Pi -> Values.real Constants.Pi
+            | Constant.I -> Values.complex Complex.onei
         | Sum sx -> sum (List.map (approximateSubstitute symbols) sx)
         | Product px -> product (List.map (approximateSubstitute symbols) px)
         | Power (a,b) -> pow (approximateSubstitute symbols a) (approximateSubstitute symbols b)

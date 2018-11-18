@@ -1,6 +1,5 @@
 ﻿namespace MathNet.Symbolics
 
-open System.Numerics
 open MathNet.Numerics
 open MathNet.Symbolics
 
@@ -65,7 +64,7 @@ type SymbolicExpression(expression:Expression) =
         match expression with
         | Approximation (Approximation.Complex fp) -> fp
         | Approximation (Approximation.Real fp) -> complex fp 0.0
-        | Constant I -> Complex.ImaginaryOne
+        | Constant I -> Complex.onei
         | Constant Pi -> complex Constants.Pi 0.0
         | Constant E -> complex Constants.E 0.0
         | Number n -> complex (float n) 0.0

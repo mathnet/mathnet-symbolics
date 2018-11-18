@@ -12,7 +12,7 @@ let tests =
             let symX = Symbol "x"
             let symY = Symbol "y"
 
-            let toComplex f = System.Numerics.Complex.Create(f, 0.0)
+            let toComplex f = complex f 0.0
 
             let expr1 = x
             (Compile.compileExpression1OrThrow expr1 symX).Invoke(3.0) --> 3.0

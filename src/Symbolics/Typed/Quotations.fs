@@ -1,6 +1,5 @@
 ﻿namespace MathNet.Symbolics
 
-open System.Numerics
 open Microsoft.FSharp.Quotations
 open Microsoft.FSharp.Quotations.Patterns
 open Microsoft.FSharp.Quotations.DerivedPatterns

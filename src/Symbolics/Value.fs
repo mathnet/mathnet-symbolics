@@ -1,8 +1,10 @@
 ﻿namespace MathNet.Symbolics
 
 open System
-open System.Numerics
 open MathNet.Numerics
+
+type BigInteger = System.Numerics.BigInteger
+
 
 [<RequireQualifiedAccess>]
 type Value =
@@ -23,7 +25,7 @@ module Value =
         elif Double.IsNaN x then Value.Undefined
         else Value.Approximation (Approximation.Real x)
 
-    let complex (x:Complex) =
+    let complex (x:complex) =
         if x.IsReal() then real x.Real
         elif x.IsInfinity() then Value.ComplexInfinity
         elif x.IsNaN() then Value.Undefined

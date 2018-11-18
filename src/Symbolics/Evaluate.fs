@@ -2,7 +2,6 @@
 
 open System
 open System.Collections.Generic
-open System.Numerics
 open MathNet.Numerics
 open MathNet.Numerics.LinearAlgebra
 open MathNet.Symbolics
@@ -65,7 +64,7 @@ module Evaluate =
     let freal x = FloatingPoint.Real(x)
 
     [<CompiledName("Complex")>]
-    let fcomplex r i = FloatingPoint.Complex (System.Numerics.Complex(r, i))
+    let fcomplex r i = FloatingPoint.Complex (complex r i)
 
     let rec fnormalize = function
         | Real x when Double.IsPositiveInfinity(x) -> PosInf
@@ -116,11 +115,11 @@ module Evaluate =
 
     let fpower u v =
         match u, v with
-        | Real x, Real y when x < 0.0 && (y%1.0 <> 0.0) -> Complex (Complex.Pow(complex x 0.0, complex y 0.0))
+        | Real x, Real y when x < 0.0 && (y%1.0 <> 0.0) -> Complex (Complex.pow (complex y 0.0) (complex x 0.0))
         | Real x, Real y -> Real (Math.Pow(x, y))
-        | Complex x, Real y -> Complex (Complex.Pow(x, y))
-        | Real x, Complex y -> Complex (Complex.Pow(complex x 0.0, y))
-        | Complex x, Complex y -> Complex (Complex.Pow(x, y))
+        | Complex x, Real y -> Complex (Complex.pow (complex y 0.0) x)
+        | Real x, Complex y -> Complex (Complex.pow y (complex x 0.0))
+        | Complex x, Complex y -> Complex (Complex.pow y x)
         | Undef, _ | _, Undef -> Undef
         | ComplexInf, Infinity | Infinity, ComplexInf -> ComplexInf
         | Infinity, PosInf -> ComplexInf
@@ -129,30 +128,30 @@ module Evaluate =
 
     let fapply f u =
         match f, u with
-        | Abs, Real x -> Real (Math.Abs(x))
-        | Abs, Complex x -> Real (Complex.Abs(x))
+        | Abs, Real x -> Real (Math.Abs x)
+        | Abs, Complex x -> Real (Complex.magnitude x)
         | Abs, RealVector x -> Real (x.L2Norm())
         | Abs, ComplexVector x -> Real (x.L2Norm())
         | Abs, RealMatrix x -> Real (x.L2Norm())
         | Abs, ComplexMatrix x -> Real (x.L2Norm())
         | Ln, Real x -> Real (Math.Log(x))
-        | Ln, Complex x -> Complex (Complex.Log(x))
-        | Log, Real x -> Real (Math.Log10(x))
-        | Log, Complex x -> Complex(Complex.Log10(x))
-        | Exp, Real x -> Real (Math.Exp(x))
-        | Exp, Complex x -> Complex (Complex.Exp(x))
-        | Sin, Real x -> Real (Math.Sin(x))
-        | Sin, Complex x -> Complex (Complex.Sin(x))
-        | Cos, Real x -> Real (Math.Cos(x))
-        | Cos, Complex x -> Complex (Complex.Cos(x))
-        | Tan, Real x -> Real (Math.Tan(x))
-        | Tan, Complex x -> Complex (Complex.Tan(x))
+        | Ln, Complex x -> Complex (Complex.ln x)
+        | Log, Real x -> Real (Math.Log10 x)
+        | Log, Complex x -> Complex (Complex.log10 x)
+        | Exp, Real x -> Real (Math.Exp x)
+        | Exp, Complex x -> Complex (Complex.exp x)
+        | Sin, Real x -> Real (Math.Sin x)
+        | Sin, Complex x -> Complex (Complex.sin x)
+        | Cos, Real x -> Real (Math.Cos x)
+        | Cos, Complex x -> Complex (Complex.cos x)
+        | Tan, Real x -> Real (Math.Tan x)
+        | Tan, Complex x -> Complex (Complex.tan x)
         | Csc, Real x -> Real (Trig.Sec x)
-        | Csc, Complex x -> Complex(Trig.Sec x)
+        | Csc, Complex x -> Complex (Trig.Sec x)
         | Sec, Real x -> Real (Trig.Sec x)
-        | Sec, Complex x -> Complex(Trig.Sec x)
+        | Sec, Complex x -> Complex (Trig.Sec x)
         | Cot, Real x -> Real (Trig.Cot x)
-        | Cot, Complex x -> Complex(Trig.Cot x)
+        | Cot, Complex x -> Complex (Trig.Cot x)
         | Sinh, Real x -> Real (Trig.Sinh(x))
         | Sinh, Complex x -> Complex (Trig.Sinh(x))
         | Cosh, Real x -> Real(Trig.Cosh(x))
@@ -202,13 +201,13 @@ module Evaluate =
     let fapplyN f xs =
         match f, xs with
         | Atan, [Real x; Real y] -> Real (Math.Atan2(x, y))
-        | Atan, [Complex x; Real y] -> Complex (Complex.Atan(x / Complex.Create(y, 0.0)))
-        | Atan, [Complex x; Complex y] -> Complex (Complex.Atan(x / y))
-        | Atan, [Real x; Complex y] -> Complex (Complex.Atan(Complex.Create(x, 0.0) / y))
+        | Atan, [Complex x; Real y] -> Complex (Complex.atan (x / (complex y 0.0)))
+        | Atan, [Complex x; Complex y] -> Complex (Complex.atan (x / y))
+        | Atan, [Real x; Complex y] -> Complex (Complex.atan ((complex x 0.0) / y))
         | Log, [Real b; Real x] -> Real (Math.Log(x, b))
-        | Log, [Real b; Complex x] -> Complex (Complex.Log(x, b))
-        | Log, [Complex b; Complex x] -> Complex(Complex.Log(x) / Complex.Log(b))
-        | Log, [Complex b; Real x] -> Complex(Complex.Log(Complex.Create(x, 0.0)) / Complex.Log(b))
+        | Log, [Real b; Complex x] -> Complex (Complex.log b x)
+        | Log, [Complex b; Complex x] -> Complex (Complex.ln x / Complex.ln b)
+        | Log, [Complex b; Real x] -> Complex (Complex.ln (complex x 0.0) / Complex.ln b)
         | BesselJ, [Real nu; Real x] -> Real (SpecialFunctions.BesselJ (nu, x))
         | BesselJ, [Real nu; Complex x] -> Complex (SpecialFunctions.BesselJ (nu, x))
         | BesselY, [Real nu; Real x] -> Real (SpecialFunctions.BesselY (nu, x))
@@ -236,7 +235,7 @@ module Evaluate =
         | NegativeInfinity -> NegInf
         | Constant E -> Real (Constants.E)
         | Constant Pi -> Real (Constants.Pi)
-        | Constant I -> Complex (Complex.ImaginaryOne)
+        | Constant I -> Complex (Complex.onei)
         | Approximation (Approximation.Real fp) -> Real fp
         | Approximation (Approximation.Complex fp) -> Complex fp
         | Identifier (Symbol s) ->

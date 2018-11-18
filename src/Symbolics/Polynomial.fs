@@ -1,7 +1,6 @@
 ﻿namespace MathNet.Symbolics
 
 open System.Collections.Generic
-open System.Numerics
 open MathNet.Numerics
 
 open ExpressionPatterns

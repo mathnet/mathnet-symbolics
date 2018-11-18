@@ -1,7 +1,5 @@
 ﻿namespace MathNet.Symbolics
 
-open MathNet.Numerics
-
 type Symbol = Symbol of string
 
 type Function =

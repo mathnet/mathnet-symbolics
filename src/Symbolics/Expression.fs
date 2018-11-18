@@ -1,6 +1,5 @@
 ﻿namespace MathNet.Symbolics
 
-open System.Numerics
 open MathNet.Numerics
 open MathNet.Symbolics
 
@@ -41,7 +40,7 @@ module Values =
         | Value.Undefined -> Undefined
 
     let real (x:float) = Value.real x |> unpack
-    let complex (x:Complex) = Value.complex x |> unpack
+    let complex (x:complex) = Value.complex x |> unpack
     let rational (x:BigRational) = Number x
 
     let negate a = Value.negate a |> unpack
