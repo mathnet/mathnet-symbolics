@@ -1,5 +1,4 @@
-Math.NET Symbolics
-==================
+# Math.NET Symbolics
 
 Math.NET Symbolics is a basic open source computer algebra library for .Net and Mono written in F#.
 
@@ -9,8 +8,7 @@ have a look at Axiom or Maxima instead, or for commercial solutions Maple, Mathe
 Math.NET Symbolics is part of the [Math.NET initiative](https://www.mathdotnet.com/).
 Available for free under the [MIT/X11 License](License.html).
 
-NuGet Packages
---------------
+## NuGet Packages
 
 The recommended way to get Math.NET Symbolics is to use NuGet. The following packages are provided and maintained in the public [NuGet Gallery](https://nuget.org/profiles/mathnet/):
 
@@ -18,8 +16,7 @@ Core Package:
 
 - [**MathNet.Symbolics**](https://www.nuget.org/packages/MathNet.Symbolics/) - core package
 
-Platform Support and Dependencies
----------------------------------
+## Platform Support and Dependencies
 
 - .NETFramework 4.5, .NETFramework 4.6.1 and .NETStandard 2.0
 
@@ -28,8 +25,7 @@ Package Dependencies:
 - [FParsec](https://www.nuget.org/packages/FParsec) (isolated usage only for infix parsing)
 
 
-Math.NET Symbolics with F# and F# Interactive
----------------------------------------------
+## Math.NET Symbolics with F# and F# Interactive
 
     [hide]
     #I "../../out/lib/net40"
@@ -149,8 +145,7 @@ Let's use this routine to approximate $\sin{x}+\cos{x}$ at $x = 0$ using the fir
 
     taylor 4 x 0Q (sin(x)+cos(x))  // Returns 1 + x - x^2/2 - x^3/6
 
-##### Math.NET Symbolics with C#, VB.NET and C++/CLI
---------------------------
+## Math.NET Symbolics with C#, VB.NET and C++/CLI
 
 Even though Math.NET Symbolics is written entirely in F#, it can be used in C#
 almost exactly the same way. The equivalent C# code to the F# code above could look as follows:
