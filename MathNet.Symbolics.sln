@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Symbolics", "src\Symbolics\Symbolics.fsproj", "{A8667C7D-CC10-4519-ACFE-1B4D3C190E97}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Symbolics", "src\Symbolics\Symbolics.fsproj", "{A8667C7D-CC10-4519-ACFE-1B4D3C190E97}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Readme", "Readme", "{7177ADE4-E525-4CDB-AA7C-C71A876B9ED8}"
 	ProjectSection(SolutionItems) = preProject
@@ -16,9 +16,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Readme", "Readme", "{7177AD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{6A8FB80F-8A1F-447D-AAF7-574B85D8600E}"
 	ProjectSection(SolutionItems) = preProject
+		.travis.yml = .travis.yml
+		appveyor.yml = appveyor.yml
 		docs\tools\build-docs.fsx = docs\tools\build-docs.fsx
 		build\build-framework.fsx = build\build-framework.fsx
 		build.fsx = build.fsx
+		src\Directory.Build.props = src\Directory.Build.props
 		build\MathNet.Symbolics.Extension.nuspec = build\MathNet.Symbolics.Extension.nuspec
 		build\MathNet.Symbolics.nuspec = build\MathNet.Symbolics.nuspec
 		paket.dependencies = paket.dependencies
