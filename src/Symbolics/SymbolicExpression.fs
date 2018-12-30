@@ -90,6 +90,9 @@ type SymbolicExpression(expression:Expression) =
 
     // LEAFS - Approximations
     static member Real(approximation:float) = SymbolicExpression(Expression.Real(approximation))
+    static member Real32(approximation:float32) = SymbolicExpression(Expression.Real32(approximation))
+    static member Complex(approximation:complex) = SymbolicExpression(Expression.Complex(approximation))
+    static member Complex32(approximation:complex32) = SymbolicExpression(Expression.Complex32(approximation))
 
     // LEAFS - Constants
     static member I = SymbolicExpression(Expression.I)
@@ -167,7 +170,11 @@ type SymbolicExpression(expression:Expression) =
     static member op_Implicit (x:int64) : SymbolicExpression = SymbolicExpression.FromInt64(x)
     static member op_Implicit (x:BigInteger) : SymbolicExpression = SymbolicExpression.FromInteger(x)
     static member op_Implicit (x:BigRational) : SymbolicExpression = SymbolicExpression.FromRational(x)
+
     static member op_Implicit (x:float) : SymbolicExpression = SymbolicExpression.Real(x)
+    static member op_Implicit (x:float32) : SymbolicExpression = SymbolicExpression.Real32(x)
+    static member op_Implicit (x:complex) : SymbolicExpression = SymbolicExpression.Complex(x)
+    static member op_Implicit (x:complex32) : SymbolicExpression = SymbolicExpression.Complex32(x)
 
     // bad idea, don't do this
     // static member op_Implicit (x:SymbolicExpression) : Expression = x.Expression

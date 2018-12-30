@@ -39,8 +39,10 @@ module Values =
         | Value.NegativeInfinity -> NegativeInfinity
         | Value.Undefined -> Undefined
 
-    let real (x:float) = Value.real x |> unpack
-    let complex (x:complex) = Value.complex x |> unpack
+    let real (x:float) = Value.fromReal x |> unpack
+    let real32 (x:float32) = Value.fromReal32 x |> unpack
+    let complex (x:complex) = Value.fromComplex x |> unpack
+    let complex32 (x:complex32) = Value.fromComplex32 x |> unpack
     let rational (x:BigRational) = Number x
 
     let negate a = Value.negate a |> unpack
@@ -145,6 +147,11 @@ module Operators =
     let negativeInfinity = Expression.NegativeInfinity
 
     let real floatingPoint = Values.real floatingPoint
+
+    let fromReal floatingPoint = Values.real floatingPoint
+    let fromReal32 floatingPoint = Values.real32 floatingPoint
+    let fromComplex floatingPoint = Values.complex floatingPoint
+    let fromComplex32 floatingPoint = Values.complex32 floatingPoint
 
     let fromInt32 (x:int) = Number (BigRational.FromInt x)
     let fromInt64 (x:int64) = Number (BigRational.FromBigInt (BigInteger(x)))
@@ -870,7 +877,10 @@ type Expression with
     static member FromIntegerFraction (n:BigInteger, d:BigInteger) = Operators.fromIntegerFraction n d
     static member FromRational (x:BigRational) = Operators.fromRational x
     static member Symbol (name:string) = Operators.symbol name
-    static member Real (floatingPoint:float) = Operators.real floatingPoint
+    static member Real (floatingPoint:float) = Operators.fromReal floatingPoint
+    static member Real32 (floatingPoint:float32) = Operators.fromReal32 floatingPoint
+    static member Complex (floatingPoint:complex) = Operators.fromComplex floatingPoint
+    static member Complex32 (floatingPoint:complex32) = Operators.fromComplex32 floatingPoint
 
     static member I = Constant I
     static member E = Constant E
@@ -954,21 +964,48 @@ type Expression with
     static member Pow (x, (y:int)) = Operators.pow x (Operators.number y)
 
     // Simpler usage - approximations
-    static member ( + ) (x, (y:float)) = x + (Operators.real y)
-    static member ( + ) ((x:float), y) = (Operators.real x) + y
-    static member ( - ) (x, (y:float)) = x - (Operators.real y)
-    static member ( - ) ((x:float), y) = (Operators.real x) - y
-    static member ( * ) (x, (y:float)) = x * (Operators.real y)
-    static member ( * ) ((x:float), y) = (Operators.real x) * y
-    static member ( / ) (x, (y:float)) = x / (Operators.real y)
-    static member ( / ) ((x:float), y) = (Operators.real x) / y
+    static member ( + ) (x, (y:float)) = x + (Operators.fromReal y)
+    static member ( + ) ((x:float), y) = (Operators.fromReal x) + y
+    static member ( - ) (x, (y:float)) = x - (Operators.fromReal y)
+    static member ( - ) ((x:float), y) = (Operators.fromReal x) - y
+    static member ( * ) (x, (y:float)) = x * (Operators.fromReal y)
+    static member ( * ) ((x:float), y) = (Operators.fromReal x) * y
+    static member ( / ) (x, (y:float)) = x / (Operators.fromReal y)
+    static member ( / ) ((x:float), y) = (Operators.fromReal x) / y
+    static member ( + ) (x, (y:float32)) = x + (Operators.fromReal32 y)
+    static member ( + ) ((x:float32), y) = (Operators.fromReal32 x) + y
+    static member ( - ) (x, (y:float32)) = x - (Operators.fromReal32 y)
+    static member ( - ) ((x:float32), y) = (Operators.fromReal32 x) - y
+    static member ( * ) (x, (y:float32)) = x * (Operators.fromReal32 y)
+    static member ( * ) ((x:float32), y) = (Operators.fromReal32 x) * y
+    static member ( / ) (x, (y:float32)) = x / (Operators.fromReal32 y)
+    static member ( / ) ((x:float32), y) = (Operators.fromReal32 x) / y
+    static member ( + ) (x, (y:complex)) = x + (Operators.fromComplex y)
+    static member ( + ) ((x:complex), y) = (Operators.fromComplex x) + y
+    static member ( - ) (x, (y:complex)) = x - (Operators.fromComplex y)
+    static member ( - ) ((x:complex), y) = (Operators.fromComplex x) - y
+    static member ( * ) (x, (y:complex)) = x * (Operators.fromComplex y)
+    static member ( * ) ((x:complex), y) = (Operators.fromComplex x) * y
+    static member ( / ) (x, (y:complex)) = x / (Operators.fromComplex y)
+    static member ( / ) ((x:complex), y) = (Operators.fromComplex x) / y
+    static member ( + ) (x, (y:complex32)) = x + (Operators.fromComplex32 y)
+    static member ( + ) ((x:complex32), y) = (Operators.fromComplex32 x) + y
+    static member ( - ) (x, (y:complex32)) = x - (Operators.fromComplex32 y)
+    static member ( - ) ((x:complex32), y) = (Operators.fromComplex32 x) - y
+    static member ( * ) (x, (y:complex32)) = x * (Operators.fromComplex32 y)
+    static member ( * ) ((x:complex32), y) = (Operators.fromComplex32 x) * y
+    static member ( / ) (x, (y:complex32)) = x / (Operators.fromComplex32 y)
+    static member ( / ) ((x:complex32), y) = (Operators.fromComplex32 x) / y
 
     // Simpler usage in C#
     static member op_Implicit (x:int) = Operators.fromInt32(x)
     static member op_Implicit (x:int64) = Operators.fromInt64(x)
     static member op_Implicit (x:BigInteger) = Operators.fromInteger(x)
     static member op_Implicit (x:BigRational) = Operators.fromRational(x)
-    static member op_Implicit (x:float) = Operators.real x
+    static member op_Implicit (x:float) = Operators.fromReal x
+    static member op_Implicit (x:float32) = Operators.fromReal32 x
+    static member op_Implicit (x:complex) = Operators.fromComplex x
+    static member op_Implicit (x:complex32) = Operators.fromComplex32 x
 
 
 [<RequireQualifiedAccess>]

@@ -21,7 +21,9 @@ type FloatingPoint =
 
     // Simpler usage in C#
     static member op_Implicit (x:float) = Real x
+    static member op_Implicit (x:float32) = Real (float x)
     static member op_Implicit (x:complex) = Complex x
+    static member op_Implicit (x:complex32) = Complex (Primitive.complex x)
     static member op_Implicit (x:Vector<float>) = RealVector x
     static member op_Implicit (x:Vector<complex>) = ComplexVector x
     static member op_Implicit (x:Matrix<float>) = RealMatrix x

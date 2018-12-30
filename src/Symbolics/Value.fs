@@ -19,21 +19,33 @@ type Value =
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Value =
 
-    let real (x:float) =
+    let fromReal (x:float) =
         if Double.IsPositiveInfinity x then Value.PositiveInfinity
         elif Double.IsNegativeInfinity x then Value.NegativeInfinity
         elif Double.IsNaN x then Value.Undefined
-        else Value.Approximation (Approximation.Real x)
+        else Value.Approximation (Approximation.fromReal x)
 
-    let complex (x:complex) =
-        if x.IsReal() then real x.Real
+    let fromReal32 (x:float32) =
+        if Single.IsPositiveInfinity x then Value.PositiveInfinity
+        elif Single.IsNegativeInfinity x then Value.NegativeInfinity
+        elif Single.IsNaN x then Value.Undefined
+        else Value.Approximation (Approximation.fromReal32 x)
+
+    let fromComplex (x:complex) =
+        if x.IsReal() then fromReal x.Real
         elif x.IsInfinity() then Value.ComplexInfinity
         elif x.IsNaN() then Value.Undefined
-        else Value.Approximation (Approximation.Complex x)
+        else Value.Approximation (Approximation.fromComplex x)
+
+    let fromComplex32 (x:complex32) =
+        if x.IsReal() then fromReal32 x.Real
+        elif x.IsInfinity() then Value.ComplexInfinity
+        elif x.IsNaN() then Value.Undefined
+        else Value.Approximation (Approximation.fromComplex32 x)
 
     let approx = function
-        | Real d -> real d
-        | Complex c -> complex c
+        | Real d -> fromReal d
+        | Complex c -> fromComplex c
 
     let zero = Value.Number (BigRational.Zero)
     let one = Value.Number (BigRational.One)

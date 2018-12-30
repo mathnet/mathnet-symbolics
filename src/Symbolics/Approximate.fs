@@ -9,10 +9,10 @@ open Operators
 module Approximate =
 
     [<CompiledName("Real")>]
-    let real x = Approximation.Real(x)
+    let real x = Approximation.fromReal x
 
     [<CompiledName("Complex")>]
-    let complex r i = Approximation.Complex (complex r i)
+    let complex r i = Approximation.fromComplex (complex r i)
 
     [<CompiledName("ApproximateSubstitute")>]
     let rec approximateSubstitute (symbols:IDictionary<string, Approximation>) x =
