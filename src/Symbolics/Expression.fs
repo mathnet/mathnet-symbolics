@@ -138,7 +138,7 @@ module Operators =
     let private four = Number (BigRational.FromInt 4)
     let minusOne = Number (BigRational.FromInt -1)
     let pi = Constant Pi
-    
+
     let symbol (name:string) = Identifier (Symbol name)
 
     let undefined = Expression.Undefined
@@ -598,6 +598,7 @@ module Operators =
     let coth = function
         | Undefined | ComplexInfinity -> undefined
         | PositiveInfinity -> one
+        | NegativeInfinity -> minusOne
         | Zero -> complexInfinity
         | Constant I -> Function (Cot, one) |> multiply (Constant I) |> negate // coth(j*x) = -j*cot(x)
         | Number n when n.IsNegative -> Function (Coth, Number -n) |> negate // coth(-x) = -coth(x)
@@ -740,7 +741,7 @@ module Operators =
         //| Zero -> divide (pow three (invert six)) (gamma (invert three)) // Bi'(0) = 3^(1/6)/Gamma(1/3)
         | x -> Function (AiryBiPrime, x)
 
-    let rec besselj nu x = 
+    let rec besselj nu x =
         match nu, x with
         | Undefined, _ -> undefined
         | _, Undefined -> undefined
@@ -751,7 +752,7 @@ module Operators =
         | _, PositiveInfinity -> zero // J(nu, oo) = 0
         | _, NegativeInfinity -> zero // J(nu, -oo) = 0
         | _, _ -> FunctionN (BesselJ, [nu; x])
-    let rec bessely nu x = 
+    let rec bessely nu x =
         match nu, x with
         | Undefined, _ -> undefined
         | _, Undefined -> undefined
@@ -762,7 +763,7 @@ module Operators =
         | _, PositiveInfinity -> zero // Y(nu, oo) = 0
         | _, NegativeInfinity -> zero // Y(nu, -oo) = 0
         | _, _ -> FunctionN (BesselY, [nu; x])
-    let rec besseli nu x = 
+    let rec besseli nu x =
         match nu, x with
         | Undefined, _ -> undefined
         | _, Undefined -> undefined
@@ -770,8 +771,8 @@ module Operators =
         | Positive, Zero -> zero // I(n, 0) = 0 for n > 0
         | Number n, _  when n.IsNegative -> besseli (Number -n) x // I(-n, x) = I(n, x)
         | Product ((Number n)::ax), _ when n.IsNegative -> besseli (multiply (Number -n) (Product ax)) x
-        | _, _ -> FunctionN (BesselI, [nu; x])  
-    let rec besselk nu x = 
+        | _, _ -> FunctionN (BesselI, [nu; x])
+    let rec besselk nu x =
         match nu, x with
         | Undefined, _ -> undefined
         | _, Undefined -> undefined
@@ -780,7 +781,7 @@ module Operators =
         | Number n, _  when n.IsNegative -> besselk (Number -n) x // K(-n, x) = K(n, x)
         | Product ((Number n)::ax), _ when n.IsNegative -> besselk (multiply (Number -n) (Product ax)) x
         | _, _ -> FunctionN (BesselK, [nu; x])
-    let rec besseliratio nu x = 
+    let rec besseliratio nu x =
         match nu, x with
         | Undefined, _ -> undefined
         | _, Undefined -> undefined
@@ -788,16 +789,16 @@ module Operators =
         | Number n, _ when n.Numerator = -1I && n.Denominator = 2I -> tanh x // I(1/2, x) / I(-1/2, x) = tanh(x)
         | Number n, _ when n.Numerator = 1I && n.Denominator = 2I -> subtract (coth x) (invert x) // I(3/2, x) / I(1/2, x) = coth(x) - 1/x
         | _, _ -> FunctionN (BesselIRatio, [nu; x])
-    let rec besselkratio nu x = 
+    let rec besselkratio nu x =
         match nu, x with
         | Undefined, _ -> undefined
         | _, Undefined -> undefined
         | Zero, Zero -> undefined // K(1, 0) / K(0, 0) = NaN
         | Number n, _ when n.Numerator = -1I && n.Denominator = 2I -> one // K(1/2, x) / K(-1/2, x) = 1
         | Number n, _ when n.Numerator = 1I && n.Denominator = 2I -> add (invert x) one  // K(3/2, x) / K(1/2, x) = 1/x + 1
-        | _, Zero -> undefined        
+        | _, Zero -> undefined
         | _, _ -> FunctionN (BesselKRatio, [nu; x])
-    let rec hankelh1 nu x = 
+    let rec hankelh1 nu x =
         match nu, x with
         | Undefined, _ -> undefined
         | _, Undefined -> undefined
@@ -805,7 +806,7 @@ module Operators =
         | Number n, _  when n.IsNegative -> (pow minusOne (Number -n)) |> multiply (hankelh1 (Number -n) x) // H1(-n, x) = pow(-1, n) * H1(n, x)
         | Product ((Number n)::ax), _ when n.IsNegative -> (pow minusOne (multiply (Number -n) (Product ax))) |> multiply (hankelh1 (multiply (Number -n) (Product ax)) x)
         | _, _ -> FunctionN (HankelH1, [nu; x])
-    let rec hankelh2 nu x = 
+    let rec hankelh2 nu x =
         match nu, x with
         | Undefined, _ -> undefined
         | _, Undefined -> undefined
@@ -856,7 +857,7 @@ module Operators =
         | Log, [b; x] -> log b x
         | BesselJ, [nu; x] -> besselj nu x
         | BesselY, [nu; x] -> bessely nu x
-        | BesselI, [nu; x] -> besseli nu x        
+        | BesselI, [nu; x] -> besseli nu x
         | BesselK, [nu; x] -> besselk nu x
         | BesselIRatio, [nu; x] -> besseliratio nu x
         | BesselKRatio, [nu; x] -> besselkratio nu x
@@ -941,9 +942,9 @@ type Expression with
 
     static member BesselJ (n, x) = Operators.besselj n x // Bessel function of the first kind
     static member BesselY (n, x) = Operators.bessely n x // Bessel function of the second kind
-    static member BesselI (n, x) = Operators.besseli n x // Modified Bessel function of the first kind    
-    static member BesselK (n, x) = Operators.besselk n x // Modified Bessel function of the second kind    
-    static member BesselIRatio (n, x) = Operators.besseliratio n x // Ratio of modified Bessel function of the first kind    
+    static member BesselI (n, x) = Operators.besseli n x // Modified Bessel function of the first kind
+    static member BesselK (n, x) = Operators.besselk n x // Modified Bessel function of the second kind
+    static member BesselIRatio (n, x) = Operators.besseliratio n x // Ratio of modified Bessel function of the first kind
     static member BesselKRatio (n, x) = Operators.besselkratio n x // Ratio of modified Bessel function of the second kind
 
     static member HankelH1 (n, x) = Operators.hankelh1 n x // Hankel Function of the First Kind

@@ -3,9 +3,6 @@
 open System
 open MathNet.Numerics
 
-[<RequireQualifiedAccess>]
-module internal Primitive =
-    let inline complex (x:complex32) = complex (float x.Real) (float x.Imaginary)
 
 
 // this could be extended to arbitrary/custom precision approximations in the future
@@ -17,7 +14,7 @@ type Approximation =
     static member op_Implicit (x:float) = Real x
     static member op_Implicit (x:float32) = Real (float x)
     static member op_Implicit (x:complex) = Complex x
-    static member op_Implicit (x:complex32) = Complex (Primitive.complex x)
+    static member op_Implicit (x:complex32) = Complex (FromPrimitive.complex32 x)
 
     member x.RealValue =
         match x with
@@ -36,10 +33,11 @@ type Approximation =
 module Approximation =
 
     let fromRational (x:BigRational) = Real (float x)
+    let fromComplexRational (x:ComplexBigRational) = if x.Imaginary.IsZero then fromRational x.Real else Complex (complex (float x.Real) (float x.Imaginary))
     let fromReal (x:float) = Real x
     let fromReal32 (x:float32) = Real (float x)
-    let fromComplex (x:complex) = Complex x
-    let fromComplex32 (x:complex32) = Complex (Primitive.complex x)
+    let fromComplex (x:complex) = if x.Imaginary = 0.0 then fromReal x.Real else Complex x
+    let fromComplex32 (x:complex32) = FromPrimitive.complex32 x |> fromComplex
 
     let negate = function
         | Real a -> Real (-a)
@@ -174,25 +172,25 @@ module Approximation =
         match nu, z with
         | Real a, Real b -> Real (SpecialFunctions.BesselJ (a, b));
         | Real a, Complex b -> Complex (SpecialFunctions.BesselJ (a, b));
-        | Complex a, Real b -> failwith "not supported"     
-        | Complex a, Complex b -> failwith "not supported"  
+        | Complex a, Real b -> failwith "not supported"
+        | Complex a, Complex b -> failwith "not supported"
     let bessely nu z =
         match nu, z with
         | Real a, Real b -> Real (SpecialFunctions.BesselY (a, b));
         | Real a, Complex b -> Complex (SpecialFunctions.BesselY (a, b));
-        | Complex a, Real b -> failwith "not supported" 
+        | Complex a, Real b -> failwith "not supported"
         | Complex a, Complex b -> failwith "not supported"
     let besseli nu z =
         match nu, z with
         | Real a, Real b -> Real (SpecialFunctions.BesselI (a, b));
         | Real a, Complex b -> Complex (SpecialFunctions.BesselI (a, b));
         | Complex a, Real b -> failwith "not supported"
-        | Complex a, Complex b -> failwith "not supported"    
+        | Complex a, Complex b -> failwith "not supported"
     let besselk nu z =
         match nu, z with
         | Real a, Real b -> Real (SpecialFunctions.BesselK (a, b));
         | Real a, Complex b -> Complex (SpecialFunctions.BesselK (a, b));
-        | Complex a, Real b -> failwith "not supported"  
+        | Complex a, Real b -> failwith "not supported"
         | Complex a, Complex b -> failwith "not supported"
     let besseliratio nu z =
         match nu, z with

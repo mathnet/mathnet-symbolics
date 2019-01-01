@@ -3,8 +3,6 @@
 open System
 open MathNet.Numerics
 
-type BigInteger = System.Numerics.BigInteger
-
 
 [<RequireQualifiedAccess>]
 type Value =

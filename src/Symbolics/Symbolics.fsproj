@@ -33,6 +33,9 @@ Uses Math.NET Numerics v4.7</PackageReleaseNotes>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Symbols.fs" />
+    <Compile Include="ExactValue.fs" />
+    <Compile Include="ApproxValue.fs" />
+    <Compile Include="NewValue.fs" />
     <Compile Include="Approximation.fs" />
     <Compile Include="Value.fs" />
     <Compile Include="Expression.fs" />
