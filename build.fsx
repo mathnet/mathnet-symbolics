@@ -115,11 +115,11 @@ Target "Build" (fun _ ->
 
 let testSymbolics framework = test "src/Symbolics.Tests" "Symbolics.Tests.fsproj" framework
 Target "TestSymbolics" DoNothing
-Target "TestSymbolicsCore2.1" (fun _ -> testSymbolics "netcoreapp2.1")
+Target "TestSymbolicsCore2.2" (fun _ -> testSymbolics "netcoreapp2.2")
 Target "TestSymbolicsNET45" (fun _ -> testSymbolics "net45")
 Target "TestSymbolicsNET461" (fun _ -> testSymbolics "net461")
 Target "TestSymbolicsNET47" (fun _ -> testSymbolics "net47")
-"Build" ==> "TestSymbolicsCore2.1" ==> "TestSymbolics"
+"Build" ==> "TestSymbolicsCore2.2" ==> "TestSymbolics"
 "Build" =?> ("TestSymbolicsNET45", isWindows)
 "Build" =?> ("TestSymbolicsNET461", isWindows) ==> "TestSymbolics"
 "Build" =?> ("TestSymbolicsNET47", isWindows)
