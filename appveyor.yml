@@ -16,3 +16,7 @@ test: off
 deploy: off
 shallow_clone: true
 clone_depth: 1
+
+environment:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
