@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>Math.NET Symbolics
+</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta name="description" content="Math.NET Symbolics is a basic open source computer algebra library for .Net and Mono. Written in F# but works well in C# as well. Supports .Net Framework 4.5 or higher and .Net Standard 2.0 or higher, on Windows, Linux and Mac."/>
+        <meta name="author" content="Christoph Ruegg"/>
+
+        <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+        <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+        <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+        <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+
+        <link type="text/css" rel="stylesheet" href="https://symbolics.mathdotnet.com/content/style.css" />
+        <style>
+          #main table:not(.pre) {
+              border: 1px solid #dddddd;
+              max-width: 100%;
+              border-style: solid;
+              border-width: 1px;
+              border-color: gray;
+              border-collapse: collapse;
+              border-right-width: 1px;
+              border-bottom-width: 1px;
+              margin-top: 15px;
+              margin-bottom: 25px;
+          }
+          #main table:not(.pre) th, #main table:not(.pre) td {
+              border: 1px solid #dddddd;
+              padding: 6px;
+          }
+          #main table:not(.pre) th p, #main table:not(.pre) td p {
+              margin-bottom: 5px;
+          }
+        </style>
+        <script type="text/javascript" src="https://symbolics.mathdotnet.com/content/tips.js"></script>
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+            <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="masthead">
+                <ul class="nav nav-pills pull-right">
+                    <li><a href="https://www.mathdotnet.com">Math.NET Project</a></li>
+                    <li><a href="https://symbolics.mathdotnet.com">Math.NET Symbolics</a></li>
+                    <li><a href="https://github.com/mathnet/mathnet-symbolics">GitHub</a></li>
+                </ul>
+                <h3 class="muted">Math.NET Symbolics</h3>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="span9" id="main">
+                    
+<h1><a name="Math-NET-Symbolics" class="anchor" href="#Math-NET-Symbolics">Math.NET Symbolics</a></h1>
+<p>Math.NET Symbolics is a basic open source computer algebra library for .Net and Mono written in F#.</p>
+<p>This project does not aim to become a full computer algebra system. If you need such a system,
+have a look at Axiom or Maxima instead, or for commercial solutions Maple, Mathematica or Wolfram Alpha.</p>
+<p>Math.NET Symbolics is part of the <a href="https://www.mathdotnet.com/">Math.NET initiative</a>.
+Available for free under the <a href="License.html">MIT/X11 License</a>.</p>
+<h2><a name="NuGet-Packages" class="anchor" href="#NuGet-Packages">NuGet Packages</a></h2>
+<p>The recommended way to get Math.NET Symbolics is to use NuGet. The following packages are provided and maintained in the public <a href="https://nuget.org/profiles/mathnet/">NuGet Gallery</a>:</p>
+<p>Core Package:</p>
+<ul>
+<li><a href="https://www.nuget.org/packages/MathNet.Symbolics/"><strong>MathNet.Symbolics</strong></a> - core package</li>
+</ul>
+<h2><a name="Platform-Support-and-Dependencies" class="anchor" href="#Platform-Support-and-Dependencies">Platform Support and Dependencies</a></h2>
+<ul>
+<li>.NETFramework 4.5, .NETFramework 4.6.1 and .NETStandard 2.0</li>
+</ul>
+<p>Package Dependencies:</p>
+<ul>
+<li><a href="https://www.nuget.org/packages/FParsec">FParsec</a> (isolated usage only for infix parsing)</li>
+</ul>
+<h2><a name="Math-NET-Symbolics-with-F-and-F-Interactive" class="anchor" href="#Math-NET-Symbolics-with-F-and-F-Interactive">Math.NET Symbolics with F# and F# Interactive</a></h2>
+<p>With NuGet you can start quickly by installing the <code>MathNet.Symbolics</code> package,
+which automatically loads its dependencies <code>MathNet.Numerics</code> and <code>MathNet.Numerics.FSharp</code>.
+In F# interactive you can reference them by loading two scripts, along the lines of</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip"><code lang="text">#load @"..\..\packages\MathNet.Numerics.FSharp.4.6.0\MathNet.Numerics.fsx"
+#load @"..\..\packages\MathNet.Symbolics.0.19.0\MathNet.Symbolics.fsx"
+</code></pre></td></tr></table>
+<p>To get started, open the namespaces and the Operators module and declare the variables
+and constants you intend to use as symbols:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span class="i">System</span><span class="o">.</span><span class="i">Numerics</span>
+<span class="k">open</span> <span class="i">MathNet</span><span class="o">.</span><span class="i">Numerics</span>
+<span class="k">open</span> <span class="i">MathNet</span><span class="o">.</span><span class="i">Symbolics</span>
+
+<span class="k">open</span> <span class="i">Operators</span>
+
+<span class="k">let</span> <span class="i">x</span> <span class="o">=</span> <span class="i">symbol</span> <span class="s">&quot;x&quot;</span>
+<span class="k">let</span> <span class="i">y</span> <span class="o">=</span> <span class="i">symbol</span> <span class="s">&quot;y&quot;</span>
+<span class="k">let</span> <span class="i">a</span> <span class="o">=</span> <span class="i">symbol</span> <span class="s">&quot;a&quot;</span>
+<span class="k">let</span> <span class="i">b</span> <span class="o">=</span> <span class="i">symbol</span> <span class="s">&quot;b&quot;</span>
+<span class="k">let</span> <span class="i">c</span> <span class="o">=</span> <span class="i">symbol</span> <span class="s">&quot;c&quot;</span>
+<span class="k">let</span> <span class="i">d</span> <span class="o">=</span> <span class="i">symbol</span> <span class="s">&quot;d&quot;</span>
+</code></pre></td>
+</tr>
+</table>
+<p>Then we're all set to start writing expressions:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">a</span> <span class="o">+</span> <span class="i">a</span>                  <span class="c">// returns 2*a</span>
+<span class="i">a</span> <span class="o">*</span> <span class="i">a</span>                  <span class="c">// returns a^2</span>
+<span class="n">2</span> <span class="o">+</span> <span class="n">1</span><span class="o">/</span><span class="i">x</span> <span class="o">-</span> <span class="n">1</span>            <span class="c">// returns 1 + 1/x</span>
+(<span class="i">a</span><span class="o">/</span><span class="i">b</span><span class="o">/</span>(<span class="i">c</span><span class="o">*</span><span class="i">a</span>))<span class="o">*</span>(<span class="i">c</span><span class="o">*</span><span class="i">d</span><span class="o">/</span><span class="i">a</span>)<span class="o">/</span><span class="i">d</span>  <span class="c">// returns 1/(a*b)</span>
+</code></pre></td>
+</tr>
+</table>
+<p>Math.NET Symbolics expressions are always in a simplified form according to a set of rules.
+Expressions are tree structures, but F# interactive shows them in a readable infix form thanks
+to a display printer added in the script loaded above. You can also use these printers manually
+to format any expression as infix string, LaTeX expression or in strict mode to see the actual
+internal representation:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Infix</span><span class="o">.</span><span class="i">format</span> (<span class="n">1</span><span class="o">/</span>(<span class="i">a</span><span class="o">*</span><span class="i">b</span>))        <span class="c">// returns string &quot;1/(a*b)&quot;</span>
+<span class="i">Infix</span><span class="o">.</span><span class="i">formatStrict</span> (<span class="n">1</span><span class="o">/</span>(<span class="i">a</span><span class="o">*</span><span class="i">b</span>))  <span class="c">// returns string &quot;a^(-1)*b^(-1)&quot;</span>
+<span class="i">LaTeX</span><span class="o">.</span><span class="i">format</span> (<span class="n">1</span><span class="o">/</span>(<span class="i">a</span><span class="o">*</span><span class="i">b</span>))        <span class="c">// returns string &quot;\frac{1}{ab}&quot;</span>
+</code></pre></td>
+</tr>
+</table>
+<p>Strings in infix notation can be parsed back into expressions:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Infix</span><span class="o">.</span><span class="i">parse</span> <span class="s">&quot;1/(a*b)&quot;</span>     <span class="c">// Returns ParsedExpression 1/(a*b)</span>
+<span class="i">Infix</span><span class="o">.</span><span class="i">parse</span> <span class="s">&quot;1/(a*b&quot;</span>      <span class="c">// Returns ParseFailure, 7: Expecting infix operator or &#39;)&#39;</span>
+<span class="i">Infix</span><span class="o">.</span><span class="i">tryParse</span> <span class="s">&quot;1/(a*b)&quot;</span>  <span class="c">// Returns Some (1/(a*b))</span>
+<span class="i">Infix</span><span class="o">.</span><span class="i">parseOrUndefined</span> <span class="s">&quot;1/(a*b)&quot;</span>  <span class="c">// Returns 1/(a*b)</span>
+<span class="i">Infix</span><span class="o">.</span><span class="i">parseOrThrow</span> <span class="s">&quot;1/(a*b)&quot;</span>      <span class="c">// Returns 1/(a*b)</span>
+</code></pre></td>
+</tr>
+</table>
+<h3><a name="Number-Literals" class="anchor" href="#Number-Literals">Number Literals</a></h3>
+<p>Numbers can be forced to become expressions using the <code>Q</code> suffix, e.g. <code>3Q</code>
+is an expression representing an integer with value 3. This is usually not needed
+if at least one of the operands is an expression, e.g. a symbol. But if all operands
+are standard .Net numbers, they will be treated as such. For example <code>(3 + 2)*4/6</code> is
+a standard F# integer expression and will result in <code>3</code> due to .Net integer arithmetics.
+However, if we force it to become an expression by writing <code>(3Q + 2)*4/6</code>, it will
+result in the fraction expression <code>10/3</code> as expected.</p>
+<p>Since Math.NET Symbolics is about algebra, all number literals are arbitrarily big
+rational numbers, i.e. integers or fractions. If you need floating point numbers, use
+a symbol for them instead and provide their value at evaluation time.</p>
+<h3><a name="Evaluating-Expressions" class="anchor" href="#Evaluating-Expressions">Evaluating Expressions</a></h3>
+<p>Often you need to evaluate the resulting number value of an expression given the values
+for all its symbols. To do so, prepare the value set as map or dictionary and pass it
+to the evaluate function. Values need to be of type FloatingPoint which is a discriminated
+union that can represent not only float and complex but also vectors and matrices of the same.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">symbols</span> <span class="o">=</span> <span class="i">Map</span><span class="o">.</span><span class="i">ofList</span> [ <span class="s">&quot;a&quot;</span>, <span class="i">Real</span> <span class="n">2.0</span>; <span class="s">&quot;b&quot;</span>, <span class="i">Real</span> <span class="n">3.0</span> ]
+<span class="i">Evaluate</span><span class="o">.</span><span class="i">evaluate</span> <span class="i">symbols</span> (<span class="n">1</span><span class="o">/</span>(<span class="i">a</span><span class="o">*</span><span class="i">b</span>))  <span class="c">// Returns Real 0.1666666667 (as float)</span>
+</code></pre></td>
+</tr>
+</table>
+<h3><a name="Manipulating-Expressions" class="anchor" href="#Manipulating-Expressions">Manipulating Expressions</a></h3>
+<p>There are various modules to help you combine and manipulate expressions:</p>
+<ul>
+<li><strong>Operators:</strong> standard operators, recommended to open always.</li>
+<li><strong>Structure:</strong> structural analysis, operand access, substitution, map</li>
+<li><strong>Algebraic:</strong> algebraic expansion, separate factors</li>
+<li><strong>Polynomial:</strong> properties, degrees, coefficients, terms, divide, gcd, expansion, partial fraction</li>
+<li><strong>Rational:</strong> numerator/denominator, properties, rationalize, expand, simplify</li>
+<li><strong>Exponential:</strong> expand, contract, simplify</li>
+<li><strong>Trigonometric:</strong> expand, separate, contract, substitute, simplify</li>
+<li><strong>Calculus:</strong> differentiate</li>
+</ul>
+<p>For example, let's try to contract the trigonometric expression <span class="math">\((\cos{x})^4\)</span>
+into <span class="math">\(\frac{3}{8} + \frac{1}{2}\cos{2x} + \frac{1}{8}\cos{4x}\)</span>:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Trigonometric</span><span class="o">.</span><span class="i">contract</span> (<span class="i">cos</span>(<span class="i">x</span>)<span class="o">**</span><span class="n">4</span>)  <span class="c">// Returns 3/8 + cos(2*x)/2 + cos(4*x)/8</span>
+</code></pre></td>
+</tr>
+</table>
+<h3><a name="Algebraic-Algorithms" class="anchor" href="#Algebraic-Algorithms">Algebraic Algorithms</a></h3>
+<p>These modules can also be combined to build more interesting manipulations.
+For example, let's implement a <a href="https://en.wikipedia.org/wiki/Taylor_series">taylor expansion</a>
+routine to approximate the shape of a differentiable function <span class="math">\(x(\zeta)\)</span> at
+some point <span class="math">\(\zeta = a\)</span> by its <span class="math">\(k-1\)</span> first derivatives at that point (order <span class="math">\(k\)</span>). We can leverage the existing
+structural substitute routine to substitute <span class="math">\(\zeta\)</span> with <span class="math">\(a\)</span> to get the resulting expression at <span class="math">\(a\)</span>,
+and the differentiate routine to evaluate the partial derivative <span class="math">\(\frac{\partial{x}}{\partial\zeta}\)</span>.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">taylor</span> (<span class="i">k</span><span class="o">:</span><span class="i">int</span>) <span class="i">symbol</span> <span class="i">a</span> <span class="i">x</span> <span class="o">=</span>
+    <span class="k">let</span> <span class="k">rec</span> <span class="i">impl</span> <span class="i">n</span> <span class="i">nf</span> <span class="i">acc</span> <span class="i">dxn</span> <span class="o">=</span>
+        <span class="k">if</span> <span class="i">n</span> <span class="o">=</span> <span class="i">k</span> <span class="k">then</span> <span class="i">acc</span> <span class="k">else</span>
+        <span class="k">let</span> <span class="i">dxn_a</span> <span class="o">=</span> <span class="i">dxn</span> <span class="o">|&gt;</span> <span class="i">Structure</span><span class="o">.</span><span class="i">substitute</span> <span class="i">symbol</span> <span class="i">a</span>
+        <span class="k">let</span> <span class="i">dxn&#39;</span>  <span class="o">=</span> <span class="i">dxn</span> <span class="o">|&gt;</span> <span class="i">Calculus</span><span class="o">.</span><span class="i">differentiate</span> <span class="i">symbol</span>
+        <span class="i">impl</span> (<span class="i">n</span><span class="o">+</span><span class="n">1</span>) (<span class="i">nf</span><span class="o">*</span>(<span class="i">n</span><span class="o">+</span><span class="n">1</span>)) (<span class="i">acc</span> <span class="o">+</span> <span class="i">dxn_a</span><span class="o">/</span><span class="i">nf</span><span class="o">*</span>(<span class="i">symbol</span><span class="o">-</span><span class="i">a</span>)<span class="o">**</span><span class="i">n</span>) <span class="i">dxn&#39;</span>
+    <span class="i">impl</span> <span class="n">0</span> <span class="n">1</span> <span class="i">zero</span> <span class="i">x</span> <span class="o">|&gt;</span> <span class="i">Algebraic</span><span class="o">.</span><span class="i">expand</span>
+</code></pre></td>
+</tr>
+</table>
+<p>Let's use this routine to approximate <span class="math">\(\sin{x}+\cos{x}\)</span> at <span class="math">\(x = 0\)</span> using the first 4 derivatives:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">taylor</span> <span class="n">4</span> <span class="i">x</span> <span class="n">0Q</span> (<span class="i">sin</span>(<span class="i">x</span>)<span class="o">+</span><span class="i">cos</span>(<span class="i">x</span>))  <span class="c">// Returns 1 + x - x^2/2 - x^3/6</span>
+</code></pre></td>
+</tr>
+</table>
+<h2><a name="Math-NET-Symbolics-with-C-VB-NET-and-C-CLI" class="anchor" href="#Math-NET-Symbolics-with-C-VB-NET-and-C-CLI">Math.NET Symbolics with C#, VB.NET and C++/CLI</a></h2>
+<p>Even though Math.NET Symbolics is written entirely in F#, it can be used in C#
+almost exactly the same way. The equivalent C# code to the F# code above could look as follows:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+<span class="l">21: </span>
+<span class="l">22: </span>
+<span class="l">23: </span>
+<span class="l">24: </span>
+<span class="l">25: </span>
+<span class="l">26: </span>
+<span class="l">27: </span>
+<span class="l">28: </span>
+<span class="l">29: </span>
+<span class="l">30: </span>
+<span class="l">31: </span>
+<span class="l">32: </span>
+<span class="l">33: </span>
+<span class="l">34: </span>
+<span class="l">35: </span>
+<span class="l">36: </span>
+<span class="l">37: </span>
+<span class="l">38: </span>
+<span class="l">39: </span>
+<span class="l">40: </span>
+<span class="l">41: </span>
+<span class="l">42: </span>
+<span class="l">43: </span>
+<span class="l">44: </span>
+<span class="l">45: </span>
+<span class="l">46: </span>
+<span class="l">47: </span>
+<span class="l">48: </span>
+<span class="l">49: </span>
+<span class="l">50: </span>
+<span class="l">51: </span>
+<span class="l">52: </span>
+<span class="l">53: </span>
+<span class="l">54: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">using</span> MathNet.Symbolics;
+<span class="k">using</span> Expr <span class="o">=</span> MathNet.Symbolics.SymbolicExpression;
+
+<span class="k">var</span> x <span class="o">=</span> Expr.Variable(<span class="s">"x"</span>);
+<span class="k">var</span> y <span class="o">=</span> Expr.Variable(<span class="s">"y"</span>);
+<span class="k">var</span> a <span class="o">=</span> Expr.Variable(<span class="s">"a"</span>);
+<span class="k">var</span> b <span class="o">=</span> Expr.Variable(<span class="s">"b"</span>);
+<span class="k">var</span> c <span class="o">=</span> Expr.Variable(<span class="s">"c"</span>);
+<span class="k">var</span> d <span class="o">=</span> Expr.Variable(<span class="s">"d"</span>);
+
+(a <span class="o">+</span> a).ToString();           <span class="c">// returns string "2*a"</span>
+(a <span class="o">*</span> a).ToString();           <span class="c">// returns string "a^2"</span>
+(<span class="n">2</span> <span class="o">+</span> <span class="n">1</span> <span class="o">/</span> x <span class="o">-</span> <span class="n">1</span>).ToString();   <span class="c">// returns string "1 + 1/x"</span>
+((a <span class="o">/</span> b <span class="o">/</span> (c <span class="o">*</span> a)) <span class="o">*</span> (c <span class="o">*</span> d <span class="o">/</span> a) <span class="o">/</span> d).ToString();   <span class="c">// returns string "1/(a*b)"</span>
+
+(<span class="n">1</span> <span class="o">/</span> (a <span class="o">*</span> b)).ToString();      <span class="c">// returns string "1/(a*b)"</span>
+(<span class="n">1</span> <span class="o">/</span> (a <span class="o">*</span> b)).ToInternalString();  <span class="c">// returns string "a^(-1)*b^(-1)"</span>
+(<span class="n">1</span> <span class="o">/</span> (a <span class="o">*</span> b)).ToLaTeX();       <span class="c">// returns string "\frac{1}{ab}"</span>
+
+Expr.Parse(<span class="s">"1/(a*b"</span>);  <span class="c">// throws an exception</span>
+Expr.Parse(<span class="s">"1/(a*b)"</span>).ToString(); <span class="c">// Returns string "1/(a*b)"</span>
+
+<span class="k">var</span> symbols <span class="o">=</span> <span class="k">new</span> Dictionary&lt;<span class="k">string</span>,FloatingPoint&gt;
+   {{ <span class="s">"a"</span>, <span class="n">2.0</span> },
+    { <span class="s">"b"</span>, <span class="n">3.0</span> }};
+
+<span class="c">// Returns 0.166666666666667</span>
+(<span class="n">1</span> <span class="o">/</span> (a <span class="o">*</span> b)).Evaluate(symbols).RealValue;
+
+<span class="c">// Compilation to a function</span>
+Func&lt;<span class="k">double</span>,<span class="k">double</span>,<span class="k">double</span>&gt; f <span class="o">=</span> (<span class="n">1</span> <span class="o">/</span> (a <span class="o">*</span> b)).Compile(<span class="s">"a"</span>, <span class="s">"b"</span>);
+f(<span class="n">2.0</span>, <span class="n">3.0</span>) <span class="c">// returns 0.166666666666667</span>
+
+<span class="c">// Returns string "3/8 + cos(2*x)/2 + cos(4*x)/8"</span>
+x.Cos().Pow(<span class="n">4</span>).TrigonometricContract().ToString();
+
+<span class="c">// Taylor Expansion</span>
+Expr Taylor(<span class="k">int</span> k, Expr symbol, Expr al, Expr xl)
+{
+    <span class="k">int</span> factorial <span class="o">=</span> <span class="n">1</span>;
+    Expr accumulator <span class="o">=</span> Expr.Zero;
+    Expr derivative <span class="o">=</span> xl;
+    <span class="k">for</span> (<span class="k">int</span> i <span class="o">=</span> <span class="n">0</span>; i <span class="o">&lt;</span> k; i+<span class="o">+</span>)
+    {
+        <span class="k">var</span> subs <span class="o">=</span> derivative.Substitute(symbol, al);
+        derivative <span class="o">=</span> derivative.Differentiate(symbol);
+        accumulator <span class="o">=</span> accumulator <span class="o">+</span> subs <span class="o">/</span> factorial <span class="o">*</span> ((symbol <span class="o">-</span> al).Pow(i));
+        factorial <span class="o">*</span><span class="o">=</span> (i <span class="o">+</span> <span class="n">1</span>);
+    }
+    <span class="k">return</span> accumulator.Expand();
+}
+
+<span class="c">// Returns string "1 + x - x^2/2 - x^3/6"</span>
+Taylor(<span class="n">4</span>, x, <span class="n">0</span>, x.Sin() <span class="o">+</span> x.Cos()).ToString();
+</code></pre></td></tr></table>
+<p>Code for C++/CLI project is almost exactly the same but there are some things that worth to mention separately:</p>
+<p>1.NuGet package manager doesn't have support for C++/CLI projects yet. So if you try to install the package with NuGet you may see this error:</p>
+<blockquote>
+<p>Could not install package 'MathNet.Symbolics 0.19.0'. You are trying to install this package into a project that targets 'native,Version=v0.0', but the package does not contain any assembly references or content files that are compatible with that framework.</p>
+</blockquote>
+<p>There are other ways to add the library to the project:</p>
+<ul>
+<li>Use other dependency manager like <a href="https://fsprojects.github.io/Paket/">Paket</a>.</li>
+<li>
+Add references manually:
+<ol>
+<li>Download packages. Although NuGet cannot include packages to the project it is downloading them to common package directory anyway.</li>
+<li>Right click on the project in the Solution Explorer</li>
+<li>Add -&gt; References...</li>
+<li>Click Browse button</li>
+<li>Navigate to packages directory.</li>
+<li>
+Add reference to the next dlls:
+<ul>
+<li>FParsec.dll</li>
+<li>FParsecCS.dll</li>
+<li>FSharp.Core.dll</li>
+<li>MathNet.Numerics.FSharp.dll</li>
+<li>MathNet.Symbolics.dll</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<p>Also to avoid version conflict of FSharp.Core you have to set <code>AutoGenerateBindingRedirects</code> to <code>true</code>. Put the instruction in your .vcxproj file under "Globals" property section:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="o">&lt;</span><span class="i">PropertyGroup</span> <span class="i">Label</span><span class="o">=</span><span class="s">&quot;Globals&quot;</span><span class="o">&gt;</span>
+	<span class="o">..</span><span class="o">.</span>
+	<span class="o">&lt;</span><span class="i">AutoGenerateBindingRedirects</span><span class="o">&gt;</span><span class="k">true</span><span class="o">&lt;/</span><span class="i">AutoGenerateBindingRedirects</span><span class="o">&gt;</span>
+</code></pre></td>
+</tr>
+</table>
+<ol>
+<li>Instead of using <code>+</code> and <code>-</code> operators it's better to choose <code>Add</code> and <code>Subtract</code> methods to get away from warning about matching more than one operator.</li>
+</ol>
+<p>Here is F# sample translated into C++/CLI:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+<span class="l">21: </span>
+<span class="l">22: </span>
+<span class="l">23: </span>
+<span class="l">24: </span>
+<span class="l">25: </span>
+<span class="l">26: </span>
+<span class="l">27: </span>
+<span class="l">28: </span>
+<span class="l">29: </span>
+<span class="l">30: </span>
+<span class="l">31: </span>
+<span class="l">32: </span>
+<span class="l">33: </span>
+<span class="l">34: </span>
+<span class="l">35: </span>
+<span class="l">36: </span>
+<span class="l">37: </span>
+<span class="l">38: </span>
+<span class="l">39: </span>
+<span class="l">40: </span>
+<span class="l">41: </span>
+<span class="l">42: </span>
+<span class="l">43: </span>
+<span class="l">44: </span>
+<span class="l">45: </span>
+<span class="l">46: </span>
+<span class="l">47: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip"><code lang="c">auto x = SymbolicExpression::Variable("x");
+auto y = SymbolicExpression::Variable("y");
+auto a = SymbolicExpression::Variable("a");
+auto b = SymbolicExpression::Variable("b");
+auto c = SymbolicExpression::Variable("c");
+auto d = SymbolicExpression::Variable("d");
+
+a-&gt;Add(a)-&gt;ToString();                // returns string "2*a"
+(a * a)-&gt;ToString();                  // returns string "a^2"
+(2 + 1 / x)-&gt;Subtract(1)-&gt;ToString(); // returns string "1 + 1/x"
+((a / b / (c * a)) * (c * d / a) / d)-&gt;ToString();   // returns 1/(a*b)
+
+(1 / (a * b))-&gt;ToString();          // returns string "1/(a*b)"
+(1 / (a * b))-&gt;ToInternalString();  // returns string "a^(-1)*b^(-1)"
+(1 / (a * b))-&gt;ToLaTeX();           // returns string "\frac{1}{ab}"
+
+Infix::Format(Infix::ParseOrUndefined("1/(a*b)")); // Returns string "1/(a*b)"
+Infix::Format(Infix::ParseOrUndefined("1/(a*b"));  // Returns string "Undefined"
+Infix::Format(Infix::ParseOrThrow("1/(a*b)"));     // Returns string "1/(a*b)"
+
+auto symbols = gcnew Dictionary&lt;String^, FloatingPoint^&gt;;
+symbols-&gt;Add("a", 2.0);
+symbols-&gt;Add("b", 3.0);
+
+// Returns 0.166666666666667
+(1 / (a * b))-&gt;Evaluate(symbols)-&gt;RealValue;
+
+// Returns string "3/8 + cos(2*x)/2 + cos(4*x)/8"
+x-&gt;Cos()-&gt;Pow(4)-&gt;TrigonometricContract()-&gt;ToString();
+
+SymbolicExpression^ Taylor(int k, SymbolicExpression^ symbol, SymbolicExpression^ a, SymbolicExpression^ x)
+{
+  int factorial = 1;
+  auto accumulator = SymbolicExpression::Zero;
+  auto derivative = x;
+  for (int i = 0; i &lt; k; i++)
+  {
+    auto subs = derivative-&gt;Substitute(symbol, a);
+    derivative = derivative-&gt;Differentiate(symbol);
+    accumulator = accumulator-&gt;Add(subs / factorial * (symbol-&gt;Subtract(a))-&gt;Pow(i));
+    factorial *= (i + 1);
+  }
+  return accumulator-&gt;Expand();
+}
+
+// Returns string "1 + x - x^2/2 - x^3/6"
+Taylor(4, x, 0, x-&gt;Sin()-&gt;Add(x-&gt;Cos()))-&gt;ToString();
+</code></pre></td></tr></table>
+<p>For VB.NET we won't do the same thing here but instead we just show basic usage for now</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="vb"><span class="k">Imports</span> Expr = MathNet.Symbolics.SymbolicExpression
+...
+<span class="k">Dim</span> x = Expr.Variable(<span class="s">"x"</span>)
+<span class="k">Dim</span> a = Expr.Variable(<span class="s">"a"</span>)
+<span class="k">Dim</span> b = Expr.Variable(<span class="s">"b"</span>)
+
+<span class="k">Dim</span> p = <span class="n">4</span> * x.Pow(<span class="n">3</span>) + <span class="n">3</span> * x * x
+<span class="k">Dim</span> d = p.Differentiate(<span class="s">"x"</span>).Divide(Expr.Parse(<span class="s">"6*x"</span>)).RationalSimplify(<span class="s">"x"</span>)
+d.ToString() <span class="c">' 1 + 2*x</span>
+d.ToLaTeX() <span class="c">' 1 + 2*x</span>
+<span class="k">Dim</span> symbols = <span class="k">New</span> Dictionary(Of <span class="k">String</span>, FloatingPoint) From {{<span class="s">"a"</span>, <span class="n">2.0</span>}, {<span class="s">"b"</span>, <span class="n">3.0</span>}}
+
+<span class="c">' Returns 0.166666666666667</span>
+(<span class="n">1</span> / (a * b)).Evaluate(symbols).RealValue
+</code></pre></td></tr></table>
+
+
+                </div>
+                <div class="span3">
+                    <ul class="nav nav-list" id="menu">
+
+                        <li class="nav-header">Math.NET Symbolics</li>
+                        <li><a href="https://symbolics.mathdotnet.com">Project Website</a></li>
+                        <li><a href="https://symbolics.mathdotnet.com/ReleaseNotes.html">Release Notes</a></li>
+                        <li><a href="https://symbolics.mathdotnet.com/License.html">MIT/X11 License</a></li>
+                        <!--<li><a href="https://symbolics.mathdotnet.com/api/">Class Reference</a></li>-->
+                        <li><a href="https://github.com/mathnet/mathnet-symbolics/issues">Issues & Bugs</a></li>
+
+                        <li class="nav-header">Contributing</li>
+                        <li><a href="https://symbolics.mathdotnet.com/Contributors.html">Contributors</a></li>
+                        <li><a href="https://symbolics.mathdotnet.com/Contributing.html">Contributing</a></li>
+                        <li><a href="https://symbolics.mathdotnet.com/Build.html">Build & Tools</a></li>
+
+                        <li class="nav-header">Getting Help</li>
+                        <li><a href="https://discuss.mathdotnet.com/c/symbolics">Discuss</a></li>
+                        <li><a href="https://stackoverflow.com/questions/tagged/mathdotnet">Stack Overflow</a></li>
+
+                        <li class="nav-header">Getting Started</li>
+                        <li><a href="https://symbolics.mathdotnet.com/">Getting started</a></li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
