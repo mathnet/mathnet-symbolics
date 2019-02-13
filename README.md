@@ -1,7 +1,7 @@
 Math.NET Symbolics
 ==================
 
-Math.NET Symbolics is a basic opensource **computer algebra library for .Net, Silverlight and Mono** written entirely in F#.
+Math.NET Symbolics is a basic open source **computer algebra library for .NET, Silverlight and Mono** written entirely in F#.
 
 This project does *not* aim to become a full computer algebra system. If you need such a system, have a look at Axiom or Maxima instead, or for proprietary commercial solutions Maple, Mathematica or Wolfram Alpha.
 
@@ -48,14 +48,14 @@ taylor 4 x (sin(x)+cos(x)) 0Q → 1 + x - (1/2)*x^2 - (1/6)*x^3
 
 ### Project
 
-Windows (.Net): [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/6u71stf85qudifvv/branch/master)](https://ci.appveyor.com/project/cdrnet/mathnet-symbolics)  
+Windows (.NET): [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/6u71stf85qudifvv/branch/master)](https://ci.appveyor.com/project/cdrnet/mathnet-symbolics)  
 Linux (Mono): [![Travis Build Status](https://travis-ci.org/mathnet/mathnet-symbolics.svg?branch=master)](https://travis-ci.org/mathnet/mathnet-symbolics)
 
-Maintained by [Christoph Rüegg](http://christoph.ruegg.name/) and part of the [Math.NET initiative](http://www.mathdotnet.com) (see also [Math.NET Numerics](http://numerics.mathdotnet.com)). It is covered under the terms of the [MIT/X11](http://mathnetnumerics.codeplex.com/license) open source license. See also the [license](LICENSE.md) file in the root folder. **We accept contributions!**
+Maintained by [Christoph Rüegg](http://christoph.ruegg.name/) and part of the [Math.NET initiative](http://www.mathdotnet.com) (see also [Math.NET Numerics](https://numerics.mathdotnet.com/)). It is covered under the terms of the [MIT/X11](http://mathnetnumerics.codeplex.com/license) open source license. See also the [license](LICENSE.md) file in the root folder. **We accept contributions!**
 
-* [**Project Website**](http://symbolics.mathdotnet.com)
-* [Source Code](http://github.com/mathnet/mathnet-symbolics)
-* [Release Notes](http://symbolics.mathdotnet.com/ReleaseNotes.html)
-* [Documentation](http://symbolics.mathdotnet.com)
-* [Issues & Bugs](http://github.com/mathnet/mathnet-symbolics/issues)
-* [Discussions](https://discuss.mathdotnet.com/c/symbolics) | [Stack Overflow](http://stackoverflow.com/questions/tagged/mathdotnet) | [Twitter](http://twitter.com/MathDotNet)
+* [**Project Website**](https://symbolics.mathdotnet.com/)
+* [Source Code](https://github.com/mathnet/mathnet-symbolics)
+* [Release Notes](https://symbolics.mathdotnet.com/ReleaseNotes.html)
+* [Documentation](https://symbolics.mathdotnet.com/)
+* [Issues & Bugs](https://github.com/mathnet/mathnet-symbolics/issues)
+* [Discussions](https://discuss.mathdotnet.com/c/symbolics) | [Stack Overflow](https://stackoverflow.com/questions/tagged/mathdotnet) | [Twitter](https://twitter.com/MathDotNet)
