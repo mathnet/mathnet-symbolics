@@ -22,8 +22,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{6A8FB80F
 		build\build-framework.fsx = build\build-framework.fsx
 		build.fsx = build.fsx
 		src\Directory.Build.props = src\Directory.Build.props
-		build\MathNet.Symbolics.Extension.nuspec = build\MathNet.Symbolics.Extension.nuspec
-		build\MathNet.Symbolics.nuspec = build\MathNet.Symbolics.nuspec
 		paket.dependencies = paket.dependencies
 		paket.lock = paket.lock
 	EndProjectSection
