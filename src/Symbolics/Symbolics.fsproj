@@ -54,7 +54,6 @@ Uses Math.NET Numerics v4.7</PackageReleaseNotes>
     <Compile Include="Compile.fs" />
     <Compile Include="Evaluate.fs" />
     <Compile Include="SymbolicExpression.fs" />
-    <None Include="MathNet.Symbolics.fsx" />
     <None Include="Script.fsx" />
     <None Include="app.config" />
     <Content Include="paket.references" />

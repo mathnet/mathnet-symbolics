@@ -3,13 +3,13 @@ language: csharp
 env:
   - HOME=/home/travis APPDATA=/home/travis LocalAppData=/home/travis
 
-sudo: required
-dist: xenial
-dotnet: 2.2.103
+sudo: required #false
+dist: bionic
+dotnet: 2.2.105
 mono:
-  - latest
+- latest
 os:
-  - linux
+- linux
 
 branches:
   except:
@@ -17,7 +17,6 @@ branches:
 
 script:
   - ./build.sh Test quick
-
 global:
   - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
   - DOTNET_CLI_TELEMETRY_OPTOUT=1

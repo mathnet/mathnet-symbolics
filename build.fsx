@@ -33,14 +33,14 @@ open BuildFramework
 
 // VERSION OVERVIEW
 
-let symbolicsRelease = release "Math.NET Symbolics" "RELEASENOTES.md"
+let symbolicsRelease = release "symbolics" "Math.NET Symbolics" "RELEASENOTES.md"
 let releases = [ symbolicsRelease ]
 traceHeader releases
 
 
 // SYMBOLICS PACKAGES
 
-let symbolicsZipPackage = zipPackage "MathNet.Symbolics" "Math.NET Symbolics" symbolicsRelease false
+let symbolicsZipPackage = zipPackage "MathNet.Symbolics" "Math.NET Symbolics" symbolicsRelease
 let symbolicsNuGetPackage = nugetPackage "MathNet.Symbolics" symbolicsRelease
 let symbolicsProject = project "MathNet.Symbolics" "src/Symbolics/Symbolics.fsproj" [symbolicsNuGetPackage]
 let symbolicsSolution = solution "Symbolics" "MathNet.Symbolics.sln" [symbolicsProject] [symbolicsZipPackage]
@@ -190,7 +190,6 @@ Target "Api" (fun _ ->
 
 Target "PublishTag" (fun _ -> publishReleaseTag "Math.NET Symbolics" "" symbolicsRelease)
 
-Target "PublishMirrors" (fun _ -> publishMirrors ())
 Target "PublishDocs" (fun _ -> publishDocs symbolicsRelease)
 Target "PublishApi" (fun _ -> publishApi symbolicsRelease)
 
