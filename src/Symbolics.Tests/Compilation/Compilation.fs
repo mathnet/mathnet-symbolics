@@ -67,5 +67,8 @@ let tests =
 
             let expr9' = x + 1
             (Compile.compileComplexExpression1OrThrow expr9' symX).Invoke(System.Numerics.Complex.One) --> toComplex 2.0
+
+            let expr10' = y * y + Expression.I * y + (besselk x (Expression.I * y)) / (besselk (negate x) (Expression.I * y))
+            (Compile.compileComplexExpression2OrThrow expr10' symX symY).Invoke(toComplex 0.5, System.Numerics.Complex.One) --> complex 2.0 1.0 // 1*1 + I + 1 = 2 + I
         }
     ]
