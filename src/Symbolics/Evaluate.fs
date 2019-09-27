@@ -226,6 +226,32 @@ module Evaluate =
         | HankelH1, [Real nu; Complex x] -> Complex (SpecialFunctions.HankelH1 (nu, x))
         | HankelH2, [Real nu; Real x] -> Complex (SpecialFunctions.HankelH2 (nu, complex x 0.0))
         | HankelH2, [Real nu; Complex x] -> Complex (SpecialFunctions.HankelH2 (nu, x))
+        | Min, vs -> vs |> List.map (fun (Real c) -> c) |> List.min |> Real
+        | Max, vs -> vs |> List.map (fun (Real c) -> c) |> List.max |> Real
+        | Avg, vs -> vs |> List.map (fun (Real c) -> c) |> List.average |> Real
+        | Function.Sum, vs -> vs |> List.map (fun (Real c) -> c) |> List.sum |> Real
+        | Median, vs ->
+            let rec median (list : float list) = 
+                match list with
+                | [] -> invalidArg "list" "List must not be empty!"
+                | [c] -> c 
+                | [a; b] -> (a + b) / 2.
+                | c when (c |> List.length) % 2 = 0 ->
+                    let len = c |> List.length
+                    c 
+                    |> List.sort
+                    |> List.skip (len / 2 - 1)
+                    |> List.take 2
+                    |> median
+                | c when (c |> List.length) % 2 = 1 ->
+                    let len = c |> List.length
+                    c 
+                    |> List.sort
+                    |> List.skip (len / 2)
+                    |> List.head
+                | _ -> failwith "impossible!"
+
+            vs |> List.map (fun (Real c) -> c) |> median |> Real
         | _ -> failwith "not supported"
 
     [<CompiledName("Evaluate")>]

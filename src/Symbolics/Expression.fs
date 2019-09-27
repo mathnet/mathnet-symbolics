@@ -388,6 +388,12 @@ module Operators =
     let root n x = pow x (pow n minusOne)
     let sqrt x = root two x
 
+    let min'  vs = FunctionN (Min,  vs)
+    let max'  vs = FunctionN (Max,  vs)
+    let avg'  vs = FunctionN (Avg,  vs)
+    let mean' vs = FunctionN (Median, vs)
+    let sum'  vs = FunctionN (Function.Sum,  vs)
+
     let abs = function
         | Undefined -> undefined
         | oo when isInfinity oo -> infinity
@@ -862,6 +868,11 @@ module Operators =
         | BesselKRatio, [nu; x] -> besselkratio nu x
         | HankelH1, [nu; x] -> hankelh1 nu x
         | HankelH2, [nu; x] -> hankelh2 nu x
+        | Min,  vs -> min'  vs
+        | Max,  vs -> max'  vs
+        | Avg,  vs -> avg'  vs
+        | Median, vs -> mean' vs
+        | Function.Sum,  vs -> sum'  vs
         | _ -> failwith "not supported"
 
 
