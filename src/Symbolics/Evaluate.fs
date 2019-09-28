@@ -226,10 +226,10 @@ module Evaluate =
         | HankelH1, [Real nu; Complex x] -> Complex (SpecialFunctions.HankelH1 (nu, x))
         | HankelH2, [Real nu; Real x] -> Complex (SpecialFunctions.HankelH2 (nu, complex x 0.0))
         | HankelH2, [Real nu; Complex x] -> Complex (SpecialFunctions.HankelH2 (nu, x))
-        | Min, vs -> vs |> List.map (fun (Real c) -> c) |> List.min |> Real
-        | Max, vs -> vs |> List.map (fun (Real c) -> c) |> List.max |> Real
-        | Avg, vs -> vs |> List.map (fun (Real c) -> c) |> List.average |> Real
-        | Function.Sum, vs -> vs |> List.map (fun (Real c) -> c) |> List.sum |> Real
+        | Min, vs -> vs |> List.minBy (fun (Real c) -> c)
+        | Max, vs -> vs |> List.maxBy (fun (Real c) -> c)
+        | Avg, vs -> vs |> List.averageBy (fun (Real c) -> c) |> Real
+        | Function.Sum, vs -> vs |> List.sumBy (fun (Real c) -> c) |> Real
         | Median, vs ->
             let rec median (list : float list) = 
                 match list with
@@ -247,8 +247,7 @@ module Evaluate =
                     let len = c |> List.length
                     c 
                     |> List.sort
-                    |> List.skip (len / 2)
-                    |> List.head
+                    |> List.item (len / 2)
                 | _ -> failwith "impossible!"
 
             vs |> List.map (fun (Real c) -> c) |> median |> Real
