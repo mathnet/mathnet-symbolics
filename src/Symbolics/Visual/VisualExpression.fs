@@ -213,6 +213,11 @@ type DefaultVisualStyle() =
         | BesselKRatio -> "besselkratio"
         | HankelH1 -> "hankelh1"
         | HankelH2 -> "hankelh2"
+        | Min -> "min"
+        | Max -> "max"
+        | Function.Sum -> "sum"
+        | Avg -> "avg"
+        | Median -> "median"
 
     member private this.FromExpression e = VisualExpression.fromExpression this e
 

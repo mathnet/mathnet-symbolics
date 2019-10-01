@@ -960,6 +960,11 @@ type Expression with
     static member HankelH1 (n, x) = Operators.hankelh1 n x // Hankel Function of the First Kind
     static member HankelH2 (n, x) = Operators.hankelh2 n x // Hankel Function of the Second Kind
 
+    static member Min (xs) = Operators.min' xs
+    static member Max (xs) = Operators.max' xs
+    static member Avg (xs) = Operators.avg' xs
+    static member Median (xs) = Operators.mean' xs
+
     static member Apply (f, x) = Operators.apply f x
     static member ApplyN (f, xs) = Operators.applyN f xs
 

@@ -226,31 +226,89 @@ module Evaluate =
         | HankelH1, [Real nu; Complex x] -> Complex (SpecialFunctions.HankelH1 (nu, x))
         | HankelH2, [Real nu; Real x] -> Complex (SpecialFunctions.HankelH2 (nu, complex x 0.0))
         | HankelH2, [Real nu; Complex x] -> Complex (SpecialFunctions.HankelH2 (nu, x))
-        | Min, vs -> vs |> List.minBy (fun (Real c) -> c)
-        | Max, vs -> vs |> List.maxBy (fun (Real c) -> c)
-        | Avg, vs -> vs |> List.averageBy (fun (Real c) -> c) |> Real
-        | Function.Sum, vs -> vs |> List.sumBy (fun (Real c) -> c) |> Real
+        | Min, vs ->
+            vs |> List.minBy (function
+                | Real c -> c
+                | Complex c -> c.Magnitude
+                | PosInf
+                | ComplexInf -> Double.PositiveInfinity
+                | NegInf -> Double.NegativeInfinity
+                | _ -> failwith "not supported"
+            )
+        | Max, vs -> 
+            vs |> List.maxBy (function
+                | Real c -> c
+                | Complex c -> c.Magnitude
+                | PosInf
+                | ComplexInf -> Double.PositiveInfinity
+                | NegInf -> Double.NegativeInfinity
+                | _ -> failwith "not supported"
+            )
+        | Avg, vs ->
+            let len = vs |> List.length |> float
+            let r, i =
+                vs
+                |> List.fold (fun (r, i) -> function
+                    | Real c -> c + r, i
+                    | Complex c ->
+                        let r = c.Real + r
+                        let i =
+                            match i with
+                            | Some i -> i + c.Imaginary |> Some
+                            | None -> c.Imaginary |> Some
+
+                        r, i
+                    | PosInf
+                    | ComplexInf -> Double.PositiveInfinity, i
+                    | NegInf -> Double.NegativeInfinity, i
+                    | _ -> failwith "not supported"
+                ) (0., None)
+
+            match i with
+            | Some i -> complex (r / len) (i / len) |> Complex
+            | None -> r / len |> Real
+        | Function.Sum, vs ->
+            let r, i =
+                vs
+                |> List.fold (fun (r, i) -> function
+                    | Real c -> c + r, i
+                    | Complex c ->
+                        let r = c.Real + r
+                        let i =
+                            match i with
+                            | Some i -> i + c.Imaginary |> Some
+                            | None -> c.Imaginary |> Some
+
+                        r, i
+                    | PosInf
+                    | ComplexInf -> Double.PositiveInfinity, i
+                    | NegInf -> Double.NegativeInfinity, i
+                    | _ -> failwith "not supported"
+                ) (0., None)
+
+            match i with
+            | Some i -> complex r i |> Complex
+            | None -> r |> Real
         | Median, vs ->
-            let rec median (list : float list) = 
+            let rec median list =
+                let len = list |> List.length
                 match list with
                 | [] -> invalidArg "list" "List must not be empty!"
                 | [c] -> c 
-                | [a; b] -> (a + b) / 2.
-                | c when (c |> List.length) % 2 = 0 ->
-                    let len = c |> List.length
+                | [a; b] -> fmultiply (fadd a b) (freal 0.5)
+                | c when len % 2 = 0 ->
                     c 
-                    |> List.sort
+                    |> List.sortBy (function Real c -> c | Complex c -> c.Magnitude | PosInf | ComplexInf -> Double.PositiveInfinity | NegInf -> Double.NegativeInfinity | _ -> failwith "not supported")
                     |> List.skip (len / 2 - 1)
                     |> List.take 2
                     |> median
-                | c when (c |> List.length) % 2 = 1 ->
-                    let len = c |> List.length
+                | c ->
                     c 
-                    |> List.sort
+                    |> List.sortBy (function Real c -> c | Complex c -> c.Magnitude | PosInf | ComplexInf -> Double.PositiveInfinity | NegInf -> Double.NegativeInfinity | _ -> failwith "not supported")
                     |> List.item (len / 2)
                 | _ -> failwith "impossible!"
 
-            vs |> List.map (fun (Real c) -> c) |> median |> Real
+            vs |> median 
         | _ -> failwith "not supported"
 
     [<CompiledName("Evaluate")>]

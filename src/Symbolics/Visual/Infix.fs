@@ -211,6 +211,11 @@ module private InfixFormatter =
         | BesselKRatio -> "besselkratio"
         | HankelH1 -> "hankelh1"
         | HankelH2 -> "hankelh2"
+        | Min -> "min"
+        | Max -> "max"
+        | Function.Sum -> "sum"
+        | Avg -> "avg"
+        | Median -> "median"
 
     // priority: 1=additive 2=product 3=power
 

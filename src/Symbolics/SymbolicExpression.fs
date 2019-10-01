@@ -255,6 +255,11 @@ type SymbolicExpression(expression:Expression) =
     member this.HankelH1(n:SymbolicExpression) = SymbolicExpression(Expression.HankelH1(n.Expression, expression))
     member this.HankelH2(n:SymbolicExpression) = SymbolicExpression(Expression.HankelH2(n.Expression, expression))
 
+    member this.Min(ns:SymbolicExpression list) = SymbolicExpression(Expression.Min(ns |> List.map (fun n -> n.Expression)))
+    member this.Max(ns:SymbolicExpression list) = SymbolicExpression(Expression.Max(ns |> List.map (fun n -> n.Expression)))
+    member this.Avg(ns:SymbolicExpression list) = SymbolicExpression(Expression.Avg(ns |> List.map (fun n -> n.Expression)))
+    member this.Median(ns:SymbolicExpression list) = SymbolicExpression(Expression.Median(ns |> List.map (fun n -> n.Expression)))
+
 
     // STRUCTURE
     member this.NumberOfOperands = expression |> Structure.numberOfOperands
