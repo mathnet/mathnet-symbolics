@@ -388,6 +388,12 @@ module Operators =
     let root n x = pow x (pow n minusOne)
     let sqrt x = root two x
 
+    let min'  vs = FunctionN (Min,  vs)
+    let max'  vs = FunctionN (Max,  vs)
+    let avg'  vs = FunctionN (Avg,  vs)
+    let mean' vs = FunctionN (Median, vs)
+    let sum'  vs = FunctionN (Function.Sum,  vs)
+
     let abs = function
         | Undefined -> undefined
         | oo when isInfinity oo -> infinity
@@ -862,6 +868,11 @@ module Operators =
         | BesselKRatio, [nu; x] -> besselkratio nu x
         | HankelH1, [nu; x] -> hankelh1 nu x
         | HankelH2, [nu; x] -> hankelh2 nu x
+        | Min,  vs -> min'  vs
+        | Max,  vs -> max'  vs
+        | Avg,  vs -> avg'  vs
+        | Median, vs -> mean' vs
+        | Function.Sum,  vs -> sum'  vs
         | _ -> failwith "not supported"
 
 
@@ -948,6 +959,11 @@ type Expression with
 
     static member HankelH1 (n, x) = Operators.hankelh1 n x // Hankel Function of the First Kind
     static member HankelH2 (n, x) = Operators.hankelh2 n x // Hankel Function of the Second Kind
+
+    static member Min (xs) = Operators.min' xs
+    static member Max (xs) = Operators.max' xs
+    static member Avg (xs) = Operators.avg' xs
+    static member Median (xs) = Operators.mean' xs
 
     static member Apply (f, x) = Operators.apply f x
     static member ApplyN (f, xs) = Operators.applyN f xs

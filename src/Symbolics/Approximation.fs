@@ -218,6 +218,55 @@ module Approximation =
         | Real a, Complex b -> Complex (SpecialFunctions.HankelH2 (a, b));
         | Complex a, Real b -> failwith "not supported"
         | Complex a, Complex b -> failwith "not supported"
+    let min' vs =
+        vs |> List.minBy (function
+            | Real c -> c
+            | Complex c -> c.Magnitude
+        )
+    let max' vs =
+        vs |> List.maxBy (function
+            | Real c -> c
+            | Complex c -> c.Magnitude
+        )
+    let avg vs =
+        let len = vs |> List.length |> float
+        let r, i =
+            vs
+            |> List.fold (fun (r, i) -> function
+                | Real c -> c + r, i
+                | Complex c ->
+                    let r = c.Real + r
+                    let i =
+                        match i with
+                        | Some i -> i + c.Imaginary |> Some
+                        | None -> c.Imaginary |> Some
+
+                    r, i
+            ) (0., None)
+
+        match i with
+        | Some i -> complex (r / len) (i / len) |> Complex
+        | None -> r / len |> Real
+    let median vs =
+        let rec median list =
+            let len = list |> List.length
+            match list with
+            | [] -> invalidArg "list" "List must not be empty!"
+            | [c] -> c 
+            | [a; b] -> product(sum(a, b), fromReal 0.5)
+            | c when len % 2 = 0 ->
+                c 
+                |> List.sortBy (function Real c -> c | Complex c -> c.Magnitude)
+                |> List.skip (len / 2 - 1)
+                |> List.take 2
+                |> median
+            | c ->
+                c 
+                |> List.sortBy (function Real c -> c | Complex c -> c.Magnitude)
+                |> List.item (len / 2)
+            | _ -> failwith "impossible!"
+
+        vs |> median 
 
     let apply f a =
         match f with
@@ -267,6 +316,11 @@ module Approximation =
         | BesselKRatio, [nu; x] -> besselkratio nu x
         | HankelH1, [nu; x] -> hankelh1 nu x
         | HankelH2, [nu; x] -> hankelh2 nu x
+        | Min, xs -> min' xs
+        | Max, xs -> max' xs
+        | Avg, xs -> avg xs
+        | Median, xs -> median xs
+        | Sum, xs -> xs |> List.reduce (fun a b -> sum(a, b))
         | _ -> failwith "not supported"
 
     let isZero = function

@@ -27,6 +27,8 @@ type Function =
                        // BesselKRatio(n, x) is defined as BesselKRatio(n + 1, x) / BesselKRatio(n, x).
     | HankelH1  // Hankel function of the first kind
     | HankelH2  // Hankel function of the second kind
+    | Min | Max | Avg | Median
+    | Sum
 
 type Constant =
     | E
