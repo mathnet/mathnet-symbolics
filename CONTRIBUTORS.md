@@ -7,14 +7,14 @@ The Math.NET project is a community effort. We accept contributions and pull req
 
 ### Maintainers
 
-- [Christoph Rüegg](http://christoph.ruegg.name/) (@cdrnet) ([keybase.io/cdrnet](https://keybase.io/cdrnet))
+- [Christoph Rüegg](https://christoph.ruegg.name/) (@cdrnet) ([keybase.io/cdrnet](https://keybase.io/cdrnet))
 
 ### Code Contributors
 
 *Essentially the output of `git shortlog -sn` in original order.
 Feel free to add a link to your personal site/blog and/or twitter handle.*
 
-- [Christoph Rüegg](http://christoph.ruegg.name/) (@cdrnet)
+- [Christoph Rüegg](https://christoph.ruegg.name/) (@cdrnet)
 - FoggyFinder
 - Francesco Bertolaccini
 - diluculo
