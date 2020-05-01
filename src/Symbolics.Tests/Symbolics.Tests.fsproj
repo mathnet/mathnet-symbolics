@@ -21,16 +21,14 @@
         <Compile Include="Operators\Exponential.fs" />
         <Compile Include="Operators\Trigonometry.fs" />
         <Compile Include="Operators\Bessel.fs" />
-        <Compile Include="Operators\Operators.fs" />
         <Compile Include="Polynomial\Polynomial.fs" />
         <Compile Include="Visual\Infix.fs" />
         <Compile Include="Visual\LaTeX.fs" />
         <Compile Include="Visual\MathML.fs" />
-        <Compile Include="Visual\Visual.fs" />
+        <Compile Include="Visual\VisualExpressions.fs" />
         <Compile Include="Compilation\Compilation.fs" />
         <Compile Include="Tests.fs" />
-        <Compile Include="Runner.fs" />
-        <None Include="app.config" />
+        <Compile Include="Main.fs" />
         <None Include="paket.references" />
     </ItemGroup>
     <Import Project="..\..\.paket\Paket.Restore.targets" />

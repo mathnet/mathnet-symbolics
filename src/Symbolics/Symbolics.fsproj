@@ -49,7 +49,6 @@ Uses Math.NET Numerics v4.7</PackageReleaseNotes>
     <Compile Include="Evaluate.fs" />
     <Compile Include="SymbolicExpression.fs" />
     <None Include="Script.fsx" />
-    <None Include="app.config" />
     <None Include="paket.references" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
