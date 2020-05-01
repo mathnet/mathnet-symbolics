@@ -5,6 +5,11 @@ If you do not want to use the official binaries, or if you like to modify,
 debug or contribute, you can compile locally either using Visual Studio or
 manually with the build scripts.
 
+System Requirements
+-------------------
+
+* .NET Core SDK 3.1.1 ([download](https://dotnet.microsoft.com/download/dotnet-core/3.1))
+
 VisualStudio or Xamarin Studio
 ------------------------------
 
@@ -15,16 +20,17 @@ may fail to compile or provide correct IntelliSense.
 
 Tests can be run with the usual integrated NUnit test runners or ReSharper.
 
-MSBuild or XBuild
------------------
+Command Line Tools
+------------------
 
 Instead of a compatible IDE you can also build the solutions directly with
-`msbuild`, or on Mono with `xbuild`. You may need to run `restore.cmd` or
+the .NET Core SDK, with MsBuild or on Mono with XBuild. You may need to run `restore.cmd` or
 `restore.sh` before, once after every git checkout in order to restore the dependencies.
 
-	restore.cmd (or restore.sh)            # restore dependencies (once)
-    msbuild MathNet.Symbolics.sln          # only build for .Net 4 (main solution)
-    xbuild MathNet.Symbolics.sln           # build with Mono, e.g. on Linux or Mac
+    restore.cmd (or restore.sh)              # restore dependencies (once)
+    dotnet build MathNet.Symbolics.sln       # with .NET Core SDK
+    msbuild MathNet.Symbolics.sln            # with MsBuild
+    xbuild MathNet.Symbolics.sln             # with Mono
 
 FAKE
 ----
@@ -36,26 +42,54 @@ FAKE itself is not included in the repository but it will download and bootstrap
 itself automatically when build.cmd is run the first time. Note that this step
 is *not* required when using Visual Studio or `msbuild` directly.
 
-    build.cmd    # normal build (.Net 4.0), run unit tests (.Net on Windows)
-    ./build.sh   # normal build (.Net 4.0), run unit tests (Mono on Linux/Mac, .Net on Windows)
+    ./build.sh   # normal build and unit tests, when using bash shell on Windows or Linux.
+    build.cmd    # normal build and unit tests, when using Windows CMD shell.
 
-    build.cmd Build              # normal build (.Net 4.0)
-    build.cmd Build incremental  # normal build, incremental (.Net 4.0)
+    ./build.sh build              # normal build
 
-    build.cmd Test        # normal build (.Net 4.0), run unit tests
-    build.cmd Test quick  # normal build (.Net 4.0), run unit tests except long running ones
+    ./build.sh test          # normal build (.Net 4.0), run unit tests
+    ./build.sh test quick    # normal build (.Net 4.0), run unit tests except long running ones
 
-    build.cmd Clean  # cleanup build artifacts
-    build.cmd Docs   # generate documentation (also DocsDev, DocsWatch)
-    build.cmd Api    # generate api reference
-    build.cmd Zip    # generate zip packages (.Net 4.0)
-    build.cmd NuGet  # generate NuGet packages (.Net 4.0)
-
-    build.cmd All    # build, test, docs, api reference (.Net 4.0)
+    ./build.sh clean         # cleanup build artifacts
+    ./build.sh docs          # generate documentation
+    ./build.sh api           # generate api reference
+    
+    ./build.sh all           # build, test, docs, api reference
 
 If the build or tests fail claiming that FSharp.Core was not be found, see
 [fsharp.org](https://fsharp.org/use/windows/) or install the
 [Visual F# 3.0 Tools](https://go.microsoft.com/fwlink/?LinkId=261286) directly.
+
+Dependencies
+------------
+
+We manage NuGet and other dependencies with [Paket](https://fsprojects.github.io/Paket/).
+You do not normally have to do anything with Paket as it is integrated into our
+FAKE build tools, unless you want to actively manage the dependencies.
+
+`.paket/paket.exe restore` will restore the packages
+to the exact version specified in the `paket.lock` file,
+`.paket/paket.exe install` will install or migrate packages after you have
+made changes to the `paket.dependencies` file, `.paket/paket.exe outdated`
+will show whether any packages are out of date and `.paket/paket.exe update`
+will update all packages within the defined constraints. Have a look at the Paket
+website for more commands and details.
+
+Documentation
+-------------
+
+This website and documentation is automatically generated from of a set of
+[CommonMark](https://commonmark.org/) structured files in `doc/content/` using
+[FSharp.Formatting](https://tpetricek.github.io/FSharp.Formatting/).
+The final documentation can be built by calling `build.sh docs`.
+
+However, for editing and previewing the docs on your local machine it is more
+convenient to run `build.sh DocsWatch` in a separate console instead, which
+monitors the content files and incrementally regenerates the HTML output
+automatically. DocsWatch will also use local/relative URIs instead of absolute
+ones, so that the links and styles will work as expected locally. This can
+also be enabled in a full one-time build with `build.sh DocsDev` instead
+of just `Docs`.
 
 Creating a Release
 ------------------
@@ -71,9 +105,7 @@ to the assembly info files automatically.
 
 The build can then be launched by calling:
 
-    build.sh All release    # full release build
-    build.sh NuGet release  # if you only need NuGet packages
-    build.sh Zip release    # if you only need Zip packages
+    ./build.sh all
 
 The build script will print the current version as part of the the header banner,
 which is also included in the release notes document in the build artifacts.
@@ -101,7 +133,7 @@ Official Release Process (Maintainers only)
 
 *   Build Release:
 
-        build.sh All release
+        build.sh all
 
 *   Commit and push release notes and (auto-updated) assembly info files with new "Release: v1.2.3" commit
 
@@ -110,13 +142,8 @@ Official Release Process (Maintainers only)
         build.sh PublishDocs
         build.sh PublishApi
         build.sh PublishTag
-        build.sh PublishMirrors
+        build.sh PublishArchive
         build.sh PublishNuGet
 
-    In theory there is also a `Publish` target to do this in one step, unfortunately
-    publishing to the NuGet gallery is quite unreliable.
-
-*   Create new Codeplex and GitHub release, attach Zip files (to be automated)
-*   Copy artifacts to [release archive](https://1drv.ms/1lMthfP) (to be automated)
 *   Consider a tweet via [@MathDotNet](https://twitter.com/MathDotNet)
 *   Consider a post to the [Google+ site](https://plus.google.com/112484567926928665204)

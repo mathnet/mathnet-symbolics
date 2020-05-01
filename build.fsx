@@ -61,15 +61,14 @@ Target "Start" DoNothing
 Target "Clean" (fun _ ->
     DeleteDirs (!! "src/**/obj/" ++ "src/**/bin/" )
     CleanDirs [ "out/api"; "out/docs" ]
-    allSolutions |> List.iter (fun solution -> CleanDirs [ solution.OutputZipDir; solution.OutputNuGetDir; solution.OutputLibDir ])
-    allSolutions |> List.iter clean)
+    allSolutions |> List.iter (fun solution -> CleanDirs [ solution.OutputZipDir; solution.OutputNuGetDir; solution.OutputLibDir ]))
 
 Target "ApplyVersion" (fun _ ->
     allProjects |> List.iter patchVersionInProjectFile
     patchVersionInAssemblyInfo "src/Symbolics" symbolicsRelease
     patchVersionInAssemblyInfo "src/Symbolics.Tests" symbolicsRelease)
 
-Target "Restore" (fun _ -> allSolutions |> List.iter restore)
+Target "Restore" (fun _ -> allSolutions |> List.iter restoreWeak)
 "Start"
   =?> ("Clean", not (hasBuildParam "incremental"))
   ==> "Restore"
@@ -79,7 +78,6 @@ Target "Prepare" DoNothing
   =?> ("Clean", not (hasBuildParam "incremental"))
   ==> "ApplyVersion"
   ==> "Prepare"
-
 
 
 // --------------------------------------------------------------------------------------
@@ -93,13 +91,13 @@ Target "Build" (fun _ ->
 
     // Normal Build (without strong name, with certificate signature)
     CleanDirs (!! "src/**/obj/" ++ "src/**/bin/" )
-    restore symbolicsSolution
-    build symbolicsSolution
+    restoreWeak symbolicsSolution
+    buildWeak symbolicsSolution
     if isWindows && hasBuildParam "sign" then sign fingerprint timeserver symbolicsSolution
     collectBinaries symbolicsSolution
     zip symbolicsZipPackage symbolicsSolution.OutputZipDir symbolicsSolution.OutputLibDir (fun f -> f.Contains("MathNet.Symbolics.") || f.Contains("MathNet.Numerics.") || f.Contains("System.Threading.") || f.Contains("FSharp.Core."))
     if isWindows then
-        pack symbolicsSolution
+        packWeak symbolicsSolution
         collectNuGetPackages symbolicsSolution
 
     // NuGet Sign (all or nothing)
@@ -115,11 +113,11 @@ Target "Build" (fun _ ->
 
 let testSymbolics framework = test "src/Symbolics.Tests" "Symbolics.Tests.fsproj" framework
 Target "TestSymbolics" DoNothing
-Target "TestSymbolicsCore2.2" (fun _ -> testSymbolics "netcoreapp2.2")
+Target "TestSymbolicsCore3.1" (fun _ -> testSymbolics "netcoreapp3.1")
 Target "TestSymbolicsNET45" (fun _ -> testSymbolics "net45")
 Target "TestSymbolicsNET461" (fun _ -> testSymbolics "net461")
 Target "TestSymbolicsNET47" (fun _ -> testSymbolics "net47")
-"Build" ==> "TestSymbolicsCore2.2" ==> "TestSymbolics"
+"Build" ==> "TestSymbolicsCore3.1" ==> "TestSymbolics"
 "Build" =?> ("TestSymbolicsNET45", isWindows)
 "Build" =?> ("TestSymbolicsNET461", isWindows) ==> "TestSymbolics"
 "Build" =?> ("TestSymbolicsNET47", isWindows)
@@ -144,10 +142,10 @@ Target "Docs" (fun _ ->
     provideDocExtraFiles extraDocs releases
     generateDocs true false)
 Target "DocsDev" (fun _ ->
-    provideDocExtraFiles extraDocs releases
+    provideDocExtraFiles  extraDocs releases
     generateDocs true true)
 Target "DocsWatch" (fun _ ->
-    provideDocExtraFiles extraDocs releases
+    provideDocExtraFiles  extraDocs releases
     use watcher = new FileSystemWatcher(DirectoryInfo("docs/content").FullName, "*.*")
     watcher.EnableRaisingEvents <- true
     watcher.Changed.Add(fun e -> generateDocs false true)

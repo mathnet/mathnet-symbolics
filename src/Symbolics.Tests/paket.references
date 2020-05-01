@@ -1,8 +1,8 @@
 FParsec
 MathNet.Numerics
 MathNet.Numerics.FSharp
+Microsoft.NET.Test.Sdk
 FSharp.Core
 Expecto
 Expecto.TestResults
-Expecto.VisualStudio.TestAdapter
-Microsoft.NET.Test.Sdk
+//Expecto.VisualStudio.TestAdapter

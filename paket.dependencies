@@ -8,27 +8,23 @@ nuget MathNet.Numerics ~> 4.7
 nuget MathNet.Numerics.FSharp ~> 4.7
 
 // Testing
-nuget Expecto framework:net461,netcoreapp2.2
-nuget Expecto.TestResults framework:net461,netcoreapp2.2
-nuget Expecto.VisualStudio.TestAdapter version_in_path:true, framework:net461,netcoreapp2.2
-nuget Microsoft.NET.Test.Sdk
+nuget Expecto framework:net461,netcoreapp3.1
+nuget Expecto.TestResults framework:net461,netcoreapp3.1
+//nuget Expecto.VisualStudio.TestAdapter version_in_path:true, framework:net461,netcoreapp2.2
+nuget Microsoft.NET.Test.Sdk ~> 16.4.0 lowest_matching, strategy:min
 
-nuget System.Runtime strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp2.2
-nuget System.Runtime.Numerics strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp2.2
-nuget System.Runtime.Serialization.Xml strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp2.2
-nuget System.Runtime.Serialization.Primitives strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp2.2
-nuget System.Runtime.Serialization.Formatters strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp2.2
-nuget System.Security.Cryptography.Algorithms strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp2.2
+nuget NETStandard.Library 2.0.3 lowest_matching, strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp3.1
+nuget Microsoft.NETCore.Platforms 3.1.0 lowest_matching, strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp3.1
+nuget Microsoft.NETCore.App 2.2.8 lowest_matching, strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp3.1
+nuget Microsoft.NETCore.DotNetHost 3.1.1 lowest_matching, strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp3.1
+nuget Microsoft.NETCore.DotNetAppHost 3.1.1 lowest_matching, strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp3.1
+nuget Microsoft.NETCore.DotNetHostPolicy 3.1.1 lowest_matching, strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp3.1
+nuget Microsoft.NETCore.DotNetHostResolver 3.1.1 lowest_matching, strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp3.1
+nuget Microsoft.NETCore.Jit 2.0.8 lowest_matching, strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp3.1
+nuget Microsoft.NETCore.Targets 2.0 lowest_matching, strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp3.1
+nuget Microsoft.NETCore.Runtime.CoreCLR 2.0.8 lowest_matching, strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp3.1
+nuget Microsoft.DotNet.PlatformAbstractions 3.1.1 lowest_matching, strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp3.1
 
-nuget NETStandard.Library 2.0.3 strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp2.2
-nuget Microsoft.NETCore.Platforms 2.2.0 strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp2.2
-nuget Microsoft.NETCore.App 2.2.4 strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp2.2
-nuget Microsoft.NETCore.DotNetHost 2.2.4 strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp2.2
-nuget Microsoft.NETCore.DotNetAppHost 2.2.4 strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp2.2
-nuget Microsoft.NETCore.DotNetHostPolicy 2.2.4 strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp2.2
-nuget Microsoft.NETCore.DotNetHostResolver 2.2.4 strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp2.2
-nuget Microsoft.NETCore.Jit 2.0.8 strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp2.2
-nuget Microsoft.NETCore.Runtime.CoreCLR 2.0.8 strategy:min, framework:netstandard1.3,netstandard1.6,netstandard2.0,netcoreapp2.2
 
 group Build
     source https://api.nuget.org/v3/index.json
