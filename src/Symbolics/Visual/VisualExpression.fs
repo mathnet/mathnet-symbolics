@@ -25,10 +25,10 @@ type VisualExpression =
 
 type IVisualStyle =
     abstract member CompactPowersOfFunctions : bool with get
-    abstract member SemanticFunction: f:Function * power:BigInteger * e:Expression -> VisualExpression
-    abstract member SemanticFunctionN: f:Function * power:BigInteger * e:Expression array -> VisualExpression
-    abstract member VisualFunction: f:string * power:BigInteger * e:VisualExpression -> Expression
-    abstract member VisualFunctionN: f:string * power:BigInteger * e:VisualExpression array -> Expression
+    abstract member SemanticFunction: f:Function * power:BigInteger * e:VisualExpression -> VisualExpression
+    abstract member SemanticFunctionN: f:Function * power:BigInteger * e:VisualExpression array -> VisualExpression
+    abstract member VisualFunction: f:string * power:BigInteger * e:Expression -> Expression
+    abstract member VisualFunctionN: f:string * power:BigInteger * e:Expression array -> Expression
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module VisualExpression =
@@ -168,10 +168,10 @@ module VisualExpression =
                 VisualExpression.Fraction (VisualExpression.PositiveInteger BigInteger.One, d)
                 |> parenthesis priority 2
             | PosIntPower (Function (f, x), Integer p) when style.CompactPowersOfFunctions ->
-                style.SemanticFunction (f, p.Numerator, x)
+                style.SemanticFunction (f, p.Numerator, convert style 0 x)
                 |> parenthesis priority 3
             | PosIntPower (FunctionN (f, xs), Integer p) when style.CompactPowersOfFunctions ->
-                style.SemanticFunctionN (f, p.Numerator, List.toArray xs)
+                style.SemanticFunctionN (f, p.Numerator, xs |> List.map (convert style 0) |> List.toArray)
                 |> parenthesis priority 3
             | Power (r, Number n) when n.IsPositive && n.Numerator = BigInteger.One ->
                 VisualExpression.Root (convert style 4 r, n.Denominator)
@@ -185,10 +185,10 @@ module VisualExpression =
             | Function (Abs, x) ->
                 VisualExpression.Abs (convert style 0 x)
             | Function (f, x) ->
-                style.SemanticFunction (f, BigInteger.One, x)
+                style.SemanticFunction (f, BigInteger.One, convert style 0 x)
                 |> parenthesis priority 3
             | FunctionN (f, xs) ->
-                style.SemanticFunctionN (f, BigInteger.One, List.toArray xs)
+                style.SemanticFunctionN (f, BigInteger.One, xs |> List.map (convert style 0) |> List.toArray)
                 |> parenthesis priority 3
 
         convert style 0 expression
@@ -221,19 +221,17 @@ type DefaultVisualStyle() =
         | HankelH1 -> "hankelh1"
         | HankelH2 -> "hankelh2"
 
-    member private this.FromExpression e = VisualExpression.fromExpression this e
-
     interface IVisualStyle with
-        member this.CompactPowersOfFunctions with get() = false
-        member this.SemanticFunction (f:Function, power:BigInteger, e:Expression) =
+        member __.CompactPowersOfFunctions with get() = false
+        member __.SemanticFunction (f:Function, power:BigInteger, e:VisualExpression) =
             match f with
-            | Abs -> VisualExpression.Abs (this.FromExpression e)
-            | _ -> VisualExpression.Function (functionName f, power, this.FromExpression e)
-        member this.SemanticFunctionN (f:Function, power:BigInteger, e:Expression array) =
-            VisualExpression.FunctionN (functionName f, power, e |> Array.map (this.FromExpression) |> List.ofArray)
-        member this.VisualFunction (f:string, power:BigInteger, e:VisualExpression) =
+            | Abs -> VisualExpression.Abs e
+            | _ -> VisualExpression.Function (functionName f, power, e)
+        member __.SemanticFunctionN (f:Function, power:BigInteger, e:VisualExpression array) =
+            VisualExpression.FunctionN (functionName f, power, List.ofArray e)
+        member __.VisualFunction (f:string, power:BigInteger, e:Expression) =
             failwith "TODO"
             Expression.Undefined
-        member this.VisualFunctionN (f:string, power:BigInteger, e:VisualExpression array) =
+        member __.VisualFunctionN (f:string, power:BigInteger, e:Expression array) =
             failwith "TODO"
             Expression.Undefined

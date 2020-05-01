@@ -2,7 +2,6 @@
 
 open System.IO
 open System.Text
-open MathNet.Numerics
 open MathNet.Symbolics
 
 type ParseResult =
