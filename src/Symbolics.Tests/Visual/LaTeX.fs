@@ -1,6 +1,8 @@
 ﻿namespace MathNet.Symbolics.Tests.Visual
 
 open NUnit.Framework
+open FsUnit
+open FsUnitTyped
 open MathNet.Symbolics
 open Operators
 
@@ -44,3 +46,9 @@ module LaTeX =
 
         LaTeX.format (x**(1Q/2)) --> "\sqrt{x}"
         LaTeX.format (x**(1Q/3)) --> "\sqrt[3]{x}"
+
+    [<Test>]
+    let ``Function Powers`` () =
+        VisualExpression.Function ("sin", BigInteger.One, VisualExpression.Symbol "x") |> LaTeX.formatVisual |> shouldEqual """\sin{x}"""
+        VisualExpression.Function ("sin", bigint 2, VisualExpression.Symbol "x") |> LaTeX.formatVisual |> shouldEqual """\sin^{2}{x}"""
+        LaTeX.format ((sin x)*(sin x)) --> """{\left(\sin{x}\right)}^{2}"""

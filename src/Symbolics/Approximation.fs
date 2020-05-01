@@ -174,25 +174,25 @@ module Approximation =
         match nu, z with
         | Real a, Real b -> Real (SpecialFunctions.BesselJ (a, b));
         | Real a, Complex b -> Complex (SpecialFunctions.BesselJ (a, b));
-        | Complex a, Real b -> failwith "not supported"     
-        | Complex a, Complex b -> failwith "not supported"  
+        | Complex a, Real b -> failwith "not supported"
+        | Complex a, Complex b -> failwith "not supported"
     let bessely nu z =
         match nu, z with
         | Real a, Real b -> Real (SpecialFunctions.BesselY (a, b));
         | Real a, Complex b -> Complex (SpecialFunctions.BesselY (a, b));
-        | Complex a, Real b -> failwith "not supported" 
+        | Complex a, Real b -> failwith "not supported"
         | Complex a, Complex b -> failwith "not supported"
     let besseli nu z =
         match nu, z with
         | Real a, Real b -> Real (SpecialFunctions.BesselI (a, b));
         | Real a, Complex b -> Complex (SpecialFunctions.BesselI (a, b));
         | Complex a, Real b -> failwith "not supported"
-        | Complex a, Complex b -> failwith "not supported"    
+        | Complex a, Complex b -> failwith "not supported"
     let besselk nu z =
         match nu, z with
         | Real a, Real b -> Real (SpecialFunctions.BesselK (a, b));
         | Real a, Complex b -> Complex (SpecialFunctions.BesselK (a, b));
-        | Complex a, Real b -> failwith "not supported"  
+        | Complex a, Real b -> failwith "not supported"
         | Complex a, Complex b -> failwith "not supported"
     let besseliratio nu z =
         match nu, z with

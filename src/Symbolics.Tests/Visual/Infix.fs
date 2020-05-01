@@ -1,6 +1,8 @@
 ﻿namespace MathNet.Symbolics.Tests.Visual
 
 open NUnit.Framework
+open FsUnit
+open FsUnitTyped
 open MathNet.Symbolics
 open Operators
 
@@ -79,6 +81,13 @@ module Infix =
         Infix.parseOrUndefined "pow(3*x,10*sin(x))" ==> "(3*x)^(10*sin(x))"
         Infix.parseOrUndefined "sqrt(pow(x,1/2))" ===> "(x^(1/2))^(1/2)"
         Infix.parseOrUndefined "sqrt(pow(x,1/2))" ==> "sqrt(sqrt(x))"
+
+    [<Test>]
+    let ``Function Powers`` () =
+        VisualExpression.Function ("sin", BigInteger.One, VisualExpression.Symbol "x") |> Infix.formatVisual |> shouldEqual "sin(x)"
+        VisualExpression.Function ("sin", bigint 2, VisualExpression.Symbol "x") |> Infix.formatVisual |> shouldEqual "sin^2(x)"
+        Infix.parseOrThrow "sin^2(x)" ==> "(sin(x))^2"
+        Infix.format (sin(x)*sin(x)) --> "(sin(x))^2"
 
     [<Test>]
     let ``Underscores in names`` () =

@@ -5,9 +5,9 @@ open MathNet.Symbolics
 
 [<StructuralEquality;NoComparison;RequireQualifiedAccess>]
 type VisualExpression =
-    | Symbol of string
-    | PositiveInteger of BigInteger
-    | PositiveFloatingPoint of double
+    | Symbol of name:string
+    | PositiveInteger of value:BigInteger
+    | PositiveFloatingPoint of value:float
     | Parenthesis of VisualExpression
     | Abs of VisualExpression
     | Negative of VisualExpression
@@ -16,18 +16,19 @@ type VisualExpression =
     | Fraction of VisualExpression * VisualExpression // a/b
     | Power of VisualExpression * VisualExpression // a^b
     | Root of VisualExpression * BigInteger // a^(1/b)
-    | Function of string * VisualExpression
-    | FunctionN of string * (VisualExpression list)
+    | Function of name:string * power:BigInteger * VisualExpression
+    | FunctionN of name:string * power:BigInteger * (VisualExpression list)
     | ComplexI
     | Infinity
     | ComplexInfinity
     | Undefined
 
 type IVisualStyle =
-    abstract member SemanticFunction: f:Function * e:Expression -> VisualExpression
-    abstract member SemanticFunctionN: f:Function * e:Expression array -> VisualExpression
-    abstract member VisualFunction: f:string * e:VisualExpression -> Expression
-    abstract member VisualFunctionN: f:string * e:VisualExpression array -> Expression
+    abstract member CompactPowersOfFunctions : bool with get
+    abstract member SemanticFunction: f:Function * power:BigInteger * e:Expression -> VisualExpression
+    abstract member SemanticFunctionN: f:Function * power:BigInteger * e:Expression array -> VisualExpression
+    abstract member VisualFunction: f:string * power:BigInteger * e:VisualExpression -> Expression
+    abstract member VisualFunctionN: f:string * power:BigInteger * e:VisualExpression array -> Expression
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module VisualExpression =
@@ -166,6 +167,12 @@ module VisualExpression =
                     else VisualExpression.Power (convert style 3 r, convert style 3 (-p))
                 VisualExpression.Fraction (VisualExpression.PositiveInteger BigInteger.One, d)
                 |> parenthesis priority 2
+            | PosIntPower (Function (f, x), Integer p) when style.CompactPowersOfFunctions ->
+                style.SemanticFunction (f, p.Numerator, x)
+                |> parenthesis priority 3
+            | PosIntPower (FunctionN (f, xs), Integer p) when style.CompactPowersOfFunctions ->
+                style.SemanticFunctionN (f, p.Numerator, List.toArray xs)
+                |> parenthesis priority 3
             | Power (r, Number n) when n.IsPositive && n.Numerator = BigInteger.One ->
                 VisualExpression.Root (convert style 4 r, n.Denominator)
                 |> parenthesis priority 3
@@ -178,10 +185,10 @@ module VisualExpression =
             | Function (Abs, x) ->
                 VisualExpression.Abs (convert style 0 x)
             | Function (f, x) ->
-                style.SemanticFunction (f, x)
+                style.SemanticFunction (f, BigInteger.One, x)
                 |> parenthesis priority 3
             | FunctionN (f, xs) ->
-                style.SemanticFunctionN (f, List.toArray xs)
+                style.SemanticFunctionN (f, BigInteger.One, List.toArray xs)
                 |> parenthesis priority 3
 
         convert style 0 expression
@@ -217,15 +224,16 @@ type DefaultVisualStyle() =
     member private this.FromExpression e = VisualExpression.fromExpression this e
 
     interface IVisualStyle with
-        member this.SemanticFunction (f:Function, e:Expression) =
+        member this.CompactPowersOfFunctions with get() = false
+        member this.SemanticFunction (f:Function, power:BigInteger, e:Expression) =
             match f with
             | Abs -> VisualExpression.Abs (this.FromExpression e)
-            | _ -> VisualExpression.Function (functionName f, this.FromExpression e)
-        member this.SemanticFunctionN (f:Function, e:Expression array) =
-            VisualExpression.FunctionN (functionName f, e |> Array.map (this.FromExpression) |> List.ofArray)
-        member this.VisualFunction (f:string, e:VisualExpression) =
+            | _ -> VisualExpression.Function (functionName f, power, this.FromExpression e)
+        member this.SemanticFunctionN (f:Function, power:BigInteger, e:Expression array) =
+            VisualExpression.FunctionN (functionName f, power, e |> Array.map (this.FromExpression) |> List.ofArray)
+        member this.VisualFunction (f:string, power:BigInteger, e:VisualExpression) =
             failwith "TODO"
             Expression.Undefined
-        member this.VisualFunctionN (f:string, e:VisualExpression array) =
+        member this.VisualFunctionN (f:string, power:BigInteger, e:VisualExpression array) =
             failwith "TODO"
             Expression.Undefined

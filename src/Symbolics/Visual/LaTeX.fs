@@ -114,8 +114,12 @@ module private LaTeXFormatter =
             write "]{"
             format write (dropParenthesis r)
             write "}"
-        | VisualExpression.Function (fn, x) ->
+        | VisualExpression.Function (fn, power, x) ->
             write (latexFunctionName fn)
+            if power.IsOne |> not then
+                write "^{"
+                write (power.ToString())
+                write "}"
             match x with
             | VisualExpression.Sum _ ->
                 write "\\left("
@@ -125,8 +129,13 @@ module private LaTeXFormatter =
                 write "{"
                 format write x
                 write "}"
-        | VisualExpression.FunctionN ("log", [basis; x]) ->
-            write "\\log_{"
+        | VisualExpression.FunctionN ("log", power, [basis; x]) ->
+            write "\\log"
+            if power.IsOne |> not then
+                write "^{"
+                write (power.ToString())
+                write "}"
+            write "_{"
             format write basis
             match x with
             | VisualExpression.Sum _ ->
@@ -137,7 +146,7 @@ module private LaTeXFormatter =
                 write "}{"
                 format write x
                 write "}"
-        | VisualExpression.FunctionN ("besselj", [nu; x]) ->
+        | VisualExpression.FunctionN ("besselj", power, [nu; x]) when power.IsOne ->
             write "J_{"
             format write nu
             match x with
@@ -149,7 +158,7 @@ module private LaTeXFormatter =
                 write "}{"
                 format write x
                 write "}"
-        | VisualExpression.FunctionN ("bessely", [nu; x]) ->
+        | VisualExpression.FunctionN ("bessely", power, [nu; x]) when power.IsOne ->
             write "Y_{"
             format write nu
             match x with
@@ -161,7 +170,7 @@ module private LaTeXFormatter =
                 write "}{"
                 format write x
                 write "}"
-        | VisualExpression.FunctionN ("besseli", [nu; x]) ->
+        | VisualExpression.FunctionN ("besseli", power, [nu; x]) when power.IsOne ->
             write "I_{"
             format write nu
             match x with
@@ -172,8 +181,8 @@ module private LaTeXFormatter =
             | _ ->
                 write "}{"
                 format write x
-                write "}"        
-        | VisualExpression.FunctionN ("besselk", [nu; x]) ->
+                write "}"
+        | VisualExpression.FunctionN ("besselk", power, [nu; x]) when power.IsOne ->
             write "K_{"
             format write nu
             match x with
@@ -185,7 +194,7 @@ module private LaTeXFormatter =
                 write "}{"
                 format write x
                 write "}"
-        | VisualExpression.FunctionN ("besseliratio", [nu; x]) ->
+        | VisualExpression.FunctionN ("besseliratio", power, [nu; x]) when power.IsOne ->
             write "\\frac{"
             write "I_{"
             format write nu
@@ -212,7 +221,7 @@ module private LaTeXFormatter =
                 format write x
                 write "}"
             write "}"
-        | VisualExpression.FunctionN ("besselkratio", [nu; x]) -> 
+        | VisualExpression.FunctionN ("besselkratio", power, [nu; x]) when power.IsOne  ->
             write "\\frac{"
             write "K_{"
             format write nu
@@ -239,7 +248,7 @@ module private LaTeXFormatter =
                 format write x
                 write "}"
             write "}"
-        | VisualExpression.FunctionN ("hankelh1", [nu; x]) ->
+        | VisualExpression.FunctionN ("hankelh1", power, [nu; x]) when power.IsOne ->
             write "H^{(1)}_{"
             format write nu
             match x with
@@ -251,7 +260,7 @@ module private LaTeXFormatter =
                 write "}{"
                 format write x
                 write "}"
-        | VisualExpression.FunctionN ("hankelh2", [nu; x]) ->
+        | VisualExpression.FunctionN ("hankelh2", power, [nu; x]) when power.IsOne ->
             write "H^{(2)}_{"
             format write nu
             match x with
@@ -263,13 +272,17 @@ module private LaTeXFormatter =
                 write "}{"
                 format write x
                 write "}"
-        | VisualExpression.FunctionN (fn, x::xs) ->
+        | VisualExpression.FunctionN (fn, power, x::xs) ->
             write (latexFunctionNName fn)
+            if power.IsOne |> not then
+                write "^{"
+                write (power.ToString())
+                write "}"
             write "\\left({"
             format write x
             xs |> List.iter (fun x -> write "}, {"; format write x)
             write "}\\right)"
-        | VisualExpression.Sum [] | VisualExpression.Product [] | VisualExpression.FunctionN (_, []) -> failwith "invalid expression"
+        | VisualExpression.Sum [] | VisualExpression.Product [] | VisualExpression.FunctionN (_, _, []) -> failwith "invalid expression"
 
 
 [<RequireQualifiedAccess>]
