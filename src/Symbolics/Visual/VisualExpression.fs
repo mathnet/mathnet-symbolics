@@ -2,6 +2,8 @@
 
 open MathNet.Numerics
 open MathNet.Symbolics
+open Microsoft.FSharp.Reflection
+open Operators
 
 [<StructuralEquality;NoComparison;RequireQualifiedAccess>]
 type VisualExpression =
@@ -33,7 +35,6 @@ type IVisualStyle =
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module VisualExpression =
     open Rational
-    open Operators
     open ExpressionPatterns
 
     let fromExpression (style:IVisualStyle) expression =
@@ -190,36 +191,37 @@ module VisualExpression =
             | FunctionN (f, xs) ->
                 style.SemanticFunctionN (f, BigInteger.One, xs |> List.map (convert style 0) |> List.toArray)
                 |> parenthesis priority 3
-
         convert style 0 expression
+
+    let toExpression (style:IVisualStyle) visualExpression =
+        let rec convert (style:IVisualStyle) = function
+            | VisualExpression.Symbol name -> symbol name
+            | VisualExpression.PositiveInteger value -> fromInteger value
+            | VisualExpression.PositiveFloatingPoint value -> fromReal value
+            | VisualExpression.Parenthesis x -> convert style x
+            | VisualExpression.Abs x -> convert style x |> abs
+            | VisualExpression.Negative x -> convert style x |> negate
+            | VisualExpression.Sum xs -> xs |> List.map (convert style) |> sum
+            | VisualExpression.Product xs -> xs |> List.map (convert style) |> product
+            | VisualExpression.Fraction (numerator, denominator) -> (convert style numerator)/(convert style denominator)
+            | VisualExpression.Power (radix, power) -> pow (convert style radix) (convert style power)
+            | VisualExpression.Root (radix, power) -> root (fromInteger power) (convert style radix)
+            | VisualExpression.Function (fn, power, x) -> style.VisualFunction (fn, power, convert style x)
+            | VisualExpression.FunctionN (fn, power, xs) -> style.VisualFunctionN (fn, power, xs |> List.map (convert style) |> List.toArray)
+            | VisualExpression.ComplexI -> Expression.I
+            | VisualExpression.Infinity -> PositiveInfinity
+            | VisualExpression.ComplexInfinity -> ComplexInfinity
+            | VisualExpression.Undefined -> Undefined
+        convert style visualExpression
 
 
 type DefaultVisualStyle() =
 
-    let functionName = function
-        | Abs -> "abs"
-        | Ln -> "ln" | Log -> "log"
-        | Exp -> "exp"
-        | Sin -> "sin" | Cos -> "cos" | Tan -> "tan"
-        | Csc -> "csc" | Sec -> "sec" | Cot -> "cot"
-        | Sinh -> "sinh" | Cosh -> "cosh" | Tanh -> "tanh"
-        | Csch -> "csch" | Sech -> "sech" | Coth -> "coth"
-        | Asin -> "asin" | Acos -> "acos" | Atan -> "atan"
-        | Acsc -> "acsc" | Asec -> "asec" | Acot -> "acot"
-        | Acosh -> "acosh" | Asinh -> "asinh" | Atanh -> "atanh"
-        | Acsch -> "acsch" | Asech -> "asech" | Acoth -> "acoth"
-        | AiryAi -> "airyai"
-        | AiryAiPrime -> "airyaiprime"
-        | AiryBi -> "airybi"
-        | AiryBiPrime -> "airybiprime"
-        | BesselJ -> "besselj"
-        | BesselY -> "bessely"
-        | BesselI -> "besseli"
-        | BesselK -> "besselk"
-        | BesselIRatio -> "besseliratio"
-        | BesselKRatio -> "besselkratio"
-        | HankelH1 -> "hankelh1"
-        | HankelH2 -> "hankelh2"
+    let functionNameMap = FSharpType.GetUnionCases typeof<Function> |> Array.map (fun case -> FSharpValue.MakeUnion(case, [||]) :?> Function, case.Name.ToLowerInvariant()) |> Map.ofArray
+    let nameFunctionMap = functionNameMap |> Map.toList |> List.map (fun (f,n) -> (n,f)) |> Map.ofList
+
+    let functionName f = Map.find f functionNameMap
+    let nameFunction name = Map.find name nameFunctionMap
 
     interface IVisualStyle with
         member __.CompactPowersOfFunctions with get() = false
@@ -230,8 +232,8 @@ type DefaultVisualStyle() =
         member __.SemanticFunctionN (f:Function, power:BigInteger, e:VisualExpression array) =
             VisualExpression.FunctionN (functionName f, power, List.ofArray e)
         member __.VisualFunction (f:string, power:BigInteger, e:Expression) =
-            failwith "TODO"
-            Expression.Undefined
+            if power.IsOne then apply (nameFunction f) e
+            else pow (apply (nameFunction f) e) (fromInteger power)
         member __.VisualFunctionN (f:string, power:BigInteger, e:Expression array) =
-            failwith "TODO"
-            Expression.Undefined
+            if power.IsOne then applyN (nameFunction f) (Array.toList e)
+            else pow (applyN (nameFunction f) (Array.toList e)) (fromInteger power)

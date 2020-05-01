@@ -60,17 +60,14 @@ module ExpressionPatterns =
 
     let (|Zero|_|) = function
         | Number n when n.IsZero -> Some Zero
-        | Approximation x when Approximation.isZero x -> Some Zero
         | _ -> None
 
     let (|One|_|) = function
         | Number n when n.IsOne -> Some One
-        | Approximation x when Approximation.isOne x -> Some One
         | _ -> None
 
     let (|MinusOne|_|) = function
         | Number n when n.IsInteger && n.Numerator = BigInteger.MinusOne -> Some MinusOne
-        | Approximation x when Approximation.isMinusOne x -> Some MinusOne
         | _ -> None
 
     let (|Negative|_|) = function

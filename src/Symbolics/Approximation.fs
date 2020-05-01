@@ -269,18 +269,6 @@ module Approximation =
         | HankelH2, [nu; x] -> hankelh2 nu x
         | _ -> failwith "not supported"
 
-    let isZero = function
-        | Real x when x = 0.0 -> true
-        | Complex c when c.IsZero() -> true
-        | _ -> false
-    let isOne = function
-        | Real x when x = 1.0 -> true
-        | Complex c when c = Complex.one -> true
-        | _ -> false
-    let isMinusOne = function
-        | Real x when x = -1.0 -> true
-        | Complex c when c.IsReal() && c.Real = -1.0 -> true
-        | _ -> false
     let isPositive = function
         | Real x when x > 0.0 -> true
         | Complex c when c.IsReal() && c.Real > 0.0 -> true

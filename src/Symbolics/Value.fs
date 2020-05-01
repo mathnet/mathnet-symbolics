@@ -52,17 +52,14 @@ module Value =
 
     let (|Zero|_|) = function
         | Value.Number n when n.IsZero -> Some Zero
-        | Value.Approximation a when Approximation.isZero a -> Some Zero
         | _ -> None
 
     let (|One|_|) = function
         | Value.Number n when n.IsOne -> Some One
-        | Value.Approximation a when Approximation.isOne a -> Some One
         | _ -> None
 
     let (|MinusOne|_|) = function
         | Value.Number n when n.IsInteger && n.Numerator = BigInteger.MinusOne -> Some MinusOne
-        | Value.Approximation a when Approximation.isMinusOne a -> Some MinusOne
         | _ -> None
 
     let (|Positive|_|) = function
