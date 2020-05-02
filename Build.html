@@ -11,7 +11,7 @@
         <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
         <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
         <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
-        <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
 
         <link type="text/css" rel="stylesheet" href="https://symbolics.mathdotnet.com/content/style.css" />
         <style>
@@ -38,7 +38,7 @@
         <script type="text/javascript" src="https://symbolics.mathdotnet.com/content/tips.js"></script>
         <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
-            <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+            <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
         <![endif]-->
 
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -61,29 +61,35 @@
 <p>If you do not want to use the official binaries, or if you like to modify,
 debug or contribute, you can compile locally either using Visual Studio or
 manually with the build scripts.</p>
+<h2><a name="System-Requirements" class="anchor" href="#System-Requirements">System Requirements</a></h2>
+<ul>
+<li>.NET Core SDK 3.1.1 (<a href="https://dotnet.microsoft.com/download/dotnet-core/3.1">download</a>)</li>
+</ul>
 <h2><a name="VisualStudio-or-Xamarin-Studio" class="anchor" href="#VisualStudio-or-Xamarin-Studio">VisualStudio or Xamarin Studio</a></h2>
 <p>We clearly separate dependency management from the IDE, you should therefore
 run <code>restore.cmd</code> or <code>restore.sh</code> once after every git checkout in order to restore
 the dependencies exactly as defined. Otherwise Visual Studio and other IDEs
 may fail to compile or provide correct IntelliSense.</p>
 <p>Tests can be run with the usual integrated NUnit test runners or ReSharper.</p>
-<h2><a name="MSBuild-or-XBuild" class="anchor" href="#MSBuild-or-XBuild">MSBuild or XBuild</a></h2>
+<h2><a name="Command-Line-Tools" class="anchor" href="#Command-Line-Tools">Command Line Tools</a></h2>
 <p>Instead of a compatible IDE you can also build the solutions directly with
-<code>msbuild</code>, or on Mono with <code>xbuild</code>. You may need to run <code>restore.cmd</code> or
+the .NET Core SDK, with MsBuild or on Mono with XBuild. You may need to run <code>restore.cmd</code> or
 <code>restore.sh</code> before, once after every git checkout in order to restore the dependencies.</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
 <span class="l">3: </span>
+<span class="l">4: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">restore</span><span class="o">.</span><span class="i">cmd</span> (<span class="k">or</span> <span class="i">restore</span><span class="o">.</span><span class="i">sh</span>)            # <span class="i">restore</span> <span class="i">dependencies</span> (<span class="i">once</span>)
-<span class="i">msbuild</span> <span class="i">MathNet</span><span class="o">.</span><span class="i">Symbolics</span><span class="o">.</span><span class="i">sln</span>          # <span class="i">only</span> <span class="i">build</span> <span class="k">for</span> <span class="o">.</span><span class="i">Net</span> <span class="n">4</span> (<span class="i">main</span> <span class="i">solution</span>)
-<span class="i">xbuild</span> <span class="i">MathNet</span><span class="o">.</span><span class="i">Symbolics</span><span class="o">.</span><span class="i">sln</span>           # <span class="i">build</span> <span class="k">with</span> <span class="i">Mono</span>, <span class="i">e</span><span class="o">.</span><span class="i">g</span><span class="o">.</span> <span class="i">on</span> <span class="i">Linux</span> <span class="k">or</span> <span class="i">Mac</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">restore</span><span class="o">.</span><span class="i">cmd</span> (<span class="k">or</span> <span class="i">restore</span><span class="o">.</span><span class="i">sh</span>)              # <span class="i">restore</span> <span class="i">dependencies</span> (<span class="i">once</span>)
+<span class="i">dotnet</span> <span class="i">build</span> <span class="i">MathNet</span><span class="o">.</span><span class="i">Symbolics</span><span class="o">.</span><span class="i">sln</span>       # <span class="k">with</span> <span class="o">.</span><span class="i">NET</span> <span class="i">Core</span> <span class="i">SDK</span>
+<span class="i">msbuild</span> <span class="i">MathNet</span><span class="o">.</span><span class="i">Symbolics</span><span class="o">.</span><span class="i">sln</span>            # <span class="k">with</span> <span class="i">MsBuild</span>
+<span class="i">xbuild</span> <span class="i">MathNet</span><span class="o">.</span><span class="i">Symbolics</span><span class="o">.</span><span class="i">sln</span>             # <span class="k">with</span> <span class="i">Mono</span>
 </code></pre></td>
 </tr>
 </table>
 <h2><a name="FAKE" class="anchor" href="#FAKE">FAKE</a></h2>
 <p>The fully automated build including unit tests, documentation and api
-reference, NuGet and Zip packages is using <a href="http://fsharp.github.io/FAKE/">FAKE</a>.</p>
+reference, NuGet and Zip packages is using <a href="https://fsharp.github.io/FAKE/">FAKE</a>.</p>
 <p>FAKE itself is not included in the repository but it will download and bootstrap
 itself automatically when build.cmd is run the first time. Note that this step
 is <em>not</em> required when using Visual Studio or <code>msbuild</code> directly.</p>
@@ -100,32 +106,49 @@ is <em>not</em> required when using Visual Studio or <code>msbuild</code> direct
 <span class="l">11: </span>
 <span class="l">12: </span>
 <span class="l">13: </span>
-<span class="l">14: </span>
-<span class="l">15: </span>
-<span class="l">16: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">build</span><span class="o">.</span><span class="i">cmd</span>    # <span class="i">normal</span> <span class="i">build</span> (<span class="o">.</span><span class="i">Net</span> <span class="n">4.0</span>), <span class="i">run</span> <span class="i">unit</span> <span class="i">tests</span> (<span class="o">.</span><span class="i">Net</span> <span class="i">on</span> <span class="i">Windows</span>)
-<span class="o">.</span><span class="o">/</span><span class="i">build</span><span class="o">.</span><span class="i">sh</span>   # <span class="i">normal</span> <span class="i">build</span> (<span class="o">.</span><span class="i">Net</span> <span class="n">4.0</span>), <span class="i">run</span> <span class="i">unit</span> <span class="i">tests</span> (<span class="i">Mono</span> <span class="i">on</span> <span class="i">Linux</span><span class="o">/</span><span class="i">Mac</span>, <span class="o">.</span><span class="i">Net</span> <span class="i">on</span> <span class="i">Windows</span>)
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="o">.</span><span class="o">/</span><span class="i">build</span><span class="o">.</span><span class="i">sh</span>   # <span class="i">normal</span> <span class="i">build</span> <span class="k">and</span> <span class="i">unit</span> <span class="i">tests</span>, <span class="k">when</span> <span class="i">using</span> <span class="i">bash</span> <span class="i">shell</span> <span class="i">on</span> <span class="i">Windows</span> <span class="k">or</span> <span class="i">Linux</span><span class="o">.</span>
+<span class="i">build</span><span class="o">.</span><span class="i">cmd</span>    # <span class="i">normal</span> <span class="i">build</span> <span class="k">and</span> <span class="i">unit</span> <span class="i">tests</span>, <span class="k">when</span> <span class="i">using</span> <span class="i">Windows</span> <span class="i">CMD</span> <span class="i">shell</span><span class="o">.</span>
 
-<span class="i">build</span><span class="o">.</span><span class="i">cmd</span> <span class="i">Build</span>              # <span class="i">normal</span> <span class="i">build</span> (<span class="o">.</span><span class="i">Net</span> <span class="n">4.0</span>)
-<span class="i">build</span><span class="o">.</span><span class="i">cmd</span> <span class="i">Build</span> <span class="i">incremental</span>  # <span class="i">normal</span> <span class="i">build</span>, <span class="i">incremental</span> (<span class="o">.</span><span class="i">Net</span> <span class="n">4.0</span>)
+<span class="o">.</span><span class="o">/</span><span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">build</span>              # <span class="i">normal</span> <span class="i">build</span>
 
-<span class="i">build</span><span class="o">.</span><span class="i">cmd</span> <span class="i">Test</span>        # <span class="i">normal</span> <span class="i">build</span> (<span class="o">.</span><span class="i">Net</span> <span class="n">4.0</span>), <span class="i">run</span> <span class="i">unit</span> <span class="i">tests</span>
-<span class="i">build</span><span class="o">.</span><span class="i">cmd</span> <span class="i">Test</span> <span class="i">quick</span>  # <span class="i">normal</span> <span class="i">build</span> (<span class="o">.</span><span class="i">Net</span> <span class="n">4.0</span>), <span class="i">run</span> <span class="i">unit</span> <span class="i">tests</span> <span class="i">except</span> <span class="i">long</span> <span class="i">running</span> <span class="i">ones</span>
+<span class="o">.</span><span class="o">/</span><span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">test</span>          # <span class="i">normal</span> <span class="i">build</span> (<span class="o">.</span><span class="i">Net</span> <span class="n">4.0</span>), <span class="i">run</span> <span class="i">unit</span> <span class="i">tests</span>
+<span class="o">.</span><span class="o">/</span><span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">test</span> <span class="i">quick</span>    # <span class="i">normal</span> <span class="i">build</span> (<span class="o">.</span><span class="i">Net</span> <span class="n">4.0</span>), <span class="i">run</span> <span class="i">unit</span> <span class="i">tests</span> <span class="i">except</span> <span class="i">long</span> <span class="i">running</span> <span class="i">ones</span>
 
-<span class="i">build</span><span class="o">.</span><span class="i">cmd</span> <span class="i">Clean</span>  # <span class="i">cleanup</span> <span class="i">build</span> <span class="i">artifacts</span>
-<span class="i">build</span><span class="o">.</span><span class="i">cmd</span> <span class="i">Docs</span>   # <span class="i">generate</span> <span class="i">documentation</span> (<span class="i">also</span> <span class="i">DocsDev</span>, <span class="i">DocsWatch</span>)
-<span class="i">build</span><span class="o">.</span><span class="i">cmd</span> <span class="i">Api</span>    # <span class="i">generate</span> <span class="i">api</span> <span class="i">reference</span>
-<span class="i">build</span><span class="o">.</span><span class="i">cmd</span> <span class="i">Zip</span>    # <span class="i">generate</span> <span class="i">zip</span> <span class="i">packages</span> (<span class="o">.</span><span class="i">Net</span> <span class="n">4.0</span>)
-<span class="i">build</span><span class="o">.</span><span class="i">cmd</span> <span class="i">NuGet</span>  # <span class="i">generate</span> <span class="i">NuGet</span> <span class="i">packages</span> (<span class="o">.</span><span class="i">Net</span> <span class="n">4.0</span>)
+<span class="o">.</span><span class="o">/</span><span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">clean</span>         # <span class="i">cleanup</span> <span class="i">build</span> <span class="i">artifacts</span>
+<span class="o">.</span><span class="o">/</span><span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">docs</span>          # <span class="i">generate</span> <span class="i">documentation</span>
+<span class="o">.</span><span class="o">/</span><span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">api</span>           # <span class="i">generate</span> <span class="i">api</span> <span class="i">reference</span>
 
-<span class="i">build</span><span class="o">.</span><span class="i">cmd</span> <span class="i">All</span>    # <span class="i">build</span>, <span class="i">test</span>, <span class="i">docs</span>, <span class="i">api</span> <span class="i">reference</span> (<span class="o">.</span><span class="i">Net</span> <span class="n">4.0</span>)
+<span class="o">.</span><span class="o">/</span><span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">all</span>           # <span class="i">build</span>, <span class="i">test</span>, <span class="i">docs</span>, <span class="i">api</span> <span class="i">reference</span>
 </code></pre></td>
 </tr>
 </table>
 <p>If the build or tests fail claiming that FSharp.Core was not be found, see
-<a href="http://fsharp.org/use/windows/">fsharp.org</a> or install the
+<a href="https://fsharp.org/use/windows/">fsharp.org</a> or install the
 <a href="https://go.microsoft.com/fwlink/?LinkId=261286">Visual F# 3.0 Tools</a> directly.</p>
+<h2><a name="Dependencies" class="anchor" href="#Dependencies">Dependencies</a></h2>
+<p>We manage NuGet and other dependencies with <a href="https://fsprojects.github.io/Paket/">Paket</a>.
+You do not normally have to do anything with Paket as it is integrated into our
+FAKE build tools, unless you want to actively manage the dependencies.</p>
+<p><code>.paket/paket.exe restore</code> will restore the packages
+to the exact version specified in the <code>paket.lock</code> file,
+<code>.paket/paket.exe install</code> will install or migrate packages after you have
+made changes to the <code>paket.dependencies</code> file, <code>.paket/paket.exe outdated</code>
+will show whether any packages are out of date and <code>.paket/paket.exe update</code>
+will update all packages within the defined constraints. Have a look at the Paket
+website for more commands and details.</p>
+<h2><a name="Documentation" class="anchor" href="#Documentation">Documentation</a></h2>
+<p>This website and documentation is automatically generated from of a set of
+<a href="https://commonmark.org/">CommonMark</a> structured files in <code>doc/content/</code> using
+<a href="https://tpetricek.github.io/FSharp.Formatting/">FSharp.Formatting</a>.
+The final documentation can be built by calling <code>build.sh docs</code>.</p>
+<p>However, for editing and previewing the docs on your local machine it is more
+convenient to run <code>build.sh DocsWatch</code> in a separate console instead, which
+monitors the content files and incrementally regenerates the HTML output
+automatically. DocsWatch will also use local/relative URIs instead of absolute
+ones, so that the links and styles will work as expected locally. This can
+also be enabled in a full one-time build with <code>build.sh DocsDev</code> instead
+of just <code>Docs</code>.</p>
 <h2><a name="Creating-a-Release" class="anchor" href="#Creating-a-Release">Creating a Release</a></h2>
 <p>While only maintainers can make official releases published on NuGet and
 referred to from the website, you can use the same tools to make your own
@@ -136,12 +159,8 @@ document in the root directory. The fake builds pick this up and propagate it
 to the assembly info files automatically.</p>
 <p>The build can then be launched by calling:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-<span class="l">2: </span>
-<span class="l">3: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">All</span> <span class="i">release</span>    # <span class="i">full</span> <span class="i">release</span> <span class="i">build</span>
-<span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">NuGet</span> <span class="i">release</span>  # <span class="k">if</span> <span class="i">you</span> <span class="i">only</span> <span class="i">need</span> <span class="i">NuGet</span> <span class="i">packages</span>
-<span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">Zip</span> <span class="i">release</span>    # <span class="k">if</span> <span class="i">you</span> <span class="i">only</span> <span class="i">need</span> <span class="i">Zip</span> <span class="i">packages</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="o">.</span><span class="o">/</span><span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">all</span>
 </code></pre></td>
 </tr>
 </table>
@@ -183,7 +202,7 @@ Example:</p>
 <p>Build Release:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">All</span> <span class="i">release</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">all</span>
 </code></pre></td>
 </tr>
 </table>
@@ -200,16 +219,12 @@ Example:</p>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">PublishDocs</span>
 <span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">PublishApi</span>
 <span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">PublishTag</span>
-<span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">PublishMirrors</span>
+<span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">PublishArchive</span>
 <span class="i">build</span><span class="o">.</span><span class="i">sh</span> <span class="i">PublishNuGet</span>
 </code></pre></td>
 </tr>
 </table>
-<p>In theory there is also a <code>Publish</code> target to do this in one step, unfortunately
-publishing to the NuGet gallery is quite unreliable.</p>
 </li>
-<li>Create new Codeplex and GitHub release, attach Zip files (to be automated)</li>
-<li><p>Copy artifacts to <a href="https://1drv.ms/1lMthfP">release archive</a> (to be automated)</p></li>
 <li><p>Consider a tweet via <a href="https://twitter.com/MathDotNet">@MathDotNet</a></p></li>
 <li><p>Consider a post to the <a href="https://plus.google.com/112484567926928665204">Google+ site</a></p></li>
 </ul>

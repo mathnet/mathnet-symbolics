@@ -11,7 +11,7 @@
         <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
         <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
         <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
-        <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
 
         <link type="text/css" rel="stylesheet" href="https://symbolics.mathdotnet.com/content/style.css" />
         <style>
@@ -38,7 +38,7 @@
         <script type="text/javascript" src="https://symbolics.mathdotnet.com/content/tips.js"></script>
         <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
-            <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+            <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
         <![endif]-->
 
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -86,7 +86,7 @@ We prefer a couple small pull requests over a single large one that targets mult
 <p><strong>Code Reformatting and Refactoring:</strong><br />
 Please avoid starting with a major refactoring or any code reformatting without talking to us first.</p>
 <p><strong>Breaking Compatibility:</strong><br />
-We try to follow <a href="http://semver.org/">semantic versioning</a>, meaning that we cannot break compatibility until the next major version. Since Symbolics intentionally permits straight access to raw algorithms, a lot of member declarations are public and thus cannot be modified. Instead of breaking compatibility, it is often possible to create a new better version side by side though and mark the original implementation as obsolete and scheduled for removal on the next major version.</p>
+We try to follow <a href="https://semver.org/">semantic versioning</a>, meaning that we cannot break compatibility until the next major version. Since Symbolics intentionally permits straight access to raw algorithms, a lot of member declarations are public and thus cannot be modified. Instead of breaking compatibility, it is often possible to create a new better version side by side though and mark the original implementation as obsolete and scheduled for removal on the next major version.</p>
 <p><strong>Merges:</strong><br />
 Please avoid merging mainline back into your pull request branch. If you need to leverage some changes recently added to mainline, consider to rebase instead. In other words, please make sure your commits sit directly on top of a recent mainline master.</p>
 
