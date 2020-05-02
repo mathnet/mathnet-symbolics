@@ -1,3 +1,11 @@
+### 0.21.0 - 2020-05-02
+* Support for compact powers of functions in visual expressions. Enabled by default for LaTeX.
+* Simplified visual expression styles, no more customizable function mapping.
+* Visual expressions can now be converted to full algebraic expressions.
+* More convenient interop with primitive number types
+* Uses Math.NET Numerics v4.9.1
+* Build with .NET Core SDK 3.1.1
+
 ### 0.20.0 - 2018-11-18
 * Bind bessel, hankel functions to Math.NET Numerics special functions *~Jong Hyun Kim*
 * Bessel ratio functions *~Jong Hyun Kim*

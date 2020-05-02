@@ -7,15 +7,16 @@
     <RootNamespace>MathNet.Symbolics</RootNamespace>
     <IsPackable>true</IsPackable>
     <PackageId>MathNet.Symbolics$(PackageIdSuffix)</PackageId>
-    <VersionPrefix>0.20.0</VersionPrefix>
+    <VersionPrefix>0.21.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <Title>Math.NET Symbolics$(TitleSuffix)</Title>
     <Description>Math.NET Symbolics is a basic open source computer algebra library for .Net and Mono. Written in F# but works well in C# as well. Supports .Net Framework 4.5 or higher and .Net Standard 2.0 or higher, on Windows, Linux and Mac.$(DescriptionSuffix)</Description>
-    <PackageReleaseNotes>Bind bessel, hankel functions to Math.NET Numerics special functions ~Jong Hyun Kim
-Bessel ratio functions ~Jong Hyun Kim
-Airy functions ~Jong Hyun Kim
-Docs/Website Improvements, Examples for more languages ~FoggyFinder
-Uses Math.NET Numerics v4.7</PackageReleaseNotes>
+    <PackageReleaseNotes>Support for compact powers of functions in visual expressions. Enabled by default for LaTeX.
+Simplified visual expression styles, no more customizable function mapping.
+Visual expressions can now be converted to full algebraic expressions.
+More convenient interop with primitive number types
+Uses Math.NET Numerics v4.9.1
+Build with .NET Core SDK 3.1.1</PackageReleaseNotes>
     <PackageTags>fsharp F# math symbolics algebra simplify solve cas parse</PackageTags>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
