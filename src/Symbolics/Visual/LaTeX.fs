@@ -288,7 +288,7 @@ module private LaTeXFormatter =
 [<RequireQualifiedAccess>]
 module LaTeX =
 
-    let defaultStyle = { VisualExpressionStyle.CompactPowersOfFunctions = false }
+    let defaultStyle = { VisualExpressionStyle.CompactPowersOfFunctions = true }
 
     [<CompiledName("FormatVisual")>]
     let formatVisual visualExpression =

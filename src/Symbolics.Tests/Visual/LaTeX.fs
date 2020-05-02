@@ -40,7 +40,7 @@ module LaTeX =
 
         LaTeX.format (sin (x+y)) --> """\sin\left(x + y\right)"""
         LaTeX.format (sin ((x+y) ** 2)) --> """\sin{{\left(x + y\right)}^{2}}"""
-        LaTeX.format ((sin (x+y)) ** 2) --> """{\left(\sin\left(x + y\right)\right)}^{2}"""
+        LaTeX.format ((sin (x+y)) ** 2) --> """\sin^{2}\left(x + y\right)"""
         LaTeX.format ((sin x)*(cos x)+(tan x)) --> """\sin{x}\cos{x} + \tan{x}"""
         LaTeX.format ((sin (x+y))*(cos (x+y))+(tan (x+y))) --> """\sin\left(x + y\right)\cos\left(x + y\right) + \tan\left(x + y\right)"""
 
@@ -51,5 +51,5 @@ module LaTeX =
     let ``Function Powers`` () =
         VisualExpression.Function ("sin", BigInteger.One, VisualExpression.Symbol "x") |> LaTeX.formatVisual |> shouldEqual """\sin{x}"""
         VisualExpression.Function ("sin", bigint 2, VisualExpression.Symbol "x") |> LaTeX.formatVisual |> shouldEqual """\sin^{2}{x}"""
-        LaTeX.format ((sin x)*(sin x)) --> """{\left(\sin{x}\right)}^{2}"""
-        LaTeX.formatStyle { CompactPowersOfFunctions=true } ((sin x)*(sin x)) --> """\sin^{2}{x}"""
+        LaTeX.format ((sin x)*(sin x)) --> """\sin^{2}{x}"""
+        LaTeX.formatStyle { CompactPowersOfFunctions=false } ((sin x)*(sin x)) --> """{\left(\sin{x}\right)}^{2}"""
