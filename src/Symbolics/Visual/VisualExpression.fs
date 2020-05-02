@@ -5,6 +5,9 @@ open MathNet.Symbolics
 open Microsoft.FSharp.Reflection
 open Operators
 
+/// Expression tree structure focusing on visual aspects and as interchange format between different representations.
+/// Intentionally open to allow also functions not supported by Expression, for visual-only or interchange use cases.
+/// Not intended for algebraic manipulations, but can be converted from and to Expression.
 [<StructuralEquality;NoComparison;RequireQualifiedAccess>]
 type VisualExpression =
     | Symbol of name:string
@@ -25,8 +28,9 @@ type VisualExpression =
     | ComplexInfinity
     | Undefined
 
-type IVisualStyle =
-    abstract member CompactPowersOfFunctions : bool with get
+type VisualExpressionStyle = {
+    CompactPowersOfFunctions : bool
+}
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module VisualExpression =
@@ -38,7 +42,8 @@ module VisualExpression =
     let private functionName f = Map.find f functionNameMap
     let private nameFunction name = Map.find name nameFunctionMap
 
-    let fromExpression (style:IVisualStyle) expression =
+    let fromExpression (style:VisualExpressionStyle) expression =
+        let compactPowersOfFunctions = style.CompactPowersOfFunctions
         let parenthesis priority threshold ve = if priority > threshold then VisualExpression.Parenthesis ve else ve
         let convertNumber priority (n:BigRational) =
             if n.IsNegative && n.IsInteger then
@@ -99,20 +104,20 @@ module VisualExpression =
             | Approximation.Complex fp ->
                 VisualExpression.Sum [VisualExpression.PositiveFloatingPoint fp.Real; VisualExpression.Product [ VisualExpression.PositiveFloatingPoint fp.Imaginary; VisualExpression.ComplexI ]]
                 |> parenthesis priority 1
-        let rec convertFractionPart style priority = function
-            | Product xs -> VisualExpression.Product (xs |> List.map (convert style 2)) |> parenthesis priority 2
-            | x -> convert style priority x
-        and convertSummand style = function
+        let rec convertFractionPart priority = function
+            | Product xs -> VisualExpression.Product (xs |> List.map (convert 2)) |> parenthesis priority 2
+            | x -> convert priority x
+        and convertSummand = function
             | Number n as x when n.IsNegative ->
-                VisualExpression.Negative (convert style 1 (-x))
+                VisualExpression.Negative (convert 1 (-x))
             | Approximation (Approximation.Real fp) as x when fp < 0.0 ->
-                VisualExpression.Negative (convert style 1 (-x))
+                VisualExpression.Negative (convert 1 (-x))
             | Product ((Number n)::xs) when n.IsNegative ->
-                VisualExpression.Negative (convert style 2 (product ((Number -n)::xs)))
+                VisualExpression.Negative (convert 2 (product ((Number -n)::xs)))
             | Product ((Approximation (Approximation.Real fp))::xs) when fp < 0.0 ->
-                VisualExpression.Negative (convert style 2 (product ((Approximation (Approximation.Real -fp))::xs)))
-            | x -> convert style 1 x
-        and convert (style:IVisualStyle) priority = function
+                VisualExpression.Negative (convert 2 (product ((Approximation (Approximation.Real -fp))::xs)))
+            | x -> convert 1 x
+        and convert priority = function
             | Number number ->
                 convertNumber priority number
             | Approximation approximation ->
@@ -135,64 +140,64 @@ module VisualExpression =
             | Undefined ->
                 VisualExpression.Undefined
             | Sum xs ->
-                VisualExpression.Sum (xs |> List.map (convertSummand style))
+                VisualExpression.Sum (xs |> List.map convertSummand)
                 |> parenthesis priority 1
             | Product (Number n::xs) when n.IsNegative ->
-                VisualExpression.Negative (convert style 2 (product ((Number -n)::xs)))
+                VisualExpression.Negative (convert 2 (product ((Number -n)::xs)))
                 |> parenthesis priority 0
             | Product _ as p ->
                 match (numerator p), (denominator p) with
                 | num, One ->
-                    convertFractionPart style 2 num
+                    convertFractionPart 2 num
                     |> parenthesis priority 2
                 | (Integer _ as num), (Integer _ as denom) ->
-                    VisualExpression.Fraction (convert style 3 num, convert style 3 denom)
+                    VisualExpression.Fraction (convert 3 num, convert 3 denom)
                     |> parenthesis priority 2
                 | (Product (Integer n::xs) as num), (Integer _ as denom) ->
-                    let prefix = VisualExpression.Fraction (convert style 3 (Number n), convert style 3 denom)
-                    match convertFractionPart style 2 (product xs) with
+                    let prefix = VisualExpression.Fraction (convert 3 (Number n), convert 3 denom)
+                    match convertFractionPart 2 (product xs) with
                     | VisualExpression.Product suffix -> VisualExpression.Product (prefix::suffix)
                     | suffix -> VisualExpression.Product [prefix; suffix]
                     |> parenthesis priority 2
                 | (Product _ as num), (Integer _ as denom) ->
-                    let prefix = VisualExpression.Fraction (VisualExpression.PositiveInteger (bigint 1), convert style 3 denom)
-                    match convertFractionPart style 2 num with
+                    let prefix = VisualExpression.Fraction (VisualExpression.PositiveInteger (bigint 1), convert 3 denom)
+                    match convertFractionPart 2 num with
                     | VisualExpression.Product suffix -> VisualExpression.Product (prefix::suffix)
                     | suffix -> VisualExpression.Product [prefix; suffix]
                     |> parenthesis priority 2
                 | num, denom ->
-                    VisualExpression.Fraction (convertFractionPart style 3 num, convertFractionPart style 3 denom)
+                    VisualExpression.Fraction (convertFractionPart 3 num, convertFractionPart 3 denom)
                     |> parenthesis priority 2
             | NegIntPower (r, p) ->
                 let d =
-                    if p = Expression.MinusOne then convert style 3 r
-                    else VisualExpression.Power (convert style 3 r, convert style 3 (-p))
+                    if p = Expression.MinusOne then convert 3 r
+                    else VisualExpression.Power (convert 3 r, convert 3 (-p))
                 VisualExpression.Fraction (VisualExpression.PositiveInteger BigInteger.One, d)
                 |> parenthesis priority 2
-            | PosIntPower (Function (f, x), Integer p) when style.CompactPowersOfFunctions ->
-                VisualExpression.Function (functionName f, p.Numerator, convert style 0 x)
+            | PosIntPower (Function (f, x), Integer p) when f <> Abs && compactPowersOfFunctions ->
+                VisualExpression.Function (functionName f, p.Numerator, convert 0 x)
                 |> parenthesis priority 3
-            | PosIntPower (FunctionN (f, xs), Integer p) when style.CompactPowersOfFunctions ->
-                VisualExpression.FunctionN (functionName f, p.Numerator, xs |> List.map (convert style 0))
+            | PosIntPower (FunctionN (f, xs), Integer p) when f <> Abs && compactPowersOfFunctions ->
+                VisualExpression.FunctionN (functionName f, p.Numerator, xs |> List.map (convert 0))
                 |> parenthesis priority 3
             | Power (r, Number n) when n.IsPositive && n.Numerator = BigInteger.One ->
-                VisualExpression.Root (convert style 4 r, n.Denominator)
+                VisualExpression.Root (convert 4 r, n.Denominator)
                 |> parenthesis priority 3
             | Power (r, Power(Integer n, minusOne)) when minusOne = Expression.MinusOne ->
-                VisualExpression.Root (convert style 4 r, n.Numerator)
+                VisualExpression.Root (convert 4 r, n.Numerator)
                 |> parenthesis priority 3
             | Power (r, p) ->
-                VisualExpression.Power (convert style 4 r, convert style 4 p)
+                VisualExpression.Power (convert 4 r, convert 4 p)
                 |> parenthesis priority 3
             | Function (Abs, x) ->
-                VisualExpression.Abs (convert style 0 x)
+                VisualExpression.Abs (convert 0 x)
             | Function (f, x) ->
-                VisualExpression.Function (functionName f, BigInteger.One, convert style 0 x)
+                VisualExpression.Function (functionName f, BigInteger.One, convert 0 x)
                 |> parenthesis priority 3
             | FunctionN (f, xs) ->
-                VisualExpression.FunctionN (functionName f, BigInteger.One, xs |> List.map (convert style 0))
+                VisualExpression.FunctionN (functionName f, BigInteger.One, xs |> List.map (convert 0))
                 |> parenthesis priority 3
-        convert style 0 expression
+        convert 0 expression
 
     let toExpression visualExpression =
         let rec convert = function
@@ -218,9 +223,3 @@ module VisualExpression =
             | VisualExpression.ComplexInfinity -> ComplexInfinity
             | VisualExpression.Undefined -> Undefined
         convert visualExpression
-
-
-type DefaultVisualStyle() =
-
-    interface IVisualStyle with
-        member __.CompactPowersOfFunctions with get() = false

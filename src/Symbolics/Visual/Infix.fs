@@ -284,7 +284,7 @@ module private InfixFormatter =
 [<RequireQualifiedAccess>]
 module Infix =
 
-    let private defaultStyle = DefaultVisualStyle()
+    let defaultStyle = { VisualExpressionStyle.CompactPowersOfFunctions = false }
 
     /// Strict formatting, prints an exact representation of the expression tree
     [<CompiledName("FormatStrict")>]
@@ -304,18 +304,26 @@ module Infix =
         sb.ToString()
 
     /// Nicer human readable but slightly denormalized output
-    [<CompiledName("Format")>]
-    let format expression =
+    [<CompiledName("FormatStyle")>]
+    let formatStyle visualStyle expression =
         let sb = StringBuilder()
-        let visual = VisualExpression.fromExpression defaultStyle expression
+        let visual = VisualExpression.fromExpression visualStyle expression
         InfixFormatter.format (sb.Append >> ignore) visual
         sb.ToString()
 
     /// Nicer human readable but slightly denormalized output
-    [<CompiledName("FormatWriter")>]
-    let formatWriter (writer:TextWriter) expression =
-        let visual = VisualExpression.fromExpression defaultStyle expression
+    [<CompiledName("Format")>]
+    let format expression = formatStyle defaultStyle expression
+
+    /// Nicer human readable but slightly denormalized output
+    [<CompiledName("FormatStyleWriter")>]
+    let formatStyleWriter visualStyle (writer:TextWriter) expression =
+        let visual = VisualExpression.fromExpression visualStyle expression
         InfixFormatter.format (writer.Write) visual
+
+    /// Nicer human readable but slightly denormalized output
+    [<CompiledName("FormatWriter")>]
+    let formatWriter (writer:TextWriter) expression = formatStyleWriter defaultStyle writer expression
 
     [<CompiledName("Parse")>]
     let parse (infix: string) = InfixParser.parse infix

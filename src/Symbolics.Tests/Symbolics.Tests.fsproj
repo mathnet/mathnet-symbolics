@@ -27,6 +27,7 @@
         <Compile Include="Visual\MathML.fs" />
         <Compile Include="Visual\VisualExpressions.fs" />
         <Compile Include="Compilation\Compilation.fs" />
+        <Compile Include="SymbolicExpressions.fs" />
         <Compile Include="Tests.fs" />
         <Compile Include="Main.fs" />
         <None Include="paket.references" />

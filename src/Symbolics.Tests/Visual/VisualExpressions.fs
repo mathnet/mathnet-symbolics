@@ -9,8 +9,8 @@ module VisualExpressions =
     [<Test>]
     let ``Convert Expression to VisualExpression`` () =
 
-        let style = DefaultVisualStyle()
-        let convert = VisualExpression.fromExpression style
+        let convert = VisualExpression.fromExpression { CompactPowersOfFunctions = false }
+        let convertFP = VisualExpression.fromExpression { CompactPowersOfFunctions = true }
 
         convert (1Q) --> VisualExpression.PositiveInteger (bigint 1)
         convert (0Q) --> VisualExpression.PositiveInteger (bigint 0)
@@ -42,14 +42,13 @@ module VisualExpressions =
         convert (x**(-2Q)) --> VisualExpression.Fraction (VisualExpression.PositiveInteger (bigint 1), VisualExpression.Power (VisualExpression.Symbol "x", VisualExpression.PositiveInteger (bigint 2)))
 
         convert (sin x) --> VisualExpression.Function ("sin", bigint 1, VisualExpression.Symbol "x")
-        //convert (pow (sin x) 2Q) --> VisualExpression.Function ("sin", bigint 2, VisualExpression.Symbol "x")
         convert (pow (sin x) 2Q) --> VisualExpression.Power (VisualExpression.Parenthesis (VisualExpression.Function ("sin", bigint 1, VisualExpression.Symbol "x")), VisualExpression.PositiveInteger (bigint 2))
+        convertFP (pow (sin x) 2Q) --> VisualExpression.Function ("sin", bigint 2, VisualExpression.Symbol "x")
 
     [<Test>]
     let ``Convert VisualExpression to Expression`` () =
 
-        let style = DefaultVisualStyle()
-        let convert = VisualExpression.toExpression style
+        let convert = VisualExpression.toExpression
 
         convert (VisualExpression.PositiveInteger (bigint 1)) --> 1Q
         convert (VisualExpression.PositiveInteger (bigint 0)) --> 0Q

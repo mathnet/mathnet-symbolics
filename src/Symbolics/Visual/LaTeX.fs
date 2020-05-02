@@ -288,7 +288,7 @@ module private LaTeXFormatter =
 [<RequireQualifiedAccess>]
 module LaTeX =
 
-    let private defaultStyle = DefaultVisualStyle()
+    let defaultStyle = { VisualExpressionStyle.CompactPowersOfFunctions = false }
 
     [<CompiledName("FormatVisual")>]
     let formatVisual visualExpression =
@@ -298,13 +298,20 @@ module LaTeX =
 
     /// LaTeX output
     [<CompiledName("Format")>]
-    let format expression =
+    let formatStyle visualStyle expression =
         let sb = StringBuilder()
-        let visual = VisualExpression.fromExpression defaultStyle expression
+        let visual = VisualExpression.fromExpression visualStyle expression
         LaTeXFormatter.format (sb.Append >> ignore) visual
         sb.ToString()
 
-    [<CompiledName("FormatWriter")>]
-    let formatWriter (writer:TextWriter) expression =
-        let visual = VisualExpression.fromExpression defaultStyle expression
+    /// LaTeX output
+    [<CompiledName("Format")>]
+    let format expression = formatStyle defaultStyle expression
+
+    [<CompiledName("FormatStyleWriter")>]
+    let formatStyleWriter visualStyle (writer:TextWriter) expression =
+        let visual = VisualExpression.fromExpression visualStyle expression
         LaTeXFormatter.format (writer.Write) visual
+
+    [<CompiledName("FormatWriter")>]
+    let formatWriter (writer:TextWriter) expression = formatStyleWriter defaultStyle writer expression

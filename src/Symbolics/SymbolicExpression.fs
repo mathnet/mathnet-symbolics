@@ -129,11 +129,23 @@ type SymbolicExpression(expression:Expression) =
     override this.ToString() : string =
         Infix.format expression
 
+    member this.ToCustomString(?compactPowersOfFunctions:bool) : string =
+        let defaults = Infix.defaultStyle
+        Infix.formatStyle
+            { CompactPowersOfFunctions = defaultArg compactPowersOfFunctions defaults.CompactPowersOfFunctions }
+            expression
+
     member this.ToInternalString() : string =
         Infix.formatStrict expression
 
     member this.ToLaTeX() : string =
         LaTeX.format expression
+
+    member this.ToCustomLaTeX(?compactPowersOfFunctions:bool) : string =
+        let defaults = LaTeX.defaultStyle
+        LaTeX.formatStyle
+            { CompactPowersOfFunctions = defaultArg compactPowersOfFunctions defaults.CompactPowersOfFunctions }
+            expression
 
     member this.ToMathML() : string =
         MathML.formatContentStrict expression

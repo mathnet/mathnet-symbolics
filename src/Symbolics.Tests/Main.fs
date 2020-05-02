@@ -1,6 +1,5 @@
 ﻿namespace MathNet.Symbolics.Tests
 
-open NUnit.Framework
 open NUnitLite
 open System.Reflection
 

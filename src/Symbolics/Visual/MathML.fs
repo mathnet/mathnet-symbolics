@@ -165,7 +165,7 @@ module Xml =
 [<RequireQualifiedAccess>]
 module MathML =
 
-    let private defaultStyle = DefaultVisualStyle()
+    let private defaultStyle = { VisualExpressionStyle.CompactPowersOfFunctions = false }
 
     [<CompiledName("FormatContentStrictVisual")>]
     let formatContentStrictVisual visualExpression =
