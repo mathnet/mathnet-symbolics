@@ -27,15 +27,16 @@ type VisualExpression =
 
 type IVisualStyle =
     abstract member CompactPowersOfFunctions : bool with get
-    abstract member SemanticFunction: f:Function * power:BigInteger * e:VisualExpression -> VisualExpression
-    abstract member SemanticFunctionN: f:Function * power:BigInteger * e:VisualExpression array -> VisualExpression
-    abstract member VisualFunction: f:string * power:BigInteger * e:Expression -> Expression
-    abstract member VisualFunctionN: f:string * power:BigInteger * e:Expression array -> Expression
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module VisualExpression =
     open Rational
     open ExpressionPatterns
+
+    let private functionNameMap = FSharpType.GetUnionCases typeof<Function> |> Array.map (fun case -> FSharpValue.MakeUnion(case, [||]) :?> Function, case.Name.ToLowerInvariant()) |> Map.ofArray
+    let private nameFunctionMap = functionNameMap |> Map.toList |> List.map (fun (f,n) -> (n,f)) |> Map.ofList
+    let private functionName f = Map.find f functionNameMap
+    let private nameFunction name = Map.find name nameFunctionMap
 
     let fromExpression (style:IVisualStyle) expression =
         let parenthesis priority threshold ve = if priority > threshold then VisualExpression.Parenthesis ve else ve
@@ -169,10 +170,10 @@ module VisualExpression =
                 VisualExpression.Fraction (VisualExpression.PositiveInteger BigInteger.One, d)
                 |> parenthesis priority 2
             | PosIntPower (Function (f, x), Integer p) when style.CompactPowersOfFunctions ->
-                style.SemanticFunction (f, p.Numerator, convert style 0 x)
+                VisualExpression.Function (functionName f, p.Numerator, convert style 0 x)
                 |> parenthesis priority 3
             | PosIntPower (FunctionN (f, xs), Integer p) when style.CompactPowersOfFunctions ->
-                style.SemanticFunctionN (f, p.Numerator, xs |> List.map (convert style 0) |> List.toArray)
+                VisualExpression.FunctionN (functionName f, p.Numerator, xs |> List.map (convert style 0))
                 |> parenthesis priority 3
             | Power (r, Number n) when n.IsPositive && n.Numerator = BigInteger.One ->
                 VisualExpression.Root (convert style 4 r, n.Denominator)
@@ -186,54 +187,40 @@ module VisualExpression =
             | Function (Abs, x) ->
                 VisualExpression.Abs (convert style 0 x)
             | Function (f, x) ->
-                style.SemanticFunction (f, BigInteger.One, convert style 0 x)
+                VisualExpression.Function (functionName f, BigInteger.One, convert style 0 x)
                 |> parenthesis priority 3
             | FunctionN (f, xs) ->
-                style.SemanticFunctionN (f, BigInteger.One, xs |> List.map (convert style 0) |> List.toArray)
+                VisualExpression.FunctionN (functionName f, BigInteger.One, xs |> List.map (convert style 0))
                 |> parenthesis priority 3
         convert style 0 expression
 
-    let toExpression (style:IVisualStyle) visualExpression =
-        let rec convert (style:IVisualStyle) = function
+    let toExpression visualExpression =
+        let rec convert = function
             | VisualExpression.Symbol name -> symbol name
             | VisualExpression.PositiveInteger value -> fromInteger value
             | VisualExpression.PositiveFloatingPoint value -> fromReal value
-            | VisualExpression.Parenthesis x -> convert style x
-            | VisualExpression.Abs x -> convert style x |> abs
-            | VisualExpression.Negative x -> convert style x |> negate
-            | VisualExpression.Sum xs -> xs |> List.map (convert style) |> sum
-            | VisualExpression.Product xs -> xs |> List.map (convert style) |> product
-            | VisualExpression.Fraction (numerator, denominator) -> (convert style numerator)/(convert style denominator)
-            | VisualExpression.Power (radix, power) -> pow (convert style radix) (convert style power)
-            | VisualExpression.Root (radix, power) -> root (fromInteger power) (convert style radix)
-            | VisualExpression.Function (fn, power, x) -> style.VisualFunction (fn, power, convert style x)
-            | VisualExpression.FunctionN (fn, power, xs) -> style.VisualFunctionN (fn, power, xs |> List.map (convert style) |> List.toArray)
+            | VisualExpression.Parenthesis x -> convert x
+            | VisualExpression.Abs x -> convert x |> abs
+            | VisualExpression.Negative x -> convert x |> negate
+            | VisualExpression.Sum xs -> xs |> List.map convert |> sum
+            | VisualExpression.Product xs -> xs |> List.map convert |> product
+            | VisualExpression.Fraction (numerator, denominator) -> (convert numerator)/(convert denominator)
+            | VisualExpression.Power (radix, power) -> pow (convert radix) (convert power)
+            | VisualExpression.Root (radix, power) -> root (fromInteger power) (convert radix)
+            | VisualExpression.Function (fn, power, x) ->
+                let applied = apply (nameFunction fn) (convert x)
+                if power.IsOne then applied else pow applied (fromInteger power)
+            | VisualExpression.FunctionN (fn, power, xs) ->
+                let applied = applyN (nameFunction fn) (List.map convert xs)
+                if power.IsOne then applied else pow applied (fromInteger power)
             | VisualExpression.ComplexI -> Expression.I
             | VisualExpression.Infinity -> PositiveInfinity
             | VisualExpression.ComplexInfinity -> ComplexInfinity
             | VisualExpression.Undefined -> Undefined
-        convert style visualExpression
+        convert visualExpression
 
 
 type DefaultVisualStyle() =
 
-    let functionNameMap = FSharpType.GetUnionCases typeof<Function> |> Array.map (fun case -> FSharpValue.MakeUnion(case, [||]) :?> Function, case.Name.ToLowerInvariant()) |> Map.ofArray
-    let nameFunctionMap = functionNameMap |> Map.toList |> List.map (fun (f,n) -> (n,f)) |> Map.ofList
-
-    let functionName f = Map.find f functionNameMap
-    let nameFunction name = Map.find name nameFunctionMap
-
     interface IVisualStyle with
         member __.CompactPowersOfFunctions with get() = false
-        member __.SemanticFunction (f:Function, power:BigInteger, e:VisualExpression) =
-            match f with
-            | Abs -> VisualExpression.Abs e
-            | _ -> VisualExpression.Function (functionName f, power, e)
-        member __.SemanticFunctionN (f:Function, power:BigInteger, e:VisualExpression array) =
-            VisualExpression.FunctionN (functionName f, power, List.ofArray e)
-        member __.VisualFunction (f:string, power:BigInteger, e:Expression) =
-            if power.IsOne then apply (nameFunction f) e
-            else pow (apply (nameFunction f) e) (fromInteger power)
-        member __.VisualFunctionN (f:string, power:BigInteger, e:Expression array) =
-            if power.IsOne then applyN (nameFunction f) (Array.toList e)
-            else pow (applyN (nameFunction f) (Array.toList e)) (fromInteger power)
