@@ -10,7 +10,7 @@ module Calculus =
     let rec differentiate symbol = function
         | x when x = symbol -> one
         | Undefined as x -> x
-        | Number _ | Approximation _ | Identifier _ | Constant _ | ComplexInfinity | PositiveInfinity | NegativeInfinity -> zero
+        | Number _ | Approximation _ | Identifier _ | Argument _ | Constant _ | ComplexInfinity | PositiveInfinity | NegativeInfinity -> zero
         | Sum xs -> sum <| List.map (differentiate symbol) xs
         | Product [x] -> differentiate symbol x
         | Product (x::xs) ->
@@ -63,6 +63,7 @@ module Calculus =
         | FunctionN (BesselKRatio, [nu; x]) -> -(differentiate symbol x) * ((pow (besselk nu x) 2Q) + (besselk (nu + 2Q) x) * (besselk nu x) - (besselk (nu + 1Q) x) * (besselk (nu - 1Q) x) - (pow (besselk (nu + 1Q) x) 2Q)) / (2Q * (pow (besselk nu x) 2Q))
         | FunctionN (HankelH1, [nu; x]) -> (differentiate symbol x) * ((hankelh1 (nu - 1Q) x) - (hankelh1 (nu + 1Q) x)) / 2Q
         | FunctionN (HankelH2, [nu; x]) -> (differentiate symbol x) * ((hankelh2 (nu - 1Q) x) - (hankelh2 (nu + 1Q) x)) / 2Q
+        | Function (_) -> failwith "not supported"
         | FunctionN (_) -> failwith "not supported"
         | Product [] -> failwith "invalid expression"
 

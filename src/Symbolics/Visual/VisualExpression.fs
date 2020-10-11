@@ -124,6 +124,8 @@ module VisualExpression =
                 convertApproximation priority approximation
             | Identifier (Symbol s) ->
                 VisualExpression.Symbol s
+            | Argument (Symbol s) ->
+                VisualExpression.Symbol s
             | Constant Pi ->
                 VisualExpression.Symbol "pi"
             | Constant E ->

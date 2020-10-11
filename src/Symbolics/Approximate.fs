@@ -35,6 +35,7 @@ module Approximate =
             match symbols.TryGetValue s with
             | true, a -> a |> Value.approx |> Values.unpack
             | _ -> x
+        | Argument _ -> x
         | FunctionN _
         | ComplexInfinity
         | PositiveInfinity

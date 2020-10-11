@@ -36,6 +36,7 @@ type SymbolicExpression(expression:Expression) =
         | Approximation (Approximation.Real _) -> SymbolicExpressionType.RealNumber
         | Approximation (Approximation.Complex _) -> SymbolicExpressionType.ComplexNumber
         | Identifier _ -> SymbolicExpressionType.Variable
+        | Argument _ -> SymbolicExpressionType.Variable
         | Constant I -> SymbolicExpressionType.ComplexNumber
         | Constant _ -> SymbolicExpressionType.RealNumber
         | Sum _ -> SymbolicExpressionType.Sum
@@ -73,6 +74,7 @@ type SymbolicExpression(expression:Expression) =
     member this.VariableName =
         match expression with
         | Identifier (Symbol s) -> s
+        | Argument (Symbol s) -> s
         | _ -> failwith "Not a variable"
 
 

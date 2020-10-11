@@ -8,6 +8,7 @@ type Expression =
     | Number of BigRational
     | Approximation of Approximation
     | Identifier of Symbol
+    | Argument of Symbol
     | Constant of Constant
     | Sum of Expression list
     | Product of Expression list
@@ -106,7 +107,7 @@ module ExpressionPatterns =
     /// Terminal node, either a number, identifier/symbol or constant (including infinity).
     /// Warning: Undefined is *not* included.
     let (|Terminal|_|) = function
-        | Number _ | Identifier _ | Constant _ as t -> Some t
+        | Number _ | Identifier _ | Argument _ | Constant _ as t -> Some t
         | _ -> None
 
     /// Recognizes a sin or cos expression
@@ -174,6 +175,7 @@ module Operators =
             | Number x, Number y -> x < y
             | Approximation x, Approximation y -> Approximation.orderRelation x y
             | Identifier x, Identifier y -> x < y
+            | Argument x, Argument y -> x < y
             | Constant x, Constant y -> x < y
             | Sum xs, Sum ys | Product xs, Product ys -> compareZip (List.rev xs) (List.rev ys)
             | Power (xr,xp), Power (yr,yp) -> if xr <> yr then compare xr yr else compare xp yp
@@ -195,6 +197,8 @@ module Operators =
             | FunctionN (xf, xs), Function (yf, y) -> if xf <> yf then xf < yf else compareZip (List.rev xs) [y]
             | Identifier _, _ -> true
             | _, Identifier _ -> false
+            | Argument _, _ -> true
+            | _, Argument _ -> false
             | ComplexInfinity, _ -> true
             | _, ComplexInfinity -> false
             | PositiveInfinity, _ -> true

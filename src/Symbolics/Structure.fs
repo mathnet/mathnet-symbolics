@@ -14,7 +14,7 @@ module Structure =
         | Power _ -> 2
         | Function _ -> 1
         | FunctionN (_, xs) -> List.length xs
-        | Number _ | Approximation _ | Identifier _ | Constant _ | ComplexInfinity | PositiveInfinity | NegativeInfinity -> 0
+        | Number _ | Approximation _ | Identifier _ | Argument _ | Constant _ | ComplexInfinity | PositiveInfinity | NegativeInfinity -> 0
         | Undefined -> 0
 
     [<CompiledName("Operand")>]
@@ -32,7 +32,7 @@ module Structure =
         | Sum ax | Product ax | FunctionN (_, ax) -> List.forall (freeOf symbol) ax
         | Power (r, p) -> freeOf symbol r && freeOf symbol p
         | Function (_, x) -> freeOf symbol x
-        | Number _ | Approximation _ | Identifier _ | Constant _ |  ComplexInfinity | PositiveInfinity | NegativeInfinity -> true
+        | Number _ | Approximation _ | Identifier _ | Argument _ | Constant _ |  ComplexInfinity | PositiveInfinity | NegativeInfinity -> true
         | Undefined -> true
 
     [<CompiledName("IsFreeOfSet")>]
@@ -42,7 +42,7 @@ module Structure =
         | Sum ax | Product ax | FunctionN (_, ax) -> List.forall (freeOfSet symbols) ax
         | Power (r, p) -> freeOfSet symbols r && freeOfSet symbols p
         | Function (_, x) -> freeOfSet symbols x
-        | Number _ | Approximation _ | Identifier _ | Constant _ |  ComplexInfinity | PositiveInfinity | NegativeInfinity -> true
+        | Number _ | Approximation _ | Identifier _ | Argument _ | Constant _ |  ComplexInfinity | PositiveInfinity | NegativeInfinity -> true
         | Undefined -> true
 
     [<CompiledName("Substitute")>]
@@ -54,7 +54,7 @@ module Structure =
         | Power (radix, p) -> (substitute y r radix) ** (substitute y r p)
         | Function (fn, x) -> apply fn (substitute y r x)
         | FunctionN (fn, xs) -> applyN fn (List.map (substitute y r) xs)
-        | Number _ | Approximation _ | Identifier _ | Constant _ |  ComplexInfinity | PositiveInfinity | NegativeInfinity -> x
+        | Number _ | Approximation _ | Identifier _ | Argument _ | Constant _ |  ComplexInfinity | PositiveInfinity | NegativeInfinity -> x
         | Undefined -> x
 
     [<CompiledName("Map")>]
@@ -71,7 +71,7 @@ module Structure =
         | Sum ax | Product ax | FunctionN (_, ax) -> List.fold f s ax
         | Power (r, p) -> List.fold f s [r;p]
         | Function (_, x) -> f s x
-        | Number _ | Approximation _ | Identifier _ | Constant _ |  ComplexInfinity | PositiveInfinity | NegativeInfinity -> s
+        | Number _ | Approximation _ | Identifier _ | Argument _ | Constant _ |  ComplexInfinity | PositiveInfinity | NegativeInfinity -> s
         | Undefined -> s
 
     /// Sort expressions in a list with standard expression ordering.
@@ -140,6 +140,16 @@ module Structure =
     [<CompiledName("CollectIdentifierSymbols")>]
     let collectIdentifierSymbols x =
         x |> collectDistinct (function | Identifier symbol -> Some symbol | _ -> None) |> List.sort
+
+    /// Collects all arguments of an expressions and returns their distinct expressions.
+    [<CompiledName("CollectArguments")>]
+    let collectArguments x =
+        x |> collectDistinct (function | Argument _ as expression -> Some expression | _ -> None) |> sortList
+
+    /// Collects all arguments of an expressions and returns their distinct symbols.
+    [<CompiledName("CollectArgumentSymbols")>]
+    let collectArgumentSymbols x =
+        x |> collectDistinct (function | Argument symbol -> Some symbol | _ -> None) |> List.sort
 
     /// Collects all numbers of an expressions and returns their distinct expressions.
     [<CompiledName("CollectNumbers")>]

@@ -54,6 +54,8 @@ module Linq =
         let rec convertExpr : MathNet.Symbolics.Expression -> Expression option = function
             | Identifier(sym) ->
                 Option.map (fun x -> x :> Expression) (getParam sym)
+            | Argument(sym) ->
+                Option.map (fun x -> x :> Expression) (getParam sym)
             | Values.Value v -> value v
             | Constant c -> constant c
             | Function(func, par) ->

@@ -450,7 +450,7 @@ module Expressions =
         Evaluate.evaluate symbols (a*x**2 + b*x + c |> Structure.substitute x (number 1/2)) --> FloatingPoint.Complex (complex 3.0 -1.0)
         Evaluate.evaluate symbols (1Q/0Q) --> FloatingPoint.ComplexInf
 
-        (fun () -> Evaluate.evaluate symbols (f) |> ignore) |> should (throwWithMessage "Failed to find symbol: f") typeof<System.Exception>
+        (fun () -> Evaluate.evaluate symbols (f) |> ignore) |> should (throwWithMessage "Failed to find symbol f") typeof<System.Exception>
 
         match Evaluate.evaluate symbols (sqrt(-1Q)) with
         | FloatingPoint.Complex c ->

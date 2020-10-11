@@ -225,6 +225,7 @@ module private InfixFormatter =
             write (n.ToString());
             if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write ")"
         | Identifier (Symbol name) -> write name
+        | Argument (Symbol name) -> write name
         | Undefined -> write "Undefined"
         | ComplexInfinity -> write "ComplexInfinity"
         | PositiveInfinity -> write "Infinity"

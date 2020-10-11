@@ -243,7 +243,8 @@ module Evaluate =
         | Identifier (Symbol s) ->
             match symbols.TryGetValue s with
             | true, a -> a |> fnormalize
-            | _ -> failwithf  "Failed to find symbol: %s" s
+            | _ -> failwithf  "Failed to find symbol %s" s
+        | Argument (Symbol s) -> failwithf  "Cannot evaluate a argument %s" s
         | Sum xs -> xs |> List.map (evaluate symbols) |> List.reduce fadd |> fnormalize
         | Product xs -> xs |> List.map (evaluate symbols) |> List.reduce fmultiply |> fnormalize
         | Power (r, p) -> fpower (evaluate symbols r) (evaluate symbols p) |> fnormalize
