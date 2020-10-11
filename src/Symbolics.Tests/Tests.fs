@@ -210,7 +210,7 @@ module Expressions =
 
         x + ln x ==> "x + ln(x)"
         x + ln (x+1) ==> "x + ln(1 + x)"
-        x + log10 (x+1) ==> "x + log(1 + x)"
+        x + lg (x+1) ==> "x + lg(1 + x)"
         x + (log x (x+1)) ==> "x + log(x,1 + x)"
         2*abs x ==> "2*|x|"
         x + abs (-x) ==> "x + |x|"
@@ -285,18 +285,18 @@ module Expressions =
         negate (x + y**2) ==> "-(x + y^2)"
 
         Algebraic.factors (b*cos(x)*ln(d)*x) ==+> ["b"; "x"; "ln(d)"; "cos(x)"]
-        Algebraic.factors (b*cos(x)*log10(d)*x) ==+> ["b"; "x"; "log(d)"; "cos(x)"]
-        Algebraic.factors (b*cos(x)*(log d (d*2))*x) ==+> ["b"; "x"; "log(d,2*d)"; "cos(x)"]
+        Algebraic.factors (b*cos(x)*lg(d)*x) ==+> ["b"; "x"; "lg(d)"; "cos(x)"]
+        Algebraic.factors (b*cos(x)*(log d (d*2))*x) ==+> ["b"; "x"; "cos(x)"; "log(d,2*d)"]
         Algebraic.factors (b+cos(x)) ==+> ["b + cos(x)"]
         Algebraic.summands (b+cos(x)+ln(d)+x) ==+> ["b"; "x"; "ln(d)"; "cos(x)"]
-        Algebraic.summands (b+cos(x)+log10(d)+x) ==+> ["b"; "x"; "log(d)"; "cos(x)"]
-        Algebraic.summands (b+cos(x)+(log d (d*2))+x) ==+> ["b"; "x"; "log(d,2*d)"; "cos(x)"]
+        Algebraic.summands (b+cos(x)+lg(d)+x) ==+> ["b"; "x"; "lg(d)"; "cos(x)"]
+        Algebraic.summands (b+cos(x)+(log d (d*2))+x) ==+> ["b"; "x"; "cos(x)"; "log(d,2*d)"]
         Algebraic.summands (b*cos(x)) ==+> ["b*cos(x)"]
 
         Algebraic.factorsInteger (2Q/3*b*cos(x)) --> (2I, [1Q/3; b; cos(x)])
 
         Algebraic.separateFactors x (b*cos(x)*ln(d)*x) ==|> ("b*ln(d)", "x*cos(x)")
-        Algebraic.separateFactors x (b*cos(x)*log10(d)*x) ==|> ("b*log(d)", "x*cos(x)")
+        Algebraic.separateFactors x (b*cos(x)*lg(d)*x) ==|> ("b*lg(d)", "x*cos(x)")
         Algebraic.separateFactors x (b*cos(x)*(log d (d*2))*x) ==|> ("b*log(d,2*d)", "x*cos(x)")
         Algebraic.separateFactors x (c*x*sin(x)/2) ==|> ("c/2", "x*sin(x)")
 
@@ -325,7 +325,7 @@ module Expressions =
         Exponential.expand (1/(exp(2*x) - (exp(x))**2)) ==> "⧝"
         Exponential.expand (exp((x+y)*(x-y))) ==> "exp(x^2)/exp(y^2)"
         Exponential.expand (ln((c*x)**a) + ln(y**b*z)) ==> "a*ln(c) + a*ln(x) + b*ln(y) + ln(z)"
-        Exponential.expand (log10((c*x)**a) + log10(y**b*z)) ==> "a*log(c) + a*log(x) + b*log(y) + log(z)"
+        Exponential.expand (lg((c*x)**a) + lg(y**b*z)) ==> "a*lg(c) + a*lg(x) + b*lg(y) + lg(z)"
         Exponential.expand ((log 5Q ((c*x)**a)) + (log 3Q (y**b*z))) ==> "a*log(5,c) + a*log(5,x) + b*log(3,y) + log(3,z)"
 
         Exponential.contract (exp(x)*exp(y)) ==> "exp(x + y)"
@@ -414,8 +414,8 @@ module Expressions =
         Calculus.differentiate x ((ln x) / (ln 10Q)) ==> "1/(x*ln(10))"
         Calculus.differentiate x (ln x) ==> "1/x"
         Calculus.differentiate x (ln (x**2)) ==> "2/x"
-        Calculus.differentiate x (log10 x) ==> "1/(x*ln(10))"
-        Calculus.differentiate x (log10 (x**2)) ==> "2/(x*ln(10))"
+        Calculus.differentiate x (lg x) ==> "1/(x*ln(10))"
+        Calculus.differentiate x (lg (x**2)) ==> "2/(x*ln(10))"
         Calculus.differentiate x (log 10Q x) ==> "1/(x*ln(10))"
         Calculus.differentiate x (log x (x**2)) ==> "2/(x*ln(x)) - ln(x^2)/(x*(ln(x))^2)"
 
@@ -503,7 +503,7 @@ module Expressions =
         let expr2 = Operators.sec 32Q
         expr2 ==> "sec(32)"
 
-        let exrp3 = Expression.Apply(Function.Cot, expr2)
+        let exrp3 = Expression.Apply(Cot, expr2)
         exrp3 ==> "cot(sec(32))"
 
         let expr4 = Infix.parseOrUndefined "25*x*sec(x)"

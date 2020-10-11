@@ -31,11 +31,11 @@ module Infix =
         Infix.parseOrUndefined "sin -x" ==> "sin - x"
         Infix.parseOrUndefined "sin" ==> "sin"
 
-        Infix.parseOrUndefined "atan(x,y)" ==> "atan(x,y)"
-        Infix.parseOrUndefined "atan ( x , y )"  ==> "atan(x,y)"
-        Infix.parseOrUndefined " atan ( - x, - y ) " ==> "atan(-x,-y)"
+        Infix.parseOrUndefined "atan2(x,y)" ==> "atan2(x,y)"
+        Infix.parseOrUndefined "atan2 ( x , y )"  ==> "atan2(x,y)"
+        Infix.parseOrUndefined " atan2 ( - x, - y ) " ==> "atan2(-x,-y)"
 
-        Infix.parseOrUndefined "log(x)" ==> "log(x)"
+        Infix.parseOrUndefined "lg(x)" ==> "lg(x)"
         Infix.parseOrUndefined "log(x,y)" ==> "log(x,y)"
         Infix.parseOrUndefined "log(x,10)" ==> "log(x,10)"
 

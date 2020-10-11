@@ -186,10 +186,15 @@ module Structure =
     let collectFunctions x =
         x |> collectAllDistinct (function | Function _ | FunctionN _ as expression -> Some expression | _ -> None) |> sortList
 
-    /// Collects all functions of an expressions and returns their distinct function types.
+    /// Collects all unary functions of an expressions and returns their distinct function types.
     [<CompiledName("CollectFunctionTypes")>]
     let collectFunctionTypes x =
-        x |> collectAllDistinct (function | Function (f, _) | FunctionN (f, _) -> Some f | _ -> None) |> List.sort
+        x |> collectAllDistinct (function | Function (f, _) -> Some f | _ -> None) |> List.sort
+
+    /// Collects all n-ary functions of an expressions and returns their distinct function types.
+    [<CompiledName("CollectNaryFunctionTypes")>]
+    let collectNaryFunctionTypes x =
+        x |> collectAllDistinct (function | FunctionN (f, _) -> Some f | _ -> None) |> List.sort
 
     /// Collects all sum expressions.
     [<CompiledName("CollectSums")>]

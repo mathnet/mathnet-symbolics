@@ -14,7 +14,8 @@ type Expression =
     | Product of Expression list
     | Power of Expression * Expression
     | Function of Function * Expression
-    | FunctionN of Function * (Expression list)
+    | FunctionN of FunctionN * (Expression list)
+    //| FunctionDef of Symbol * (Symbol list) * Expression
     | ComplexInfinity
     | PositiveInfinity
     | NegativeInfinity
@@ -193,8 +194,8 @@ module Operators =
             | x, Power (yr, yp) -> if x <> yr then compare x yr else compare one yp
             | Sum xs, y -> compareZip (List.rev xs) [y]
             | x, Sum ys -> compareZip [x] (List.rev ys)
-            | Function (xf, x), FunctionN (yf, ys) -> if xf <> yf then xf < yf else compareZip [x] (List.rev ys)
-            | FunctionN (xf, xs), Function (yf, y) -> if xf <> yf then xf < yf else compareZip (List.rev xs) [y]
+            | Function _, FunctionN _ -> true
+            | FunctionN _, Function _ -> false
             | Identifier _, _ -> true
             | _, Identifier _ -> false
             | Argument _, _ -> true
@@ -424,13 +425,13 @@ module Operators =
         | Power (x', Number n) when n.Equals(-1N) && isPositive x'
             -> ln x' |> negate
         | x -> Function (Ln, x)
-    let log10 = function
+    let lg = function
         | Undefined -> undefined
         | Zero -> negativeInfinity
         | One -> zero
         | Number n when n.Equals(10N) -> one
         | oo when isInfinity oo -> infinity
-        | x -> Function (Log, x)
+        | x -> Function (Lg, x)
     let log basis x = FunctionN (Log, [basis; x])
 
     let sin = function
@@ -638,7 +639,7 @@ module Operators =
         | Number n when n.IsNegative -> Function (Atan, Number -n) |> negate // atan(-x) = -atan(x)
         | Product ((Number n)::ax) when n.IsNegative -> Function (Atan, multiply (Number -n) (Product ax)) |> negate
         | x -> Function (Atan, x)
-    let arctan2 x y = FunctionN (Atan, [x;y])
+    let arctan2 x y = FunctionN (Atan2, [x;y])
     let arccsc = function
         | Undefined | ComplexInfinity -> undefined
         | PositiveInfinity | NegativeInfinity -> zero // acsc(oo) = acsc(-oo) = 0
@@ -815,12 +816,12 @@ module Operators =
         | Product ((Number n)::ax), _ when n.IsNegative -> (pow minusOne (multiply (Number -n) (Product ax))) |> multiply (hankelh2 (multiply (Number -n) (Product ax)) x)
         | _, _ -> FunctionN (HankelH2, [nu; x])
 
-    let apply f x =
+    let apply (f: Function) x =
         match f with
         | Abs -> abs x
         | Exp -> exp x
         | Ln -> ln x
-        | Log -> log10 x
+        | Lg -> lg x
         | Sin -> sin x
         | Cos -> cos x
         | Tan -> tan x
@@ -849,11 +850,10 @@ module Operators =
         | AiryAiPrime -> airyaiprime x
         | AiryBi -> airybi x
         | AiryBiPrime -> airybiprime x
-        | _ -> failwith "not supported"
 
-    let applyN (f: Function) (xs: Expression list) =
+    let applyN (f: FunctionN) (xs: Expression list) =
         match f, xs with
-        | Atan, [x;y] -> arctan2 x y
+        | Atan2, [x;y] -> arctan2 x y
         | Log, [b; x] -> log b x
         | BesselJ, [nu; x] -> besselj nu x
         | BesselY, [nu; x] -> bessely nu x
@@ -904,7 +904,7 @@ type Expression with
 
     static member Exp (x) = Operators.exp x
     static member Ln (x) = Operators.ln x
-    static member Log(x) = Operators.log10 x
+    static member Log(x) = Operators.lg x
     static member Log (basis, x) = Operators.log basis x
 
     static member Sin (x) = Operators.sin x

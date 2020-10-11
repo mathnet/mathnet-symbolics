@@ -65,15 +65,15 @@ module Log10 =
 
     [<Test>]
     let ``Zero, One & Infinity`` () =
-        log10 undefined ==> "Undefined"
-        log10 infinity ==> "∞"
-        log10 negativeInfinity ==> "∞"
-        log10 complexInfinity ==> "∞"
-        log10 0Q ==> "-∞"
-        log10 1Q ==> "0"
-        log10 10Q ==> "1"
+        lg undefined ==> "Undefined"
+        lg infinity ==> "∞"
+        lg negativeInfinity ==> "∞"
+        lg complexInfinity ==> "∞"
+        lg 0Q ==> "-∞"
+        lg 1Q ==> "0"
+        lg 10Q ==> "1"
 
     [<Test>]
     let ``Special Values`` () =
-        log10(10Q) ==> "1"
-        log10(1Q/10Q) ==> "log(1/10)" // "-1"
+        lg(10Q) ==> "1"
+        lg(1Q/10Q) ==> "lg(1/10)" // "-1"

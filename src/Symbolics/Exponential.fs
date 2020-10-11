@@ -27,7 +27,7 @@ module Exponential =
         match Structure.map expand x with
         | Function (Exp, a) -> expRules (Algebraic.expand a)
         | Function (Ln, a) -> lnRules ln (Algebraic.expand a)
-        | Function (Log, a) -> lnRules log10 (Algebraic.expand a)
+        | Function (Lg, a) -> lnRules lg (Algebraic.expand a)
         | FunctionN (Log, [basis;a]) -> lognRules basis (Algebraic.expand a)
         | a -> a
 

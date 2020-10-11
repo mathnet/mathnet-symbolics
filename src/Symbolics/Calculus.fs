@@ -23,7 +23,7 @@ module Calculus =
             de*ln(r)*p + e*dr*(r**(e-1))
         | Function (Exp, x) as f -> (differentiate symbol x) * f
         | Function (Ln, x) -> (differentiate symbol x) / x
-        | Function (Log, x) -> (differentiate symbol ((ln x) / (ln 10Q)))
+        | Function (Lg, x) -> (differentiate symbol ((ln x) / (ln 10Q)))
         | Function (Sin, x) -> (differentiate symbol x) * cos(x)
         | Function (Cos, x) -> -(differentiate symbol x) * sin(x)
         | Function (Tan, x) -> 2*(differentiate symbol x) / (cos(2Q * x) + 1Q)
@@ -53,7 +53,7 @@ module Calculus =
         | Function (AiryAiPrime, x) -> (differentiate symbol x) * x * airyai(x)
         | Function (AiryBi, x) -> (differentiate symbol x) * airybiprime(x)
         | Function (AiryBiPrime, x) -> (differentiate symbol x) * x * airybi(x)
-        | FunctionN (Atan, [x; y]) -> differentiate symbol (tan (x / y))
+        | FunctionN (Atan2, [x; y]) -> differentiate symbol (tan (x / y))
         | FunctionN (Log, [b; x]) -> differentiate symbol ((ln x) / (ln b))
         | FunctionN (BesselJ, [nu; x]) -> (differentiate symbol x) * ((besselj (nu - 1Q) x) - (besselj (nu + 1Q) x)) / 2Q
         | FunctionN (BesselY, [nu; x]) -> (differentiate symbol x) * ((bessely (nu - 1Q) x) - (bessely (nu + 1Q) x)) / 2Q

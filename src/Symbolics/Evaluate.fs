@@ -138,8 +138,8 @@ module Evaluate =
         | Abs, ComplexMatrix x -> Real (x.L2Norm())
         | Ln, Real x -> Real (Math.Log(x))
         | Ln, Complex x -> Complex (Complex.ln x)
-        | Log, Real x -> Real (Math.Log10 x)
-        | Log, Complex x -> Complex (Complex.log10 x)
+        | Lg, Real x -> Real (Math.Log10 x)
+        | Lg, Complex x -> Complex (Complex.log10 x)
         | Exp, Real x -> Real (Math.Exp x)
         | Exp, Complex x -> Complex (Complex.exp x)
         | Sin, Real x -> Real (Math.Sin x)
@@ -202,10 +202,10 @@ module Evaluate =
 
     let fapplyN f xs =
         match f, xs with
-        | Atan, [Real x; Real y] -> Real (Math.Atan2(x, y))
-        | Atan, [Complex x; Real y] -> Complex (Complex.atan (x / (complex y 0.0)))
-        | Atan, [Complex x; Complex y] -> Complex (Complex.atan (x / y))
-        | Atan, [Real x; Complex y] -> Complex (Complex.atan ((complex x 0.0) / y))
+        | Atan2, [Real x; Real y] -> Real (Math.Atan2(x, y))
+        | Atan2, [Complex x; Real y] -> Complex (Complex.atan (x / (complex y 0.0)))
+        | Atan2, [Complex x; Complex y] -> Complex (Complex.atan (x / y))
+        | Atan2, [Real x; Complex y] -> Complex (Complex.atan ((complex x 0.0) / y))
         | Log, [Real b; Real x] -> Real (Math.Log(x, b))
         | Log, [Real b; Complex x] -> Complex (Complex.log b x)
         | Log, [Complex b; Complex x] -> Complex (Complex.ln x / Complex.ln b)

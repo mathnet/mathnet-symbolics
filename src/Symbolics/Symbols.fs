@@ -4,7 +4,7 @@ type Symbol = Symbol of string
 
 type Function =
     | Abs
-    | Ln | Log | Exp
+    | Ln | Lg | Exp
     | Sin | Cos | Tan
     | Csc | Sec | Cot
     | Sinh | Cosh | Tanh
@@ -17,6 +17,10 @@ type Function =
     | AiryAiPrime // Derivative of Airy function Ai
     | AiryBi // Airy function Bi
     | AiryBiPrime // Derivative of Airy function Bi
+
+type FunctionN =
+    | Log
+    | Atan2
     | BesselJ   // Bessel function of the first kind
     | BesselY   // Bessel function of the second kind
     | BesselI   // Modified Bessel function of the first kind and exponentially scaled

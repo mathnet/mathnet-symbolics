@@ -89,14 +89,13 @@ module Linq =
                     | AiryBi -> Some (mathCall1 "AiryBi")
                     | AiryBiPrime -> Some (mathCall1 "AiryBiPrime")
                     | Ln   -> Some (mathCall1 "Log")
-                    | Log  -> Some (mathCall1 "Log10")
+                    | Lg  -> Some (mathCall1 "Log10")
                     | Exp  -> Some (mathCall1 "Exp")
                     | Abs  -> Some abs
-                    | _    -> None
                 let f = convertFunc func
                 let e = convertExpr par
                 Option.map2 id f e
-            | FunctionN(Atan, [x;y]) ->
+            | FunctionN(Atan2, [x;y]) ->
                 let exprX = convertExpr x
                 let exprY = convertExpr y
                 Option.map2 atan2 exprX exprY

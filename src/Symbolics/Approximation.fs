@@ -67,7 +67,7 @@ module Approximation =
     let ln = function
         | Real a -> Real (Math.Log a)
         | Complex a -> Complex (Complex.ln a)
-    let log10 = function
+    let lg = function
         | Real a -> Real (Math.Log10 a)
         | Complex a -> Complex (Complex.log10 a)
     let log b x =
@@ -223,7 +223,7 @@ module Approximation =
         match f with
         | Abs -> abs a
         | Ln -> ln a
-        | Log -> log10 a
+        | Lg -> lg a
         | Exp -> exp a
         | Sin ->sin a
         | Cos -> cos a
@@ -253,11 +253,10 @@ module Approximation =
         | AiryAiPrime -> airyaiprime a
         | AiryBi -> airybi a
         | AiryBiPrime -> airybiprime a
-        | _ -> failwith "not supported"
 
     let applyN f xs =
         match f, xs with
-        | Atan, [x; y] -> atan2 x y
+        | Atan2, [x; y] -> atan2 x y
         | Log, [b; x] -> log b x
         | BesselJ, [nu; x] -> besselj nu x
         | BesselY, [nu; x] -> bessely nu x

@@ -13,7 +13,7 @@ module private LaTeXFormatter =
     // TODO
     let latexFunctionName = function
         | "abs" -> "\\operatorname{abs}"
-        | "ln" -> "\\ln" | "log" -> "\\log_{10}"
+        | "ln" -> "\\ln" | "lg" -> "\\log_{10}"
         | "exp" -> "\\exp"
         | "sin" -> "\\sin" | "cos" -> "\\cos" | "tan" -> "\\tan"
         | "csc" -> "\\csc" | "sec" -> "\\sec" | "cot" -> "\\cot"

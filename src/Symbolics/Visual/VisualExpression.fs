@@ -38,9 +38,13 @@ module VisualExpression =
     open ExpressionPatterns
 
     let private functionNameMap = FSharpType.GetUnionCases typeof<Function> |> Array.map (fun case -> FSharpValue.MakeUnion(case, [||]) :?> Function, case.Name.ToLowerInvariant()) |> Map.ofArray
+    let private functionNaryNameMap = FSharpType.GetUnionCases typeof<FunctionN> |> Array.map (fun case -> FSharpValue.MakeUnion(case, [||]) :?> FunctionN, case.Name.ToLowerInvariant()) |> Map.ofArray
     let private nameFunctionMap = functionNameMap |> Map.toList |> List.map (fun (f,n) -> (n,f)) |> Map.ofList
+    let private nameFunctionNaryMap = functionNaryNameMap |> Map.toList |> List.map (fun (f,n) -> (n,f)) |> Map.ofList
     let private functionName f = Map.find f functionNameMap
+    let private functionNaryName f = Map.find f functionNaryNameMap
     let private nameFunction name = Map.find name nameFunctionMap
+    let private nameFunctionNary name = Map.find name nameFunctionNaryMap
 
     let fromExpression (style:VisualExpressionStyle) expression =
         let compactPowersOfFunctions = style.CompactPowersOfFunctions
@@ -179,8 +183,8 @@ module VisualExpression =
             | PosIntPower (Function (f, x), Integer p) when f <> Abs && compactPowersOfFunctions ->
                 VisualExpression.Function (functionName f, p.Numerator, convert 0 x)
                 |> parenthesis priority 3
-            | PosIntPower (FunctionN (f, xs), Integer p) when f <> Abs && compactPowersOfFunctions ->
-                VisualExpression.FunctionN (functionName f, p.Numerator, xs |> List.map (convert 0))
+            | PosIntPower (FunctionN (f, xs), Integer p) when compactPowersOfFunctions ->
+                VisualExpression.FunctionN (functionNaryName f, p.Numerator, xs |> List.map (convert 0))
                 |> parenthesis priority 3
             | Power (r, Number n) when n.IsPositive && n.Numerator = BigInteger.One ->
                 VisualExpression.Root (convert 4 r, n.Denominator)
@@ -197,7 +201,7 @@ module VisualExpression =
                 VisualExpression.Function (functionName f, BigInteger.One, convert 0 x)
                 |> parenthesis priority 3
             | FunctionN (f, xs) ->
-                VisualExpression.FunctionN (functionName f, BigInteger.One, xs |> List.map (convert 0))
+                VisualExpression.FunctionN (functionNaryName f, BigInteger.One, xs |> List.map (convert 0))
                 |> parenthesis priority 3
         convert 0 expression
 
@@ -218,7 +222,7 @@ module VisualExpression =
                 let applied = apply (nameFunction fn) (convert x)
                 if power.IsOne then applied else pow applied (fromInteger power)
             | VisualExpression.FunctionN (fn, power, xs) ->
-                let applied = applyN (nameFunction fn) (List.map convert xs)
+                let applied = applyN (nameFunctionNary fn) (List.map convert xs)
                 if power.IsOne then applied else pow applied (fromInteger power)
             | VisualExpression.ComplexI -> Expression.I
             | VisualExpression.Infinity -> PositiveInfinity

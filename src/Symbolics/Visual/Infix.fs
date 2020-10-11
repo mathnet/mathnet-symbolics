@@ -63,6 +63,14 @@ module private InfixParser =
             |> Array.sortBy (fun (name,_) -> -name.Length)
         choice [ for (name, union) in cases -> str_ws name |>> fun _ -> union ] .>> ws
 
+    let functionNaryName : FunctionN parser =
+        let cases =
+            FSharpType.GetUnionCases typeof<FunctionN>
+            |> Array.map
+                (fun case -> (case.Name.ToLower(), FSharpValue.MakeUnion(case, [||]) :?> FunctionN))
+            |> Array.sortBy (fun (name,_) -> -name.Length)
+        choice [ for (name, union) in cases -> str_ws name |>> fun _ -> union ] .>> ws
+
     let pseudoName : Pseudo parser =
         let flags = BindingFlags.NonPublic ||| BindingFlags.Public
         let cases =
@@ -80,14 +88,19 @@ module private InfixParser =
         let parensTerm = parens expr
         let absTerm = abs expr
 
+        let functionArg = expr |> parens
         let functionArgs = sepBy expr (str_ws ",") |> parens
 
-        let functionTerm = functionName .>>. functionArgs |>> function
-            | f, [arg] -> Expression.Apply(f, arg)
+        let functionTerm = functionName .>>. functionArg |>> function
+            | f, arg -> Expression.Apply(f, arg)
+
+        let functionNaryTerm = functionNaryName .>>. functionArgs |>> function
             | f, args -> Expression.ApplyN(f, args)
 
-        let functionPowerTerm = functionName .>>. (str_ws "^" >>. number) .>>. functionArgs |>> function
-            | (f, power), [arg] -> pow (Expression.Apply(f, arg)) power
+        let functionPowerTerm = functionName .>>. (str_ws "^" >>. number) .>>. functionArg |>> function
+            | (f, power), arg -> pow (Expression.Apply(f, arg)) power
+
+        let functionNaryPowerTerm = functionNaryName .>>. (str_ws "^" >>. number) .>>. functionArgs |>> function
             | (f, power), args -> pow (Expression.ApplyN(f, args)) power
 
         let pseudoTerm = pseudoName .>>. functionArgs |>> function
@@ -95,7 +108,11 @@ module private InfixParser =
             | Pow, [x;y] -> (x,y) |> Expression.Pow
             | _ -> failwith "wrong matching"
 
-        let term = number <|> parensTerm <|> absTerm <|> attempt functionTerm <|> attempt functionPowerTerm <|> attempt pseudoTerm  <|> identifier
+        let term =
+            number <|> parensTerm <|> absTerm
+            <|> attempt functionTerm <|> attempt functionNaryTerm
+            <|> attempt functionPowerTerm <|> attempt functionNaryPowerTerm
+            <|> attempt pseudoTerm  <|> identifier
 
         opp.TermParser <- term
         opp.AddOperator(InfixOperator("+", ws, 1, Associativity.Left, add))
@@ -194,7 +211,7 @@ module private InfixFormatter =
 
     let functionName = function
         | Abs -> "abs"
-        | Ln -> "ln" | Log -> "log"
+        | Ln -> "ln" | Lg -> "log"
         | Exp -> "exp"
         | Sin -> "sin" | Cos -> "cos" | Tan -> "tan"
         | Csc -> "csc" | Sec -> "sec" | Cot -> "cot"
@@ -206,6 +223,10 @@ module private InfixFormatter =
         | Asech -> "asech" | Acsch -> "acsch" | Acoth -> "acoth"
         | AiryAi -> "airyai" | AiryAiPrime -> "airyaiprime"
         | AiryBi -> "airybi" | AiryBiPrime -> "airybiprime"
+
+    let functionNaryName = function
+        | Log -> "log"
+        | Atan2 -> "atan"
         | BesselJ -> "besselj"
         | BesselY -> "bessely"
         | BesselI -> "besseli"
@@ -272,7 +293,7 @@ module private InfixFormatter =
             strict write 0 x
             write ")"
         | FunctionN (fn, x::xs) ->
-            write (functionName fn)
+            write (functionNaryName fn)
             write "("
             strict write 0 x
             xs |> List.iter (fun x -> write ","; strict write 0 x)

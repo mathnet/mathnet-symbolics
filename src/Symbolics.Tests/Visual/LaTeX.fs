@@ -30,8 +30,8 @@ module LaTeX =
         LaTeX.format (Expression.E * 2Q**(4Q*x)) --> """e\cdot{2}^{4x}"""
         LaTeX.format (4Q * Expression.E ** x) --> """4{e}^{x}"""
 
-        LaTeX.format (log10 x) --> """\log_{10}{x}"""
-        LaTeX.format (log10 (x+y)) --> """\log_{10}\left(x + y\right)"""
+        LaTeX.format (lg x) --> """\log_{10}{x}"""
+        LaTeX.format (lg (x+y)) --> """\log_{10}\left(x + y\right)"""
         LaTeX.format (log 8Q y) --> """\log_{8}{y}"""
         LaTeX.format (log 8Q (x+y)) --> """\log_{8}\left(x + y\right)"""
         LaTeX.format (log (sin x) (tanh y)) --> """\log_{\sin{x}}{\tanh{y}}"""
