@@ -40,10 +40,12 @@ Build with .NET Core SDK 3.1.1</PackageReleaseNotes>
     <Compile Include="Exponential.fs" />
     <Compile Include="Trigonometric.fs" />
     <Compile Include="Approximate.fs" />
+    <Compile Include="Enriched\EnrichedExpression.fs" />
     <Compile Include="Visual\VisualExpression.fs" />
     <Compile Include="Visual\Infix.fs" />
     <Compile Include="Visual\LaTeX.fs" />
     <Compile Include="Visual\MathML.fs" />
+    <Compile Include="Typed\TypedExpression.fs" />
     <Compile Include="Typed\Quotations.fs" />
     <Compile Include="Typed\Linq.fs" />
     <Compile Include="Compile.fs" />

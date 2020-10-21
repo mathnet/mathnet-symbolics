@@ -63,7 +63,6 @@ module Calculus =
         | FunctionN (BesselKRatio, [nu; x]) -> -(differentiate symbol x) * ((pow (besselk nu x) 2Q) + (besselk (nu + 2Q) x) * (besselk nu x) - (besselk (nu + 1Q) x) * (besselk (nu - 1Q) x) - (pow (besselk (nu + 1Q) x) 2Q)) / (2Q * (pow (besselk nu x) 2Q))
         | FunctionN (HankelH1, [nu; x]) -> (differentiate symbol x) * ((hankelh1 (nu - 1Q) x) - (hankelh1 (nu + 1Q) x)) / 2Q
         | FunctionN (HankelH2, [nu; x]) -> (differentiate symbol x) * ((hankelh2 (nu - 1Q) x) - (hankelh2 (nu + 1Q) x)) / 2Q
-        | Function (_) -> failwith "not supported"
         | FunctionN (_) -> failwith "not supported"
         | Product [] -> failwith "invalid expression"
 
