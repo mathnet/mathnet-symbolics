@@ -2,6 +2,7 @@ source https://api.nuget.org/v3/index.json
 storage: packages
 
 nuget FSharp.Core 4.6.0 redirects:force
+nuget Microsoft.NETFramework.ReferenceAssemblies copy_local:true, framework:net45,net461
 
 nuget FParsec ~> 1.0.3
 nuget MathNet.Numerics ~> 4.7
