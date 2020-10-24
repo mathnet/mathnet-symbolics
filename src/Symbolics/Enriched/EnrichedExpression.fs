@@ -6,28 +6,27 @@ open MathNet.Symbolics
 /// Enriched expression tree which includes an enrichment element on every node.
 /// Not intended for algebraic manipulations, but can be converted from and to Expression.
 [<StructuralEquality;NoComparison;RequireQualifiedAccess>]
-type EnrichedExpression<'e> =
+type EnrichedExpression<'e, 'w> =
     | Number of 'e * BigRational
     | Approximation of 'e * Approximation
     | Identifier of 'e * Symbol
     | Argument of 'e * Symbol
     | Constant of 'e * Constant
-    | Sum of 'e * (EnrichedExpression<'e> list)
-    | Product of 'e * (EnrichedExpression<'e> list)
-    | Power of 'e * (EnrichedExpression<'e> * EnrichedExpression<'e>)
-    | Function of 'e * (Function * EnrichedExpression<'e>)
-    | FunctionN of 'e * (FunctionN * (EnrichedExpression<'e> list))
+    | Sum of 'e * (EnrichedExpression<'e,'w> list)
+    | Product of 'e * (EnrichedExpression<'e, 'w> list)
+    | Power of 'e * (EnrichedExpression<'e, 'w> * EnrichedExpression<'e, 'w>)
+    | Function of 'e * (Function * EnrichedExpression<'e, 'w>)
+    | FunctionN of 'e * (FunctionN * (EnrichedExpression<'e, 'w> list))
     | ComplexInfinity of 'e
     | PositiveInfinity of 'e
     | NegativeInfinity of 'e
+    | Wrapped of 'e * 'w * EnrichedExpression<'e,'w>
     | Undefined
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module EnrichedExpression =
-    open Rational
-    open ExpressionPatterns
 
-    let enrichment (enrichedExpression: EnrichedExpression<'e>) : 'e option =
+    let enrichment (enrichedExpression: EnrichedExpression<'e, 'w>) : 'e option =
         match enrichedExpression with
         | EnrichedExpression.Number (e, _) -> Some e
         | EnrichedExpression.Approximation (e, _) -> Some e
@@ -42,9 +41,15 @@ module EnrichedExpression =
         | EnrichedExpression.ComplexInfinity e -> Some e
         | EnrichedExpression.PositiveInfinity e -> Some e
         | EnrichedExpression.NegativeInfinity e -> Some e
+        | EnrichedExpression.Wrapped (e, _, _) -> Some e
         | EnrichedExpression.Undefined -> None
 
-    let toExpression (enrichedExpression: EnrichedExpression<'e>) : Expression =
+    let wrapping (enrichedExpression: EnrichedExpression<'e, 'w>) : 'w option =
+        match enrichedExpression with
+        | EnrichedExpression.Wrapped (_, w, _) -> Some w
+        | _ -> None
+
+    let toExpression (enrichedExpression: EnrichedExpression<'e, 'w>) : Expression =
         let rec convert = function
             | EnrichedExpression.Number (_, x) -> Expression.Number x
             | EnrichedExpression.Approximation (_, x) -> Expression.Approximation x
@@ -59,5 +64,6 @@ module EnrichedExpression =
             | EnrichedExpression.ComplexInfinity _ -> Expression.ComplexInfinity
             | EnrichedExpression.PositiveInfinity _ -> Expression.PositiveInfinity
             | EnrichedExpression.NegativeInfinity _ -> Expression.NegativeInfinity
+            | EnrichedExpression.Wrapped (_, _, x) -> convert x
             | EnrichedExpression.Undefined -> Expression.Undefined
         convert enrichedExpression

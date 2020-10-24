@@ -7,7 +7,11 @@ type ValueType =
     | Complex
     | Undefined
 
-type TypedExpression = EnrichedExpression<ValueType>
+type ValueTypeWrap =
+    | RationalToReal
+    | RealToComplex
+
+type TypedExpression = EnrichedExpression<ValueType, ValueTypeWrap>
 
 module TypedExpression =
 
@@ -15,12 +19,23 @@ module TypedExpression =
 
         let enrichedType e = EnrichedExpression.enrichment e |> Option.defaultValue ValueType.Undefined
 
+        let cast desiredType e =
+            match enrichedType e with
+            | _ when desiredType = ValueType.Undefined -> e
+            | actualType when actualType = desiredType -> e
+            | ValueType.Rational when desiredType = ValueType.Real -> TypedExpression.Wrapped (ValueType.Real, RationalToReal, e)
+            | ValueType.Rational when desiredType = ValueType.Complex -> TypedExpression.Wrapped (ValueType.Complex, RealToComplex, TypedExpression.Wrapped (ValueType.Real, RationalToReal, e))
+            | ValueType.Real when desiredType = ValueType.Complex -> TypedExpression.Wrapped (ValueType.Complex, RealToComplex, e)
+            | _ -> failwith "Not Supported"
+
         let mergeType a b =
             match a, b with
-            | ValueType.Undefined, _ | _, ValueType.Undefined -> ValueType.Real
+            | ValueType.Undefined, _ | _, ValueType.Undefined -> ValueType.Undefined
             | ValueType.Rational, ValueType.Rational -> ValueType.Rational
             | ValueType.Complex, _ | _, ValueType.Complex -> ValueType.Complex
             | ValueType.Real, _ | _, ValueType.Real -> ValueType.Real
+
+        let deriveMergedTypeWith baseType expressions = expressions |> List.map enrichedType |> List.fold mergeType baseType
 
         let rec convert = function
             | Number n -> TypedExpression.Number (ValueType.Rational, n)
@@ -36,17 +51,17 @@ module TypedExpression =
             | Undefined -> TypedExpression.Undefined
             | Sum xs ->
                 let cs = xs |> List.map convert
-                let t = cs |> List.map enrichedType |> List.fold mergeType ValueType.Rational
-                TypedExpression.Sum (t, cs)
+                let t = cs |> deriveMergedTypeWith ValueType.Rational
+                TypedExpression.Sum (t, cs |> List.map (cast t))
             | Product xs ->
                 let cs = xs |> List.map convert
-                let t = cs |> List.map enrichedType |> List.fold mergeType ValueType.Rational
-                TypedExpression.Product (t, cs)
+                let t = cs |> deriveMergedTypeWith ValueType.Rational
+                TypedExpression.Product (t, cs |> List.map (cast t))
             | Power (a, b) ->
                 let ca = convert a
                 let cb = convert b
-                let t = mergeType (mergeType (enrichedType ca) (enrichedType cb)) ValueType.Real
-                TypedExpression.Power (t, (ca, cb))
+                let t = [ca; cb] |> deriveMergedTypeWith ValueType.Real
+                TypedExpression.Power (t, (ca |> cast t, cb |> cast t))
             | Function (Abs, x) ->
                 TypedExpression.Function (ValueType.Real, (Abs, convert x))
             | Function ((Ln | Lg | Exp) as f, x)
@@ -62,9 +77,7 @@ module TypedExpression =
                     match enrichedType cb, enrichedType cx with
                     | (ValueType.Real | ValueType.Rational), (ValueType.Real | ValueType.Rational) -> ValueType.Real
                     | (ValueType.Real | ValueType.Rational), ValueType.Complex -> ValueType.Complex
-                    | ValueType.Complex, _ -> ValueType.Undefined
-                    | ValueType.Undefined, _ -> ValueType.Undefined
-                    | _, ValueType.Undefined -> ValueType.Undefined
+                    | _ -> ValueType.Undefined
                 TypedExpression.FunctionN (t, (Log, [cb; cx]))
             | FunctionN (Atan2, xs) ->
                 let cs = xs |> List.map convert
@@ -77,9 +90,7 @@ module TypedExpression =
                     match enrichedType cnu, enrichedType cz with
                     | (ValueType.Real | ValueType.Rational), (ValueType.Real | ValueType.Rational) -> ValueType.Real
                     | (ValueType.Real | ValueType.Rational), ValueType.Complex -> ValueType.Complex
-                    | ValueType.Complex, _ -> ValueType.Undefined
-                    | ValueType.Undefined, _ -> ValueType.Undefined
-                    | _, ValueType.Undefined -> ValueType.Undefined
+                    | _ -> ValueType.Undefined
                 TypedExpression.FunctionN (t, (f, [cnu; cz]))
             | FunctionN _ -> failwith "not supported"
 
