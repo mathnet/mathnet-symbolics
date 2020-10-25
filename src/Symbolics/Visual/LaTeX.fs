@@ -55,7 +55,7 @@ module private LaTeXFormatter =
             match s with
             | "pi" -> write "\\pi"
             | name ->
-                if name.Length > 1 then write "{"
+                if name.Length > 1 then write "\\mathrm{"
                 addBracets name |> write
                 if name.Length > 1 then write "}"
         | VisualExpression.Infinity -> write "\\infty"
@@ -80,14 +80,19 @@ module private LaTeXFormatter =
             xs |> List.iter (function
                 | VisualExpression.Negative x -> write " - "; format write x
                 | x -> write " + "; format write x)
+        | VisualExpression.Product ((x::xs) as xx) when (xx |> List.exists (function | VisualExpression.Symbol s when s.Length > 1 && s <> "pi" -> true | _ -> false)) ->
+            format write x
+            xs |> List.iter (fun x ->
+                write " \cdot "
+                format write x)
         | VisualExpression.Product (x::xs) ->
             format write x
             xs |> List.iter (function
                 | VisualExpression.Power (VisualExpression.PositiveInteger _, _) as x ->
-                    write "\cdot"
+                    write " \cdot "
                     format write x
                 | VisualExpression.Power (VisualExpression.PositiveFloatingPoint _, _) as x ->
-                    write "\cdot"
+                    write " \cdot "
                     format write x
                 | x -> format write x)
          | VisualExpression.Fraction (n, d) ->

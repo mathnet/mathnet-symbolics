@@ -21,13 +21,15 @@ module LaTeX =
         LaTeX.format ((a+b)**c) --> """{\left(a + b\right)}^{c}"""
         LaTeX.format (a**(b**c)) --> """{a}^{{b}^{c}}"""
         LaTeX.format ((a**b)**c) --> """{\left({a}^{b}\right)}^{c}"""
-        LaTeX.format (a*b*(symbol "def")) --> """ab{def}"""
+        LaTeX.format (a*b*d) --> """abd"""
+        LaTeX.format (a*b*(symbol "def")) --> """a \cdot b \cdot \mathrm{def}"""
+        LaTeX.format (symbol "L1" * symbol "U1" + symbol "L2") --> """\mathrm{L2} + \mathrm{L1} \cdot \mathrm{U1}"""
 
-        LaTeX.format (3Q*2Q**x) --> """3\cdot{2}^{x}"""
-        LaTeX.format (3.0*(real 2.0)**x) --> """3\cdot{2}^{x}"""
+        LaTeX.format (3Q*2Q**x) --> """3 \cdot {2}^{x}"""
+        LaTeX.format (3.0*(real 2.0)**x) --> """3 \cdot {2}^{x}"""
         LaTeX.format (5Q*x) --> """5x"""
         LaTeX.format (Expression.Pi * 10Q) --> """10\pi"""
-        LaTeX.format (Expression.E * 2Q**(4Q*x)) --> """e\cdot{2}^{4x}"""
+        LaTeX.format (Expression.E * 2Q**(4Q*x)) --> """e \cdot {2}^{4x}"""
         LaTeX.format (4Q * Expression.E ** x) --> """4{e}^{x}"""
 
         LaTeX.format (lg x) --> """\log_{10}{x}"""
@@ -53,3 +55,13 @@ module LaTeX =
         VisualExpression.Function ("sin", bigint 2, VisualExpression.Symbol "x") |> LaTeX.formatVisual |> shouldEqual """\sin^{2}{x}"""
         LaTeX.format ((sin x)*(sin x)) --> """\sin^{2}{x}"""
         LaTeX.formatStyle { CompactPowersOfFunctions=false } ((sin x)*(sin x)) --> """{\left(\sin{x}\right)}^{2}"""
+
+    [<Test>]
+    let ``Underscores in names`` () =
+        let expr = Infix.parseOrUndefined "(TESTING_UNDER)*(2)"
+        expr ==> "2*TESTING_UNDER"
+        LaTeX.format expr --> """2 \cdot \mathrm{TESTING_{UNDER}}"""
+
+        let expr2 = Infix.parseOrUndefined "(TESTING_UNDER_second)*(2)"
+        expr2 ==> "2*TESTING_UNDER_second"
+        LaTeX.format expr2 --> """2 \cdot \mathrm{TESTING_{UNDER_{second}}}"""

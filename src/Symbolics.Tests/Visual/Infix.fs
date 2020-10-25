@@ -90,16 +90,6 @@ module Infix =
         Infix.format (sin(x)*sin(x)) --> "(sin(x))^2"
 
     [<Test>]
-    let ``Underscores in names`` () =
-        let expr = Infix.parseOrUndefined "(TESTING_UNDER)*(2)"
-        expr ==> "2*TESTING_UNDER"
-        LaTeX.format expr --> """2{TESTING_{UNDER}}"""
-
-        let expr2 = Infix.parseOrUndefined "(TESTING_UNDER_second)*(2)"
-        expr2 ==> "2*TESTING_UNDER_second"
-        LaTeX.format expr2 --> """2{TESTING_{UNDER_{second}}}"""
-
-    [<Test>]
     let ``Exponential notation parsing`` () =
         let expr = Infix.parseOrUndefined "(-6.40869140625E-05)*x"
         expr ==> "(-6.40869140625E-05)*x"
