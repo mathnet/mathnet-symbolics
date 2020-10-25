@@ -337,15 +337,19 @@ module Infix =
     [<CompiledName("Format")>]
     let format expression = formatStyle defaultStyle expression
 
+    [<CompiledName("FormatVisualWriter")>]
+    let formatVisualWriter (writer:TextWriter) visualExpression =
+        InfixFormatter.format (writer.Write) visualExpression
+
     /// Nicer human readable but slightly denormalized output
     [<CompiledName("FormatStyleWriter")>]
     let formatStyleWriter visualStyle (writer:TextWriter) expression =
-        let visual = VisualExpression.fromExpression visualStyle expression
-        InfixFormatter.format (writer.Write) visual
+        VisualExpression.fromExpression visualStyle expression |> formatVisualWriter writer
 
     /// Nicer human readable but slightly denormalized output
     [<CompiledName("FormatWriter")>]
-    let formatWriter (writer:TextWriter) expression = formatStyleWriter defaultStyle writer expression
+    let formatWriter (writer:TextWriter) expression =
+        VisualExpression.fromExpression defaultStyle expression |> formatVisualWriter writer
 
     [<CompiledName("Parse")>]
     let parse (infix: string) = InfixParser.parse infix

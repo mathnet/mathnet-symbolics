@@ -313,10 +313,14 @@ module LaTeX =
     [<CompiledName("Format")>]
     let format expression = formatStyle defaultStyle expression
 
+    [<CompiledName("FormatVisualWriter")>]
+    let formatVisualWriter (writer:TextWriter) visualExpression =
+        LaTeXFormatter.format (writer.Write) visualExpression
+
     [<CompiledName("FormatStyleWriter")>]
     let formatStyleWriter visualStyle (writer:TextWriter) expression =
-        let visual = VisualExpression.fromExpression visualStyle expression
-        LaTeXFormatter.format (writer.Write) visual
+        VisualExpression.fromExpression visualStyle expression |> formatVisualWriter writer
 
     [<CompiledName("FormatWriter")>]
-    let formatWriter (writer:TextWriter) expression = formatStyleWriter defaultStyle writer expression
+    let formatWriter (writer:TextWriter) expression =
+        VisualExpression.fromExpression defaultStyle expression |> formatVisualWriter writer
