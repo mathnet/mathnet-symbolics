@@ -11,7 +11,6 @@ module Infix =
     [<Test>]
     let ``Print infix expressions`` () =
         Infix.format (1/(a*b)) --> "1/(a*b)"
-        Infix.formatStrict (1/(a*b)) --> "a^(-1)*b^(-1)"
 
     [<Test>]
     let ``Parse infix expressions`` () =
@@ -77,11 +76,9 @@ module Infix =
 
     [<Test>]
     let ``Pseudo Function Test`` () =
-        Infix.parseOrUndefined "sqrt(x)" ===> "x^(1/2)"
         Infix.parseOrUndefined "sqrt(x)" ==> "sqrt(x)"
         Infix.parseOrUndefined "pow(x,3)" ==> "x^3"
         Infix.parseOrUndefined "pow(3*x,10*sin(x))" ==> "(3*x)^(10*sin(x))"
-        Infix.parseOrUndefined "sqrt(pow(x,1/2))" ===> "(x^(1/2))^(1/2)"
         Infix.parseOrUndefined "sqrt(pow(x,1/2))" ==> "sqrt(sqrt(x))"
 
     [<Test>]

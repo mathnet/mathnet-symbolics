@@ -187,25 +187,17 @@ module Expressions =
         (-2*a*x)/(3) ==> "-2/3*a*x"
         (-1*a*x)/(3) ==> "-1/3*a*x"
 
-        // There is no subtraction, negation or division in simplified expressions (strict):
-        1 / x ===> "x^(-1)" // strict
-        1 / x ==> "1/x" // nice
-        -x ===> "(-1)*x"
+        1 / x ==> "1/x"
         -x ==> "-x"
-        2 + 1/x - 1 ===> "1 + x^(-1)"
         2 + 1/x - 1 ==> "1 + 1/x"
-        -(-x) ===> "x"
         -(-x) ==> "x"
-        1 / (1 / x) ===> "x"
         1 / (1 / x) ==> "x"
 
         2*x*3 ==> "6*x"
-        -x*y/3 ===> "(-1/3)*x*y"
         -x*y/3 ==> "-1/3*x*y"
 
         ((x*y)**(1Q/2)*z**2)**2 ==> "x*y*z^4"
-        (a/b/(c*a))*(c*d/a)/d ===> "a^(-1)*b^(-1)" // strict
-        (a/b/(c*a))*(c*d/a)/d ==> "1/(a*b)" // nice
+        (a/b/(c*a))*(c*d/a)/d ==> "1/(a*b)"
         a**(3Q/2)*a**(1Q/2) ==> "a^2"
 
         x + ln x ==> "x + ln(x)"
@@ -238,7 +230,6 @@ module Expressions =
         (a+b)-(a+b) ==> "a + b - (a + b)"
         (a+b)-(a+b) |> Algebraic.expand ==> "0"
         2*(a+b)-(a+b) ==> "a + b"
-        (a+b)-2*(a+b) |> Algebraic.expand ===> "(-1)*a + (-1)*b"
         (a+b)-2*(a+b) |> Algebraic.expand ==> "-a - b"
 
         (a*b)/(b*a) ==> "1"
@@ -252,8 +243,7 @@ module Expressions =
         (x*(y+1)**(3Q/2)+1)*(x*(y+1)**(3Q/2)-1) ==> "(-1 + x*(1 + y)^(3/2))*(1 + x*(1 + y)^(3/2))"
         (x*(y+1)**(3Q/2)+1)*(x*(y+1)**(3Q/2)-1) |> Algebraic.expand |> Algebraic.expand ==> "-1 + x^2 + 3*x^2*y + 3*x^2*y^2 + x^2*y^3"
         sin(a*(x+y)) |> Algebraic.expand ==> "sin(a*(x + y))" // does not expand
-        a/(b*(x+y)) |> Algebraic.expand ===> "a*b^(-1)*(x + y)^(-1)" // strict; does not expand
-        a/(b*(x+y)) |> Algebraic.expand ==> "a/(b*(x + y))" // nice; does not expand
+        a/(b*(x+y)) |> Algebraic.expand ==> "a/(b*(x + y))" // does not expand
 
     [<Test>]
     let ``Structural Operators`` () =

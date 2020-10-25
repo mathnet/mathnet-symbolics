@@ -115,7 +115,6 @@ module private InfixParser =
 module private InfixFormatter =
 
     open Operators
-    open ExpressionPatterns
 
     let culture = System.Globalization.CultureInfo.InvariantCulture
 
@@ -191,98 +190,6 @@ module private InfixFormatter =
             write ")"
         | VisualExpression.Sum [] | VisualExpression.Product [] | VisualExpression.Function (_, _, []) -> failwith "invalid expression"
 
-    let functionName = function
-        | Abs -> "abs"
-        | Ln -> "ln" | Lg -> "log"
-        | Exp -> "exp"
-        | Sin -> "sin" | Cos -> "cos" | Tan -> "tan"
-        | Csc -> "csc" | Sec -> "sec" | Cot -> "cot"
-        | Sinh -> "sinh" | Cosh -> "cosh" | Tanh -> "tanh"
-        | Csch -> "csch" | Sech -> "sech" | Coth -> "coth"
-        | Acos -> "acos" | Asin -> "asin" | Atan -> "atan"
-        | Acsc -> "acsc" | Asec -> "asec" | Acot -> "acot"
-        | Acosh -> "acosh" | Asinh -> "asinh" | Atanh -> "atanh"
-        | Asech -> "asech" | Acsch -> "acsch" | Acoth -> "acoth"
-        | AiryAi -> "airyai" | AiryAiPrime -> "airyaiprime"
-        | AiryBi -> "airybi" | AiryBiPrime -> "airybiprime"
-
-    let functionNaryName = function
-        | Log -> "log"
-        | Atan2 -> "atan"
-        | BesselJ -> "besselj"
-        | BesselY -> "bessely"
-        | BesselI -> "besseli"
-        | BesselK -> "besselk"
-        | BesselIRatio -> "besseliratio"
-        | BesselKRatio -> "besselkratio"
-        | HankelH1 -> "hankelh1"
-        | HankelH2 -> "hankelh2"
-
-    // priority: 1=additive 2=product 3=power
-
-    // Strict Formatting:
-
-    let rec strict write priority = function
-        | Number n ->
-            if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write "("
-            write (n.ToString());
-            if not(n.IsInteger) && priority > 1 || n.IsInteger && priority > 0 && n.Sign < 0 then write ")"
-        | Identifier (Symbol name) -> write name
-        | Argument (Symbol name) -> write name
-        | Undefined -> write "Undefined"
-        | ComplexInfinity -> write "ComplexInfinity"
-        | PositiveInfinity -> write "Infinity"
-        | NegativeInfinity ->
-            if priority > 0 then write "("
-            write "-Infinity"
-            if priority > 0 then write ")"
-        | Constant E -> write "e"
-        | Constant Pi -> write "pi"
-        | Constant I -> write "j"
-        | Approximation (Approximation.Real fp) ->
-            if fp >= 0.0 then write (fp.ToString(culture))
-            else
-                if priority > 0 then write "("
-                write (fp.ToString(culture));
-                if priority > 0 then write ")"
-        | Approximation (Approximation.Complex fp) ->
-            write "("
-            write (fp.ToString(culture));
-            write ")"
-        | Sum (x::xs) ->
-            if priority > 1 then write "("
-            strict write 1 x
-            xs |> List.iter (fun x -> write " + "; strict write 1 x)
-            if priority > 1 then write ")"
-        | Product (x::xs) ->
-            if priority > 2 then write "("
-            strict write 2 x
-            xs |> List.iter (fun x -> write "*"; strict write 2 x)
-            if priority > 2 then write ")"
-        | Power (r, p) ->
-            if priority > 2 then write "("
-            strict write 3 r
-            write "^"
-            strict write 3 p
-            if priority > 2 then write ")"
-        | Function (Abs, x) ->
-            write "|"
-            strict write 0 x
-            write "|"
-        | Function (fn, x) ->
-            write (functionName fn)
-            write "("
-            strict write 0 x
-            write ")"
-        | FunctionN (fn, x::xs) ->
-            write (functionNaryName fn)
-            write "("
-            strict write 0 x
-            xs |> List.iter (fun x -> write ","; strict write 0 x)
-            write ")"
-        | Sum [] | Product [] | FunctionN (_, []) -> failwith "invalid expression"
-
-
 
 /// Print and parse infix expression string
 [<RequireQualifiedAccess>]
@@ -291,17 +198,6 @@ module Infix =
     open Microsoft.FSharp.Core
 
     let defaultStyle = { VisualExpressionStyle.CompactPowersOfFunctions = false }
-
-    /// Strict formatting, prints an exact representation of the expression tree
-    [<CompiledName("FormatStrict")>]
-    let formatStrict expression =
-        let sb = StringBuilder()
-        InfixFormatter.strict (sb.Append >> ignore) 0 expression
-        sb.ToString()
-
-    /// Strict formatting, prints an exact representation of the expression tree
-    [<CompiledName("FormatStrictWriter")>]
-    let formatStrictWriter (writer:TextWriter) expression = InfixFormatter.strict (writer.Write) 0 expression
 
     [<CompiledName("FormatVisual")>]
     let formatVisual visualExpression =

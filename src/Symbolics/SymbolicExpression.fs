@@ -137,9 +137,6 @@ type SymbolicExpression(expression:Expression) =
             { CompactPowersOfFunctions = defaultArg compactPowersOfFunctions defaults.CompactPowersOfFunctions }
             expression
 
-    member this.ToInternalString() : string =
-        Infix.formatStrict expression
-
     member this.ToLaTeX() : string =
         LaTeX.format expression
 

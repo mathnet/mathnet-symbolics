@@ -12,11 +12,8 @@ open Operators
 // Test: x should evaluate to expected
 let inline (-->) x expected = x |> shouldEqual expected
 
-// Test: x should evaluate to the expected string when formatted *nicely*
+// Test: x should evaluate to the expected string when formatted
 let inline (==>) x expected = (Infix.format x) |> shouldEqual expected
-
-// Test: x should evaluate to the expected string when formatted *strictly* (not denormalized)
-let inline (===>) x expected = (Infix.formatStrict x) |> shouldEqual expected
 
 // extra test helpers for tuples, list, arrays and hash-sets - maybe there's a better way?
 let inline (==|>) (x1, x2) expected = (Infix.format x1, Infix.format x2) |> shouldEqual expected
