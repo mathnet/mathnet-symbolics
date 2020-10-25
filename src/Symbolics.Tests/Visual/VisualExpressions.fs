@@ -29,6 +29,8 @@ module VisualExpressions =
         convert (Undefined) --> VisualExpression.Undefined
 
         convert (-x*y) --> VisualExpression.Negative (VisualExpression.Product [ VisualExpression.Symbol "x"; VisualExpression.Symbol "y"])
+        convert (x*z*y) --> VisualExpression.Product [ VisualExpression.Symbol "x"; VisualExpression.Symbol "y"; VisualExpression.Symbol "z"]
+        convert (x+z+y) --> VisualExpression.Sum [ VisualExpression.Symbol "x"; VisualExpression.Symbol "y"; VisualExpression.Symbol "z"]
         convert (x*(1-y)) --> VisualExpression.Product [VisualExpression.Symbol "x"; VisualExpression.Parenthesis (VisualExpression.Sum [ VisualExpression.PositiveInteger (bigint 1); VisualExpression.Negative (VisualExpression.Symbol "y")])]
 
         convert (abs x) --> VisualExpression.Abs (VisualExpression.Symbol "x")
@@ -41,9 +43,9 @@ module VisualExpressions =
         convert (x**(-1Q)) --> VisualExpression.Fraction (VisualExpression.PositiveInteger (bigint 1), VisualExpression.Symbol "x")
         convert (x**(-2Q)) --> VisualExpression.Fraction (VisualExpression.PositiveInteger (bigint 1), VisualExpression.Power (VisualExpression.Symbol "x", VisualExpression.PositiveInteger (bigint 2)))
 
-        convert (sin x) --> VisualExpression.Function ("sin", bigint 1, VisualExpression.Symbol "x")
-        convert (pow (sin x) 2Q) --> VisualExpression.Power (VisualExpression.Parenthesis (VisualExpression.Function ("sin", bigint 1, VisualExpression.Symbol "x")), VisualExpression.PositiveInteger (bigint 2))
-        convertFP (pow (sin x) 2Q) --> VisualExpression.Function ("sin", bigint 2, VisualExpression.Symbol "x")
+        convert (sin x) --> VisualExpression.Function ("sin", bigint 1, [VisualExpression.Symbol "x"])
+        convert (pow (sin x) 2Q) --> VisualExpression.Power (VisualExpression.Parenthesis (VisualExpression.Function ("sin", bigint 1, [VisualExpression.Symbol "x"])), VisualExpression.PositiveInteger (bigint 2))
+        convertFP (pow (sin x) 2Q) --> VisualExpression.Function ("sin", bigint 2, [VisualExpression.Symbol "x"])
 
     [<Test>]
     let ``Convert VisualExpression to Expression`` () =
@@ -79,5 +81,5 @@ module VisualExpressions =
         convert (VisualExpression.Fraction (VisualExpression.PositiveInteger (bigint 1), VisualExpression.Symbol "x")) --> (x**(-1Q))
         convert (VisualExpression.Fraction (VisualExpression.PositiveInteger (bigint 1), VisualExpression.Power (VisualExpression.Symbol "x", VisualExpression.PositiveInteger (bigint 2)))) --> (x**(-2Q))
 
-        convert (VisualExpression.Function ("sin", bigint 1, VisualExpression.Symbol "x")) --> sin x
-        convert (VisualExpression.Function ("sin", bigint 2, VisualExpression.Symbol "x")) --> pow (sin x) 2Q
+        convert (VisualExpression.Function ("sin", bigint 1, [VisualExpression.Symbol "x"])) --> sin x
+        convert (VisualExpression.Function ("sin", bigint 2, [VisualExpression.Symbol "x"])) --> pow (sin x) 2Q

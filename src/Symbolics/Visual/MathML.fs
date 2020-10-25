@@ -114,6 +114,8 @@ module private MathMLFormatter =
         | VisualExpression.ComplexInfinity -> csymbol "nums1" "infinity"
         | VisualExpression.Undefined -> csymbol "nums1" "NaN"
         | VisualExpression.ComplexI -> csymbol "nums1" "i"
+        | VisualExpression.RealE -> csymbol "nums1" "e"
+        | VisualExpression.RealPi -> csymbol "nums1" "pi"
         | VisualExpression.PositiveInteger i -> cn i
         | VisualExpression.PositiveFloatingPoint fp -> cn fp
         | VisualExpression.Parenthesis x -> formatContentStrict x
@@ -137,7 +139,6 @@ module private MathMLFormatter =
         | VisualExpression.Root (r, p) ->
             apply "arith1" "root" [ formatContentStrict r; cn p ]
         | VisualExpression.Function (fn, power, x) -> failwith "not implemented"
-        | VisualExpression.FunctionN (fn, power, xs) -> failwith "not implemented"
 
 
     /// Format a semantics xml element containing both strict content representation and annotations.

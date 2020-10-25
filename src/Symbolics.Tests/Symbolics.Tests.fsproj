@@ -22,10 +22,10 @@
         <Compile Include="Operators\Trigonometry.fs" />
         <Compile Include="Operators\Bessel.fs" />
         <Compile Include="Polynomial\Polynomial.fs" />
+        <Compile Include="Visual\VisualExpressions.fs" />
         <Compile Include="Visual\Infix.fs" />
         <Compile Include="Visual\LaTeX.fs" />
         <Compile Include="Visual\MathML.fs" />
-        <Compile Include="Visual\VisualExpressions.fs" />
         <Compile Include="Compilation\Compilation.fs" />
         <Compile Include="SymbolicExpressions.fs" />
         <Compile Include="Tests.fs" />

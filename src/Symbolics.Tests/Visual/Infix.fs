@@ -22,6 +22,8 @@ module Infix =
         Infix.parseOrUndefined "x-" ==> "Undefined"
         Infix.parseOrUndefined "y*x" ==> "x*y"
         Infix.parseOrUndefined "  y  *  x  " ==> "x*y"
+        Infix.parseOrUndefined "a*b*cde*f" ==> "a*b*cde*f"
+        Infix.parseOrUndefined "a+b+cde+f" ==> "a + b + cde + f"
 
         Infix.parseOrUndefined "sin(x)" ==> "sin(x)"
         Infix.parseOrUndefined " sin (x) " ==> "sin(x)"
@@ -84,8 +86,8 @@ module Infix =
 
     [<Test>]
     let ``Function Powers`` () =
-        VisualExpression.Function ("sin", BigInteger.One, VisualExpression.Symbol "x") |> Infix.formatVisual |> shouldEqual "sin(x)"
-        VisualExpression.Function ("sin", bigint 2, VisualExpression.Symbol "x") |> Infix.formatVisual |> shouldEqual "sin^2(x)"
+        VisualExpression.Function ("sin", BigInteger.One, [VisualExpression.Symbol "x"]) |> Infix.formatVisual |> shouldEqual "sin(x)"
+        VisualExpression.Function ("sin", bigint 2, [VisualExpression.Symbol "x"]) |> Infix.formatVisual |> shouldEqual "sin^2(x)"
         Infix.parseOrThrow "sin^2(x)" ==> "(sin(x))^2"
         Infix.format (sin(x)*sin(x)) --> "(sin(x))^2"
 
@@ -102,6 +104,47 @@ module Infix =
 
         let expr4 = Infix.parseOrUndefined "58E-3"
         expr4 ==> "0.058"
+
+    [<Test>]
+    let ``Parse Infix to VisualExpression`` () =
+
+        Infix.parseVisual "1" --> Ok (VisualExpression.PositiveInteger (bigint 1))
+        Infix.parseVisual "0" --> Ok (VisualExpression.PositiveInteger (bigint 0))
+        Infix.parseVisual "-1" --> Ok (VisualExpression.Negative (VisualExpression.PositiveInteger (bigint 1)))
+
+        Infix.parseVisual "1/2" --> Ok (VisualExpression.Fraction ((VisualExpression.PositiveInteger (bigint 1)), (VisualExpression.PositiveInteger (bigint 2))))
+        Infix.parseVisual "-1/2" --> Ok (VisualExpression.Fraction ((VisualExpression.Negative (VisualExpression.PositiveInteger (bigint 1))), (VisualExpression.PositiveInteger (bigint 2))))
+
+        Infix.parseVisual "1.0" --> Ok (VisualExpression.PositiveFloatingPoint 1.0)
+        Infix.parseVisual "0.0" --> Ok (VisualExpression.PositiveFloatingPoint 0.0)
+        Infix.parseVisual "-1.0" --> Ok (VisualExpression.Negative (VisualExpression.PositiveFloatingPoint 1.0))
+
+        Infix.parseVisual "\u221E" --> Ok (VisualExpression.Infinity)
+        Infix.parseVisual "oo" --> Ok (VisualExpression.Infinity)
+        Infix.parseVisual "-\u221E" --> Ok (VisualExpression.Negative VisualExpression.Infinity)
+        Infix.parseVisual "-oo" --> Ok (VisualExpression.Negative VisualExpression.Infinity)
+        Infix.parseVisual "\u29DD" --> Ok (VisualExpression.ComplexInfinity)
+
+        Infix.parseVisual "-x*y" --> Ok (VisualExpression.Product [VisualExpression.Negative (VisualExpression.Symbol "x"); VisualExpression.Symbol "y"])
+        Infix.parseVisual "x*z*y" --> Ok (VisualExpression.Product [ VisualExpression.Symbol "x"; VisualExpression.Symbol "z"; VisualExpression.Symbol "y"])
+        Infix.parseVisual "x+z+y" --> Ok (VisualExpression.Sum [ VisualExpression.Symbol "x"; VisualExpression.Symbol "z"; VisualExpression.Symbol "y"])
+        Infix.parseVisual "x*(1-y)" --> Ok (VisualExpression.Product [VisualExpression.Symbol "x"; VisualExpression.Parenthesis (VisualExpression.Sum [ VisualExpression.PositiveInteger (bigint 1); VisualExpression.Negative (VisualExpression.Symbol "y")])])
+
+        Infix.parseVisual "|x|" --> Ok (VisualExpression.Abs (VisualExpression.Symbol "x"))
+        Infix.parseVisual "-|x|" --> Ok (VisualExpression.Negative (VisualExpression.Abs (VisualExpression.Symbol "x")))
+        Infix.parseVisual "1-|x|" --> Ok (VisualExpression.Sum [ VisualExpression.PositiveInteger (bigint 1); VisualExpression.Negative (VisualExpression.Abs (VisualExpression.Symbol "x"))])
+        Infix.parseVisual "-1-|x|" --> Ok (VisualExpression.Sum [ VisualExpression.Negative (VisualExpression.PositiveInteger (bigint 1)); VisualExpression.Negative (VisualExpression.Abs (VisualExpression.Symbol "x"))])
+        Infix.parseVisual "|2*x|" --> Ok (VisualExpression.Abs (VisualExpression.Product [ VisualExpression.PositiveInteger (bigint 2); VisualExpression.Symbol "x"]))
+
+        Infix.parseVisual "x^2" --> Ok (VisualExpression.Power (VisualExpression.Symbol "x", VisualExpression.PositiveInteger (bigint 2)))
+        Infix.parseVisual "x^-1" --> Ok (VisualExpression.Power (VisualExpression.Symbol "x", VisualExpression.Negative (VisualExpression.PositiveInteger (bigint 1))))
+        Infix.parseVisual "x^-2" --> Ok (VisualExpression.Power (VisualExpression.Symbol "x", VisualExpression.Negative (VisualExpression.PositiveInteger (bigint 2))))
+
+        Infix.parseVisual "sin(x)" --> Ok (VisualExpression.Function ("sin", bigint 1, [VisualExpression.Symbol "x"]))
+
+        Infix.parseVisual "sqrt(x)" --> Ok (VisualExpression.Root (VisualExpression.Symbol "x", bigint 2))
+        Infix.parseVisual "pow(sin(x),2)" --> Ok (VisualExpression.Power (VisualExpression.Parenthesis (VisualExpression.Function ("sin", bigint 1, [VisualExpression.Symbol "x"])), VisualExpression.PositiveInteger (bigint 2)))
+
 
     [<Test>]
     [<TestCase("en-US")>]

@@ -21,9 +21,10 @@ type VisualExpression =
     | Fraction of VisualExpression * VisualExpression // a/b
     | Power of VisualExpression * VisualExpression // a^b
     | Root of VisualExpression * BigInteger // a^(1/b)
-    | Function of name:string * power:BigInteger * VisualExpression
-    | FunctionN of name:string * power:BigInteger * (VisualExpression list)
+    | Function of name:string * power:BigInteger * (VisualExpression list)
     | ComplexI
+    | RealPi
+    | RealE
     | Infinity
     | ComplexInfinity
     | Undefined
@@ -131,9 +132,9 @@ module VisualExpression =
             | Argument (Symbol s) ->
                 VisualExpression.Symbol s
             | Constant Pi ->
-                VisualExpression.Symbol "pi"
+                VisualExpression.RealPi
             | Constant E ->
-                VisualExpression.Symbol "e"
+                VisualExpression.RealE
             | Constant I ->
                 VisualExpression.ComplexI
             | ComplexInfinity ->
@@ -181,10 +182,10 @@ module VisualExpression =
                 VisualExpression.Fraction (VisualExpression.PositiveInteger BigInteger.One, d)
                 |> parenthesis priority 2
             | PosIntPower (Function (f, x), Integer p) when f <> Abs && compactPowersOfFunctions ->
-                VisualExpression.Function (functionName f, p.Numerator, convert 0 x)
+                VisualExpression.Function (functionName f, p.Numerator, [convert 0 x])
                 |> parenthesis priority 3
             | PosIntPower (FunctionN (f, xs), Integer p) when compactPowersOfFunctions ->
-                VisualExpression.FunctionN (functionNaryName f, p.Numerator, xs |> List.map (convert 0))
+                VisualExpression.Function (functionNaryName f, p.Numerator, xs |> List.map (convert 0))
                 |> parenthesis priority 3
             | Power (r, Number n) when n.IsPositive && n.Numerator = BigInteger.One ->
                 VisualExpression.Root (convert 4 r, n.Denominator)
@@ -198,10 +199,10 @@ module VisualExpression =
             | Function (Abs, x) ->
                 VisualExpression.Abs (convert 0 x)
             | Function (f, x) ->
-                VisualExpression.Function (functionName f, BigInteger.One, convert 0 x)
+                VisualExpression.Function (functionName f, BigInteger.One, [convert 0 x])
                 |> parenthesis priority 3
             | FunctionN (f, xs) ->
-                VisualExpression.FunctionN (functionNaryName f, BigInteger.One, xs |> List.map (convert 0))
+                VisualExpression.Function (functionNaryName f, BigInteger.One, xs |> List.map (convert 0))
                 |> parenthesis priority 3
         convert 0 expression
 
@@ -218,13 +219,15 @@ module VisualExpression =
             | VisualExpression.Fraction (numerator, denominator) -> (convert numerator)/(convert denominator)
             | VisualExpression.Power (radix, power) -> pow (convert radix) (convert power)
             | VisualExpression.Root (radix, power) -> root (fromInteger power) (convert radix)
-            | VisualExpression.Function (fn, power, x) ->
+            | VisualExpression.Function (fn, power, [x]) ->
                 let applied = apply (nameFunction fn) (convert x)
                 if power.IsOne then applied else pow applied (fromInteger power)
-            | VisualExpression.FunctionN (fn, power, xs) ->
+            | VisualExpression.Function (fn, power, xs) ->
                 let applied = applyN (nameFunctionNary fn) (List.map convert xs)
                 if power.IsOne then applied else pow applied (fromInteger power)
             | VisualExpression.ComplexI -> Expression.I
+            | VisualExpression.RealPi -> Expression.Pi
+            | VisualExpression.RealE -> Expression.E
             | VisualExpression.Infinity -> PositiveInfinity
             | VisualExpression.ComplexInfinity -> ComplexInfinity
             | VisualExpression.Undefined -> Undefined

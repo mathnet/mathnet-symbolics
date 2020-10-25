@@ -51,8 +51,8 @@ module LaTeX =
 
     [<Test>]
     let ``Function Powers`` () =
-        VisualExpression.Function ("sin", BigInteger.One, VisualExpression.Symbol "x") |> LaTeX.formatVisual |> shouldEqual """\sin{x}"""
-        VisualExpression.Function ("sin", bigint 2, VisualExpression.Symbol "x") |> LaTeX.formatVisual |> shouldEqual """\sin^{2}{x}"""
+        VisualExpression.Function ("sin", BigInteger.One, [VisualExpression.Symbol "x"]) |> LaTeX.formatVisual |> shouldEqual """\sin{x}"""
+        VisualExpression.Function ("sin", bigint 2, [VisualExpression.Symbol "x"]) |> LaTeX.formatVisual |> shouldEqual """\sin^{2}{x}"""
         LaTeX.format ((sin x)*(sin x)) --> """\sin^{2}{x}"""
         LaTeX.formatStyle { CompactPowersOfFunctions=false } ((sin x)*(sin x)) --> """{\left(\sin{x}\right)}^{2}"""
 
