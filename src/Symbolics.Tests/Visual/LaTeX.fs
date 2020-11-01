@@ -26,7 +26,7 @@ module LaTeX =
         LaTeX.format (symbol "L1" * symbol "U1" + symbol "L2") --> """\mathrm{L2} + \mathrm{L1} \cdot \mathrm{U1}"""
 
         LaTeX.format (3Q*2Q**x) --> """3 \cdot {2}^{x}"""
-        LaTeX.format (3.0*(real 2.0)**x) --> """3 \cdot {2}^{x}"""
+        LaTeX.format (3.0*(real 2.0)**x) --> """3.0 \cdot {2.0}^{x}"""
         LaTeX.format (5Q*x) --> """5x"""
         LaTeX.format (Expression.Pi * 10Q) --> """10\pi"""
         LaTeX.format (Expression.E * 2Q**(4Q*x)) --> """e \cdot {2}^{4x}"""

@@ -65,7 +65,9 @@ module private LaTeXFormatter =
         | VisualExpression.RealE -> write "e"
         | VisualExpression.RealPi -> write "\\pi"
         | VisualExpression.PositiveInteger n -> write (n.ToString())
-        | VisualExpression.PositiveFloatingPoint fp -> write (fp.ToString(culture))
+        | VisualExpression.PositiveFloatingPoint fp ->
+            let s = fp.ToString(culture)
+            if s.IndexOf('.') = -1 then write (s + ".0") else write s
         | VisualExpression.Parenthesis x ->
             write "\\left("
             format write x

@@ -217,7 +217,7 @@ module Polynomial =
 
         Rational.simplify x ((x/10)/(x+x**2)) ==> "1/(10 + 10*x)"
         Rational.simplify x ((x*a)/(x+x**2)) ==> "a/(1 + x)"
-        Rational.simplify x ((x*0.1)/(x+x**2)) ==> "0.1/(1 + 1*x)"
+        Rational.simplify x ((x*0.1)/(x+x**2)) ==> "0.1/(1.0 + 1.0*x)"
 
         // http://stackoverflow.com/questions/32791138/extracting-common-terms-with-mathnet-symbolics
         let pn = (1Q/8)*x*y*z + (1Q/2)*x*(y**2)*z

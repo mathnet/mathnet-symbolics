@@ -134,7 +134,9 @@ module private InfixFormatter =
         | VisualExpression.RealE -> write "e"
         | VisualExpression.RealPi -> write "\u03C0" // "π"
         | VisualExpression.PositiveInteger n -> write (n.ToString())
-        | VisualExpression.PositiveFloatingPoint fp -> write (fp.ToString(culture))
+        | VisualExpression.PositiveFloatingPoint fp ->
+            let s = fp.ToString(culture)
+            if s.IndexOf('.') = -1 then write (s + ".0") else write s
         | VisualExpression.Parenthesis x ->
             write "("
             format write x

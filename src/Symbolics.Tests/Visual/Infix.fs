@@ -56,13 +56,13 @@ module Infix =
         Infix.parseOrThrow "2.25" ==> "2.25"
         Infix.parseOrThrow "2.250" ==> "2.25"
         Infix.parseOrThrow "0.001" ==> "0.001"
-        Infix.parseOrThrow "2.00" ==> "2"
+        Infix.parseOrThrow "2.00" ==> "2.0"
 
         Infix.parseOrThrow "1.5*a + o" ==> "1.5*a + o"
 
         Infix.parseOrThrow ".001" ==> "0.001"
         Infix.parseOrThrow ".001" --> Expression.Real(0.001)
-        Infix.parseOrThrow "1." ==> "1"
+        Infix.parseOrThrow "1." ==> "1.0"
         Infix.parseOrThrow "1." --> Expression.Real(1.0)
         Infix.parseOrThrow "1" ==> "1"
         Infix.parseOrThrow "1" --> Expression.FromInt32(1)
@@ -94,10 +94,10 @@ module Infix =
         expr ==> "(-6.40869140625E-05)*x"
 
         let expr2 = Infix.parseOrUndefined "1.5e7"
-        expr2 ==> "15000000"
+        expr2 ==> "15000000.0"
 
         let expr3 = Infix.parseOrUndefined "-.5e7"
-        expr3 ==> "-5000000"
+        expr3 ==> "-5000000.0"
 
         let expr4 = Infix.parseOrUndefined "58E-3"
         expr4 ==> "0.058"
