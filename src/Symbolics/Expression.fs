@@ -170,6 +170,8 @@ module Operators =
     let isComplexInfinity = function | ComplexInfinity -> true | _ -> false
     let isInfinity = function | PositiveInfinity | ComplexInfinity | NegativeInfinity -> true | _ -> false
 
+    let isApproximateZero = function | Zero -> true | Approximation (Real r) when r = 0.0 -> true | _ -> false
+
     let internal orderRelation (x:Expression) (y:Expression) =
         let rec compare a b =
             match a, b with
@@ -321,6 +323,8 @@ module Operators =
         | One, b | b, One -> b
         | Zero, oo | oo, Zero when isInfinity oo -> undefined
         | Zero, _ | _, Zero -> zero
+        | Approximation (Real a), oo | oo, Approximation (Real a) when a = 0.0 && isInfinity oo -> undefined
+        | Approximation (Real a), _ | _, Approximation (Real a) when a = 0.0 -> Approximation (Real 0.0)
         | ComplexInfinity, _ | _, ComplexInfinity -> complexInfinity
         | PositiveInfinity, Positive | Positive, PositiveInfinity -> infinity
         | PositiveInfinity, Negative | Negative, PositiveInfinity -> negativeInfinity

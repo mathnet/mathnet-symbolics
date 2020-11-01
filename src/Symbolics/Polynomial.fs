@@ -40,6 +40,7 @@ module Polynomial =
     let rec isMonomial symbol = function
         | x when x = symbol -> true
         | Number _ -> true
+        | Approximation _ -> true
         | PosIntPower (r, _) when r = symbol -> true
         | Product ax -> List.forall (isMonomial symbol) ax
         | x -> Structure.freeOf symbol x
@@ -48,6 +49,7 @@ module Polynomial =
     let rec isMonomialMV (symbols: HashSet<Expression>) = function
         | x when symbols.Contains(x) -> true
         | Number _ -> true
+        | Approximation _ -> true
         | PosIntPower (r, _) when symbols.Contains(r) -> true
         | Product ax -> List.forall (isMonomialMV symbols) ax
         | x -> Structure.freeOfSet symbols x
@@ -69,6 +71,7 @@ module Polynomial =
         | Zero -> negativeInfinity
         | x when x = symbol -> one
         | Number _ -> zero
+        | Approximation _ -> zero
         | PosIntPower (r, p) when r = symbol -> p
         | Product ax -> sum <| List.map (degreeMonomial symbol) ax
         | x when Structure.freeOf symbol x -> zero
@@ -79,6 +82,7 @@ module Polynomial =
         | Zero -> negativeInfinity
         | x when symbols.Contains(x) -> one
         | Number _ -> zero
+        | Approximation _ -> zero
         | PosIntPower (r, p) when symbols.Contains(r) -> p
         | Product ax -> sum <| List.map (degreeMonomialMV symbols) ax
         | x when Structure.freeOfSet symbols x -> zero
@@ -128,6 +132,7 @@ module Polynomial =
     let rec coefficientMonomial symbol = function
         | x when x = symbol -> one
         | Number _ as x -> x
+        | Approximation _ as x -> x
         | PosIntPower (r, p) when r = symbol -> one
         | Product ax -> List.map (coefficientMonomial symbol) ax |> product
         | x when Structure.freeOf symbol x -> x
@@ -137,6 +142,7 @@ module Polynomial =
     let rec coefficientMonomialMV (symbols: HashSet<Expression>) = function
         | x when symbols.Contains(x) -> one
         | Number _ as x -> x
+        | Approximation _ as x -> x
         | PosIntPower (r, p) when symbols.Contains(r) -> one
         | Product ax -> List.map (coefficientMonomialMV symbols) ax |> product
         | x when Structure.freeOfSet symbols x -> x
@@ -146,6 +152,7 @@ module Polynomial =
     let rec coefficientDegreeMonomial symbol = function
         | x when x = symbol -> one, one
         | Number _ as x -> x, zero
+        | Approximation _ as x -> x, zero
         | PosIntPower (r, p) when r = symbol -> one, p
         | Product ax ->
             let cds = List.map (coefficientDegreeMonomial symbol) ax
@@ -181,6 +188,7 @@ module Polynomial =
         let rec collect symbol = function
             | x when x = symbol -> [1, one]
             | Number _ as a -> [0, a]
+            | Approximation _ as a -> [0, a]
             | PosIntPower (r, Number n) when r = symbol -> [int n, one]
             | Sum ax -> List.collect (collect symbol) ax
             | Product ax -> List.map (collect symbol) ax |> List.reduce (fun a b -> a |> List.fold (fun s (o1, e1) -> b |> List.fold (fun s (o2, e2) -> (o1+o2,e1*e2)::s) s) [])
@@ -193,7 +201,8 @@ module Polynomial =
     [<CompiledName("CollectMonomialTerms")>]
     let rec collectTermsMonomial symbol = function
         | x when x = symbol -> (one, x)
-        | Number _ as x-> (x, one)
+        | Number _ as x -> (x, one)
+        | Approximation _ as x -> (x, one)
         | PosIntPower (r, p) as x when r = symbol -> (one, x)
         | Product ax -> List.map (collectTermsMonomial symbol) ax |> List.reduce (fun (c1, v1) (c2, v2) -> (c1*c2, v1*v2))
         | x when Structure.freeOf symbol x -> (x, one)
@@ -202,7 +211,8 @@ module Polynomial =
     [<CompiledName("CollectMultivariateMonomialTerms")>]
     let rec collectTermsMonomialMV (symbols: HashSet<Expression>) = function
         | x when symbols.Contains(x) -> (one, x)
-        | Number _ as x-> (x, one)
+        | Number _ as x -> (x, one)
+        | Approximation _ as x -> (x, one)
         | PosIntPower (r, p) as x when symbols.Contains(r) -> (one, x)
         | Product ax -> List.map (collectTermsMonomialMV symbols) ax |> List.reduce (fun (c1, v1) (c2, v2) -> (c1*c2, v1*v2))
         | x when Structure.freeOfSet symbols x -> (x, one)
@@ -271,18 +281,18 @@ module Polynomial =
 
     [<CompiledName("Gcd")>]
     let gcd symbol u v =
-        if isZero u && isZero v then zero else
+        if isApproximateZero u && isApproximateZero v then zero else
         let rec inner x y =
-            if isZero y then x
+            if isApproximateZero y then x
             else inner y (remainder symbol x y)
         let z = inner u v in z / (leadingCoefficient symbol z) |> Algebraic.expand
 
     /// Returns a tuple with the gcd and a such that a*u = gcd (mod v)
     [<CompiledName("HalfExtendedGcd")>]
     let halfExtendedGcd symbol u v =
-         if isZero u && isZero v then (zero, zero) else
+         if isApproximateZero u && isApproximateZero v then (zero, zero) else
          let rec inner x y a' a'' =
-            if isZero y then (x, a'') else
+            if isApproximateZero y then (x, a'') else
             let q, r = divide symbol x y
             inner y r (a'' - q*a') a'
          let z, a = inner u v zero one
@@ -301,9 +311,9 @@ module Polynomial =
     let halfDiophantineGcd symbol u v w =
         let (g, s) = halfExtendedGcd symbol u v
         let (q, r) = divide symbol w g
-        if not (isZero r) then Undefined else
+        if not (isApproximateZero r) then Undefined else
         let s' = Algebraic.expand (q*s)
-        if not (isZero s') && Numbers.compare (degree symbol s') (degree symbol v) >= 0 then
+        if not (isApproximateZero s') && Numbers.compare (degree symbol s') (degree symbol v) >= 0 then
             remainder symbol s' v
         else s'
 
@@ -339,7 +349,7 @@ module Polynomial =
             let g = gcd symbol r f
             let s = quot symbol f g
             impl (j+1) (quot symbol r g) g p*(s**j)
-        if isZero x then x else
+        if isApproximateZero x then x else
         let c = leadingCoefficient symbol x
         let u = Algebraic.expand (x/c)
         let r = gcd symbol u (Calculus.differentiate symbol u)
