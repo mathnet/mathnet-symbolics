@@ -7,16 +7,20 @@
     <RootNamespace>MathNet.Symbolics</RootNamespace>
     <IsPackable>true</IsPackable>
     <PackageId>MathNet.Symbolics$(PackageIdSuffix)</PackageId>
-    <VersionPrefix>0.21.0</VersionPrefix>
+    <VersionPrefix>0.22.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <Title>Math.NET Symbolics$(TitleSuffix)</Title>
     <Description>Math.NET Symbolics is a basic open source computer algebra library for .Net and Mono. Written in F# but works well in C# as well. Supports .Net Framework 4.5 or higher and .Net Standard 2.0 or higher, on Windows, Linux and Mac.$(DescriptionSuffix)</Description>
-    <PackageReleaseNotes>Support for compact powers of functions in visual expressions. Enabled by default for LaTeX.
-Simplified visual expression styles, no more customizable function mapping.
-Visual expressions can now be converted to full algebraic expressions.
-More convenient interop with primitive number types
-Uses Math.NET Numerics v4.9.1
-Build with .NET Core SDK 3.1.1</PackageReleaseNotes>
+    <PackageReleaseNotes>Fix evaluation for Csc ~Andrew Boyarshin
+Fully separated unary from N-ary functions, they now have a separate DU
+Distinct known function names: binary atan is now atan2, unary log (log-10) is now lg.
+Introducinig Enriched and Typed expressions, preparing for explicit argument nodes.
+LaTeX: render full-word symbols with mathrm and force cdot in products if necessary
+Infix/LaTeX: visual expressions can now be formatted also to a TextWriter
+Infix/LaTeX: approximations now always render with a decimal point (to clearly distinct from integers)
+Infix: parsing logic reworked to parse via visual expressions (no longer forcing auto-simplified full expressions)
+Approximations now reduce 0.0x to 0.0 as a practical compromise.
+Polynomial and rational algorithms handle approximations better (especially 0.0).</PackageReleaseNotes>
     <PackageTags>fsharp F# math symbolics algebra simplify solve cas parse</PackageTags>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
