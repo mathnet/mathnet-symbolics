@@ -20,7 +20,7 @@ module Algebraic =
 
     [<CompiledName("FactorsInteger")>]
     let factorsInteger x =
-        let denom (n:BigRational) = Expression.FromIntegerFraction (1I, n.Denominator)
+        let denom (n:BigRational) = Expression.IntegerFraction (1I, n.Denominator)
         match x with
         | Integer n -> (n.Numerator, [])
         | Number n -> (n.Numerator, [denom n])

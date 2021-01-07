@@ -38,6 +38,7 @@ module Approximation =
     let fromRational (x:BigRational) = Real (float x)
     let fromReal (x:float) = Real x
     let fromReal32 (x:float32) = Real (float x)
+    let fromDecimal (x:decimal) = Real (float x)
     let fromComplex (x:complex) = Complex x
     let fromComplex32 (x:complex32) = Complex (Primitive.complex x)
 

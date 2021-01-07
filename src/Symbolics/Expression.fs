@@ -41,12 +41,6 @@ module Values =
         | Value.NegativeInfinity -> NegativeInfinity
         | Value.Undefined -> Undefined
 
-    let real (x:float) = Value.fromReal x |> unpack
-    let real32 (x:float32) = Value.fromReal32 x |> unpack
-    let complex (x:complex) = Value.fromComplex x |> unpack
-    let complex32 (x:complex32) = Value.fromComplex32 x |> unpack
-    let rational (x:BigRational) = Number x
-
     let negate a = Value.negate a |> unpack
     let abs a = Value.abs a |> unpack
 
@@ -145,19 +139,19 @@ module Operators =
     let complexInfinity = Expression.ComplexInfinity
     let negativeInfinity = Expression.NegativeInfinity
 
-    let real floatingPoint = Values.real floatingPoint
-
-    let fromReal floatingPoint = Values.real floatingPoint
-    let fromReal32 floatingPoint = Values.real32 floatingPoint
-    let fromComplex floatingPoint = Values.complex floatingPoint
-    let fromComplex32 floatingPoint = Values.complex32 floatingPoint
+    let fromReal floatingPoint = Value.fromReal floatingPoint |> Values.unpack
+    let fromReal32 floatingPoint = Value.fromReal32 floatingPoint |> Values.unpack
+    let fromComplex floatingPoint = Value.fromComplex floatingPoint |> Values.unpack
+    let fromComplex32 floatingPoint = Value.fromComplex32 floatingPoint |> Values.unpack
 
     let fromInt32 (x:int) = Number (BigRational.FromInt x)
     let fromInt64 (x:int64) = Number (BigRational.FromBigInt (BigInteger(x)))
+    let fromDecimal (x:decimal) = Number (BigRational.FromDecimal x)
     let fromInteger (x:BigInteger) = Number (BigRational.FromBigInt x)
     let fromIntegerFraction (n:BigInteger) (d:BigInteger) = Number (BigRational.FromBigIntFraction (n, d))
     let fromRational (x:BigRational) = Number x
 
+    let real = fromReal
     let number = fromInt32
 
     let isZero = function | Zero -> true | _ -> false
@@ -876,11 +870,12 @@ type Expression with
     static member One = Operators.one
     static member Two = Operators.two
     static member MinusOne = Operators.minusOne
-    static member FromInt32 (x:int) = Operators.fromInt32 x
-    static member FromInt64 (x:int64) = Operators.fromInt64 x
-    static member FromInteger (x:BigInteger) = Operators.fromInteger x
-    static member FromIntegerFraction (n:BigInteger, d:BigInteger) = Operators.fromIntegerFraction n d
-    static member FromRational (x:BigRational) = Operators.fromRational x
+    static member Int32 (x:int) = Operators.fromInt32 x
+    static member Int64 (x:int64) = Operators.fromInt64 x
+    static member Integer (x:BigInteger) = Operators.fromInteger x
+    static member IntegerFraction (n:BigInteger, d:BigInteger) = Operators.fromIntegerFraction n d
+    static member Rational (x:BigRational) = Operators.fromRational x
+    static member Decimal (x:decimal) = Operators.fromDecimal x
     static member Symbol (name:string) = Operators.symbol name
     static member Real (floatingPoint:float) = Operators.fromReal floatingPoint
     static member Real32 (floatingPoint:float32) = Operators.fromReal32 floatingPoint
@@ -977,6 +972,7 @@ type Expression with
     static member ( * ) ((x:float), y) = (Operators.fromReal x) * y
     static member ( / ) (x, (y:float)) = x / (Operators.fromReal y)
     static member ( / ) ((x:float), y) = (Operators.fromReal x) / y
+
     static member ( + ) (x, (y:float32)) = x + (Operators.fromReal32 y)
     static member ( + ) ((x:float32), y) = (Operators.fromReal32 x) + y
     static member ( - ) (x, (y:float32)) = x - (Operators.fromReal32 y)
@@ -985,6 +981,7 @@ type Expression with
     static member ( * ) ((x:float32), y) = (Operators.fromReal32 x) * y
     static member ( / ) (x, (y:float32)) = x / (Operators.fromReal32 y)
     static member ( / ) ((x:float32), y) = (Operators.fromReal32 x) / y
+
     static member ( + ) (x, (y:complex)) = x + (Operators.fromComplex y)
     static member ( + ) ((x:complex), y) = (Operators.fromComplex x) + y
     static member ( - ) (x, (y:complex)) = x - (Operators.fromComplex y)
@@ -993,6 +990,7 @@ type Expression with
     static member ( * ) ((x:complex), y) = (Operators.fromComplex x) * y
     static member ( / ) (x, (y:complex)) = x / (Operators.fromComplex y)
     static member ( / ) ((x:complex), y) = (Operators.fromComplex x) / y
+
     static member ( + ) (x, (y:complex32)) = x + (Operators.fromComplex32 y)
     static member ( + ) ((x:complex32), y) = (Operators.fromComplex32 x) + y
     static member ( - ) (x, (y:complex32)) = x - (Operators.fromComplex32 y)
@@ -1001,6 +999,15 @@ type Expression with
     static member ( * ) ((x:complex32), y) = (Operators.fromComplex32 x) * y
     static member ( / ) (x, (y:complex32)) = x / (Operators.fromComplex32 y)
     static member ( / ) ((x:complex32), y) = (Operators.fromComplex32 x) / y
+
+    static member ( + ) (x, (y:decimal)) = x + (Operators.fromDecimal y)
+    static member ( + ) ((x:decimal), y) = (Operators.fromDecimal x) + y
+    static member ( - ) (x, (y:decimal)) = x - (Operators.fromDecimal y)
+    static member ( - ) ((x:decimal), y) = (Operators.fromDecimal x) - y
+    static member ( * ) (x, (y:decimal)) = x * (Operators.fromDecimal y)
+    static member ( * ) ((x:decimal), y) = (Operators.fromDecimal x) * y
+    static member ( / ) (x, (y:decimal)) = x / (Operators.fromDecimal y)
+    static member ( / ) ((x:decimal), y) = (Operators.fromDecimal x) / y
 
     // Simpler usage in C#
     static member op_Implicit (x:int) = Operators.fromInt32(x)
@@ -1011,12 +1018,13 @@ type Expression with
     static member op_Implicit (x:float32) = Operators.fromReal32 x
     static member op_Implicit (x:complex) = Operators.fromComplex x
     static member op_Implicit (x:complex32) = Operators.fromComplex32 x
+    static member op_Implicit (x:decimal) = Operators.fromDecimal x
 
 
 [<RequireQualifiedAccess>]
 module NumericLiteralQ =
     let FromZero () = Expression.Zero
     let FromOne () = Expression.One
-    let FromInt32 (x:int) = Expression.FromInt32 x
-    let FromInt64 (x:int64) = Expression.FromInt64 x
-    let FromString str = Expression.FromRational (BigRational.Parse str)
+    let FromInt32 (x:int) = Expression.Int32 x
+    let FromInt64 (x:int64) = Expression.Int64 x
+    let FromString str = Expression.Rational (BigRational.Parse str)

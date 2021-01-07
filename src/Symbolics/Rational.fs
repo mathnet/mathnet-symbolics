@@ -10,14 +10,14 @@ module Rational =
 
     [<CompiledName("Numerator")>]
     let rec numerator = function
-        | Number n when not n.IsInteger -> Expression.FromInteger n.Numerator
+        | Number n when not n.IsInteger -> Expression.Integer n.Numerator
         | NegRationalPower _ -> one
         | Product ax -> product <| List.map numerator ax
         | z -> z
 
     [<CompiledName("Denominator")>]
     let rec denominator = function
-        | Number n when not n.IsInteger -> Expression.FromInteger n.Denominator
+        | Number n when not n.IsInteger -> Expression.Integer n.Denominator
         | NegRationalPower (r, p) -> r ** -p
         | Product ax -> product <| List.map denominator ax
         | _ -> one

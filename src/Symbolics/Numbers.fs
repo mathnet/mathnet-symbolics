@@ -48,14 +48,14 @@ module Numbers =
     let gcd2 u v =
         match u, v with
         | Number a, Number b when a.IsInteger && b.IsInteger ->
-            Euclid.GreatestCommonDivisor(a.Numerator, b.Numerator) |> Expression.FromInteger
+            Euclid.GreatestCommonDivisor(a.Numerator, b.Numerator) |> Expression.Integer
         | _ -> Undefined
 
     [<CompiledName("LeastCommonMultiple2")>]
     let lcm2 u v =
         match u, v with
         | Number a, Number b when a.IsInteger && b.IsInteger ->
-            Euclid.LeastCommonMultiple(a.Numerator, b.Numerator) |> Expression.FromInteger
+            Euclid.LeastCommonMultiple(a.Numerator, b.Numerator) |> Expression.Integer
         | _ -> Undefined
 
     [<CompiledName("GreatestCommonDivisor")>]

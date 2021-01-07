@@ -18,14 +18,14 @@ module Quotations =
         | SpecificCall <@@ ( * ) @@> (_, _, [xt; yt]) -> (parse xt) * (parse yt)
         | SpecificCall <@@ ( / ) @@> (_, _, [xt; yt]) -> (parse xt) / (parse yt)
         | SpecificCall <@@ ( ** ) @@> (_, _, [xt; yt]) -> (parse xt) ** (parse yt)
-        | Int16 k -> Expression.FromInt32 (int k)
-        | Int32 k -> Expression.FromInt32 k
-        | Int64 k -> Expression.FromInt64 k
-        | UInt16 k -> Expression.FromInt32 (int k)
-        | UInt32 k -> Expression.FromInt64 (int64 k)
-        | UInt64 k -> Expression.FromInteger (BigInteger k)
-        | DerivedPatterns.Double d -> Expression.Real d
-        | DerivedPatterns.Single d -> Expression.Real (float d)
+        | Int16 k -> Expression.Int32 (int k)
+        | Int32 k -> Expression.Int32 k
+        | Int64 k -> Expression.Int64 k
+        | UInt16 k -> Expression.Int32 (int k)
+        | UInt32 k -> Expression.Int64 (int64 k)
+        | UInt64 k -> Expression.Integer (BigInteger k)
+        | Double d -> Expression.Real d
+        | Single d -> Expression.Real (float d)
         | Var x -> Identifier (Symbol x.Name)
         | PropertyGet (_, info, _) -> Identifier (Symbol info.Name)
         | Let (_, _, t) -> parse t

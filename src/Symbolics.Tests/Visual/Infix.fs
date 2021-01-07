@@ -65,7 +65,7 @@ module Infix =
         Infix.parseOrThrow "1." ==> "1.0"
         Infix.parseOrThrow "1." --> Expression.Real(1.0)
         Infix.parseOrThrow "1" ==> "1"
-        Infix.parseOrThrow "1" --> Expression.FromInt32(1)
+        Infix.parseOrThrow "1" --> Expression.Int32(1)
 
         Infix.parseOrThrow "pi" --> Expression.Pi
         Infix.parseOrThrow "π" --> Expression.Pi
