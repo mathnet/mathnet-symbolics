@@ -1,3 +1,8 @@
+### 0.23.0 - 2021-01-08
+* Uses Math.NET Numerics v4.15.0 or newer
+* Better support for decimal values
+* Drop From prefix in Expression.FromInt32 et al (breaking)
+
 ### 0.22.0 - 2020-11-01
 * Fix evaluation for Csc *~Andrew Boyarshin*
 * Fully separated unary from N-ary functions, they now have a separate DU
