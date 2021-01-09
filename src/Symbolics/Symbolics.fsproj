@@ -2,28 +2,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>net45;net461;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net461;net45;netstandard2.0</TargetFrameworks>
     <AssemblyName>MathNet.Symbolics</AssemblyName>
     <RootNamespace>MathNet.Symbolics</RootNamespace>
     <IsPackable>true</IsPackable>
-    <PackageId>MathNet.Symbolics$(PackageIdSuffix)</PackageId>
+    <PackageId>MathNet.Symbolics</PackageId>
     <VersionPrefix>0.23.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
-    <Title>Math.NET Symbolics$(TitleSuffix)</Title>
+    <Title>Math.NET Symbolics</Title>
     <Description>Math.NET Symbolics is a basic open source computer algebra library for .Net and Mono. Written in F# but works well in C# as well. Supports .Net Framework 4.5 or higher and .Net Standard 2.0 or higher, on Windows, Linux and Mac.$(DescriptionSuffix)</Description>
     <PackageReleaseNotes>Uses Math.NET Numerics v4.15.0 or newer
 Better support for decimal values
 Drop From prefix in Expression.FromInt32 et al (breaking)</PackageReleaseNotes>
     <PackageTags>fsharp F# math symbolics algebra simplify solve cas parse</PackageTags>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <NoWarn>2003</NoWarn>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Symbols.fs" />
     <Compile Include="Approximation.fs" />
     <Compile Include="Value.fs" />

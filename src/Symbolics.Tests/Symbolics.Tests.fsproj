@@ -4,7 +4,6 @@
         <OutputType>Exe</OutputType>
         <GenerateProgramFile>false</GenerateProgramFile>
         <TargetFrameworks>net461;netcoreapp3.1</TargetFrameworks>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <AssemblyName>MathNet.Symbolics.Tests</AssemblyName>
         <RootNamespace>MathNet.Symbolics.Tests</RootNamespace>
         <IsPackable>false</IsPackable>
@@ -15,7 +14,6 @@
         <ProjectReference Include="..\Symbolics\Symbolics.fsproj" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="AssemblyInfo.fs" />
         <Compile Include="Global.fs" />
         <Compile Include="Operators\Arithmetic.fs" />
         <Compile Include="Operators\Exponential.fs" />
