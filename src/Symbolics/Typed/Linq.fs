@@ -4,6 +4,7 @@ open System
 open MathNet.Symbolics
 open MathNet.Numerics
 open System.Linq.Expressions
+
 open ExpressionPatterns
 open Operators
 
@@ -22,7 +23,7 @@ module Linq =
         | ExpressionType.Subtract, (:? BinaryExpression as e) -> (parse e.Left) - (parse e.Right)
         | ExpressionType.Multiply, (:? BinaryExpression as e) -> (parse e.Left) * (parse e.Right)
         | ExpressionType.Divide, (:? BinaryExpression as e) -> (parse e.Left) / (parse e.Right)
-        | ExpressionType.Constant, (:? ConstantExpression as e) -> Expression.Int64 (Convert.ToInt64(e.Value))
+        | ExpressionType.Constant, (:? ConstantExpression as e) -> fromInt64 (Convert.ToInt64(e.Value))
         | ExpressionType.Parameter, (:? ParameterExpression as e) -> Identifier (Symbol e.Name)
         | ExpressionType.MemberAccess, (:? MemberExpression as e) -> Identifier (Symbol e.Member.Name)
         | ExpressionType.Lambda, (:? LambdaExpression as e) -> parse e.Body
@@ -148,17 +149,17 @@ module Linq =
                         let newBasis = exponentiate (power - 1N) exp
                         mul exp newBasis
                 Option.map (exponentiate y) basis
-            | Power(x, minusOne) when minusOne = Expression.MinusOne ->
+            | Power(x, m) when m = minusOne ->
                 let a = convertExpr x
                 Option.map2 div (value Value.one) a
-            | Power (x, Power(n, minusOne)) when minusOne = Expression.MinusOne ->
+            | Power (x, Power(n, m)) when m = minusOne ->
                 let a = convertExpr x
-                let b = convertExpr (Power(n, minusOne))
+                let b = convertExpr (Power(n, m))
                 if n = two then
                     Option.map (mathCall1 "Sqrt") a
                 else
                     let a = convertExpr x
-                    let b = convertExpr (Power(n, minusOne))
+                    let b = convertExpr (Power(n, m))
                     Option.map2 pow a b
             | Power(Constant E, y) ->
                 let exponent = convertExpr y

@@ -3,6 +3,7 @@
 open MathNet.Numerics
 open MathNet.Symbolics
 
+open Operators
 
 [<RequireQualifiedAccess>]
 type SymbolicExpressionType =
@@ -80,27 +81,29 @@ type SymbolicExpression(expression:Expression) =
 
 
     // LEAFS - Integer
-    static member Zero = SymbolicExpression(Expression.Zero)
-    static member One = SymbolicExpression(Expression.One)
-    static member Two = SymbolicExpression(Expression.Two)
-    static member MinusOne = SymbolicExpression(Expression.MinusOne)
-    static member Int32(x:int32) = SymbolicExpression(Expression.Int32(x))
-    static member Int64(x:int64) = SymbolicExpression(Expression.Int64(x))
-    static member Integer(x:BigInteger) = SymbolicExpression(Expression.Integer(x))
-    static member IntegerFraction(n:BigInteger, d:BigInteger) = SymbolicExpression(Expression.IntegerFraction(n, d))
-    static member Rational(x:BigRational) = SymbolicExpression(Expression.Rational(x))
-    static member Decimal(x:decimal) = SymbolicExpression(Expression.Decimal(x))
+    static member Zero = SymbolicExpression(zero)
+    static member One = SymbolicExpression(one)
+    static member Two = SymbolicExpression(two)
+    static member MinusOne = SymbolicExpression(minusOne)
+
+    static member FromInt32(x:int32) = SymbolicExpression(fromInt32 x)
+    static member FromInt64(x:int64) = SymbolicExpression(fromInt64 x)
+    static member FromInteger(x:BigInteger) = SymbolicExpression(fromInteger x)
+    static member FromIntegerFraction(n:BigInteger, d:BigInteger) = SymbolicExpression(fromIntegerFraction n d)
+    static member FromRational(x:BigRational) = SymbolicExpression(fromRational x)
+
+    static member FromDecimal(x:decimal) = SymbolicExpression(fromDecimal x)
 
     // LEAFS - Approximations
-    static member Real(approximation:float) = SymbolicExpression(Expression.Real(approximation))
-    static member Real32(approximation:float32) = SymbolicExpression(Expression.Real32(approximation))
-    static member Complex(approximation:complex) = SymbolicExpression(Expression.Complex(approximation))
-    static member Complex32(approximation:complex32) = SymbolicExpression(Expression.Complex32(approximation))
+    static member FromReal(approximation:float) = SymbolicExpression(fromReal approximation)
+    static member FromReal32(approximation:float32) = SymbolicExpression(fromReal32 approximation)
+    static member FromComplex(approximation:complex) = SymbolicExpression(fromComplex approximation)
+    static member FromComplex32(approximation:complex32) = SymbolicExpression(fromComplex32 approximation)
 
     // LEAFS - Constants
     static member I = SymbolicExpression(Expression.I)
     static member E = SymbolicExpression(Expression.E)
-    static member Pi = SymbolicExpression(Expression.Pi)
+    static member Pi = SymbolicExpression(pi)
 
     // LEAFS - Mathematical Symbols
     static member PositiveInfinity = SymbolicExpression(Expression.PositiveInfinity)
@@ -178,16 +181,17 @@ type SymbolicExpression(expression:Expression) =
     static member op_Implicit (x:Expression) : SymbolicExpression = SymbolicExpression(x)
     static member op_Implicit (x:string) : SymbolicExpression = SymbolicExpression.Parse(x)
 
-    static member op_Implicit (x:int32) : SymbolicExpression = SymbolicExpression.Int32(x)
-    static member op_Implicit (x:int64) : SymbolicExpression = SymbolicExpression.Int64(x)
-    static member op_Implicit (x:BigInteger) : SymbolicExpression = SymbolicExpression.Integer(x)
-    static member op_Implicit (x:BigRational) : SymbolicExpression = SymbolicExpression.Rational(x)
-    static member op_Implicit (x:decimal) : SymbolicExpression = SymbolicExpression.Decimal(x)
+    static member op_Implicit (x:int32) : SymbolicExpression = SymbolicExpression(fromInt32 x)
+    static member op_Implicit (x:int64) : SymbolicExpression = SymbolicExpression(fromInt64 x)
+    static member op_Implicit (x:BigInteger) : SymbolicExpression = SymbolicExpression(fromInteger x)
+    static member op_Implicit (x:BigRational) : SymbolicExpression = SymbolicExpression(fromRational x)
 
-    static member op_Implicit (x:float) : SymbolicExpression = SymbolicExpression.Real(x)
-    static member op_Implicit (x:float32) : SymbolicExpression = SymbolicExpression.Real32(x)
-    static member op_Implicit (x:complex) : SymbolicExpression = SymbolicExpression.Complex(x)
-    static member op_Implicit (x:complex32) : SymbolicExpression = SymbolicExpression.Complex32(x)
+    static member op_Implicit (x:decimal) : SymbolicExpression = SymbolicExpression(fromDecimal x)
+
+    static member op_Implicit (x:float) : SymbolicExpression = SymbolicExpression(fromReal x)
+    static member op_Implicit (x:float32) : SymbolicExpression = SymbolicExpression(fromReal32 x)
+    static member op_Implicit (x:complex) : SymbolicExpression = SymbolicExpression(fromComplex x)
+    static member op_Implicit (x:complex32) : SymbolicExpression = SymbolicExpression(fromComplex32 x)
 
     // bad idea, don't do this
     // static member op_Implicit (x:SymbolicExpression) : Expression = x.Expression

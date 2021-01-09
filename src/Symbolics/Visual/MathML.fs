@@ -45,7 +45,7 @@ module private MathMLParser =
         | LeafNamed "cn" body -> Number (BigRational.Parse body)
         | CSymbol (dict, symbol) ->
             match dict, symbol with
-            | "nums1", "pi" -> Expression.Pi
+            | "nums1", "pi" -> pi
             | "nums1", "e" -> Expression.E
             | "nums1", "i" -> Expression.I
             | "nums1", "infinity" -> PositiveInfinity

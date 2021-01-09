@@ -29,6 +29,7 @@ BenchmarkDotNet.Artifacts
 *.lnt
 *.svclog
 *.log
+*.binlog
 
 # Caches
 _ReSharper*

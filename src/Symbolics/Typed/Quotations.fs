@@ -5,6 +5,8 @@ open Microsoft.FSharp.Quotations.Patterns
 open Microsoft.FSharp.Quotations.DerivedPatterns
 open MathNet.Symbolics
 
+open Operators
+
 [<RequireQualifiedAccess>]
 module Quotations =
 
@@ -18,14 +20,14 @@ module Quotations =
         | SpecificCall <@@ ( * ) @@> (_, _, [xt; yt]) -> (parse xt) * (parse yt)
         | SpecificCall <@@ ( / ) @@> (_, _, [xt; yt]) -> (parse xt) / (parse yt)
         | SpecificCall <@@ ( ** ) @@> (_, _, [xt; yt]) -> (parse xt) ** (parse yt)
-        | Int16 k -> Expression.Int32 (int k)
-        | Int32 k -> Expression.Int32 k
-        | Int64 k -> Expression.Int64 k
-        | UInt16 k -> Expression.Int32 (int k)
-        | UInt32 k -> Expression.Int64 (int64 k)
-        | UInt64 k -> Expression.Integer (BigInteger k)
-        | Double d -> Expression.Real d
-        | Single d -> Expression.Real (float d)
+        | Int16 k -> fromInt32 (int k)
+        | Int32 k -> fromInt32 k
+        | Int64 k -> fromInt64 k
+        | UInt16 k -> fromInt32 (int k)
+        | UInt32 k -> fromInt64 (int64 k)
+        | UInt64 k -> fromInteger (BigInteger k)
+        | Double d -> fromReal d
+        | Single d -> fromReal (float d)
         | Var x -> Identifier (Symbol x.Name)
         | PropertyGet (_, info, _) -> Identifier (Symbol info.Name)
         | Let (_, _, t) -> parse t

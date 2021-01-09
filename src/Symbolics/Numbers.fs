@@ -6,6 +6,8 @@ open MathNet.Symbolics
 [<RequireQualifiedAccess>]
 module Numbers =
 
+    open Operators
+
     /// Represent the constant as a real number if possible
     let (|RealConstant|_|) = function
         | Approximation (Real r) -> Some r
@@ -48,14 +50,14 @@ module Numbers =
     let gcd2 u v =
         match u, v with
         | Number a, Number b when a.IsInteger && b.IsInteger ->
-            Euclid.GreatestCommonDivisor(a.Numerator, b.Numerator) |> Expression.Integer
+            Euclid.GreatestCommonDivisor(a.Numerator, b.Numerator) |> fromInteger
         | _ -> Undefined
 
     [<CompiledName("LeastCommonMultiple2")>]
     let lcm2 u v =
         match u, v with
         | Number a, Number b when a.IsInteger && b.IsInteger ->
-            Euclid.LeastCommonMultiple(a.Numerator, b.Numerator) |> Expression.Integer
+            Euclid.LeastCommonMultiple(a.Numerator, b.Numerator) |> fromInteger
         | _ -> Undefined
 
     [<CompiledName("GreatestCommonDivisor")>]

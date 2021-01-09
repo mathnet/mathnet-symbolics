@@ -48,11 +48,11 @@ module Expressions =
     [<Test>]
     let ``Constant Expressions`` () =
 
-        Expression.Pi ==> "π"
+        pi ==> "π"
         Expression.E ==> "e"
         Expression.I ==> "j"
-        Expression.Real(1.23) ==> "1.23"
-        Expression.Real(-0.23) ==> "-0.23"
+        fromReal 1.23 ==> "1.23"
+        fromReal -0.23 ==> "-0.23"
 
     [<Test>]
     let ``Approximations`` () =

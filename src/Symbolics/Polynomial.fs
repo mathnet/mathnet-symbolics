@@ -109,7 +109,7 @@ module Polynomial =
 
     [<CompiledName("CommonMonomialFactors")>]
     let commonMonomialFactors xs =
-        let normalizePowers = List.map (fun (r, p) -> pow r (Expression.Integer p))
+        let normalizePowers = List.map (fun (r, p) -> pow r (fromInteger p))
         let denormalizePowers = List.map (function
             | PosIntPower (r, (Integer n)) -> (r, n.Numerator)
             | x -> (x, 1I))
@@ -121,7 +121,7 @@ module Polynomial =
             let x' = x1 |> List.choose (fun (r1, p1) -> x2 |> List.tryPick (fun (r2,p2) -> if r2 = r1 then Some (r1, min p1 p2) else None))
             n', x'
         let (n, x') = xs |> List.map monomialFactors |> List.reduce intersect
-        (Expression.Integer n)::(normalizePowers x') |> product
+        (fromInteger n)::(normalizePowers x') |> product
 
     [<CompiledName("CommonFactors")>]
     let commonFactors = function
