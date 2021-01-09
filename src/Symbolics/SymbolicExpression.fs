@@ -199,12 +199,12 @@ type SymbolicExpression(expression:Expression) =
 
     // OPERATORS
 
-    static member ( ~+ ) (x:SymbolicExpression) = SymbolicExpression(+x.Expression)
-    static member ( ~- ) (x:SymbolicExpression) = SymbolicExpression(-x.Expression)
-    static member ( + ) ((x:SymbolicExpression), (y:SymbolicExpression)) = SymbolicExpression(x.Expression + y.Expression)
-    static member ( - ) ((x:SymbolicExpression), (y:SymbolicExpression)) = SymbolicExpression(x.Expression - y.Expression)
-    static member ( * ) ((x:SymbolicExpression), (y:SymbolicExpression)) = SymbolicExpression(x.Expression * y.Expression)
-    static member ( / ) ((x:SymbolicExpression), (y:SymbolicExpression)) = SymbolicExpression(x.Expression / y.Expression)
+    static member ( ~+ ) (x:SymbolicExpression) : SymbolicExpression = SymbolicExpression(+x.Expression)
+    static member ( ~- ) (x:SymbolicExpression) : SymbolicExpression = SymbolicExpression(-x.Expression)
+    static member ( + ) ((x:SymbolicExpression), (y:SymbolicExpression)) : SymbolicExpression = SymbolicExpression(x.Expression + y.Expression)
+    static member ( - ) ((x:SymbolicExpression), (y:SymbolicExpression)) : SymbolicExpression = SymbolicExpression(x.Expression - y.Expression)
+    static member ( * ) ((x:SymbolicExpression), (y:SymbolicExpression)) : SymbolicExpression = SymbolicExpression(x.Expression * y.Expression)
+    static member ( / ) ((x:SymbolicExpression), (y:SymbolicExpression)) : SymbolicExpression = SymbolicExpression(x.Expression / y.Expression)
 
     static member Sum([<System.ParamArray>] summands : SymbolicExpression array) = SymbolicExpression(summands |> Seq.map (fun x -> x.Expression) |> Operators.sumSeq)
     static member Sum(summands : SymbolicExpression seq) = SymbolicExpression(summands |> Seq.map (fun x -> x.Expression) |> Operators.sumSeq)
