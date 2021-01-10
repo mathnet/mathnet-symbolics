@@ -7,13 +7,14 @@
     <RootNamespace>MathNet.Symbolics</RootNamespace>
     <IsPackable>true</IsPackable>
     <PackageId>MathNet.Symbolics</PackageId>
-    <VersionPrefix>0.23.0</VersionPrefix>
+    <VersionPrefix>0.24.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <Title>Math.NET Symbolics</Title>
     <Description>Math.NET Symbolics is a basic open source computer algebra library for .Net and Mono. Written in F# but works well in C# as well. Supports .Net Framework 4.5 or higher and .Net Standard 2.0 or higher, on Windows, Linux and Mac.$(DescriptionSuffix)</Description>
-    <PackageReleaseNotes>Uses Math.NET Numerics v4.15.0 or newer
-Better support for decimal values
-Drop From prefix in Expression.FromInt32 et al (breaking)</PackageReleaseNotes>
+    <PackageReleaseNotes>Usability: Operators module now provides I, E and Pi (instead of pi) (breaking)
+Usability: VariableSets.Alphabet provides a-z variables that can be opened on demand
+Fixes issue where operators were generic where they should not have been
+Minor internal simplifications and streamlining</PackageReleaseNotes>
     <PackageTags>fsharp F# math symbolics algebra simplify solve cas parse</PackageTags>
     <NoWarn>2003</NoWarn>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

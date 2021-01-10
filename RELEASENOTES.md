@@ -1,3 +1,9 @@
+### 0.24.0 - 2021.01-10
+* Usability: Operators module now provides I, E and Pi (instead of pi) (breaking)
+* Usability: VariableSets.Alphabet provides a-z variables that can be opened on demand
+* Fixes issue where operators were generic where they should not have been
+* Minor internal simplifications and streamlining
+
 ### 0.23.0 - 2021-01-08
 * Uses Math.NET Numerics v4.15.0 or newer
 * Better support for decimal values
