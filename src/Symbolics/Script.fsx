@@ -1,8 +1,8 @@
-﻿#load @"..\..\packages\MathNet.Numerics.FSharp\MathNet.Numerics.fsx"
-
-//#load "MathNet.Symbolics.fsx"
-#I @"..\..\out\lib\Net40"
+﻿#I @"..\..\packages\MathNet.Numerics.FSharp\lib\net45"
+#I @"..\..\packages\MathNet.Numerics\lib\net40"
+#I @"..\..\out\Symbolics\Lib\net45"
 #r "MathNet.Numerics.dll"
+#r "MathNet.Numerics.FSharp.dll"
 #r "MathNet.Symbolics.dll"
 
 open System
@@ -238,7 +238,6 @@ Rational.simplify x (1/(1+1/(x+1)) + 2/(x+2))  // (3 + x)/(2 + x)
 
 // Printing
 Infix.format (1/(a*b))        // "1/(a*b)"
-Infix.formatStrict (1/(a*b))  // "a^(-1)*b^(-1)"
 LaTeX.format (1/(a*b))        // "\frac{1}{ab}"
 
 
