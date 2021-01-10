@@ -86,19 +86,19 @@ type SymbolicExpression(expression:Expression) =
     static member Two = SymbolicExpression(two)
     static member MinusOne = SymbolicExpression(minusOne)
 
-    static member FromInt32(x:int32) = SymbolicExpression(fromInt32 x)
-    static member FromInt64(x:int64) = SymbolicExpression(fromInt64 x)
-    static member FromInteger(x:BigInteger) = SymbolicExpression(fromInteger x)
-    static member FromIntegerFraction(n:BigInteger, d:BigInteger) = SymbolicExpression(fromIntegerFraction n d)
-    static member FromRational(x:BigRational) = SymbolicExpression(fromRational x)
+    static member Int32(x:int32) = SymbolicExpression(fromInt32 x)
+    static member Int64(x:int64) = SymbolicExpression(fromInt64 x)
+    static member Integer(x:BigInteger) = SymbolicExpression(fromInteger x)
+    static member IntegerFraction(n:BigInteger, d:BigInteger) = SymbolicExpression(fromIntegerFraction n d)
+    static member Rational(x:BigRational) = SymbolicExpression(fromRational x)
 
-    static member FromDecimal(x:decimal) = SymbolicExpression(fromDecimal x)
+    static member Decimal(x:decimal) = SymbolicExpression(fromDecimal x)
 
     // LEAFS - Approximations
-    static member FromReal(approximation:float) = SymbolicExpression(fromReal approximation)
-    static member FromReal32(approximation:float32) = SymbolicExpression(fromReal32 approximation)
-    static member FromComplex(approximation:complex) = SymbolicExpression(fromComplex approximation)
-    static member FromComplex32(approximation:complex32) = SymbolicExpression(fromComplex32 approximation)
+    static member Real(approximation:float) = SymbolicExpression(fromReal approximation)
+    static member Real32(approximation:float32) = SymbolicExpression(fromReal32 approximation)
+    static member Complex(approximation:complex) = SymbolicExpression(fromComplex approximation)
+    static member Complex32(approximation:complex32) = SymbolicExpression(fromComplex32 approximation)
 
     // LEAFS - Constants
     static member I = SymbolicExpression(I)

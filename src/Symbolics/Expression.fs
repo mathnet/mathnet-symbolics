@@ -878,18 +878,18 @@ type Expression with
     static member Two = Operators.two
     static member MinusOne = Operators.minusOne
 
-    static member FromInt32 (x:int) = Operators.fromInt32 x
-    static member FromInt64 (x:int64) = Operators.fromInt64 x
-    static member FromInteger (x:BigInteger) = Operators.fromInteger x
-    static member FromIntegerFraction (n:BigInteger, d:BigInteger) = Operators.fromIntegerFraction n d
-    static member FromRational (x:BigRational) = Operators.fromRational x
+    static member Int32 (x:int) = Operators.fromInt32 x
+    static member Int64 (x:int64) = Operators.fromInt64 x
+    static member Integer (x:BigInteger) = Operators.fromInteger x
+    static member IntegerFraction (n:BigInteger, d:BigInteger) = Operators.fromIntegerFraction n d
+    static member Rational (x:BigRational) = Operators.fromRational x
 
-    static member FromDecimal (x:decimal) = Operators.fromDecimal x
+    static member Decimal (x:decimal) = Operators.fromDecimal x
 
-    static member FromReal (floatingPoint:float) = Operators.fromReal floatingPoint
-    static member FromReal32 (floatingPoint:float32) = Operators.fromReal32 floatingPoint
-    static member FromComplex (floatingPoint:complex) = Operators.fromComplex floatingPoint
-    static member FromComplex32 (floatingPoint:complex32) = Operators.fromComplex32 floatingPoint
+    static member Real (floatingPoint:float) = Operators.fromReal floatingPoint
+    static member Real32 (floatingPoint:float32) = Operators.fromReal32 floatingPoint
+    static member Complex (floatingPoint:complex) = Operators.fromComplex floatingPoint
+    static member Complex32 (floatingPoint:complex32) = Operators.fromComplex32 floatingPoint
 
     static member Symbol (name:string) = Operators.symbol name
 
