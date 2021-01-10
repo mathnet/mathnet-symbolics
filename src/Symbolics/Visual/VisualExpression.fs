@@ -225,9 +225,9 @@ module VisualExpression =
             | VisualExpression.Function (fn, power, xs) ->
                 let applied = applyN (nameFunctionNary fn) (List.map convert xs)
                 if power.IsOne then applied else pow applied (fromInteger power)
-            | VisualExpression.ComplexI -> Expression.I
-            | VisualExpression.RealPi -> pi
-            | VisualExpression.RealE -> Expression.E
+            | VisualExpression.ComplexI -> I
+            | VisualExpression.RealPi -> Pi
+            | VisualExpression.RealE -> E
             | VisualExpression.Infinity -> PositiveInfinity
             | VisualExpression.ComplexInfinity -> ComplexInfinity
             | VisualExpression.Undefined -> Undefined

@@ -48,9 +48,9 @@ module Expressions =
     [<Test>]
     let ``Constant Expressions`` () =
 
-        pi ==> "π"
-        Expression.E ==> "e"
-        Expression.I ==> "j"
+        Pi ==> "π"
+        E ==> "e"
+        I ==> "j"
         fromReal 1.23 ==> "1.23"
         fromReal -0.23 ==> "-0.23"
 
@@ -490,10 +490,10 @@ module Expressions =
         let exrp = Infix.parseOrUndefined "tan(x)*25*csc(x)"
         exrp ==> "25*tan(x)*csc(x)"
 
-        let expr2 = Operators.sec 32Q
+        let expr2 = sec 32Q
         expr2 ==> "sec(32)"
 
-        let exrp3 = Expression.Apply(Cot, expr2)
+        let exrp3 = apply Cot expr2
         exrp3 ==> "cot(sec(32))"
 
         let expr4 = Infix.parseOrUndefined "25*x*sec(x)"

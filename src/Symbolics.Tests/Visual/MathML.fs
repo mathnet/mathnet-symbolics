@@ -14,7 +14,7 @@ module MathML =
         MathML.formatContentStrict x ==/> """<ci>x</ci>"""
         MathML.formatContentStrict -x ==/> """<apply><csymbol cd="arith1">unary_minus</csymbol><ci>x</ci></apply>"""
         MathML.formatContentStrict (-2*x) ==/> """<apply><csymbol cd="arith1">unary_minus</csymbol><apply><csymbol cd="arith1">times</csymbol><cn>2</cn><ci>x</ci></apply></apply>"""
-        MathML.formatContentStrict pi ==/> """<csymbol cd="nums1">pi</csymbol>"""
+        MathML.formatContentStrict Pi ==/> """<csymbol cd="nums1">pi</csymbol>"""
         MathML.formatContentStrict (1/x) ==/> """<apply><csymbol cd="arith1">divide</csymbol><cn>1</cn><ci>x</ci></apply>"""
         MathML.formatContentStrict (1/(a*b)) ==/> """<apply><csymbol cd="arith1">divide</csymbol><cn>1</cn><apply><csymbol cd="arith1">times</csymbol><ci>a</ci><ci>b</ci></apply></apply>"""
         MathML.formatContentStrict (x**2) ==/> """<apply><csymbol cd="arith1">power</csymbol><ci>x</ci><cn>2</cn></apply>"""

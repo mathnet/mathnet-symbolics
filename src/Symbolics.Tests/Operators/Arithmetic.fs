@@ -47,7 +47,7 @@ module Abs =
         abs infinity ==> "∞"
         abs negativeInfinity ==> "∞"
         abs complexInfinity ==> "∞"
-        abs Expression.I ==> "1"
+        abs I ==> "1"
 
 
 module Multiply =
@@ -250,6 +250,6 @@ module Power =
         0Q**(1/complexInfinity) ==> "Undefined"
 
         // Todo - Imaginary related
-        //Expression.I*infinity ==> "∞*j"
-        //0Q**Expression.I ==> "Undefined"
-        1Q**Expression.I ==> "1"
+        //I*infinity ==> "∞*j"
+        //0Q**I ==> "Undefined"
+        1Q**I ==> "1"

@@ -14,7 +14,7 @@ module LaTeX =
         LaTeX.format (1/(a*b)) --> """\frac{1}{ab}"""
         LaTeX.format minusOne --> """-1"""
         LaTeX.format Expression.ComplexInfinity --> """\infty"""
-        LaTeX.format pi --> """\pi"""
+        LaTeX.format Pi --> """\pi"""
         LaTeX.format (fromReal -0.23) --> string -0.23
         LaTeX.format (a**b) --> """{a}^{b}"""
         LaTeX.format (a**(b+c)) --> """{a}^{b + c}"""
@@ -28,9 +28,9 @@ module LaTeX =
         LaTeX.format (3Q*2Q**x) --> """3 \cdot {2}^{x}"""
         LaTeX.format (3.0*(fromReal 2.0)**x) --> """3.0 \cdot {2.0}^{x}"""
         LaTeX.format (5Q*x) --> """5x"""
-        LaTeX.format (pi * 10Q) --> """10\pi"""
-        LaTeX.format (Expression.E * 2Q**(4Q*x)) --> """e \cdot {2}^{4x}"""
-        LaTeX.format (4Q * Expression.E ** x) --> """4{e}^{x}"""
+        LaTeX.format (Pi * 10Q) --> """10\pi"""
+        LaTeX.format (E * 2Q**(4Q*x)) --> """e \cdot {2}^{4x}"""
+        LaTeX.format (4Q * E ** x) --> """4{e}^{x}"""
 
         LaTeX.format (lg x) --> """\log_{10}{x}"""
         LaTeX.format (lg (x+y)) --> """\log_{10}\left(x + y\right)"""

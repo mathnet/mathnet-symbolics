@@ -101,9 +101,9 @@ type SymbolicExpression(expression:Expression) =
     static member FromComplex32(approximation:complex32) = SymbolicExpression(fromComplex32 approximation)
 
     // LEAFS - Constants
-    static member I = SymbolicExpression(Expression.I)
-    static member E = SymbolicExpression(Expression.E)
-    static member Pi = SymbolicExpression(pi)
+    static member I = SymbolicExpression(I)
+    static member E = SymbolicExpression(E)
+    static member Pi = SymbolicExpression(Pi)
 
     // LEAFS - Mathematical Symbols
     static member PositiveInfinity = SymbolicExpression(Expression.PositiveInfinity)
@@ -112,7 +112,7 @@ type SymbolicExpression(expression:Expression) =
     static member Undefined = SymbolicExpression(Expression.Undefined)
 
     // LEAFS - Symbols
-    static member Variable(name:string) = SymbolicExpression(Expression.Symbol(name))
+    static member Variable(name:string) = SymbolicExpression(symbol name)
 
 
     // PARSING
@@ -206,10 +206,10 @@ type SymbolicExpression(expression:Expression) =
     static member ( * ) ((x:SymbolicExpression), (y:SymbolicExpression)) : SymbolicExpression = SymbolicExpression(x.Expression * y.Expression)
     static member ( / ) ((x:SymbolicExpression), (y:SymbolicExpression)) : SymbolicExpression = SymbolicExpression(x.Expression / y.Expression)
 
-    static member Sum([<System.ParamArray>] summands : SymbolicExpression array) = SymbolicExpression(summands |> Seq.map (fun x -> x.Expression) |> Operators.sumSeq)
-    static member Sum(summands : SymbolicExpression seq) = SymbolicExpression(summands |> Seq.map (fun x -> x.Expression) |> Operators.sumSeq)
-    static member Product([<System.ParamArray>] factors : SymbolicExpression array) = SymbolicExpression(factors |> Seq.map (fun x -> x.Expression) |> Operators.productSeq)
-    static member Product(factors : SymbolicExpression seq) = SymbolicExpression(factors |> Seq.map (fun x -> x.Expression) |> Operators.productSeq)
+    static member Sum([<System.ParamArray>] summands : SymbolicExpression array) = SymbolicExpression(summands |> Seq.map (fun x -> x.Expression) |> sumSeq)
+    static member Sum(summands : SymbolicExpression seq) = SymbolicExpression(summands |> Seq.map (fun x -> x.Expression) |> sumSeq)
+    static member Product([<System.ParamArray>] factors : SymbolicExpression array) = SymbolicExpression(factors |> Seq.map (fun x -> x.Expression) |> productSeq)
+    static member Product(factors : SymbolicExpression seq) = SymbolicExpression(factors |> Seq.map (fun x -> x.Expression) |> productSeq)
 
     member this.Negate() = -this
     member this.Add(x:SymbolicExpression) = this + x
@@ -218,59 +218,59 @@ type SymbolicExpression(expression:Expression) =
     member this.Divide(x:SymbolicExpression) = this / x
 
     member this.Pow(power:SymbolicExpression) = SymbolicExpression(Expression.Pow(expression, power.Expression))
-    member this.Invert() = SymbolicExpression(Expression.Invert(expression))
+    member this.Invert() = SymbolicExpression(invert expression)
 
-    member this.Abs() = SymbolicExpression(Expression.Abs(expression))
+    member this.Abs() = SymbolicExpression(abs expression)
 
-    member this.Root(n:SymbolicExpression) = SymbolicExpression(Expression.Root(n.Expression, expression))
-    member this.Sqrt() = SymbolicExpression(Expression.Sqrt(expression))
+    member this.Root(n:SymbolicExpression) = SymbolicExpression(root n.Expression expression)
+    member this.Sqrt() = SymbolicExpression(sqrt expression)
 
-    member this.Exp() = SymbolicExpression(Expression.Exp(expression))
-    member this.Ln() = SymbolicExpression(Expression.Ln(expression))
-    member this.Log() = SymbolicExpression(Expression.Log(expression))
-    member this.Log(basis:SymbolicExpression) = SymbolicExpression(Expression.Log(basis.Expression, expression))
+    member this.Exp() = SymbolicExpression(exp expression)
+    member this.Ln() = SymbolicExpression(ln expression)
+    member this.Log() = SymbolicExpression(lg expression)
+    member this.Log(basis:SymbolicExpression) = SymbolicExpression(log basis.Expression expression)
 
-    member this.Sin() = SymbolicExpression(Expression.Sin(expression))
-    member this.Cos() = SymbolicExpression(Expression.Cos(expression))
-    member this.Tan() = SymbolicExpression(Expression.Tan(expression))
-    member this.Csc() = SymbolicExpression(Expression.Csc(expression))
-    member this.Sec() = SymbolicExpression(Expression.Sec(expression))
-    member this.Cot() = SymbolicExpression(Expression.Cot(expression))
+    member this.Sin() = SymbolicExpression(sin expression)
+    member this.Cos() = SymbolicExpression(cos expression)
+    member this.Tan() = SymbolicExpression(tan expression)
+    member this.Csc() = SymbolicExpression(csc expression)
+    member this.Sec() = SymbolicExpression(sec expression)
+    member this.Cot() = SymbolicExpression(cot expression)
 
-    member this.Sinh() = SymbolicExpression(Expression.Sinh(expression))
-    member this.Cosh() = SymbolicExpression(Expression.Cosh(expression))
-    member this.Tanh() = SymbolicExpression(Expression.Tanh(expression))
-    member this.Csch() = SymbolicExpression(Expression.Csch(expression))
-    member this.Sech() = SymbolicExpression(Expression.Sech(expression))
-    member this.Coth() = SymbolicExpression(Expression.Coth(expression))
+    member this.Sinh() = SymbolicExpression(sinh expression)
+    member this.Cosh() = SymbolicExpression(cosh expression)
+    member this.Tanh() = SymbolicExpression(tanh expression)
+    member this.Csch() = SymbolicExpression(csch expression)
+    member this.Sech() = SymbolicExpression(sech expression)
+    member this.Coth() = SymbolicExpression(coth expression)
 
-    member this.ArcSin() = SymbolicExpression(Expression.ArcSin(expression))
-    member this.ArcCos() = SymbolicExpression(Expression.ArcCos(expression))
-    member this.ArcTan() = SymbolicExpression(Expression.ArcTan(expression))
-    member this.ArcCsc() = SymbolicExpression(Expression.ArcCsc(expression))
-    member this.ArcSec() = SymbolicExpression(Expression.ArcSec(expression))
-    member this.ArcCot() = SymbolicExpression(Expression.ArcCot(expression))
+    member this.ArcSin() = SymbolicExpression(arcsin expression)
+    member this.ArcCos() = SymbolicExpression(arccos expression)
+    member this.ArcTan() = SymbolicExpression(arctan expression)
+    member this.ArcCsc() = SymbolicExpression(arccsc expression)
+    member this.ArcSec() = SymbolicExpression(arcsec expression)
+    member this.ArcCot() = SymbolicExpression(arccot expression)
 
-    member this.ArcSinh() = SymbolicExpression(Expression.ArcSinh(expression))
-    member this.ArcCosh() = SymbolicExpression(Expression.ArcCosh(expression))
-    member this.ArcTanh() = SymbolicExpression(Expression.ArcTanh(expression))
-    member this.ArcCsch() = SymbolicExpression(Expression.ArcCsch(expression))
-    member this.ArcSech() = SymbolicExpression(Expression.ArcSech(expression))
-    member this.ArcCoth() = SymbolicExpression(Expression.ArcCoth(expression))
+    member this.ArcSinh() = SymbolicExpression(arcsinh expression)
+    member this.ArcCosh() = SymbolicExpression(arccosh expression)
+    member this.ArcTanh() = SymbolicExpression(arctanh expression)
+    member this.ArcCsch() = SymbolicExpression(arccsch expression)
+    member this.ArcSech() = SymbolicExpression(arcsech expression)
+    member this.ArcCoth() = SymbolicExpression(arccoth expression)
 
-    member this.AiryAi() = SymbolicExpression(Expression.AiryAi(expression))
-    member this.AiryAiPrime() = SymbolicExpression(Expression.AiryAiPrime(expression))
-    member this.AiryBi() = SymbolicExpression(Expression.AiryBi(expression))
-    member this.AiryBiPrime() = SymbolicExpression(Expression.AiryBiPrime(expression))
+    member this.AiryAi() = SymbolicExpression(airyai expression)
+    member this.AiryAiPrime() = SymbolicExpression(airyaiprime expression)
+    member this.AiryBi() = SymbolicExpression(airybi expression)
+    member this.AiryBiPrime() = SymbolicExpression(airybiprime expression)
 
-    member this.BesselJ(n:SymbolicExpression) = SymbolicExpression(Expression.BesselJ(n.Expression, expression))
-    member this.BesselY(n:SymbolicExpression) = SymbolicExpression(Expression.BesselY(n.Expression, expression))
-    member this.BesselI(n:SymbolicExpression) = SymbolicExpression(Expression.BesselI(n.Expression, expression))
-    member this.BesselK(n:SymbolicExpression) = SymbolicExpression(Expression.BesselK(n.Expression, expression))
-    member this.BesselIRatio(n:SymbolicExpression) = SymbolicExpression(Expression.BesselIRatio(n.Expression, expression))
-    member this.BesselKRatio(n:SymbolicExpression) = SymbolicExpression(Expression.BesselKRatio(n.Expression, expression))
-    member this.HankelH1(n:SymbolicExpression) = SymbolicExpression(Expression.HankelH1(n.Expression, expression))
-    member this.HankelH2(n:SymbolicExpression) = SymbolicExpression(Expression.HankelH2(n.Expression, expression))
+    member this.BesselJ(n:SymbolicExpression) = SymbolicExpression(besselj n.Expression expression)
+    member this.BesselY(n:SymbolicExpression) = SymbolicExpression(bessely n.Expression expression)
+    member this.BesselI(n:SymbolicExpression) = SymbolicExpression(besseli n.Expression expression)
+    member this.BesselK(n:SymbolicExpression) = SymbolicExpression(besselk n.Expression expression)
+    member this.BesselIRatio(n:SymbolicExpression) = SymbolicExpression(besseliratio n.Expression expression)
+    member this.BesselKRatio(n:SymbolicExpression) = SymbolicExpression(besselkratio n.Expression expression)
+    member this.HankelH1(n:SymbolicExpression) = SymbolicExpression(hankelh1 n.Expression expression)
+    member this.HankelH2(n:SymbolicExpression) = SymbolicExpression(hankelh2 n.Expression expression)
 
 
     // STRUCTURE

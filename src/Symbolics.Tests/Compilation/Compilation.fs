@@ -27,7 +27,7 @@ module Compilation =
         let expr4 = ln x
         (Compile.compileExpression1OrThrow expr4 symX).Invoke(3.0) --> System.Math.Log(3.0)
 
-        let expr5 = (Constant E) ** x
+        let expr5 = E ** x
         (Compile.compileExpression1OrThrow expr5 symX).Invoke(3.0) --> System.Math.Exp(3.0)
 
         let expr6 = sqrt x
@@ -54,7 +54,7 @@ module Compilation =
         let expr4' = ln x
         (Compile.compileComplexExpression1OrThrow expr4' symX).Invoke(toComplex 3.0) --> System.Numerics.Complex.Log(toComplex 3.0)
 
-        let expr5' = (Constant E) ** x
+        let expr5' = E ** x
         (Compile.compileComplexExpression1OrThrow expr5' symX).Invoke(toComplex 3.0) --> System.Numerics.Complex.Exp(toComplex 3.0)
 
         let expr6' = sqrt x

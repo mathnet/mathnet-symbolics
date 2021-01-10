@@ -8,12 +8,12 @@ module Sin =
 
     [<Test>]
     let ``Special Values`` () =
-        sin(-2Q) ==> "-sin(2)"
-        sin(-pi) ==> "-sin(π)" // "0"
-        sin(0Q) ==> "0"
-        sin(pi/6Q) ==> "sin(π/6)" // "1/2"
-        sin(5Q/7Q*pi) ==> "sin(5/7*π)"
-        sin(Constant I) ==> "j*sinh(1)"
+        sin -2Q ==> "-sin(2)"
+        sin -Pi ==> "-sin(π)" // "0"
+        sin 0Q ==> "0"
+        sin(Pi/6Q) ==> "sin(π/6)" // "1/2"
+        sin(5Q/7Q*Pi) ==> "sin(5/7*π)"
+        sin I ==> "j*sinh(1)"
 
         sin(arcsin(x)) ==> "x"
         sin(arccos(x)) ==> "sqrt(1 - x^2)"
@@ -22,8 +22,8 @@ module Sin =
         sin(arcsec(x)) ==> "sqrt(1 - 1/x^2)"
         sin(arccot(x)) ==> "1/(sqrt(1 + 1/x^2)*x)"
 
-        sin(arcsin(4Q*pi + x)) ==> "4*π + x"
-        sin(arcsin(4Q*Constant I)) ==> "4*j"
+        sin(arcsin(4Q*Pi + x)) ==> "4*π + x"
+        sin(arcsin(4Q*I)) ==> "4*j"
 
     [<Test>]
     let ``Calculus`` () =
@@ -34,12 +34,12 @@ module Cos =
 
     [<Test>]
     let ``Special Values`` () =
-        cos(-2Q) ==> "cos(2)"
-        cos(-pi) ==> "cos(π)" // "-1"
-        cos(0Q) ==> "1"
-        cos(pi/6Q) ==> "cos(π/6)" // "2/sqrt(3)"
-        cos(5Q/7Q*pi) ==> "cos(5/7*π)"
-        cos(Constant I) ==> "cosh(1)"
+        cos -2Q ==> "cos(2)"
+        cos -Pi ==> "cos(π)" // "-1"
+        cos 0Q ==> "1"
+        cos(Pi/6Q) ==> "cos(π/6)" // "2/sqrt(3)"
+        cos(5Q/7Q*Pi) ==> "cos(5/7*π)"
+        cos I ==> "cosh(1)"
 
         cos(arcsin(x)) ==> "sqrt(1 - x^2)"
         cos(arccos(x)) ==> "x"
@@ -58,11 +58,11 @@ module Tan =
     [<Test>]
     let ``Special Values`` () =
         tan(-2Q) ==> "-tan(2)"
-        tan(-pi) ==> "-tan(π)" // "0"
+        tan(-Pi) ==> "-tan(π)" // "0"
         tan(0Q) ==> "0"
-        tan(pi/6Q) ==> "tan(π/6)" // "1/sqrt(3)"
-        tan(5Q/7Q*pi) ==> "tan(5/7*π)"
-        tan(Constant I) ==> "j*tanh(1)"
+        tan(Pi/6Q) ==> "tan(π/6)" // "1/sqrt(3)"
+        tan(5Q/7Q*Pi) ==> "tan(5/7*π)"
+        tan I ==> "j*tanh(1)"
 
         tan(arcsin(x)) ==> "x/sqrt(1 - x^2)"
         tan(arccos(x)) ==> "sqrt(1 - x^2)/x"
@@ -81,11 +81,11 @@ module Csc =
     [<Test>]
     let ``Special Values`` () =
         csc(-2Q) ==> "-csc(2)"
-        csc(-pi) ==> "-csc(π)" // "⧝"
+        csc(-Pi) ==> "-csc(π)" // "⧝"
         csc(0Q) ==> "⧝"
-        csc(pi/6Q) ==> "csc(π/6)" // "2"
-        csc(5Q/7Q*pi) ==> "csc(5/7*π)"
-        csc(Constant I) ==> "-j*csch(1)"
+        csc(Pi/6Q) ==> "csc(π/6)" // "2"
+        csc(5Q/7Q*Pi) ==> "csc(5/7*π)"
+        csc(I) ==> "-j*csch(1)"
 
         csc(arcsin(x)) ==> "1/x"
         csc(arccos(x)) ==> "(1 - x^2)^(-1/2)"
@@ -104,11 +104,11 @@ module Sec =
     [<Test>]
     let ``Special Values`` () =
         sec(-2Q) ==> "sec(2)"
-        sec(-pi) ==> "sec(π)" // "-1"
+        sec(-Pi) ==> "sec(π)" // "-1"
         sec(0Q) ==> "1"
-        sec(pi/6Q) ==> "sec(π/6)" // "2/sqrt(3)"
-        sec(5Q/7Q*pi) ==> "sec(5/7*π)"
-        sec(Constant I) ==> "sech(1)"
+        sec(Pi/6Q) ==> "sec(π/6)" // "2/sqrt(3)"
+        sec(5Q/7Q*Pi) ==> "sec(5/7*π)"
+        sec(I) ==> "sech(1)"
 
         sec(arcsin(x)) ==> "(1 - x^2)^(-1/2)"
         sec(arccos(x)) ==> "1/x"
@@ -127,11 +127,11 @@ module Cot =
     [<Test>]
     let ``Special Values`` () =
         cot(-2Q) ==> "-cot(2)"
-        cot(-pi) ==> "-cot(π)" // "⧝"
+        cot(-Pi) ==> "-cot(π)" // "⧝"
         cot(0Q) ==> "⧝"
-        cot(pi/6Q) ==> "cot(π/6)" // "1/sqrt(3)"
-        cot(5Q/7Q*pi) ==> "cot(5/7*π)"
-        cot(Constant I) ==> "-j*coth(1)"
+        cot(Pi/6Q) ==> "cot(π/6)" // "1/sqrt(3)"
+        cot(5Q/7Q*Pi) ==> "cot(5/7*π)"
+        cot(I) ==> "-j*coth(1)"
 
         cot(arcsin(x)) ==> "sqrt(1 - x^2)/x"
         cot(arccos(x)) ==> "x/sqrt(1 - x^2)"
@@ -153,11 +153,11 @@ module Sinh =
     let ``Special Values`` () =
         sinh(0Q) ==> "0"
         sinh(-2Q) ==> "-sinh(2)"
-        sinh(Constant I) ==> "j*sin(1)"
-        sinh(-pi*Constant I) ==> "-sinh(π*j)" // "0"
-        sinh(-1Q/6Q*pi*Constant I) ==> "-sinh(1/6*π*j)" // "1/2*j"
-        sinh(5Q/7Q*pi*Constant I) ==> "sinh(5/7*π*j)"
-        sinh(3Q/2Q*pi*Constant I) ==> "sinh(3/2*π*j)" // "-j"
+        sinh(I) ==> "j*sin(1)"
+        sinh(-Pi*I) ==> "-sinh(π*j)" // "0"
+        sinh(-1Q/6Q*Pi*I) ==> "-sinh(1/6*π*j)" // "1/2*j"
+        sinh(5Q/7Q*Pi*I) ==> "sinh(5/7*π*j)"
+        sinh(3Q/2Q*Pi*I) ==> "sinh(3/2*π*j)" // "-j"
 
         sinh(arcsinh(x)) ==> "x"
         sinh(arccosh(x)) ==> "sqrt((-1 + x)/(1 + x))*(1 + x)"
@@ -177,11 +177,11 @@ module Cosh =
     let ``Special Values`` () =
         cosh(0Q) ==> "1"
         cosh(-2Q) ==> "cosh(2)"
-        cosh(Constant I) ==> "cos(1)"
-        cosh(-pi*Constant I) ==> "cosh(π*j)" // "-1"
-        cosh(-1Q/6Q*pi*Constant I) ==> "cosh(1/6*π*j)" // "sqrt(3)/2"
-        cosh(5Q/7Q*pi*Constant I) ==> "cosh(5/7*π*j)"
-        cosh(3Q/2Q*pi*Constant I) ==> "cosh(3/2*π*j)" // "0"
+        cosh(I) ==> "cos(1)"
+        cosh(-Pi*I) ==> "cosh(π*j)" // "-1"
+        cosh(-1Q/6Q*Pi*I) ==> "cosh(1/6*π*j)" // "sqrt(3)/2"
+        cosh(5Q/7Q*Pi*I) ==> "cosh(5/7*π*j)"
+        cosh(3Q/2Q*Pi*I) ==> "cosh(3/2*π*j)" // "0"
 
         cosh(arcsinh(x)) ==> "sqrt(1 + x^2)"
         cosh(arccosh(x)) ==> "x"
@@ -201,11 +201,11 @@ module Tanh =
     let ``Special Values`` () =
         tanh(0Q) ==> "0"
         tanh(-2Q) ==> "-tanh(2)"
-        tanh(Constant I) ==> "j*tan(1)"
-        tanh(-pi*Constant I) ==> "-tanh(π*j)" // "0"
-        tanh(-1Q/6Q*pi*Constant I) ==> "-tanh(1/6*π*j)" // "-sqrt(3)/2"
-        tanh(5Q/7Q*pi*Constant I) ==> "tanh(5/7*π*j)" // "-tan(2/7*π)*j"
-        tanh(3Q/2Q*pi*Constant I) ==> "tanh(3/2*π*j)" // "⧝"
+        tanh(I) ==> "j*tan(1)"
+        tanh(-Pi*I) ==> "-tanh(π*j)" // "0"
+        tanh(-1Q/6Q*Pi*I) ==> "-tanh(1/6*π*j)" // "-sqrt(3)/2"
+        tanh(5Q/7Q*Pi*I) ==> "tanh(5/7*π*j)" // "-tan(2/7*π)*j"
+        tanh(3Q/2Q*Pi*I) ==> "tanh(3/2*π*j)" // "⧝"
 
         tanh(arcsinh(x)) ==> "x/sqrt(1 + x^2)"
         tanh(arccosh(x)) ==> "(sqrt((-1 + x)/(1 + x))*(1 + x))/x"
@@ -225,11 +225,11 @@ module Csch =
     let ``Special Values`` () =
         csch(0Q) ==> "⧝"
         csch(-2Q) ==> "-csch(2)"
-        csch(Constant I) ==> "-j*csc(1)"
-        csch(-pi*Constant I) ==> "-csch(π*j)" // "⧝"
-        csch(-1Q/6Q*pi*Constant I) ==> "-csch(1/6*π*j)" // "2*j"
-        csch(5Q/7Q*pi*Constant I) ==> "csch(5/7*π*j)" // "-csc(2/7*π)*j"
-        csch(3Q/2Q*pi*Constant I) ==> "csch(3/2*π*j)" // "j"
+        csch(I) ==> "-j*csc(1)"
+        csch(-Pi*I) ==> "-csch(π*j)" // "⧝"
+        csch(-1Q/6Q*Pi*I) ==> "-csch(1/6*π*j)" // "2*j"
+        csch(5Q/7Q*Pi*I) ==> "csch(5/7*π*j)" // "-csc(2/7*π)*j"
+        csch(3Q/2Q*Pi*I) ==> "csch(3/2*π*j)" // "j"
 
         csch(arcsinh(x)) ==> "1/x"
         csch(arccosh(x)) ==> "1/(sqrt((-1 + x)/(1 + x))*(1 + x))"
@@ -249,11 +249,11 @@ module Sech =
     let ``Special Values`` () =
         sech(0Q) ==> "1"
         sech(-2Q) ==> "sech(2)"
-        sech(Constant I) ==> "sec(1)"
-        sech(-pi*Constant I) ==> "sech(π*j)" // "-1"
-        sech(-1Q/6Q*pi*Constant I) ==> "sech(1/6*π*j)" // "2/sqrt(3)"
-        sech(5Q/7Q*pi*Constant I) ==> "sech(5/7*π*j)" // "-1/sec(2/7*π)"
-        sech(3Q/2Q*pi*Constant I) ==> "sech(3/2*π*j)" // "⧝"
+        sech(I) ==> "sec(1)"
+        sech(-Pi*I) ==> "sech(π*j)" // "-1"
+        sech(-1Q/6Q*Pi*I) ==> "sech(1/6*π*j)" // "2/sqrt(3)"
+        sech(5Q/7Q*Pi*I) ==> "sech(5/7*π*j)" // "-1/sec(2/7*π)"
+        sech(3Q/2Q*Pi*I) ==> "sech(3/2*π*j)" // "⧝"
 
         sech(arcsinh(x)) ==> "(1 + x^2)^(-1/2)"
         sech(arccosh(x)) ==> "1/x"
@@ -273,11 +273,11 @@ module Coth =
     let ``Special Values`` () =
         coth(0Q) ==> "⧝"
         coth(-2Q) ==> "-coth(2)"
-        coth(Constant I) ==> "-j*cot(1)"
-        coth(-pi*Constant I) ==> "-coth(π*j)" // "0"
-        coth(-1Q/6Q*pi*Constant I) ==> "-coth(1/6*π*j)" // "-sqrt(3)*j"
-        coth(5Q/7Q*pi*Constant I) ==> "coth(5/7*π*j)" // "cot(2/7*π)*j"
-        coth(3Q/2Q*pi*Constant I) ==> "coth(3/2*π*j)" // "0"
+        coth(I) ==> "-j*cot(1)"
+        coth(-Pi*I) ==> "-coth(π*j)" // "0"
+        coth(-1Q/6Q*Pi*I) ==> "-coth(1/6*π*j)" // "-sqrt(3)*j"
+        coth(5Q/7Q*Pi*I) ==> "coth(5/7*π*j)" // "cot(2/7*π)*j"
+        coth(3Q/2Q*Pi*I) ==> "coth(3/2*π*j)" // "0"
 
         coth(arcsinh(x)) ==> "sqrt(1 + x^2)/x"
         coth(arccosh(x)) ==> "x/(sqrt((-1 + x)/(1 + x))*(1 + x))"
@@ -387,10 +387,10 @@ module Asinh =
     [<Test>]
     let ``Special Values`` () =
         arcsinh(0Q) ==> "0"
-        arcsinh(-Constant I) ==> "-asinh(j)" // "-1/2*π*j"
-        arcsinh(-1Q/2Q*Constant I) ==> "-asinh(j/2)" // "1/2*j"
-        arcsinh(Constant I) ==> "1/2*π*j"
-        arcsinh(2Q*Constant I) ==> "asinh(2*j)" // "asin(2)*j"
+        arcsinh(-I) ==> "-asinh(j)" // "-1/2*π*j"
+        arcsinh(-1Q/2Q*I) ==> "-asinh(j/2)" // "1/2*j"
+        arcsinh(I) ==> "1/2*π*j"
+        arcsinh(2Q*I) ==> "asinh(2*j)" // "asin(2)*j"
 
     [<Test>]
     let ``Calculus`` () =
@@ -402,10 +402,10 @@ module Acosh =
     [<Test>]
     let ``Special Values`` () =
         arccosh(0Q) ==> "1/2*π*j"
-        arccosh(-Constant I) ==> "acosh(-j)"
-        arccosh(-1Q/2Q*Constant I) ==> "acosh(-j/2)"
-        arccosh(Constant I) ==> "acosh(j)"
-        arccosh(2Q*Constant I) ==> "acosh(2*j)"
+        arccosh(-I) ==> "acosh(-j)"
+        arccosh(-1Q/2Q*I) ==> "acosh(-j/2)"
+        arccosh(I) ==> "acosh(j)"
+        arccosh(2Q*I) ==> "acosh(2*j)"
 
     [<Test>]
     let ``Calculus`` () =
@@ -417,10 +417,10 @@ module Atanh =
     [<Test>]
     let ``Special Values`` () =
         arctanh(0Q) ==> "0"
-        arctanh(-Constant I) ==> "-atanh(j)" // "-1/4*π*j"
-        arctanh(-1Q/2Q*Constant I) ==> "-atanh(j/2)" // "-atan(1/2)*j"
-        arctanh(Constant I) ==> "1/4*π*j"
-        arctanh(2Q*Constant I) ==> "atanh(2*j)" // "atan(2)*j"
+        arctanh(-I) ==> "-atanh(j)" // "-1/4*π*j"
+        arctanh(-1Q/2Q*I) ==> "-atanh(j/2)" // "-atan(1/2)*j"
+        arctanh(I) ==> "1/4*π*j"
+        arctanh(2Q*I) ==> "atanh(2*j)" // "atan(2)*j"
 
     [<Test>]
     let ``Calculus`` () =
@@ -432,10 +432,10 @@ module Acsch =
     [<Test>]
     let ``Special Values`` () =
         arccsch(0Q) ==> "⧝"
-        arccsch(-Constant I) ==> "-acsch(j)" // "1/2*π*j"
-        arccsch(-1Q/2Q*Constant I) ==> "-acsch(j/2)" // "acsc(1/2)*j"
-        arccsch(Constant I) ==> "-1/2*π*j"
-        arccsch(2Q*Constant I) ==> "acsch(2*j)" // "-1/6*π*j"
+        arccsch(-I) ==> "-acsch(j)" // "1/2*π*j"
+        arccsch(-1Q/2Q*I) ==> "-acsch(j/2)" // "acsc(1/2)*j"
+        arccsch(I) ==> "-1/2*π*j"
+        arccsch(2Q*I) ==> "acsch(2*j)" // "-1/6*π*j"
 
     [<Test>]
     let ``Calculus`` () =
@@ -448,10 +448,10 @@ module Asech =
     [<Test>]
     let ``Special Values`` () =
         arcsech(0Q) ==> "∞"
-        arcsech(-Constant I) ==> "asech(-j)"
-        arcsech(-1Q/2Q*Constant I) ==> "asech(-j/2)"
-        arcsech(Constant I) ==> "asech(j)"
-        arcsech(2Q*Constant I) ==> "asech(2*j)"
+        arcsech(-I) ==> "asech(-j)"
+        arcsech(-1Q/2Q*I) ==> "asech(-j/2)"
+        arcsech(I) ==> "asech(j)"
+        arcsech(2Q*I) ==> "asech(2*j)"
 
     [<Test>]
     let ``Calculus`` () =
@@ -464,10 +464,10 @@ module Acoth =
     [<Test>]
     let ``Special Values`` () =
         arccoth(0Q) ==> "1/2*π*j"
-        arccoth(-Constant I) ==> "-acoth(j)" // "1/4*π*j"
-        arccoth(-1Q/2Q*Constant I) ==> "-acoth(j/2)" // "acot(1/2)*j"
-        arccoth(Constant I) ==> "-1/4*π*j"
-        arccoth(2Q*Constant I) ==> "acoth(2*j)" // "-atan(2)*j"
+        arccoth(-I) ==> "-acoth(j)" // "1/4*π*j"
+        arccoth(-1Q/2Q*I) ==> "-acoth(j/2)" // "acot(1/2)*j"
+        arccoth(I) ==> "-1/4*π*j"
+        arccoth(2Q*I) ==> "acoth(2*j)" // "-atan(2)*j"
 
     [<Test>]
     let ``Calculus`` () =

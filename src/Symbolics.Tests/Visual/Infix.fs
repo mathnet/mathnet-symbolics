@@ -67,8 +67,8 @@ module Infix =
         Infix.parseOrThrow "1" ==> "1"
         Infix.parseOrThrow "1" --> fromInt32(1)
 
-        Infix.parseOrThrow "pi" --> pi
-        Infix.parseOrThrow "π" --> pi
+        Infix.parseOrThrow "pi" --> Pi
+        Infix.parseOrThrow "π" --> Pi
         Infix.parseOrThrow "∞" --> Expression.PositiveInfinity
         Infix.parseOrThrow "inf" --> Expression.PositiveInfinity
         Infix.parseOrThrow "-∞" --> Expression.NegativeInfinity

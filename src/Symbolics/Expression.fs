@@ -130,7 +130,10 @@ module Operators =
     let two : Expression = Number (BigRational.FromInt 2)
     let private four : Expression = Number (BigRational.FromInt 4)
     let minusOne : Expression = Number (BigRational.FromInt -1)
-    let pi : Expression = Constant Pi
+
+    let Pi : Expression = Constant Pi
+    let I : Expression = Constant I
+    let E : Expression = Constant E
 
     let symbol (name:string) : Expression = Identifier (Symbol name)
 
@@ -389,6 +392,9 @@ module Operators =
     let root (n:Expression) (x:Expression) : Expression = pow x (pow n minusOne)
     let sqrt (x:Expression) : Expression = root two x
 
+    let private PiI = multiply Pi I
+    let private PiIHalf = divide PiI two
+
     let abs : Expression -> Expression = function
         | Undefined -> undefined
         | oo when isInfinity oo -> infinity
@@ -402,13 +408,13 @@ module Operators =
         | PositiveInfinity -> infinity
         | NegativeInfinity -> zero
         | Zero -> one
-        | One -> Constant E
-        | MinusOne -> invert (Constant E)
+        | One -> E
+        | MinusOne -> invert E
         | Product [Constant Pi; Constant I;] -> minusOne // exp(n*pi*j) for ...-1, -1/2, 0, 1/2, 1,...
         | Product [Number n; Constant Pi; Constant I;] when n.IsInteger
             -> if n.Numerator.IsEven then one else minusOne
         | Product [Number n; Constant Pi; Constant I;] when (n*2N).IsInteger
-            -> if (n + 1N/2N).Numerator.IsEven then negate (Constant I) else Constant I
+            -> if (n + 1N/2N).Numerator.IsEven then negate I else I
         | Function (Ln, x') -> x' // exp(ln(x)) = x
         | x -> Function (Exp, x)
     let rec ln : Expression -> Expression = function
@@ -416,9 +422,9 @@ module Operators =
         | oo when isInfinity oo -> infinity
         | Zero -> negativeInfinity
         | One -> zero
-        | MinusOne -> multiply pi (Constant I) // ln(-1) = pi*j
+        | MinusOne -> PiI // ln(-1) = pi*j
         | Constant E -> one
-        | Constant I -> divide (multiply pi (Constant I)) two // ln(j) = 1/2*pi*j
+        | Constant I -> PiIHalf // ln(j) = 1/2*pi*j
         | Number n when n.Numerator.Equals(1I) && n.IsPositive
             -> Function (Ln, fromInteger n.Denominator) |> negate // ln(1/x) = -ln(x) for positive x
         | Power (x', Number n) when n.Equals(-1N) && isPositive x'
@@ -438,7 +444,7 @@ module Operators =
         | oo when isInfinity oo -> undefined
         | Zero -> zero
         | Constant Pi -> zero // sin(n*pi) = 0 for integer n
-        | Constant I -> multiply (Constant I) (Function (Sinh, one))  // sin(j) = j*sinh(1), sin(j*x) = j*sinh(x)
+        | Constant I -> multiply I (Function (Sinh, one))  // sin(j) = j*sinh(1), sin(j*x) = j*sinh(x)
         | Number n when n.IsNegative -> negate (Function (Sin, Number -n))
         | Product ((Number n)::ax) when n.IsNegative -> negate (Function (Sin, multiply (Number -n) (Product ax)))
         | Function (Asin, x') -> x' // sin(asin(x)) = x
@@ -468,7 +474,7 @@ module Operators =
         | oo when isInfinity oo -> undefined
         | Zero -> zero
         | Constant Pi -> zero // tan(pi) = 0
-        | Constant I -> multiply (Constant I) (Function (Tanh, one)) // tan(j) = j*tanh(1), tan(j*x) = j*tanh(x)
+        | Constant I -> multiply I (Function (Tanh, one)) // tan(j) = j*tanh(1), tan(j*x) = j*tanh(x)
         | Number n when n.IsNegative -> negate (Function (Tan, Number -n))
         | Product ((Number n)::ax) when n.IsNegative -> negate (Function (Tan, multiply (Number -n) (Product ax)))
         | Function (Asin, x') -> divide x' (sqrt (subtract one (pow x' two))) // tan(asin(x)) = x/sqrt(1 - x^2)
@@ -483,7 +489,7 @@ module Operators =
         | oo when isInfinity oo -> undefined
         | Zero -> complexInfinity // csc(0) = coo
         | Constant Pi -> complexInfinity // csc(pi) = coo
-        | Constant I -> Function (Csch, one) |> multiply (Constant I) |> negate // csc(j) = -j*csch(1), csc(j*x) = -j*csch(x)
+        | Constant I -> Function (Csch, one) |> multiply I |> negate // csc(j) = -j*csch(1), csc(j*x) = -j*csch(x)
         | Number n when n.IsNegative -> Function (Csc, Number -n) |> negate // csc(-x) = -csc(x)
         | Product ((Number n)::ax) when n.IsNegative -> Function (Csc, multiply (Number -n) (Product ax)) |> negate
         | Function (Asin, x') -> invert x' // csc(asin(x)) = 1/x
@@ -513,7 +519,7 @@ module Operators =
         | oo when isInfinity oo -> undefined
         | Zero -> complexInfinity // cot(0) = coo
         | Constant Pi -> complexInfinity // cot(pi) = coo
-        | Constant I -> Function (Coth, one) |> multiply (Constant I) |> negate // cot(j) = -j*coth(1), cot(j*x) = -j*coth(x)
+        | Constant I -> Function (Coth, one) |> multiply I |> negate // cot(j) = -j*coth(1), cot(j*x) = -j*coth(x)
         | Number n when n.IsNegative -> Function (Cot, Number -n) |> negate // cot(-x) = -cot(x)
         | Product ((Number n)::ax) when n.IsNegative -> Function (Cot, multiply (Number -n) (Product ax)) |> negate
         | Function (Asin, x') -> divide (sqrt (subtract one (pow x' two))) x' // cot(asin(x)) = sqrt(1 - x^2)/x
@@ -529,7 +535,7 @@ module Operators =
         | PositiveInfinity -> infinity // sinh(oo) = oo
         | NegativeInfinity -> negativeInfinity // sinh(-oo) = -oo
         | Zero -> zero // sinh(0) = 0
-        | Constant I -> Function (Sin, one) |> multiply (Constant I) // sinh(j) = j*sin(1), sinh(j*x) = j*sin(x)
+        | Constant I -> Function (Sin, one) |> multiply I // sinh(j) = j*sin(1), sinh(j*x) = j*sin(x)
         | Number n when n.IsNegative -> Function (Sinh, Number -n) |> negate // sinh(-x) = -sinh(x)
         | Product ((Number n)::ax) when n.IsNegative -> Function (Sinh, multiply (Number -n) (Product ax)) |> negate
         | Function (Asinh, x') -> x' // sinh(asinh(x)) = x
@@ -558,7 +564,7 @@ module Operators =
         | PositiveInfinity -> one // tanh(oo) = 1, tanh(-oo) = -1
         | NegativeInfinity -> minusOne
         | Zero -> zero // tanh(0) = 0
-        | Constant I -> Function (Tan, one) |> multiply (Constant I) // tanh(j) = j*tan(1), tanh(j*x) = j*tan(x)
+        | Constant I -> Function (Tan, one) |> multiply I // tanh(j) = j*tan(1), tanh(j*x) = j*tan(x)
         | Number n when n.IsNegative -> Function (Tanh, Number -n) |> negate // tanh(-x) = -tanh(x)
         | Product ((Number n)::ax) when n.IsNegative -> Function (Tanh, multiply (Number -n) (Product ax)) |> negate
         | Function (Asinh, x') -> divide x' (sqrt (add (pow x' two) one)) // tanh(asinh(x)) = x/sqrt(x^2 + 1)
@@ -572,7 +578,7 @@ module Operators =
         | Undefined | ComplexInfinity -> undefined
         | PositiveInfinity | NegativeInfinity -> zero // csch(oo) = csch(-oo) = oo
         | Zero -> complexInfinity // csch(0) = coo
-        | Constant I -> Function (Csc, one) |> multiply (Constant I) |> negate // csch(j) = -j*csc(1), csch(j*x) = -j*csc(x)
+        | Constant I -> Function (Csc, one) |> multiply I |> negate // csch(j) = -j*csc(1), csch(j*x) = -j*csc(x)
         | Number n when n.IsNegative -> Function (Csch, Number -n) |> negate // csch(-x) = -csch(x)
         | Product ((Number n)::ax) when n.IsNegative -> Function (Csch, multiply (Number -n) (Product ax)) |> negate
         | Function (Asinh, x') -> invert x' // csch(asinh(x)) = 1/x
@@ -600,7 +606,7 @@ module Operators =
         | Undefined | ComplexInfinity -> undefined
         | PositiveInfinity -> one
         | Zero -> complexInfinity
-        | Constant I -> Function (Cot, one) |> multiply (Constant I) |> negate // coth(j*x) = -j*cot(x)
+        | Constant I -> Function (Cot, one) |> multiply I |> negate // coth(j*x) = -j*cot(x)
         | Number n when n.IsNegative -> Function (Coth, Number -n) |> negate // coth(-x) = -coth(x)
         | Product ((Number n)::ax) when n.IsNegative -> Function (Coth, multiply (Number -n) (Product ax)) |> negate
         | Function (Asinh, x') -> divide (sqrt (add (pow x' two) one)) x' // coth(asinh(x)) = sqrt(x^2 + 1)/x
@@ -614,27 +620,27 @@ module Operators =
     let arcsin : Expression -> Expression = function
         | Undefined | ComplexInfinity -> undefined
         | Zero -> zero // asin(0) = 0
-        | One -> divide pi two // asin(1) = pi/2
-        | MinusOne -> divide pi two |> negate // asin(-1) = -pi/2
-        | Constant I -> multiply (Constant I) (Function (Asinh, one)) // asin(j) = j*asinh(1)
+        | One -> divide Pi two // asin(1) = pi/2
+        | MinusOne -> divide Pi two |> negate // asin(-1) = -pi/2
+        | Constant I -> multiply I (Function (Asinh, one)) // asin(j) = j*asinh(1)
         | Number n when n.IsNegative -> Function (Asin, Number -n) |> negate // arcsin(-x) = -arcsin(x)
         | Product ((Number n)::ax) when n.IsNegative -> Function (Asin, multiply (Number -n) (Product ax)) |> negate
         | x -> Function (Asin, x)
     let arccos : Expression -> Expression = function
         | Undefined | ComplexInfinity -> undefined
-        | PositiveInfinity -> multiply infinity (Constant I) // acos(oo) = oo*j, acos(-oo) = -oo*j
-        | NegativeInfinity -> multiply negativeInfinity (Constant I)
-        | Zero -> divide pi two // acos(0) = pi/2
+        | PositiveInfinity -> multiply infinity I // acos(oo) = oo*j, acos(-oo) = -oo*j
+        | NegativeInfinity -> multiply negativeInfinity I
+        | Zero -> divide Pi two // acos(0) = pi/2
         | One -> zero // acos(1) = 0
-        | MinusOne -> pi // acos(-1) = pi
+        | MinusOne -> Pi // acos(-1) = pi
         | x -> Function (Acos, x)
     let arctan : Expression -> Expression = function
         | Undefined | ComplexInfinity -> undefined
-        | PositiveInfinity -> divide pi two // atan(oo) = pi/2, atan(-oo) = -pi/2
+        | PositiveInfinity -> divide Pi two // atan(oo) = pi/2, atan(-oo) = -pi/2
         | Zero -> zero // atan(0) = 0
-        | One -> divide pi four // atan(1) = pi/4
-        | MinusOne -> divide pi four |> negate // atan(-1) = -pi/4
-        | Constant I -> multiply (Constant I) infinity // atan(j) = oo*j
+        | One -> divide Pi four // atan(1) = pi/4
+        | MinusOne -> divide Pi four |> negate // atan(-1) = -pi/4
+        | Constant I -> multiply I infinity // atan(j) = oo*j
         | Number n when n.IsNegative -> Function (Atan, Number -n) |> negate // atan(-x) = -atan(x)
         | Product ((Number n)::ax) when n.IsNegative -> Function (Atan, multiply (Number -n) (Product ax)) |> negate
         | x -> Function (Atan, x)
@@ -643,24 +649,24 @@ module Operators =
         | Undefined | ComplexInfinity -> undefined
         | PositiveInfinity | NegativeInfinity -> zero // acsc(oo) = acsc(-oo) = 0
         | Zero -> complexInfinity // acsc(0) = coo
-        | One -> divide pi two // acsc(1) = pi/2, acsc(-1) = -pi/2
-        | MinusOne -> divide pi two |> negate
-        | Constant I -> multiply (Constant I) (Function (Acsch, one)) |> negate // acsc(j) = -j*acsch(1)
+        | One -> divide Pi two // acsc(1) = pi/2, acsc(-1) = -pi/2
+        | MinusOne -> divide Pi two |> negate
+        | Constant I -> multiply I (Function (Acsch, one)) |> negate // acsc(j) = -j*acsch(1)
         | x -> Function (Acsc, x)
     let arcsec : Expression -> Expression = function
         | Undefined | ComplexInfinity -> undefined
-        | PositiveInfinity | NegativeInfinity -> divide pi two // asec(oo) = asec(-oo) = pi/2
+        | PositiveInfinity | NegativeInfinity -> divide Pi two // asec(oo) = asec(-oo) = pi/2
         | Zero -> complexInfinity // asec(0) = coo
         | One -> zero // asec(1) = 0, asec(-1) = pi
-        | MinusOne -> pi
+        | MinusOne -> Pi
         | x -> Function (Asec, x)
     let arccot : Expression -> Expression = function
         | Undefined -> undefined
         | oo when isInfinity oo -> zero // acot(coo) = acot(oo) = acot(-oo) = 0
-        | Zero -> divide pi two // acot(0) = pi/2
-        | One -> divide pi four // acot(1) = pi/4, acot(-1) = -pi/4
-        | MinusOne -> divide pi four |> negate
-        | Constant I -> multiply (Constant I) negativeInfinity // atan(j) = -oo*j
+        | Zero -> divide Pi two // acot(0) = pi/2
+        | One -> divide Pi four // acot(1) = pi/4, acot(-1) = -pi/4
+        | MinusOne -> divide Pi four |> negate
+        | Constant I -> multiply I negativeInfinity // atan(j) = -oo*j
         | Number n when n.IsNegative -> Function (Acot, Number -n) |> negate // acot(-x) = -acot(x)
         | Product ((Number n)::ax) when n.IsNegative -> Function (Acot, multiply (Number -n) (Product ax)) |> negate
         | x -> Function (Acot, x)
@@ -670,25 +676,25 @@ module Operators =
         | PositiveInfinity -> infinity // asinh(oo) = oo, asinh(-oo) = -oo
         | NegativeInfinity -> negativeInfinity
         | Zero -> zero // asinh(0) = 0
-        | Constant I -> divide (multiply pi (Constant I)) two // asinh(j) = pi*j/2, asinh(n*j) = j*asin(n)
+        | Constant I -> PiIHalf // asinh(j) = pi*j/2, asinh(n*j) = j*asin(n)
         | Number n when n.IsNegative -> Function (Asinh, Number -n) |> negate // asinh(-x) = -asinh(x)
         | Product ((Number n)::ax) when n.IsNegative -> Function (Asinh, multiply (Number -n) (Product ax)) |> negate
         | x -> Function (Asinh, x)
     let arccosh : Expression -> Expression = function
         | Undefined | ComplexInfinity -> undefined
         | PositiveInfinity | NegativeInfinity -> infinity // acosh(oo) = acosh(-oo) = oo
-        | Zero -> divide (multiply pi (Constant I)) two // acosh(0) = pi*j/2
+        | Zero -> PiIHalf // acosh(0) = pi*j/2
         | One -> zero // acosh(1) = 0
-        | MinusOne -> multiply pi (Constant I) // acosh(-1) = pi*j
+        | MinusOne -> PiI // acosh(-1) = pi*j
         | x -> Function (Acosh, x)
     let arctanh : Expression -> Expression = function
         | Undefined | ComplexInfinity -> undefined
-        | PositiveInfinity -> divide  (multiply pi (Constant I)) two |> negate // atanh(oo) = - pi*j/2, atanh(-oo) = pi*j/2
-        | NegativeInfinity -> divide  (multiply pi (Constant I)) two
+        | PositiveInfinity -> PiIHalf |> negate // atanh(oo) = - pi*j/2, atanh(-oo) = pi*j/2
+        | NegativeInfinity -> PiIHalf
         | Zero -> zero // atanh(0) = 0
         | One -> infinity // atanh(1) = oo, atanh(-1) = -oo
         | MinusOne -> negativeInfinity
-        | Constant I -> divide (multiply pi (Constant I)) four // atanh(j) = pi*j/4
+        | Constant I -> divide PiI four // atanh(j) = pi*j/4
         | Number n when n.IsNegative -> Function (Atanh, Number -n) |> negate // atanh(-x) = -atanh(x)
         | Product ((Number n)::ax) when n.IsNegative -> Function (Atanh, multiply (Number -n) (Product ax)) |> negate
         | x -> Function (Atanh, x)
@@ -696,24 +702,24 @@ module Operators =
         | Undefined | ComplexInfinity -> undefined
         | PositiveInfinity | NegativeInfinity -> zero // acsch(oo) = acsch(-oo) = 0
         | Zero | One | MinusOne -> complexInfinity // acsch(0) = coo
-        | Constant I -> divide (multiply pi (Constant I)) two |> negate // acsch(j) = -pi*j/2
+        | Constant I -> PiIHalf |> negate // acsch(j) = -pi*j/2
         | Number n when n.IsNegative -> Function (Acsch, Number -n) |> negate // acsch(-x) = -acsch(x)
         | Product ((Number n)::ax) when n.IsNegative -> Function (Acsch, multiply (Number -n) (Product ax)) |> negate
         | x -> Function (Acsch, x)
     let arcsech : Expression -> Expression = function
         | Undefined | ComplexInfinity -> undefined
-        | PositiveInfinity | NegativeInfinity -> divide (multiply pi (Constant I)) two // asech(oo) = asech(-oo) = pi*j/2
+        | PositiveInfinity | NegativeInfinity -> PiIHalf // asech(oo) = asech(-oo) = pi*j/2
         | Zero -> infinity // asech(0) = oo
         | One -> zero // asech(1) = 0
-        | MinusOne -> multiply pi (Constant I) // asech(-1) = pi*j
+        | MinusOne -> PiI // asech(-1) = pi*j
         | x -> Function (Asech, x)
     let arccoth : Expression -> Expression = function
         | Undefined | ComplexInfinity -> undefined
         | PositiveInfinity | NegativeInfinity -> zero // acoth(oo) = acoth(-oo) = 0
-        | Zero -> divide (multiply pi (Constant I)) two // acoth(0) = pi*j/2
+        | Zero -> PiIHalf // acoth(0) = pi*j/2
         | One -> infinity // acoth(1) = oo, acoth(-1) = -oo
         | MinusOne -> negativeInfinity
-        | Constant I -> divide (multiply pi (Constant I)) four |> negate // atanh(j) = -pi*j/4
+        | Constant I -> divide PiI four |> negate // atanh(j) = -pi*j/4
         | Number n when n.IsNegative -> Function (Acoth, Number -n) |> negate // acoth(-x) = -acoth(x)
         | Product ((Number n)::ax) when n.IsNegative -> Function (Acoth, multiply (Number -n) (Product ax)) |> negate
         | x -> Function (Acoth, x)
@@ -887,9 +893,9 @@ type Expression with
 
     static member Symbol (name:string) = Operators.symbol name
 
-    static member I = Constant I
-    static member E = Constant E
-    static member Pi = Operators.pi
+    static member I = Operators.I
+    static member E = Operators.E
+    static member Pi = Operators.Pi
 
     static member ( ~+ ) (x:Expression) : Expression = Operators.plus x
     static member ( ~- ) (x:Expression) : Expression = Operators.negate x
