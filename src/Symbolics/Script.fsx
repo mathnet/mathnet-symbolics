@@ -11,19 +11,9 @@ open MathNet.Numerics
 open MathNet.Symbolics
 
 open Operators
+open VariableSets.Alphabet
 
 fsi.AddPrinter Infix.format
-
-// variables:
-let x = symbol "x"
-let y = symbol "y"
-let z = symbol "z"
-let a = symbol "a"
-let b = symbol "b"
-let c = symbol "c"
-let d = symbol "d"
-let e = symbol "e"
-let f = symbol "f"
 
 
 // This script is just for local experiments

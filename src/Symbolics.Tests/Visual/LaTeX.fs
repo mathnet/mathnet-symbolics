@@ -1,10 +1,11 @@
 ﻿namespace MathNet.Symbolics.Tests.Visual
 
 open NUnit.Framework
-open FsUnit
 open FsUnitTyped
 open MathNet.Symbolics
+
 open Operators
+open VariableSets.Alphabet
 
 module LaTeX =
 

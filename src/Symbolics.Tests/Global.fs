@@ -1,7 +1,6 @@
 ﻿[<AutoOpen>]
 module Global
 
-open FsUnit
 open FsUnitTyped
 
 open System.Collections.Generic
@@ -24,16 +23,3 @@ let inline (==*>) (x:HashSet<Expression>) (expected:string list) = (HashSet(expe
 
 // extra test helper for MathML (just normalizing XML, really)
 let inline (==/>) (x:string) expected = x |> shouldEqual (Xml.normalizeString expected)
-
-// variables
-let x = symbol "x"
-let y = symbol "y"
-let z = symbol "z"
-let a = symbol "a"
-let b = symbol "b"
-let c = symbol "c"
-let d = symbol "d"
-let e = symbol "e"
-let f = symbol "f"
-
-let n = symbol "n"

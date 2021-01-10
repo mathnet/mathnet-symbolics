@@ -2,7 +2,9 @@
 
 open NUnit.Framework
 open MathNet.Symbolics
+
 open Operators
+open VariableSets.Alphabet
 
 module Exp =
 

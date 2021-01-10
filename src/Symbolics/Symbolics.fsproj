@@ -43,6 +43,7 @@ Drop From prefix in Expression.FromInt32 et al (breaking)</PackageReleaseNotes>
     <Compile Include="Compile.fs" />
     <Compile Include="Evaluate.fs" />
     <Compile Include="SymbolicExpression.fs" />
+    <Compile Include="VariableSets.fs" />
     <None Include="Script.fsx" />
     <None Include="paket.references" />
   </ItemGroup>

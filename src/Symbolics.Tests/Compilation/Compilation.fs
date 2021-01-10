@@ -3,7 +3,9 @@
 open NUnit.Framework
 open MathNet.Numerics
 open MathNet.Symbolics
+
 open Operators
+open VariableSets.Alphabet
 
 module Compilation =
 

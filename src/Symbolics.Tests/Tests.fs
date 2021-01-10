@@ -2,11 +2,12 @@ namespace MathNet.Symbolics.Tests
 
 open NUnit.Framework
 open FsUnit
-open FsUnitTyped
 
 open MathNet.Numerics
 open MathNet.Symbolics
+
 open Operators
+open VariableSets.Alphabet
 
 module Expressions =
 
