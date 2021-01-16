@@ -142,8 +142,8 @@ module Operators =
     let complexInfinity : Expression = Expression.ComplexInfinity
     let negativeInfinity : Expression = Expression.NegativeInfinity
 
-    let fromReal (floatingPoint:float) : Expression = Value.fromDouble floatingPoint |> Values.unpack
-    let fromReal32 (floatingPoint:float32) : Expression = Value.fromSingle floatingPoint |> Values.unpack
+    let fromDouble (floatingPoint:float) : Expression = Value.fromDouble floatingPoint |> Values.unpack
+    let fromSingle (floatingPoint:float32) : Expression = Value.fromSingle floatingPoint |> Values.unpack
     let fromComplex (floatingPoint:complex) : Expression = Value.fromComplex floatingPoint |> Values.unpack
     let fromComplex32 (floatingPoint:complex32) : Expression = Value.fromComplex32 floatingPoint |> Values.unpack
 
@@ -155,7 +155,7 @@ module Operators =
     let fromIntegerFraction (n:BigInteger) (d:BigInteger) : Expression = Number (BigRational.FromBigIntFraction (n, d))
     let fromRational (x:BigRational) : Expression = Number x
 
-    let real : float -> Expression = fromReal
+    let real : float -> Expression = fromDouble
     let number : int -> Expression = fromInt32
 
     let isZero : Expression -> bool = function | Zero -> true | _ -> false
@@ -886,8 +886,8 @@ type Expression with
 
     static member Decimal (x:decimal) = Operators.fromDecimal x
 
-    static member Real (floatingPoint:float) = Operators.fromReal floatingPoint
-    static member Real32 (floatingPoint:float32) = Operators.fromReal32 floatingPoint
+    static member Real (floatingPoint:float) = Operators.fromDouble floatingPoint
+    static member Real32 (floatingPoint:float32) = Operators.fromSingle floatingPoint
     static member Complex (floatingPoint:complex) = Operators.fromComplex floatingPoint
     static member Complex32 (floatingPoint:complex32) = Operators.fromComplex32 floatingPoint
 
@@ -975,23 +975,23 @@ type Expression with
     static member Pow (x:Expression, y:int) : Expression = Operators.pow x (Operators.fromInt32 y)
 
     // Simpler usage - approximations
-    static member ( + ) (x:Expression, y:float) : Expression = Operators.add x (Operators.fromReal y)
-    static member ( + ) (x:float, y:Expression) : Expression = Operators.add (Operators.fromReal x) y
-    static member ( - ) (x:Expression, y:float) : Expression = Operators.subtract x (Operators.fromReal y)
-    static member ( - ) (x:float, y:Expression) : Expression = Operators.subtract (Operators.fromReal x) y
-    static member ( * ) (x:Expression, y:float) : Expression = Operators.multiply x (Operators.fromReal y)
-    static member ( * ) (x:float, y:Expression) : Expression = Operators.multiply (Operators.fromReal x) y
-    static member ( / ) (x:Expression, y:float) : Expression = Operators.divide x (Operators.fromReal y)
-    static member ( / ) (x:float, y:Expression) : Expression = Operators.divide (Operators.fromReal x) y
+    static member ( + ) (x:Expression, y:float) : Expression = Operators.add x (Operators.fromDouble y)
+    static member ( + ) (x:float, y:Expression) : Expression = Operators.add (Operators.fromDouble x) y
+    static member ( - ) (x:Expression, y:float) : Expression = Operators.subtract x (Operators.fromDouble y)
+    static member ( - ) (x:float, y:Expression) : Expression = Operators.subtract (Operators.fromDouble x) y
+    static member ( * ) (x:Expression, y:float) : Expression = Operators.multiply x (Operators.fromDouble y)
+    static member ( * ) (x:float, y:Expression) : Expression = Operators.multiply (Operators.fromDouble x) y
+    static member ( / ) (x:Expression, y:float) : Expression = Operators.divide x (Operators.fromDouble y)
+    static member ( / ) (x:float, y:Expression) : Expression = Operators.divide (Operators.fromDouble x) y
 
-    static member ( + ) (x:Expression, y:float32) : Expression = Operators.add x (Operators.fromReal32 y)
-    static member ( + ) (x:float32, y:Expression) : Expression = Operators.add (Operators.fromReal32 x) y
-    static member ( - ) (x:Expression, y:float32) : Expression = Operators.subtract x (Operators.fromReal32 y)
-    static member ( - ) (x:float32, y:Expression) : Expression = Operators.subtract (Operators.fromReal32 x) y
-    static member ( * ) (x:Expression, y:float32) : Expression = Operators.multiply x (Operators.fromReal32 y)
-    static member ( * ) (x:float32, y:Expression) : Expression = Operators.multiply (Operators.fromReal32 x) y
-    static member ( / ) (x:Expression, y:float32) : Expression = Operators.divide x (Operators.fromReal32 y)
-    static member ( / ) (x:float32, y:Expression) : Expression = Operators.divide (Operators.fromReal32 x) y
+    static member ( + ) (x:Expression, y:float32) : Expression = Operators.add x (Operators.fromSingle y)
+    static member ( + ) (x:float32, y:Expression) : Expression = Operators.add (Operators.fromSingle x) y
+    static member ( - ) (x:Expression, y:float32) : Expression = Operators.subtract x (Operators.fromSingle y)
+    static member ( - ) (x:float32, y:Expression) : Expression = Operators.subtract (Operators.fromSingle x) y
+    static member ( * ) (x:Expression, y:float32) : Expression = Operators.multiply x (Operators.fromSingle y)
+    static member ( * ) (x:float32, y:Expression) : Expression = Operators.multiply (Operators.fromSingle x) y
+    static member ( / ) (x:Expression, y:float32) : Expression = Operators.divide x (Operators.fromSingle y)
+    static member ( / ) (x:float32, y:Expression) : Expression = Operators.divide (Operators.fromSingle x) y
 
     static member ( + ) (x:Expression, y:complex) : Expression = Operators.add x (Operators.fromComplex y)
     static member ( + ) (x:complex, y:Expression) : Expression = Operators.add (Operators.fromComplex x) y
@@ -1025,8 +1025,8 @@ type Expression with
     static member op_Implicit (x:int64) : Expression = Operators.fromInt64 x
     static member op_Implicit (x:BigInteger) : Expression = Operators.fromInteger x
     static member op_Implicit (x:BigRational) : Expression = Operators.fromRational x
-    static member op_Implicit (x:float) : Expression = Operators.fromReal x
-    static member op_Implicit (x:float32) : Expression = Operators.fromReal32 x
+    static member op_Implicit (x:float) : Expression = Operators.fromDouble x
+    static member op_Implicit (x:float32) : Expression = Operators.fromSingle x
     static member op_Implicit (x:complex) : Expression = Operators.fromComplex x
     static member op_Implicit (x:complex32) : Expression = Operators.fromComplex32 x
     static member op_Implicit (x:decimal) : Expression = Operators.fromDecimal x

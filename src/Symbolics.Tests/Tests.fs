@@ -52,8 +52,8 @@ module Expressions =
         Pi ==> "π"
         E ==> "e"
         I ==> "j"
-        fromReal 1.23 ==> "1.23"
-        fromReal -0.23 ==> "-0.23"
+        fromDouble 1.23 ==> "1.23"
+        fromDouble -0.23 ==> "-0.23"
 
     [<Test>]
     let ``Approximations`` () =

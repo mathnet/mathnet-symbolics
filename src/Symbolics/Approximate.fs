@@ -17,12 +17,12 @@ module Approximate =
     [<CompiledName("ApproximateSubstitute")>]
     let rec approximateSubstitute (symbols:IDictionary<string, Approximation>) x =
         match x with
-        | Number n -> fromReal (float n)
+        | Number n -> fromDouble (float n)
         | Approximation _ -> x
         | Constant c ->
             match c with
-            | Constant.E -> fromReal Constants.E
-            | Constant.Pi -> fromReal Constants.Pi
+            | Constant.E -> fromDouble Constants.E
+            | Constant.Pi -> fromDouble Constants.Pi
             | Constant.I -> fromComplex Complex.onei
         | Sum sx -> sum (List.map (approximateSubstitute symbols) sx)
         | Product px -> product (List.map (approximateSubstitute symbols) px)

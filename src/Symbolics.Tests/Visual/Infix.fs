@@ -62,11 +62,11 @@ module Infix =
         Infix.parseOrThrow "1.5*a + o" ==> "1.5*a + o"
 
         Infix.parseOrThrow ".001" ==> "0.001"
-        Infix.parseOrThrow ".001" --> fromReal(0.001)
+        Infix.parseOrThrow ".001" --> fromDouble 0.001
         Infix.parseOrThrow "1." ==> "1.0"
-        Infix.parseOrThrow "1." --> fromReal(1.0)
+        Infix.parseOrThrow "1." --> fromDouble 1.0
         Infix.parseOrThrow "1" ==> "1"
-        Infix.parseOrThrow "1" --> fromInt32(1)
+        Infix.parseOrThrow "1" --> fromInt32 1
 
         Infix.parseOrThrow "pi" --> Pi
         Infix.parseOrThrow "π" --> Pi

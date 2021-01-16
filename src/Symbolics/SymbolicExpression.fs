@@ -95,8 +95,8 @@ type SymbolicExpression(expression:Expression) =
     static member Decimal(x:decimal) = SymbolicExpression(fromDecimal x)
 
     // LEAFS - Approximations
-    static member Real(approximation:float) = SymbolicExpression(fromReal approximation)
-    static member Real32(approximation:float32) = SymbolicExpression(fromReal32 approximation)
+    static member Real(approximation:float) = SymbolicExpression(fromDouble approximation)
+    static member Real32(approximation:float32) = SymbolicExpression(fromSingle approximation)
     static member Complex(approximation:complex) = SymbolicExpression(fromComplex approximation)
     static member Complex32(approximation:complex32) = SymbolicExpression(fromComplex32 approximation)
 
@@ -188,8 +188,8 @@ type SymbolicExpression(expression:Expression) =
 
     static member op_Implicit (x:decimal) : SymbolicExpression = SymbolicExpression(fromDecimal x)
 
-    static member op_Implicit (x:float) : SymbolicExpression = SymbolicExpression(fromReal x)
-    static member op_Implicit (x:float32) : SymbolicExpression = SymbolicExpression(fromReal32 x)
+    static member op_Implicit (x:float) : SymbolicExpression = SymbolicExpression(fromDouble x)
+    static member op_Implicit (x:float32) : SymbolicExpression = SymbolicExpression(fromSingle x)
     static member op_Implicit (x:complex) : SymbolicExpression = SymbolicExpression(fromComplex x)
     static member op_Implicit (x:complex32) : SymbolicExpression = SymbolicExpression(fromComplex32 x)
 

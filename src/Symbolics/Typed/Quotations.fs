@@ -26,10 +26,10 @@ module Quotations =
         | UInt16 k -> fromInt32 (int k)
         | UInt32 k -> fromInt64 (int64 k)
         | UInt64 k -> fromInteger (BigInteger k)
-        | Double d -> fromReal d
-        | Single d -> fromReal (float d)
-        | Var x -> Identifier (Symbol x.Name)
-        | PropertyGet (_, info, _) -> Identifier (Symbol info.Name)
+        | Double d -> fromDouble d
+        | Single f -> fromSingle f
+        | Var x -> symbol x.Name
+        | PropertyGet (_, info, _) -> symbol info.Name
         | Let (_, _, t) -> parse t
         | Lambda (_, t) -> parse t
         | _ -> failwith "not supported"

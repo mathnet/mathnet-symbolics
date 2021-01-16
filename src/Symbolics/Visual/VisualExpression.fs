@@ -210,7 +210,7 @@ module VisualExpression =
         let rec convert = function
             | VisualExpression.Symbol name -> symbol name
             | VisualExpression.PositiveInteger value -> fromInteger value
-            | VisualExpression.PositiveFloatingPoint value -> fromReal value
+            | VisualExpression.PositiveFloatingPoint value -> fromDouble value
             | VisualExpression.Parenthesis x -> convert x
             | VisualExpression.Abs x -> convert x |> abs
             | VisualExpression.Negative x -> convert x |> negate

@@ -16,7 +16,7 @@ module LaTeX =
         LaTeX.format minusOne --> """-1"""
         LaTeX.format Expression.ComplexInfinity --> """\infty"""
         LaTeX.format Pi --> """\pi"""
-        LaTeX.format (fromReal -0.23) --> string -0.23
+        LaTeX.format (fromDouble -0.23) --> string -0.23
         LaTeX.format (a**b) --> """{a}^{b}"""
         LaTeX.format (a**(b+c)) --> """{a}^{b + c}"""
         LaTeX.format ((a+b)**c) --> """{\left(a + b\right)}^{c}"""
@@ -27,7 +27,7 @@ module LaTeX =
         LaTeX.format (symbol "L1" * symbol "U1" + symbol "L2") --> """\mathrm{L2} + \mathrm{L1} \cdot \mathrm{U1}"""
 
         LaTeX.format (3Q*2Q**x) --> """3 \cdot {2}^{x}"""
-        LaTeX.format (3.0*(fromReal 2.0)**x) --> """3.0 \cdot {2.0}^{x}"""
+        LaTeX.format (3.0*(fromDouble 2.0)**x) --> """3.0 \cdot {2.0}^{x}"""
         LaTeX.format (5Q*x) --> """5x"""
         LaTeX.format (Pi * 10Q) --> """10\pi"""
         LaTeX.format (E * 2Q**(4Q*x)) --> """e \cdot {2}^{4x}"""
