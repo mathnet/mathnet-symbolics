@@ -23,13 +23,13 @@ module Value =
         if Double.IsPositiveInfinity x then Value.PositiveInfinity
         elif Double.IsNegativeInfinity x then Value.NegativeInfinity
         elif Double.IsNaN x then Value.Undefined
-        else Value.Approximation (Approximation.fromReal x)
+        else Value.Approximation (Approximation.fromDouble x)
 
     let fromReal32 (x:float32) =
         if Single.IsPositiveInfinity x then Value.PositiveInfinity
         elif Single.IsNegativeInfinity x then Value.NegativeInfinity
         elif Single.IsNaN x then Value.Undefined
-        else Value.Approximation (Approximation.fromReal32 x)
+        else Value.Approximation (Approximation.fromSingle x)
 
     let fromComplex (x:complex) =
         if x.IsReal() then fromReal x.Real

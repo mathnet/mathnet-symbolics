@@ -9,7 +9,7 @@ open Operators
 module Approximate =
 
     [<CompiledName("Real")>]
-    let real x = Approximation.fromReal x
+    let real x = Approximation.fromDouble x
 
     [<CompiledName("Complex")>]
     let complex r i = Approximation.fromComplex (complex r i)
