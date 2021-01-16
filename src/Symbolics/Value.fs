@@ -19,32 +19,32 @@ type Value =
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Value =
 
-    let fromReal (x:float) =
+    let fromDouble (x:float) =
         if Double.IsPositiveInfinity x then Value.PositiveInfinity
         elif Double.IsNegativeInfinity x then Value.NegativeInfinity
         elif Double.IsNaN x then Value.Undefined
         else Value.Approximation (Approximation.fromDouble x)
 
-    let fromReal32 (x:float32) =
+    let fromSingle (x:float32) =
         if Single.IsPositiveInfinity x then Value.PositiveInfinity
         elif Single.IsNegativeInfinity x then Value.NegativeInfinity
         elif Single.IsNaN x then Value.Undefined
         else Value.Approximation (Approximation.fromSingle x)
 
     let fromComplex (x:complex) =
-        if x.IsReal() then fromReal x.Real
+        if x.IsReal() then fromDouble x.Real
         elif x.IsInfinity() then Value.ComplexInfinity
         elif x.IsNaN() then Value.Undefined
         else Value.Approximation (Approximation.fromComplex x)
 
     let fromComplex32 (x:complex32) =
-        if x.IsReal() then fromReal32 x.Real
+        if x.IsReal() then fromSingle x.Real
         elif x.IsInfinity() then Value.ComplexInfinity
         elif x.IsNaN() then Value.Undefined
         else Value.Approximation (Approximation.fromComplex32 x)
 
     let approx = function
-        | Real d -> fromReal d
+        | Real d -> fromDouble d
         | Complex c -> fromComplex c
 
     let zero = Value.Number (BigRational.Zero)

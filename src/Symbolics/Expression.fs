@@ -142,8 +142,8 @@ module Operators =
     let complexInfinity : Expression = Expression.ComplexInfinity
     let negativeInfinity : Expression = Expression.NegativeInfinity
 
-    let fromReal (floatingPoint:float) : Expression = Value.fromReal floatingPoint |> Values.unpack
-    let fromReal32 (floatingPoint:float32) : Expression = Value.fromReal32 floatingPoint |> Values.unpack
+    let fromReal (floatingPoint:float) : Expression = Value.fromDouble floatingPoint |> Values.unpack
+    let fromReal32 (floatingPoint:float32) : Expression = Value.fromSingle floatingPoint |> Values.unpack
     let fromComplex (floatingPoint:complex) : Expression = Value.fromComplex floatingPoint |> Values.unpack
     let fromComplex32 (floatingPoint:complex32) : Expression = Value.fromComplex32 floatingPoint |> Values.unpack
 
