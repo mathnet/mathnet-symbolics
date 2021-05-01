@@ -40,7 +40,7 @@ module Linq =
         | Product ax -> product <| List.map denominator ax
         | _ -> one
 
-    let private toLambda (expr : MathNet.Symbolics.Expression) (args : Symbol list) (valueType : Type) (mathType : Type) constant value add mul div pow atan2 log abs besselj bessely besseli besselk besseliratio besselkratio hankelh1 hankelh2 : LambdaExpression option =
+    let private toLambda (expr : MathNet.Symbolics.Expression) (args : Symbol list) (valueType : Type) (mathType : Type) constant value add mul div pow min max atan2 log abs besselj bessely besseli besselk besseliratio besselkratio hankelh1 hankelh2 : LambdaExpression option =
         let valueTypeArr1 = [| valueType |]
         let valueTypeArr2 = [| valueType; valueType |]
         let argName = function |Symbol(n) -> n
@@ -95,7 +95,15 @@ module Linq =
                     | Abs  -> Some abs
                 let f = convertFunc func
                 let e = convertExpr par
-                Option.map2 id f e
+                Option.map2 id f e          
+            | FunctionN(Min, [x;y]) ->
+                let exprX = convertExpr x
+                let exprY = convertExpr y
+                Option.map2 min exprX exprY
+            | FunctionN(Max, [x;y]) ->
+                let exprX = convertExpr x
+                let exprY = convertExpr y
+                Option.map2 max exprX exprY
             | FunctionN(Atan2, [x;y]) ->
                 let exprX = convertExpr x
                 let exprY = convertExpr y
@@ -209,6 +217,8 @@ module Linq =
         let mathCall1 (name : string) (a : Expression) = Expression.Call(mathType.GetMethod(name, [| valueType |]), a) :> Expression
         let mathCall2 (name : string) (a : Expression) (b : Expression) = Expression.Call(mathType.GetMethod(name, [| valueType; valueType |]), a, b) :> Expression
         let pow = mathCall2 "Pow"
+        let min = mathCall2 "Min"
+        let max = mathCall2 "Max"
         let atan2 = mathCall2 "Atan2"
         let log a b = mathCall2 "Log" b a
         let abs = mathCall1 "Abs"
@@ -220,7 +230,7 @@ module Linq =
         let besselkratio = mathCall2 "BesselKRatio"
         let hankelh1 = mathCall2 "HankelH1"
         let hankelh2 = mathCall2 "HankelH2"
-        toLambda expr args valueType mathType constant value add mul div pow atan2 log abs besselj bessely besseli besselk besseliratio besselkratio hankelh1 hankelh2
+        toLambda expr args valueType mathType constant value add mul div pow min max atan2 log abs besselj bessely besseli besselk besseliratio besselkratio hankelh1 hankelh2
 
     [<CompiledName("FormatComplexLambda")>]
     let formatComplexLambda (expr : MathNet.Symbolics.Expression) (args : Symbol list) : LambdaExpression option =
@@ -242,6 +252,8 @@ module Linq =
         let mul = mathCall2 "Multiply"
         let div = mathCall2 "Divide"
         let pow = mathCall2 "Pow"
+        let min = mathCall2 "Min"
+        let max = mathCall2 "Max"
         let atan2 a b = mathCall1 "Atan" (div a b)
         let log a b =
             let ln = mathCall1 "Log"
@@ -255,4 +267,4 @@ module Linq =
         let besselkratio = mathCall2 "BesselKRatio"
         let hankelh1 = mathCall2 "HankelH1"
         let hankelh2 = mathCall2 "HankelH2"
-        toLambda expr args valueType mathType constant value add mul div pow atan2 log abs besselj bessely besseli besselk besseliratio besselkratio hankelh1 hankelh2
+        toLambda expr args valueType mathType constant value add mul div pow min max atan2 log abs besselj bessely besseli besselk besseliratio besselkratio hankelh1 hankelh2

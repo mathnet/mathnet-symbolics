@@ -124,6 +124,14 @@ module Approximation =
     let atan = function
         | Real a -> Real (Trig.Atan a)
         | Complex a -> Complex (Trig.Atan a)
+    let min x y =
+        match x, y with
+        | Real a, Real b -> Real (Math.Min (a, b))
+        | _ -> failwith "not supported"
+    let max x y =
+        match x, y with
+        | Real a, Real b -> Real (Math.Max (a, b))
+        | _ -> failwith "not supported"
     let atan2 x y =
         match x, y with
         | Real a, Real b -> Real (Math.Atan2 (a, b))
@@ -257,6 +265,8 @@ module Approximation =
 
     let applyN f xs =
         match f, xs with
+        | Min, [x; y] -> min x y
+        | Max, [x; y] -> max x y
         | Atan2, [x; y] -> atan2 x y
         | Log, [b; x] -> log b x
         | BesselJ, [nu; x] -> besselj nu x

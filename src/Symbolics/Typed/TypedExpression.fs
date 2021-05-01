@@ -83,6 +83,14 @@ module TypedExpression =
                 let cs = xs |> List.map convert
                 let t = cs |> List.map enrichedType |> List.fold mergeType ValueType.Real
                 TypedExpression.FunctionN (t, (Atan2, cs))
+            | FunctionN (Min, xs) ->
+                let cs = xs |> List.map convert
+                let t = cs |> List.map enrichedType |> List.fold mergeType ValueType.Real
+                TypedExpression.FunctionN (t, (Min, cs))
+            | FunctionN (Max, xs) ->
+                let cs = xs |> List.map convert
+                let t = cs |> List.map enrichedType |> List.fold mergeType ValueType.Real
+                TypedExpression.FunctionN (t, (Max, cs))
             | FunctionN ((BesselJ | BesselY | BesselI | BesselK | BesselIRatio | BesselKRatio | HankelH1 | HankelH2) as f, [nu; z]) ->
                 let cnu = convert nu
                 let cz = convert z

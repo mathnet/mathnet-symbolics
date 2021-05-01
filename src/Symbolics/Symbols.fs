@@ -20,6 +20,8 @@ type Function =
 
 type FunctionN =
     | Log
+    | Min
+    | Max
     | Atan2
     | BesselJ   // Bessel function of the first kind
     | BesselY   // Bessel function of the second kind

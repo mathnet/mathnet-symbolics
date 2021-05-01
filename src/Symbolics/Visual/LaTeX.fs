@@ -28,6 +28,8 @@ module private LaTeXFormatter =
         | x -> sprintf "\\operatorname{%s}" x
     let latexFunctionNName = function
         | "log" -> "\\log"
+        | "min" -> "\\operatorname{min}"
+        | "max" -> "\\operatorname{max}"
         | "atan" -> "\\operatorname{atan2}"
         | x -> sprintf "\\operatorname{%s}" x
 
