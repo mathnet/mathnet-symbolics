@@ -644,8 +644,8 @@ module Operators =
         | Number n when n.IsNegative -> Function (Atan, Number -n) |> negate // atan(-x) = -atan(x)
         | Product ((Number n)::ax) when n.IsNegative -> Function (Atan, multiply (Number -n) (Product ax)) |> negate
         | x -> Function (Atan, x)
-    let min (x:Expression) (y:Expression) : Expression = FunctionN (Min, [x;y])
-    let max (x:Expression) (y:Expression) : Expression = FunctionN (Max, [x;y])
+    let min2 (x:Expression) (y:Expression) : Expression = FunctionN (Min, [x;y])
+    let max2 (x:Expression) (y:Expression) : Expression = FunctionN (Max, [x;y])
     let arctan2 (x:Expression) (y:Expression) : Expression = FunctionN (Atan2, [x;y])
     let arccsc : Expression -> Expression = function
         | Undefined | ComplexInfinity -> undefined
@@ -860,8 +860,8 @@ module Operators =
 
     let applyN (f: FunctionN) (xs: Expression list) : Expression =
         match f, xs with
-        | Min, [x;y] -> min x y
-        | Max, [x;y] -> max x y
+        | Min, [x;y] -> min2 x y
+        | Max, [x;y] -> max2 x y
         | Atan2, [x;y] -> arctan2 x y
         | Log, [b; x] -> log b x
         | BesselJ, [nu; x] -> besselj nu x
@@ -964,8 +964,8 @@ type Expression with
     static member HankelH1 (n, x) = Operators.hankelh1 n x // Hankel Function of the First Kind
     static member HankelH2 (n, x) = Operators.hankelh2 n x // Hankel Function of the Second Kind
     
-    static member Min (x, y) = Operators.min x y
-    static member Max (x, y) = Operators.max x y
+    static member Min (x, y) = Operators.min2 x y
+    static member Max (x, y) = Operators.max2 x y
 
     static member Apply (f, x) = Operators.apply f x
     static member ApplyN (f, xs) = Operators.applyN f xs

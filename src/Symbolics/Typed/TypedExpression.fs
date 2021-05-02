@@ -79,6 +79,14 @@ module TypedExpression =
                     | (ValueType.Real | ValueType.Rational), ValueType.Complex -> ValueType.Complex
                     | _ -> ValueType.Undefined
                 TypedExpression.FunctionN (t, (Log, [cb; cx]))
+            | FunctionN (Min, xs) ->
+                let cs = xs |> List.map convert
+                let t = cs |> List.map enrichedType |> List.fold mergeType ValueType.Real
+                TypedExpression.FunctionN (t, (Min, cs))
+            | FunctionN (Max, xs) ->
+                let cs = xs |> List.map convert
+                let t = cs |> List.map enrichedType |> List.fold mergeType ValueType.Real
+                TypedExpression.FunctionN (t, (Max, cs))
             | FunctionN (Atan2, xs) ->
                 let cs = xs |> List.map convert
                 let t = cs |> List.map enrichedType |> List.fold mergeType ValueType.Real

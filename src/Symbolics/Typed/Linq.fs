@@ -95,7 +95,7 @@ module Linq =
                     | Abs  -> Some abs
                 let f = convertFunc func
                 let e = convertExpr par
-                Option.map2 id f e          
+                Option.map2 id f e
             | FunctionN(Min, [x;y]) ->
                 let exprX = convertExpr x
                 let exprY = convertExpr y
