@@ -32,6 +32,14 @@ module Infix =
         Infix.parseOrUndefined "sin x-1" ==> "Undefined"
         Infix.parseOrUndefined "sin -x" ==> "sin - x"
         Infix.parseOrUndefined "sin" ==> "sin"
+        
+        Infix.parseOrUndefined "min(x,y)" ==> "min(x,y)"
+        Infix.parseOrUndefined "min ( x , y )"  ==> "min(x,y)"
+        Infix.parseOrUndefined " min ( - x, - y ) " ==> "min(-x,-y)"
+        
+        Infix.parseOrUndefined "max(x,y)" ==> "max(x,y)"
+        Infix.parseOrUndefined "max ( x , y )"  ==> "max(x,y)"
+        Infix.parseOrUndefined " max ( - x, - y ) " ==> "max(-x,-y)"
 
         Infix.parseOrUndefined "atan2(x,y)" ==> "atan2(x,y)"
         Infix.parseOrUndefined "atan2 ( x , y )"  ==> "atan2(x,y)"

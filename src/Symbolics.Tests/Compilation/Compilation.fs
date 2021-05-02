@@ -43,6 +43,12 @@ module Compilation =
 
         let expr9 = x + 1
         (Compile.compileExpression1OrThrow expr9 symX).Invoke(1.0) --> 2.0
+        
+        let expr10 = min2 x y
+        (Compile.compileExpression2OrThrow expr10 symX symY).Invoke(12.5, 5.7) --> System.Math.Min(12.5, 5.7)
+        
+        let expr11 = max2 x y
+        (Compile.compileExpression2OrThrow expr11 symX symY).Invoke(12.5, 5.7) --> System.Math.Max(12.5, 5.7)
 
         let expr1' = x
         (Compile.compileComplexExpression1OrThrow expr1' symX).Invoke(toComplex 3.0) --> toComplex 3.0
