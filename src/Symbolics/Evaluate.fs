@@ -228,6 +228,8 @@ module Evaluate =
         | HankelH2, [Real nu; Complex x] -> Complex (SpecialFunctions.HankelH2 (nu, x))
         | _ -> failwith "not supported"
 
+    
+
     [<CompiledName("Evaluate")>]
     let rec evaluate (symbols:IDictionary<string, FloatingPoint>) = function
         | Number n -> Real (float n) |> fnormalize
@@ -250,3 +252,17 @@ module Evaluate =
         | Power (r, p) -> fpower (evaluate symbols r) (evaluate symbols p) |> fnormalize
         | Function (f, x) -> fapply f (evaluate symbols x) |> fnormalize
         | FunctionN (f, xs) -> xs |> List.map (evaluate symbols) |> fapplyN f |> fnormalize
+        | FunInvocation (Symbol fnm, xs) ->
+            let param, fx = Definition.funDict.[fnm]
+            let cmpl = Compile.compileExpressionOrThrow fx param
+
+            let param_val =
+                xs
+                |> List.map (evaluate symbols)
+                |> List.map (fun pv ->
+                    match pv with
+                    | (FloatingPoint.Real v) -> box v
+                    | _ -> null
+                )
+                |> Array.ofList
+            cmpl.DynamicInvoke(param_val:obj[]) :?> float |> Real
