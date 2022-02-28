@@ -44,6 +44,9 @@ module Compilation =
         let expr9 = x + 1
         (Compile.compileExpression1OrThrow expr9 symX).Invoke(1.0) --> 2.0
 
+        let expr10' = y * y + Expression.I * y + (besselk x (Expression.I * y)) / (besselk (negate x) (Expression.I * y))
+        (Compile.compileComplexExpression2OrThrow expr10' symX symY).Invoke(toComplex 0.5, System.Numerics.Complex.One) --> complex 2.0 1.0
+
         let expr1' = x
         (Compile.compileComplexExpression1OrThrow expr1' symX).Invoke(toComplex 3.0) --> toComplex 3.0
 

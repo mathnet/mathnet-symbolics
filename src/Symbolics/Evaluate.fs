@@ -5,6 +5,7 @@ open System.Collections.Generic
 open MathNet.Numerics
 open MathNet.Numerics.LinearAlgebra
 open MathNet.Symbolics
+open Definition
 
 [<NoComparison>]
 type FloatingPoint =
@@ -84,6 +85,7 @@ module Evaluate =
         | Real x, Real y -> Real (x+y)
         | Real x, Complex y | Complex y, Real x -> Complex ((complex x 0.0) + y)
         | Complex x, Complex y -> Complex (x+y)
+        | Real x, RealVector y -> RealVector (x+y)
         | RealVector x, RealVector y -> RealVector (x+y)
         | ComplexVector x, ComplexVector y -> ComplexVector (x+y)
         | RealMatrix x, RealMatrix y -> RealMatrix (x+y)
@@ -100,6 +102,7 @@ module Evaluate =
         | Real x, Real y -> Real (x*y)
         | Real x, Complex y | Complex y, Real x -> Complex ((complex x 0.0) * y)
         | Complex x, Complex y -> Complex (x*y)
+        | Real x, RealVector y -> RealVector (x*y)
         | RealVector x, RealVector y -> Real (x*y)
         | ComplexVector x, ComplexVector y -> Complex (x*y)
         | RealMatrix x, RealMatrix y -> RealMatrix (x*y)
@@ -253,16 +256,57 @@ module Evaluate =
         | Function (f, x) -> fapply f (evaluate symbols x) |> fnormalize
         | FunctionN (f, xs) -> xs |> List.map (evaluate symbols) |> fapplyN f |> fnormalize
         | FunInvocation (Symbol fnm, xs) ->
-            let param, fx = Definition.funDict.[fnm]
-            let cmpl = Compile.compileExpressionOrThrow fx param
-
-            let param_val =
+            let cal_param_obj_val () =
                 xs
-                |> List.map (evaluate symbols)
-                |> List.map (fun pv ->
-                    match pv with
+                |> List.map (fun exp ->
+                    match evaluate symbols exp with
                     | (FloatingPoint.Real v) -> box v
                     | _ -> null
                 )
                 |> Array.ofList
-            cmpl.DynamicInvoke(param_val:obj[]) :?> float |> Real
+            let cal_param_real_val () =
+                xs
+                |> List.map (fun exp ->
+                    match evaluate symbols exp with
+                    | (FloatingPoint.Real v) -> v
+                    | _ -> Double.NaN
+                )
+                |> Array.ofList
+            let cal_param_vec_val () =
+                xs
+                |> List.map (fun exp ->
+                    match evaluate symbols exp with
+                    | (FloatingPoint.RealVector v) -> v
+                    | _ -> failwithf "vector parameter is required for %s" fnm
+                )
+                |> Array.ofList
+            if keyWord.ContainsKey fnm then
+                let mbr () =
+                    let param_val = cal_param_vec_val ()
+                    let m2 = DenseMatrix.zero<float> (param_val.Length) (param_val.[0].Count)
+                    param_val
+                    |> Array.iteri (fun i v ->
+                        m2.SetRow(i, v)
+                    )
+                    m2
+                match fnm with
+                | "vec" ->
+                    let param_val = cal_param_real_val ()
+                    FloatingPoint.RealVector <| vector param_val
+                | "mat_by_row" ->
+                    FloatingPoint.RealMatrix (mbr ())
+                | "mat_by_col" ->
+                    let m2 = mbr()
+                    FloatingPoint.RealMatrix <| m2.Transpose()
+            else
+                match funDict.[fnm] with
+                | DTExp (param, fx) ->
+                    let param_val = cal_param_obj_val ()
+                    let cmpl = Compile.compileExpressionOrThrow fx param
+                    cmpl.DynamicInvoke(param_val:obj[]) :?> float |> Real
+                | DTFunI1toI1 f ->
+                    let param_val = cal_param_real_val ()
+                    f (int param_val.[0]) |> float |> Real
+            
+
+
