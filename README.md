@@ -63,6 +63,8 @@ let main argv =
     printfn "%A" a1.RealVectorValue
     let a2 = SymbolicExpression(Infix.parseOrThrow("mat_by_row(a, a)")).Evaluate(symbols2)
     printfn "%A" a2.RealMatrixValue
+	let a4 = SymbolicExpression(Infix.parseOrThrow("mat_multiply(m, m, a)")).Evaluate(symbols2)
+    printfn "%A" a4
     0 // return an integer exit code
 ```
 

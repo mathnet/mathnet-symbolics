@@ -280,6 +280,15 @@ module Evaluate =
                     | _ -> failwithf "vector parameter is required for %s" fnm
                 )
                 |> Array.ofList
+            let cal_param_mat_vec_val () =
+                xs
+                |> List.map (fun exp ->
+                    match evaluate symbols exp with
+                    | (FloatingPoint.RealVector v) -> FloatingPoint.RealVector v
+                    | (FloatingPoint.RealMatrix v) -> FloatingPoint.RealMatrix v
+                    | _ -> failwithf "vector parameter is required for %s" fnm
+                )
+                |> Array.ofList
             if keyWord.ContainsKey fnm then
                 let mbr () =
                     let param_val = cal_param_vec_val ()
@@ -298,6 +307,45 @@ module Evaluate =
                 | "mat_by_col" ->
                     let m2 = mbr()
                     FloatingPoint.RealMatrix <| m2.Transpose()
+                | "mat_multiply" ->
+                    let param_val = cal_param_mat_vec_val ()
+                    param_val
+                    |> Array.skip 1
+                    |> Array.fold (fun s a ->
+                        match s with
+                        | FloatingPoint.RealVector vs ->
+                            match a with
+                            | FloatingPoint.RealVector va ->
+                                let r = vs * va
+                                FloatingPoint.Real r
+                            | FloatingPoint.RealMatrix ma ->
+                                let r = vs * ma
+                                FloatingPoint.RealVector r
+                            | FloatingPoint.Real ra ->
+                                FloatingPoint.RealVector (vs * ra)
+                        | FloatingPoint.RealMatrix ms ->
+                            match a with
+                            | FloatingPoint.RealVector va ->
+                                let r = ms * va
+                                FloatingPoint.RealVector r
+                            | FloatingPoint.RealMatrix ma ->
+                                let r = ms * ma
+                                FloatingPoint.RealMatrix r
+                            | FloatingPoint.Real ra ->
+                                let r = ra * ms
+                                FloatingPoint.RealMatrix r
+                        | FloatingPoint.Real rs ->
+                            match a with
+                            | FloatingPoint.RealVector va ->
+                                let r = rs * va
+                                FloatingPoint.RealVector r
+                            | FloatingPoint.RealMatrix ma ->
+                                let r = rs * ma
+                                FloatingPoint.RealMatrix r
+                            | FloatingPoint.Real ra ->
+                                let r = ra * rs
+                                FloatingPoint.Real r
+                    ) param_val.[0]
             else
                 match funDict.[fnm] with
                 | DTExp (param, fx) ->
