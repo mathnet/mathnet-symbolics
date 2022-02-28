@@ -1,4 +1,4 @@
-Math.NET Symbolics
+Math.NET Symbolics (With Matrix/Vector supported)
 ==================
 
 Math.NET Symbolics is a basic open source **computer algebra library for .NET, Silverlight and Mono** written entirely in F#.
