@@ -1,5 +1,51 @@
-Math.NET Symbolics (With Matrix/Vector supported)
+Math.NET Symbolics (With Matrix/Vector/Customized Function supported)
 ==================
+
+For supporting code like the following:
+
+```
+#r @"src\Symbolics\bin\Debug\netstandard2.0\MathNet.Symbolics.dll"
+#r @"nuget:MathNet.Numerics"
+#r @"nuget:FsUnit"
+#r @"nuget:FParsec"
+#r @"nuget:MathNet.Numerics.FSharp"
+#load @"src\Symbolics.Tests\Global.fs"
+
+open MathNet.Numerics
+open MathNet.Symbolics
+open Global
+open Operators
+open VariableSets.Alphabet
+type Expr = SymbolicExpression
+
+let symV = Symbol "v"
+let symW = Symbol "w"
+let symX = Symbol "x"
+let symY = Symbol "y"
+let symZ = Symbol "z"
+
+
+open Definition
+define "test" ([symV; symW], (v + w)*2)
+SymbolicExpression(Infix.parseOrThrow("2^test(x, 2 * x)")).Evaluate(dict[ "x", FloatingPoint.Real 2.0; ])
+```
+
+Result:
+```
+val it : FloatingPoint = Real 4096.0
+```
+
+Code:
+```
+SymbolicExpression(cFun("test", [x + (fromInt32 10); (fromDouble 100.0)])*2).Evaluate(dict[ "x", FloatingPoint.Real 9.0; ])
+
+```
+
+Result:
+```
+val it : FloatingPoint = Real 476.0
+```
+
 
 ```
 open System
