@@ -1,4 +1,8 @@
 Math.NET Symbolics (With Matrix/Vector/Customized Function supported)
+
+2022-03-12 Now there is a private repo which supports DiffSharp Tensor within Math.NET Symbolics. (very rough/early stage)
+If you are interested about it, please leave a message in issues.
+
 ==================
 
 For supporting code like the following:
