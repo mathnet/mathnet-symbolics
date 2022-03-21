@@ -3,7 +3,7 @@ Math.NET Symbolics (With Matrix/Vector/Customized Function supported)
 
 https://github.com/ingted/coldfar-symbolics
 
-# 2022-03-21 The progress is really great. Critical lambda compilation and evaluation bugs are resolved.
+# 2022-03-21 The progress is really great. Critical lambda compilation and evaluation bugs are resolved. So you can easily extend symbolic operation with tensor value in Math.Net. 
 
 ```
     let a0 = SymbolicExpression(Infix.parseOrThrow("v * 2")).Evaluate(symbols2)
