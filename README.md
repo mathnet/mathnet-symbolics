@@ -1,5 +1,5 @@
 Math.NET Symbolics (With Matrix/Vector/Customized Function supported)
-2022-03-21 The progress is really great. Critical lambda compilation and evaluation bugs are resolved.
+# 2022-03-21 The progress is really great. Critical lambda compilation and evaluation bugs are resolved.
 
 ```
     let a0 = SymbolicExpression(Infix.parseOrThrow("v * 2")).Evaluate(symbols2)
