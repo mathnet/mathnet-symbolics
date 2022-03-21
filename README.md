@@ -1,4 +1,8 @@
 Math.NET Symbolics (With Matrix/Vector/Customized Function supported)
+# if you are interested about it, send me an email to join this repo:
+
+https://github.com/ingted/coldfar-symbolics
+
 # 2022-03-21 The progress is really great. Critical lambda compilation and evaluation bugs are resolved.
 
 ```
