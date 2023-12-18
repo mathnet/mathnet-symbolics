@@ -1,34 +1,43 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <GenerateProgramFile>false</GenerateProgramFile>
-        <TargetFrameworks>net461;netcoreapp3.1</TargetFrameworks>
-        <AssemblyName>MathNet.Symbolics.Tests</AssemblyName>
-        <RootNamespace>MathNet.Symbolics.Tests</RootNamespace>
-        <IsPackable>false</IsPackable>
-        <NoWarn>44;2003</NoWarn>
-        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    </PropertyGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\Symbolics\Symbolics.fsproj" />
-    </ItemGroup>
-    <ItemGroup>
-        <Compile Include="Global.fs" />
-        <Compile Include="Operators\Arithmetic.fs" />
-        <Compile Include="Operators\Exponential.fs" />
-        <Compile Include="Operators\Trigonometry.fs" />
-        <Compile Include="Operators\Bessel.fs" />
-        <Compile Include="Polynomial\Polynomial.fs" />
-        <Compile Include="Visual\VisualExpressions.fs" />
-        <Compile Include="Visual\Infix.fs" />
-        <Compile Include="Visual\LaTeX.fs" />
-        <Compile Include="Visual\MathML.fs" />
-        <Compile Include="Compilation\Compilation.fs" />
-        <Compile Include="SymbolicExpressions.fs" />
-        <Compile Include="Tests.fs" />
-        <Compile Include="Main.fs" />
-        <None Include="paket.references" />
-    </ItemGroup>
-    <Import Project="..\..\.paket\Paket.Restore.targets" />
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <GenerateProgramFile>false</GenerateProgramFile>
+    <TargetFrameworks>net8.0;net48</TargetFrameworks>
+    <AssemblyName>MathNet.Symbolics.Tests</AssemblyName>
+    <RootNamespace>MathNet.Symbolics.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <NoWarn>44;2003</NoWarn>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Symbolics\Symbolics.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Global.fs" />
+    <Compile Include="Operators\Arithmetic.fs" />
+    <Compile Include="Operators\Exponential.fs" />
+    <Compile Include="Operators\Trigonometry.fs" />
+    <Compile Include="Operators\Bessel.fs" />
+    <Compile Include="Polynomial\Polynomial.fs" />
+    <Compile Include="Visual\VisualExpressions.fs" />
+    <Compile Include="Visual\Infix.fs" />
+    <Compile Include="Visual\LaTeX.fs" />
+    <Compile Include="Visual\MathML.fs" />
+    <Compile Include="Compilation\Compilation.fs" />
+    <Compile Include="SymbolicExpressions.fs" />
+    <Compile Include="Tests.fs" />
+    <Compile Include="Main.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.4.2" />
+    <PackageReference Include="NUnitLite" Version="3.13.3" />
+    <PackageReference Include="FsUnit" Version="5.3.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 </Project>

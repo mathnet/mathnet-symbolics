@@ -1,3 +1,6 @@
+### 0.25 - 2023-12-17
+* attempt to revive this project with upgraded tooling, for net8.0, net6.0, net48 and netstandard2.0
+
 ### 0.24.0 - 2021.01-10
 * Usability: Operators module now provides I, E and Pi (instead of pi) (breaking)
 * Usability: VariableSets.Alphabet provides a-z variables that can be opened on demand

@@ -172,7 +172,7 @@ module Value =
     let apply f = function
         | Value.Approximation a -> Approximation.apply f a |> approx
         | Value.Number a -> Approximation.fromRational a |> Approximation.apply f |> approx
-        | Value.Undefined _ -> Value.Undefined
+        | Value.Undefined -> Value.Undefined
         | Value.ComplexInfinity -> Value.Undefined // TODO
         | Value.PositiveInfinity -> Value.Undefined // TODO
         | Value.NegativeInfinity -> Value.Undefined // TODO

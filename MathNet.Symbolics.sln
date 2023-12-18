@@ -16,14 +16,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Readme", "Readme", "{7177AD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{6A8FB80F-8A1F-447D-AAF7-574B85D8600E}"
 	ProjectSection(SolutionItems) = preProject
-		.travis.yml = .travis.yml
+		.editorconfig = .editorconfig
 		appveyor.yml = appveyor.yml
-		docs\tools\build-docs.fsx = docs\tools\build-docs.fsx
-		build\build-framework.fsx = build\build-framework.fsx
-		build.fsx = build.fsx
-		src\Directory.Build.props = src\Directory.Build.props
+		Directory.Build.props = Directory.Build.props
+		global.json = global.json
 		paket.dependencies = paket.dependencies
 		paket.lock = paket.lock
+		build.cmd = build.cmd
+		build.sh = build.sh
+		.gitignore = .gitignore
+		.gitattributes = .gitattributes
+		NuGet.config = NuGet.config
+		restore.sh = restore.sh
+		restore.cmd = restore.cmd
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{37C7BBC6-A637-45BC-9EBF-1733771CDE56}"

@@ -1,6 +1,5 @@
 <Project>
     <PropertyGroup>
-        <NetStandardImplicitPackageVersion>2.0.3</NetStandardImplicitPackageVersion>
         <Company>Math.NET Project</Company>
         <Product>Math.NET Symbolics</Product>
         <Authors>Christoph Ruegg</Authors>
@@ -13,8 +12,13 @@
         <RepositoryType>git</RepositoryType>
         <NeutralLanguage>en</NeutralLanguage>
         <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <Nullable>disable</Nullable>
+        <EnableNETAnalyzers>True</EnableNETAnalyzers>
+        <AnalysisLevel>5.0</AnalysisLevel>
     </PropertyGroup>
     <ItemGroup>
-        <None Include="$(MSBuildThisFileDirectory)icon.png" Pack="true" Visible="false" PackagePath="\" />
+        <None Include="$(MSBuildThisFileDirectory)build/icon.png" Pack="true" Visible="false" PackagePath="\" />
     </ItemGroup>
 </Project>

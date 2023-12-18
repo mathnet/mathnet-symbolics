@@ -2,22 +2,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>net461;net45;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net6.0;net48;netstandard2.0</TargetFrameworks>
     <AssemblyName>MathNet.Symbolics</AssemblyName>
     <RootNamespace>MathNet.Symbolics</RootNamespace>
     <IsPackable>true</IsPackable>
     <PackageId>MathNet.Symbolics</PackageId>
-    <VersionPrefix>0.24.0</VersionPrefix>
-    <VersionSuffix></VersionSuffix>
+    <VersionPrefix>0.25</VersionPrefix>
+    <VersionSuffix>
+    </VersionSuffix>
     <Title>Math.NET Symbolics</Title>
     <Description>Math.NET Symbolics is a basic open source computer algebra library for .Net and Mono. Written in F# but works well in C# as well. Supports .Net Framework 4.5 or higher and .Net Standard 2.0 or higher, on Windows, Linux and Mac.$(DescriptionSuffix)</Description>
-    <PackageReleaseNotes>Usability: Operators module now provides I, E and Pi (instead of pi) (breaking)
-Usability: VariableSets.Alphabet provides a-z variables that can be opened on demand
-Fixes issue where operators were generic where they should not have been
-Minor internal simplifications and streamlining</PackageReleaseNotes>
+    <PackageReleaseNotes>attempt to revive this project with upgraded tooling, for net8.0, net6.0, net48 and netstandard2.0</PackageReleaseNotes>
     <PackageTags>fsharp F# math symbolics algebra simplify solve cas parse</PackageTags>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <NoWarn>2003</NoWarn>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Symbols.fs" />
@@ -46,7 +45,14 @@ Minor internal simplifications and streamlining</PackageReleaseNotes>
     <Compile Include="SymbolicExpression.fs" />
     <Compile Include="VariableSets.fs" />
     <None Include="Script.fsx" />
-    <None Include="paket.references" />
   </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
+  <ItemGroup>
+    <PackageReference Include="FParsec" Version="2.0.0-beta2" />
+    <PackageReference Include="MathNet.Numerics" Version="6.0.0-beta1" />
+    <PackageReference Include="MathNet.Numerics.FSharp" Version="6.0.0-beta1" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 </Project>
