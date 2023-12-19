@@ -8,10 +8,10 @@
         "paket"
       ]
     },
-    "fake-cli": {
-      "version": "6.0.0",
+    "fsharp.formatting.commandtool": {
+      "version": "11.5.1",
       "commands": [
-        "fake"
+        "fsdocs"
       ]
     }
   }

@@ -29,6 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{6A8FB80F
 		NuGet.config = NuGet.config
 		restore.sh = restore.sh
 		restore.cmd = restore.cmd
+		.config\dotnet-tools.json = .config\dotnet-tools.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{37C7BBC6-A637-45BC-9EBF-1733771CDE56}"
