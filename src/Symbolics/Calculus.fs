@@ -53,6 +53,8 @@ module Calculus =
         | Function (AiryAiPrime, x) -> (differentiate symbol x) * x * airyai(x)
         | Function (AiryBi, x) -> (differentiate symbol x) * airybiprime(x)
         | Function (AiryBiPrime, x) -> (differentiate symbol x) * x * airybi(x)
+        | FunctionN (Min, _) -> failwith "not supported"
+        | FunctionN (Max, _) -> failwith "not supported"
         | FunctionN (Atan2, [x; y]) -> differentiate symbol (tan (x / y))
         | FunctionN (Log, [b; x]) -> differentiate symbol ((ln x) / (ln b))
         | FunctionN (BesselJ, [nu; x]) -> (differentiate symbol x) * ((besselj (nu - 1Q) x) - (besselj (nu + 1Q) x)) / 2Q

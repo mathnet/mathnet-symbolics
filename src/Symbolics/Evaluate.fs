@@ -202,6 +202,8 @@ module Evaluate =
 
     let fapplyN f xs =
         match f, xs with
+        | Min, [Real x; Real y] -> Real (Math.Min(x, y))
+        | Max, [Real x; Real y] -> Real (Math.Max(x, y))
         | Atan2, [Real x; Real y] -> Real (Math.Atan2(x, y))
         | Atan2, [Complex x; Real y] -> Complex (Complex.atan (x / (complex y 0.0)))
         | Atan2, [Complex x; Complex y] -> Complex (Complex.atan (x / y))
