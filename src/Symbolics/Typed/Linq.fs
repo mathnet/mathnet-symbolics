@@ -233,7 +233,7 @@ module Linq =
         let constant = function
             | E -> Some (Expression.Constant (complex Constants.E 0.0) :> Expression)
             | Pi -> Some (Expression.Constant (complex Constants.Pi 0.0) :> Expression)
-            | _ -> None
+            | I -> Some (Expression.Constant (complex 0.0 1.0) :> Expression)
         let valueType = typeof<complex>
         let mathType = typeof<complex>
         let mathCall1 (name : string) (a : Expression) = Expression.Call(mathType.GetMethod(name, [| valueType |]), a) :> Expression

@@ -15,11 +15,12 @@ type Expression =
     | Power of Expression * Expression
     | Function of Function * Expression
     | FunctionN of FunctionN * (Expression list)
-    //| FunctionDef of Symbol * (Symbol list) * Expression
+    | FunInvocation of Symbol * (Expression list)
     | ComplexInfinity
     | PositiveInfinity
     | NegativeInfinity
     | Undefined
+
 
 [<RequireQualifiedAccess>]
 module Values =
@@ -182,6 +183,20 @@ module Operators =
             | Power (xr,xp), Power (yr,yp) -> if xr <> yr then compare xr yr else compare xp yp
             | Function (xf, x), Function (yf, y) -> if xf <> yf then xf < yf else compare x y
             | FunctionN (xf, xs), FunctionN (yf, ys) -> if xf <> yf then xf < yf else compareZip (List.rev xs) (List.rev ys)
+            | FunInvocation (name1, paramdef1), FunInvocation (name2, paramdef2) ->
+                if name1 <> name2 then name1 < name2
+                else
+                    let l1 = List.length paramdef1
+                    let l2 = List.length paramdef2
+                    if l1 <> l2 then l1 < l2
+                    else
+                        (paramdef1, paramdef2)
+                        ||> List.map2 (fun p1 p2 ->
+                            compare p1 p2
+                        )
+                        |> List.find (fun result -> not result)
+                            
+                        
             | Number _, _ -> true
             | _, Number _ -> false
             | Approximation _, _ -> true
@@ -395,6 +410,7 @@ module Operators =
     let private PiI = multiply Pi I
     let private PiIHalf = divide PiI two
 
+    let cFun(fnm, paramList) = FunInvocation (Symbol fnm, paramList)
     let abs : Expression -> Expression = function
         | Undefined -> undefined
         | oo when isInfinity oo -> infinity

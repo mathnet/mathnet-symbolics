@@ -60,10 +60,18 @@ module private InfixParser =
         let functionArgs = sepBy expr (str_ws ",") |> between (str_ws "(") (str_ws ")")
 
         let functionTerm = symbolName .>>. functionArgs |>> function
-            | f, args -> VisualExpression.Function (f, BigInteger.One, args)
+            | f, args ->
+                if Definition.funDict.ContainsKey f then
+                    VisualExpression.FunInvocation (f, BigInteger.One, args)
+                else
+                    VisualExpression.Function (f, BigInteger.One, args)
 
         let functionPowerTerm = symbolName .>>. (str_ws "^" >>. integer) .>>. functionArgs |>> function
-            | (f, power), args -> VisualExpression.Function (f, power, args)
+            | (f, power), args ->
+                if Definition.funDict.ContainsKey f then
+                    VisualExpression.FunInvocation (f, BigInteger.One, args)
+                else
+                    VisualExpression.Function (f, power, args)
 
         let sqrtTerm = str_ws "sqrt" >>. (between (str_ws "(") (str_ws ")") expr) |>> function
             | arg -> VisualExpression.Root (arg, bigint 2)
@@ -181,7 +189,8 @@ module private InfixFormatter =
             write "("
             format write x
             write ")"
-        | VisualExpression.Function (fn, power, x::xs) ->
+        | VisualExpression.Function (fn, power, x::xs)
+        | VisualExpression.FunInvocation (fn, power, x::xs) ->
             write fn
             if power.IsOne |> not then
                 write "^"

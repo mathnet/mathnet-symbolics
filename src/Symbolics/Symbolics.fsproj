@@ -23,6 +23,7 @@
     <Compile Include="Approximation.fs" />
     <Compile Include="Value.fs" />
     <Compile Include="Expression.fs" />
+    <Compile Include="Definition.fs" />
     <Compile Include="Numbers.fs" />
     <Compile Include="Structure.fs" />
     <Compile Include="Algebraic.fs" />

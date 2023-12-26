@@ -5,6 +5,7 @@ open System.Collections.Generic
 open MathNet.Numerics
 open MathNet.Numerics.LinearAlgebra
 open MathNet.Symbolics
+open Definition
 
 [<NoComparison>]
 type FloatingPoint =
@@ -84,6 +85,7 @@ module Evaluate =
         | Real x, Real y -> Real (x+y)
         | Real x, Complex y | Complex y, Real x -> Complex ((complex x 0.0) + y)
         | Complex x, Complex y -> Complex (x+y)
+        | Real x, RealVector y -> RealVector (x+y)
         | RealVector x, RealVector y -> RealVector (x+y)
         | ComplexVector x, ComplexVector y -> ComplexVector (x+y)
         | RealMatrix x, RealMatrix y -> RealMatrix (x+y)
@@ -100,6 +102,7 @@ module Evaluate =
         | Real x, Real y -> Real (x*y)
         | Real x, Complex y | Complex y, Real x -> Complex ((complex x 0.0) * y)
         | Complex x, Complex y -> Complex (x*y)
+        | Real x, RealVector y -> RealVector (x*y)
         | RealVector x, RealVector y -> Real (x*y)
         | ComplexVector x, ComplexVector y -> Complex (x*y)
         | RealMatrix x, RealMatrix y -> RealMatrix (x*y)
@@ -228,6 +231,8 @@ module Evaluate =
         | HankelH2, [Real nu; Complex x] -> Complex (SpecialFunctions.HankelH2 (nu, x))
         | _ -> failwith "not supported"
 
+    
+
     [<CompiledName("Evaluate")>]
     let rec evaluate (symbols:IDictionary<string, FloatingPoint>) = function
         | Number n -> Real (float n) |> fnormalize
@@ -250,3 +255,106 @@ module Evaluate =
         | Power (r, p) -> fpower (evaluate symbols r) (evaluate symbols p) |> fnormalize
         | Function (f, x) -> fapply f (evaluate symbols x) |> fnormalize
         | FunctionN (f, xs) -> xs |> List.map (evaluate symbols) |> fapplyN f |> fnormalize
+        | FunInvocation (Symbol fnm, xs) ->
+            let cal_param_obj_val () =
+                xs
+                |> List.map (fun exp ->
+                    match evaluate symbols exp with
+                    | (FloatingPoint.Real v) -> box v
+                    | _ -> null
+                )
+                |> Array.ofList
+            let cal_param_real_val () =
+                xs
+                |> List.map (fun exp ->
+                    match evaluate symbols exp with
+                    | (FloatingPoint.Real v) -> v
+                    | _ -> Double.NaN
+                )
+                |> Array.ofList
+            let cal_param_vec_val () =
+                xs
+                |> List.map (fun exp ->
+                    match evaluate symbols exp with
+                    | (FloatingPoint.RealVector v) -> v
+                    | _ -> failwithf "vector parameter is required for %s" fnm
+                )
+                |> Array.ofList
+            let cal_param_mat_vec_val () =
+                xs
+                |> List.map (fun exp ->
+                    match evaluate symbols exp with
+                    | (FloatingPoint.RealVector v) -> FloatingPoint.RealVector v
+                    | (FloatingPoint.RealMatrix v) -> FloatingPoint.RealMatrix v
+                    | _ -> failwithf "vector parameter is required for %s" fnm
+                )
+                |> Array.ofList
+            if keyWord.ContainsKey fnm then
+                let mbr () =
+                    let param_val = cal_param_vec_val ()
+                    let m2 = DenseMatrix.zero<float> (param_val.Length) (param_val.[0].Count)
+                    param_val
+                    |> Array.iteri (fun i v ->
+                        m2.SetRow(i, v)
+                    )
+                    m2
+                match fnm with
+                | "vec" ->
+                    let param_val = cal_param_real_val ()
+                    FloatingPoint.RealVector <| vector param_val
+                | "mat_by_row" ->
+                    FloatingPoint.RealMatrix (mbr ())
+                | "mat_by_col" ->
+                    let m2 = mbr()
+                    FloatingPoint.RealMatrix <| m2.Transpose()
+                | "mat_multiply" ->
+                    let param_val = cal_param_mat_vec_val ()
+                    param_val
+                    |> Array.skip 1
+                    |> Array.fold (fun s a ->
+                        match s with
+                        | FloatingPoint.RealVector vs ->
+                            match a with
+                            | FloatingPoint.RealVector va ->
+                                let r = vs * va
+                                FloatingPoint.Real r
+                            | FloatingPoint.RealMatrix ma ->
+                                let r = vs * ma
+                                FloatingPoint.RealVector r
+                            | FloatingPoint.Real ra ->
+                                FloatingPoint.RealVector (vs * ra)
+                        | FloatingPoint.RealMatrix ms ->
+                            match a with
+                            | FloatingPoint.RealVector va ->
+                                let r = ms * va
+                                FloatingPoint.RealVector r
+                            | FloatingPoint.RealMatrix ma ->
+                                let r = ms * ma
+                                FloatingPoint.RealMatrix r
+                            | FloatingPoint.Real ra ->
+                                let r = ra * ms
+                                FloatingPoint.RealMatrix r
+                        | FloatingPoint.Real rs ->
+                            match a with
+                            | FloatingPoint.RealVector va ->
+                                let r = rs * va
+                                FloatingPoint.RealVector r
+                            | FloatingPoint.RealMatrix ma ->
+                                let r = rs * ma
+                                FloatingPoint.RealMatrix r
+                            | FloatingPoint.Real ra ->
+                                let r = ra * rs
+                                FloatingPoint.Real r
+                    ) param_val.[0]
+            else
+                match funDict.[fnm] with
+                | DTExp (param, fx) ->
+                    let param_val = cal_param_obj_val ()
+                    let cmpl = Compile.compileExpressionOrThrow fx param
+                    cmpl.DynamicInvoke(param_val:obj[]) :?> float |> Real
+                | DTFunI1toI1 f ->
+                    let param_val = cal_param_real_val ()
+                    f (int param_val.[0]) |> float |> Real
+            
+
+

@@ -22,6 +22,7 @@ type VisualExpression =
     | Power of VisualExpression * VisualExpression // a^b
     | Root of VisualExpression * BigInteger // a^(1/b)
     | Function of name:string * power:BigInteger * (VisualExpression list)
+    | FunInvocation of name:string * power:BigInteger * (VisualExpression list)
     | ComplexI
     | RealPi
     | RealE
@@ -204,6 +205,8 @@ module VisualExpression =
             | FunctionN (f, xs) ->
                 VisualExpression.Function (functionNaryName f, BigInteger.One, xs |> List.map (convert 0))
                 |> parenthesis priority 3
+            | FunInvocation (Symbol fnm, xs) ->
+                VisualExpression.FunInvocation (fnm, BigInteger.One, xs |> List.map (convert 0))
         convert 0 expression
 
     let toExpression visualExpression =
@@ -219,6 +222,12 @@ module VisualExpression =
             | VisualExpression.Fraction (numerator, denominator) -> (convert numerator)/(convert denominator)
             | VisualExpression.Power (radix, power) -> pow (convert radix) (convert power)
             | VisualExpression.Root (radix, power) -> root (fromInteger power) (convert radix)
+            | VisualExpression.FunInvocation (fn, power, xs) ->
+                let paramExp = xs |> List.map convert
+                let applied = Expression.FunInvocation ((Symbol fn), paramExp)
+                if power.IsOne then
+                    applied
+                else pow applied (fromInteger power)
             | VisualExpression.Function (fn, power, [x]) ->
                 let applied = apply (nameFunction fn) (convert x)
                 if power.IsOne then applied else pow applied (fromInteger power)
